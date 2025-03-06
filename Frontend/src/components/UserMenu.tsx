@@ -4,9 +4,11 @@ import { IconButton, Menu, MenuItem, Typography, Box } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const UserMenu: React.FC = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  console.log('Usuario en UserMenu:', user);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -21,23 +23,12 @@ const UserMenu: React.FC = () => {
     handleClose();
   };
 
-  // Aquí se pone la API.
-  // Por ahora, usaré datos ficticios.
-  const user = {
-    name: 'Usuario',
-    edad: '21',
-    email: 'steventu06@gmail.com',
-
-
-  };
-
   return (
     <Box>
-      <IconButton onClick={handleClick}sx={{ ml: 1,color: '#fff' }} >
-        
+      <IconButton onClick={handleClick} sx={{ ml: 1, color: '#fff' }}>
         <AccountCircleIcon />
-        <Typography variant="body1" sx={{ ml: 1,color: '#fff' }} >
-          {user.name}
+        <Typography variant="body1" sx={{ ml: 1, color: '#fff' }}>
+          {user ? user.nombre : 'Usuario'}
         </Typography>
       </IconButton>
       <Menu
@@ -49,14 +40,15 @@ const UserMenu: React.FC = () => {
       >
         <MenuItem disabled>
           <Box>
-            <Typography variant="subtitle1">{user.name}</Typography>
-            <Typography variant="body1" color="warning">
-              {user.email}
+            <Typography variant="subtitle1">
+              {user ? `${user.nombre} ${user.apellido}` : 'Usuario'}
             </Typography>
-            
+            <Typography variant="body1" color="textSecondary">
+              {user ? user.email : 'correo@ejemplo.com'}
+            </Typography>
           </Box>
         </MenuItem>
-        <MenuItem onClick={handleLogout} >Cerrar sesión</MenuItem>
+        <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
       </Menu>
     </Box>
   );

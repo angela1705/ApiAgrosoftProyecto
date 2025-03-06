@@ -1,15 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
-# Router Usuarios
 from apps.Usuarios.permisos.api.routers import PermisosRouter
 from apps.Usuarios.rol_permiso.api.routers import RolPermisoRouter
 from apps.Usuarios.roles_acciones.api.routers import RolesAccionesRouter
 from apps.Usuarios.usuario_rol.api.routers import UsuarioRolRouter
 from apps.Usuarios.usuarios.api.routers import UsuariosRouter
 from apps.Usuarios.roles.api.routers import RolesRouter
+from apps.Usuarios.usuarios.api.views import RegistroUsuarioView, CurrentUserView
 
-# Router Cultivo
+# Router Cultivo, Finanzas, Inventario, IOT
 from apps.Cultivo.actividades.api.router import actividadRouter 
 from apps.Cultivo.afecciones.api.router import afeccionRouter 
 from apps.Cultivo.bancal.api.router import bancalRouter 
@@ -33,22 +34,16 @@ from apps.Cultivo.tipos_residuos.api.router import tipoResiduoRouter
 from apps.Cultivo.semillero_herramienta.api.router import semilleroHRouter
 from apps.Cultivo.semillero_insumo.api.router import semilleroInsumoRouter
 from apps.Cultivo.tareas.api.router import tareaRouter
-
-# Router Finanzas
 from apps.Finanzas.pagos.api.router import pagoRouter
 from apps.Finanzas.salario.api.router import salarioRouter
 from apps.Finanzas.venta.api.router import ventaRouter
-
-# Router Inventario
 from apps.Inventario.bodega.api.routers import bodegaRouter
 from apps.Inventario.bodega_herramienta.api.routers import bodegaHerramientaRouter
 from apps.Inventario.bodega_insumo.api.routers import bodegaInsumoRouter
 from apps.Inventario.herramientas.api.routers import herramientaRouter
 from apps.Inventario.insumos.api.routers import insumoRouter
-
 from apps.Iot.datos_meteorologicos.api.routers import Datos_metereologicosRouter
 from apps.Iot.sensores.api.routers import SensoresRouter
-
 
 router = DefaultRouter()
 routerUsuarios = DefaultRouter()
@@ -105,8 +100,6 @@ routerInventario.registry.extend(insumoRouter.registry)
 routerIOT.registry.extend(Datos_metereologicosRouter.registry)
 routerIOT.registry.extend(SensoresRouter.registry)
 
-
-
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -132,5 +125,8 @@ urlpatterns = [
     path('iot/', include(routerIOT.urls)),
     path('finanzas/', include(routerFinanzas.urls)),
     path('inventario/', include(routerInventario.urls)),
-    path('', include('apps.Usuarios.usuarios.api.router')),
+    path('usuarios/registro/', RegistroUsuarioView.as_view(), name='registro_usuario'),
+    path('usuarios/me/', CurrentUserView.as_view(), name='current_user'),
+    path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
