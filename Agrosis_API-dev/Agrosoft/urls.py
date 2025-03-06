@@ -50,12 +50,12 @@ from apps.Iot.datos_meteorologicos.api.routers import Datos_metereologicosRouter
 from apps.Iot.sensores.api.routers import SensoresRouter
 
 
-routerIOT = DefaultRouter()
+router = DefaultRouter()
 routerUsuarios = DefaultRouter()
 routerCultivo = DefaultRouter()
 routerFinanzas = DefaultRouter()
 routerInventario = DefaultRouter()
-routerIot = DefaultRouter()
+routerIOT = DefaultRouter()
 
 # Usuarios
 routerUsuarios.registry.extend(PermisosRouter.registry)
@@ -126,10 +126,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('api/iot/', include (routerIOT.urls)),
-    path('api/cultivo/', include (routerCultivo.urls)),
-    path('api/finanzas/', include (routerFinanzas.urls)),
-    path('api/inventario/', include (routerInventario.urls)),
-    path('api/usuarios/', include (routerUsuarios.urls)),
-
+    path('api/', include(router.urls)),
+    path('usuarios/', include(routerUsuarios.urls)),
+    path('cultivo/', include(routerCultivo.urls)),
+    path('iot/', include(routerIOT.urls)),
+    path('finanzas/', include(routerFinanzas.urls)),
+    path('inventario/', include(routerInventario.urls)),
+    path('', include('apps.Usuarios.usuarios.api.router')),
 ]
