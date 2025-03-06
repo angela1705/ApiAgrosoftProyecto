@@ -3,11 +3,6 @@ import { useAuth } from '../context/AuthContext';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 
-interface LoginResponse {
-  token: string;
-  message?: string;
-}
-
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -20,30 +15,10 @@ const Login: React.FC = () => {
     setError('');
     setLoading(true);
 
-    if (!email || !password) {
-      setError('Email y contraseña son requeridos');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch('http://127.0.0.1:8000/auth/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data: LoginResponse = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Error en el login');
-      }
-
-      login(data.token);
+      await login(email, password); 
     } catch (err) {
-      setError((err as Error).message || 'Error de autenticación');
+      setError('Error de autenticación. Verifica tus credenciales.');
     } finally {
       setLoading(false);
     }
@@ -72,6 +47,7 @@ const Login: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
           variant="outlined"
           fullWidth
+          required
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: '12px',
@@ -104,6 +80,7 @@ const Login: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           variant="outlined"
           fullWidth
+          required
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: '12px',

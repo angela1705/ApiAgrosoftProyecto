@@ -9,9 +9,9 @@ import AgrosisLogotic from '../assets/def_AGROSIS_LOGOTIC.png';
 import LogoSena from '../assets/logo2.png';
 
 const LoginPage: React.FC = () => {
-  const { isAuthentication } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  if (isAuthentication) {
+  if (isAuthenticated) {
     return <Navigate to="/" replace={true} />;
   }
 
@@ -24,7 +24,7 @@ const LoginPage: React.FC = () => {
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: '#27a35e', 
+        backgroundColor: '#27a35e',
       }}
     >
       {/* Fondo con línea horizontal curva (~) */}
@@ -51,9 +51,9 @@ const LoginPage: React.FC = () => {
           preserveAspectRatio="none"
         >
           <path
-            fill="#fff" // Mitad superior
+            fill="#fff"
             fillOpacity="1"
-            d="M0,0 L0,160 Q360,140 720,160 Q1080,180 1440,160 L1440,0 Z" // Curva
+            d="M0,0 L0,160 Q360,140 720,160 Q1080,180 1440,160 L1440,0 Z"
           />
         </svg>
       </Box>
