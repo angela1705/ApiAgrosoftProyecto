@@ -17,6 +17,12 @@ import EspeciePage from './pages/EspeciePage';
 import ProgramacionPage from './pages/ProgramacionPage';
 import CultivoPage from './pages/CultivoPage';
 import ActividadPage from './pages/ActividadPage';
+import HerramientasPage from './pages/HerramientasPage';
+import InsumosPage from './pages/InsumosPage';
+import BodegaPage from './pages/BodegaPage';
+import BodegaHerramientaPage from './pages/BodegaHerramientaPage';
+import BodegaInsumoPage from './pages/BodegaInsumoPage';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -25,15 +31,11 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route element={<LoginPage />} path="/login" />
+          <Route element={<RegisterPage />} path="/register" />
           <Route
             path="/"
             element={<PrivateRoute><DashboardPage /></PrivateRoute>}
           />
-
-          {/* Ruta pública para registar */}
-          <Route
-           element={<RegisterPage />} path="/register" />
-
           <Route
             path="/docs"
             element={<PrivateRoute><DocsPage /></PrivateRoute>}
@@ -42,11 +44,11 @@ function App() {
             path="/cultivo/tipoespecie/"
             element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/tipo_actividad/"
             element={<PrivateRoute><TipoActividadPage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/lotes/"
             element={<PrivateRoute><LotesPage /></PrivateRoute>}
           />
@@ -54,21 +56,41 @@ function App() {
             path="/cultivo/bancal/"
             element={<PrivateRoute><BancalPage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/especies/"
             element={<PrivateRoute><EspeciePage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/programacion/"
             element={<PrivateRoute><ProgramacionPage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/cultivo/"
             element={<PrivateRoute><CultivoPage /></PrivateRoute>}
           />
           <Route
             path="/cultivo/actividad/"
             element={<PrivateRoute><ActividadPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/herramientas/"
+            element={<PrivateRoute><HerramientasPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/insumos/"
+            element={<PrivateRoute><InsumosPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/bodega/"
+            element={<PrivateRoute><BodegaPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/bodega_herramienta/"
+            element={<PrivateRoute><BodegaHerramientaPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/bodega_insumo/"
+            element={<PrivateRoute><BodegaInsumoPage /></PrivateRoute>}
           />
           <Route
             path="/pricing"
