@@ -136,7 +136,7 @@ const BancalPage: React.FC = () => {
                     <TableCell>{bancal.TamY}</TableCell>
                     <TableCell>{bancal.posX}</TableCell>
                     <TableCell>{bancal.posY}</TableCell>
-                    <TableCell>{bancal.fk_lote_nombre}</TableCell>
+                    <TableCell>{bancal.fk_lote}</TableCell>
                     <TableCell>
                       <button className="text-green-500 hover:underline mr-2">Editar</button>
                       <button className="text-red-500 hover:underline">Eliminar</button>
