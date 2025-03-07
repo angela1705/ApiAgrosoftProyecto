@@ -10,6 +10,13 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/Dashboard';
 import PrivateRoute from './components/RutaPrivada';
 import TipoEspeciePage from './pages/TipoEspeciePage';
+import TipoActividadPage from './pages/TipoActividadPage';
+import LotesPage from './pages/LotesPage';
+import BancalPage from './pages/BancalPage';
+import EspeciePage from './pages/EspeciePage';
+import ProgramacionPage from './pages/ProgramacionPage';
+import CultivoPage from './pages/CultivoPage';
+import ActividadPage from './pages/ActividadPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -34,6 +41,34 @@ function App() {
           <Route
             path="/cultivo/tipoespecie/"
             element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>}
+          />
+           <Route
+            path="/cultivo/tipo_actividad/"
+            element={<PrivateRoute><TipoActividadPage /></PrivateRoute>}
+          />
+           <Route
+            path="/cultivo/lotes/"
+            element={<PrivateRoute><LotesPage /></PrivateRoute>}
+          />
+          <Route
+            path="/cultivo/bancal/"
+            element={<PrivateRoute><BancalPage /></PrivateRoute>}
+          />
+           <Route
+            path="/cultivo/especies/"
+            element={<PrivateRoute><EspeciePage /></PrivateRoute>}
+          />
+           <Route
+            path="/cultivo/programacion/"
+            element={<PrivateRoute><ProgramacionPage /></PrivateRoute>}
+          />
+           <Route
+            path="/cultivo/cultivo/"
+            element={<PrivateRoute><CultivoPage /></PrivateRoute>}
+          />
+          <Route
+            path="/cultivo/actividad/"
+            element={<PrivateRoute><ActividadPage /></PrivateRoute>}
           />
           <Route
             path="/pricing"
