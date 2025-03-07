@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -9,59 +10,63 @@ import {
   Chip,
   Tooltip,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
-const fetchData = async (url) => {
-  const { data } = await axios.get(url);
-  return data;
+type StatusType = "active" | "paused" | "vacation";
+
+type ChipColor = "success" | "danger" | "warning" | "default" | "primary" | "secondary" | undefined;
+
+const statusColorMap: Record<StatusType, ChipColor> = {
+  active: "success",
+  paused: "danger",
+  vacation: "warning",
 };
 
-const Tabla = ({
-  apiUrl = null,
-  initialData = [],
-  columns,
-  statusColorMap = {},
-}) => {
-  const { data: users, isLoading, error } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => (apiUrl ? fetchData(apiUrl) : initialData),
-    enabled: !!apiUrl, // Solo ejecuta la consulta si hay una API definida
-    initialData, // Usa datos estáticos si están disponibles
-  });
+interface Column {
+  uid: string;
+  name: string;
+}
 
-  if (isLoading) return <p>Cargando...</p>;
-  if (error) return <p>Error al cargar datos</p>;
+interface Item {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  status: StatusType;
+}
 
-  const renderCell = (user, columnKey) => {
-    const cellValue = user[columnKey];
+interface TablaProps {
+  apiEndpoint: string;
+  columns: Column[];
+}
+
+const Tabla: React.FC<TablaProps> = ({ apiEndpoint, columns }) => {
+  const [data, setData] = useState<Item[]>([]);
+
+  useEffect(() => {
+    fetch(apiEndpoint)
+      .then((response) => response.json())
+      .then((data: Item[]) => setData(data))
+      .catch((error) => console.error("Error fetching data:", error));
+  }, [apiEndpoint]);
+
+  const renderCell = (item: Item, columnKey: string) => {
+    const cellValue = item[columnKey as keyof Item];
 
     switch (columnKey) {
       case "name":
         return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          />
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
-          </div>
+          <User avatarProps={{ radius: "lg", src: item.avatar }} description={item.email} name={cellValue as string} />
         );
       case "status":
-        return <Chip className="capitalize" color={statusColorMap[cellValue] || "default"}>{cellValue}</Chip>;
+        return <Chip color={statusColorMap[item.status]}>{item.status}</Chip>;
       case "actions":
         return (
-          <div className="flex space-x-2">
-            <Tooltip content="Editar">
-              <button className="text-blue-500 hover:text-blue-700">✏️</button>
+          <div className="flex items-center gap-2">
+            <Tooltip content="Edit">
+              <span className="cursor-pointer text-blue-500">✏️</span>
             </Tooltip>
-            <Tooltip content="Eliminar">
-              <button className="text-red-500 hover:text-red-700">🗑️</button>
+            <Tooltip content="Delete">
+              <span className="cursor-pointer text-red-500">🗑️</span>
             </Tooltip>
           </div>
         );
@@ -78,10 +83,10 @@ const Tabla = ({
         ))}
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
+        {data.map((item) => (
+          <TableRow key={item.id}>
             {columns.map((column) => (
-              <TableCell key={column.uid}>{renderCell(user, column.uid)}</TableCell>
+              <TableCell key={column.uid}>{renderCell(item, column.uid)}</TableCell>
             ))}
           </TableRow>
         ))}

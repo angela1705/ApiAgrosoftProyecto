@@ -8,7 +8,7 @@ import AboutPage from './pages/about';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/Dashboard';
 import PrivateRoute from './components/RutaPrivada';
-
+import TipoEspeciePage from './pages/TipoEspeciePage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -24,6 +24,10 @@ function App() {
           <Route
             path="/docs"
             element={<PrivateRoute><DocsPage /></PrivateRoute>}
+          />
+          <Route
+            path="/cultivo/tipoespecie/"
+            element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>}
           />
           <Route
             path="/pricing"
