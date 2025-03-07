@@ -6,6 +6,7 @@ import PricingPage from './pages/pricing';
 import BlogPage from './pages/blog';
 import AboutPage from './pages/about';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/Dashboard';
 import PrivateRoute from './components/RutaPrivada';
 import TipoEspeciePage from './pages/TipoEspeciePage';
@@ -28,6 +29,11 @@ function App() {
             path="/"
             element={<PrivateRoute><DashboardPage /></PrivateRoute>}
           />
+
+          {/* Ruta pública para registar */}
+          <Route
+           element={<RegisterPage />} path="/register" />
+
           <Route
             path="/docs"
             element={<PrivateRoute><DocsPage /></PrivateRoute>}

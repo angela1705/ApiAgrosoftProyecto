@@ -7,7 +7,7 @@ class Usuarios(AbstractUser):
     nombre = models.CharField(max_length=30)
     apellido = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
-
+    is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'email' 
     REQUIRED_FIELDS = ['username', 'nombre', 'apellido'] 
 

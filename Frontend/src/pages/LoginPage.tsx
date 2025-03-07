@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Box, Typography, Link, Divider } from '@mui/material';
 import { motion } from 'framer-motion';
 import Login from '../components/Login';
+import { Link as RouterLink } from 'react-router-dom'; // Importar Link de react-router-dom
 
 import AgrosisLogotic from '../assets/def_AGROSIS_LOGOTIC.png';
 import LogoSena from '../assets/logo2.png';
@@ -163,6 +164,24 @@ const LoginPage: React.FC = () => {
             >
               ¿Olvidaste tu contraseña?
             </Link>
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 2,
+                color: '#718096',
+                textAlign: 'center',
+                fontSize: '0.9rem',
+              }}
+            >
+              ¿No estás registrado?{' '}
+              <Link
+                component={RouterLink}
+                to="/register"
+                sx={{ color: '#27a35e', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+              >
+                Regístrate
+              </Link>
+            </Typography>
           </motion.div>
         </Box>
 
