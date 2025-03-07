@@ -7,8 +7,10 @@ interface ReusableInputProps {
   type: string;
   radius?: "full" | "lg" | "md" | "sm" | "none";
   value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
+
+
 
 export const ReuInput: React.FC<ReusableInputProps> = ({
   label,
