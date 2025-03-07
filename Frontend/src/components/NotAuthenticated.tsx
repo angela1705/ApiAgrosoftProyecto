@@ -25,6 +25,15 @@ const NotAuthenticated: React.FC = () => {
       >
         Iniciar sesión
       </Button>
+      <Button
+        component={Link}
+        to="/register"
+        variant="contained"
+        color="primary"
+        sx={{ mt: 2 }}
+      >
+        Registar usuario
+      </Button>
     </Box>
   );
 };

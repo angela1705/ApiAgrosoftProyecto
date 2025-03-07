@@ -6,10 +6,10 @@ import PricingPage from './pages/pricing';
 import BlogPage from './pages/blog';
 import AboutPage from './pages/about';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/Dashboard';
 import PrivateRoute from './components/RutaPrivada';
 import TipoEspeciePage from './pages/TipoEspeciePage';
-import TipoActividadPage from './pages/TipoActividadPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -22,6 +22,11 @@ function App() {
             path="/"
             element={<PrivateRoute><DashboardPage /></PrivateRoute>}
           />
+
+          {/* Ruta pública para registar */}
+          <Route
+           element={<RegisterPage />} path="/register" />
+
           <Route
             path="/docs"
             element={<PrivateRoute><DocsPage /></PrivateRoute>}
@@ -29,10 +34,6 @@ function App() {
           <Route
             path="/cultivo/tipoespecie/"
             element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>}
-          />
-           <Route
-            path="/cultivo/tipo_actividad/"
-            element={<PrivateRoute><TipoActividadPage /></PrivateRoute>}
           />
           <Route
             path="/pricing"
