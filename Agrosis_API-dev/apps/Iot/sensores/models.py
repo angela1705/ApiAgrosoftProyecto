@@ -2,12 +2,12 @@ from django.db import models
 
 # Create your models here.
 class Sensores(models.Model):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50, default='')
     tipo_sensor = models.CharField(max_length=50)
     unidad_medida = models.CharField(max_length=50)
-    descripcion = models.TextField()
-    medida_minima = models.IntegerField()
-    medida_maxima = models.IntegerField()
+    descripcion = models.TextField(default='')
+    medida_minima = models.IntegerField(default=0) 
+    medida_maxima = models.IntegerField(default=0)  
 
-    def str(self):
+    def __str__(self):
         return self.nombre
