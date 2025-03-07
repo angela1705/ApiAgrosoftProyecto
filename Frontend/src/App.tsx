@@ -10,6 +10,8 @@ import DashboardPage from './pages/Dashboard';
 import PrivateRoute from './components/RutaPrivada';
 import TipoEspeciePage from './pages/TipoEspeciePage';
 import TipoActividadPage from './pages/TipoActividadPage';
+import LotesPage from './pages/LotesPage';
+import BancalPage from './pages/BancalPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -33,6 +35,14 @@ function App() {
            <Route
             path="/cultivo/tipo_actividad/"
             element={<PrivateRoute><TipoActividadPage /></PrivateRoute>}
+          />
+           <Route
+            path="/cultivo/lotes/"
+            element={<PrivateRoute><LotesPage /></PrivateRoute>}
+          />
+          <Route
+            path="/cultivo/bancal/"
+            element={<PrivateRoute><BancalPage /></PrivateRoute>}
           />
           <Route
             path="/pricing"
