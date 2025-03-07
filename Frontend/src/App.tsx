@@ -12,6 +12,7 @@ import TipoEspeciePage from './pages/TipoEspeciePage';
 import TipoActividadPage from './pages/TipoActividadPage';
 import LotesPage from './pages/LotesPage';
 import BancalPage from './pages/BancalPage';
+import EspeciePage from './pages/EspeciePage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -43,6 +44,10 @@ function App() {
           <Route
             path="/cultivo/bancal/"
             element={<PrivateRoute><BancalPage /></PrivateRoute>}
+          />
+           <Route
+            path="/cultivo/especies/"
+            element={<PrivateRoute><EspeciePage /></PrivateRoute>}
           />
           <Route
             path="/pricing"
