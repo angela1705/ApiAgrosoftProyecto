@@ -1,6 +1,6 @@
 export interface BodegaHerramienta {
-    id?: number;
-    nombre: string;
-    descripcion: string;
+    id: number;
+    bodega: number;
+    herramienta: string; 
     cantidad: number;
 }
