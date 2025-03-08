@@ -1,8 +1,8 @@
 import React, { useState, ChangeEvent } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "../components/ReuInput";
-import { TipoEspecie } from "../types/cultivo/TipoEspecie";
-import { useRegistrarTipoEspecie, useTipoEspecies } from "../hooks/cultivo/usetipoespecie";
+import { ReuInput } from "../../components/globales/ReuInput";
+import { TipoEspecie } from "../../types/cultivo/TipoEspecie";
+import { useRegistrarTipoEspecie, useTipoEspecies } from "../../hooks/cultivo/usetipoespecie";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 
 const TipoEspeciePage: React.FC = () => {

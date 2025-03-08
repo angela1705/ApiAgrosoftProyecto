@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "../components/ReuInput";
+import { ReuInput } from "../../components/globales/ReuInput";
 import { TipoActividad } from "@/types/cultivo/TipoActividad";
-import { useRegistrarTipoActividad } from "../hooks/cultivo/usetipoactividad";
+import { useRegistrarTipoActividad } from "../../hooks/cultivo/usetipoactividad";
 
 const TipoActividadPage: React.FC = () => {
   const [tipoActividad, setTipoActividad] = useState<TipoActividad>({

@@ -18,8 +18,8 @@ import {
   FaTemperatureHigh,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
-import LogoSena from "../assets/def_AGROSIS_LOGOTIC.png";
-import Sena from "../assets/logo sena.png"; 
+import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
+import Sena from "../../assets/logo sena.png"; 
 
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },

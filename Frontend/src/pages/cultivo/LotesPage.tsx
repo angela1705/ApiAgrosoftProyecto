@@ -1,9 +1,9 @@
     import React, { useState } from "react";
     import DefaultLayout from "@/layouts/default";
-    import { ReuInput } from "../components/ReuInput";
-    import { useRegistrarLote } from "../hooks/cultivo/uselotes";
-    import { Lote } from "../types/cultivo/Lotes";
-    import Formulario from "../components/Formulario";
+    import { ReuInput } from "../../components/globales/ReuInput";
+    import { useRegistrarLote } from "../../hooks/cultivo/uselotes";
+    import { Lote } from "../../types/cultivo/Lotes";
+    import Formulario from "../../components/globales/Formulario";
 
     const LotesPage: React.FC = () => {
     const [lote, setLote] = useState<Lote>({

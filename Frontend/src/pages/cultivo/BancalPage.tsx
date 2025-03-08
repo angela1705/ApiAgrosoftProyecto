@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "@/components/ReuInput";
+import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarBancal, useBancales } from "@/hooks/cultivo/usebancal";
 import { useLotes } from "@/hooks/cultivo/uselotes";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";

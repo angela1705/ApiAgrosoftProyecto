@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "@/components/ReuInput";
+import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarCultivo, useCultivos } from "@/hooks/cultivo/useCultivo";
 import { useEspecies } from "@/hooks/cultivo/useEspecie";
 import { useBancales } from "@/hooks/cultivo/usebancal";

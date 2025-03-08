@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "@/components/ReuInput";
+import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarActividad, useActividades, useInsumos, useUsuarios } from "@/hooks/cultivo/useActividad";
 import { useTipoActividad } from "@/hooks/cultivo/usetipoactividad";
 import { useProgramaciones } from "@/hooks/cultivo/useProgramacion";

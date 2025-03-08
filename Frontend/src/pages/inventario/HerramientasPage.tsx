@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "@/components/ReuInput";
-import { useRegistrarInsumo, useInsumos } from "@/hooks/inventario/useInsumos";
+import { ReuInput } from "@/components/globales/ReuInput";
+import { useRegistrarHerramienta, useHerramientas } from "@/hooks/inventario/useHerramientas";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 
-const InsumosPage: React.FC = () => {
-  const [insumo, setInsumo] = useState({
+const HerramientasPage: React.FC = () => {
+  const [herramienta, setHerramienta] = useState({
     nombre: "",
     descripcion: "",
     cantidad: 0,
   });
 
-  const mutation = useRegistrarInsumo();
-  const { data: insumos, isLoading } = useInsumos();
+  const mutation = useRegistrarHerramienta();
+  const { data: herramientas, isLoading } = useHerramientas();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInsumo((prev) => ({
+    setHerramienta((prev) => ({
       ...prev,
       [name]: name === "cantidad" ? Number(value) : value,
     }));
@@ -24,21 +24,21 @@ const InsumosPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(insumo);
+    mutation.mutate(herramienta);
   };
 
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Insumo</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Herramienta</h2>
           <form onSubmit={handleSubmit}>
             <ReuInput
               label="Nombre"
               placeholder="Ingrese el nombre"
               type="text"
               name="nombre"
-              value={insumo.nombre}
+              value={herramienta.nombre}
               onChange={handleChange}
             />
             <ReuInput
@@ -46,7 +46,7 @@ const InsumosPage: React.FC = () => {
               placeholder="Ingrese la descripción"
               type="text"
               name="descripcion"
-              value={insumo.descripcion}
+              value={herramienta.descripcion}
               onChange={handleChange}
             />
             <ReuInput
@@ -54,11 +54,11 @@ const InsumosPage: React.FC = () => {
               placeholder="Ingrese la cantidad"
               type="number"
               name="cantidad"
-              value={insumo.cantidad}
+              value={herramienta.cantidad}
               onChange={handleChange}
             />
             <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-lg mt-4">
-              Agregar Insumo
+              Agregar Herramienta
             </button>
           </form>
         </div>
@@ -73,11 +73,11 @@ const InsumosPage: React.FC = () => {
               <TableColumn>Cantidad</TableColumn>
             </TableHeader>
             <TableBody>
-              {insumos?.map((insumo) => (
-                <TableRow key={insumo.id}>
-                  <TableCell>{insumo.nombre}</TableCell>
-                  <TableCell>{insumo.descripcion}</TableCell>
-                  <TableCell>{insumo.cantidad}</TableCell>
+              {herramientas?.map((herramienta) => (
+                <TableRow key={herramienta.id}>
+                  <TableCell>{herramienta.nombre}</TableCell>
+                  <TableCell>{herramienta.descripcion}</TableCell>
+                  <TableCell>{herramienta.cantidad}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -88,4 +88,4 @@ const InsumosPage: React.FC = () => {
   );
 };
 
-export default InsumosPage;
+export default HerramientasPage;

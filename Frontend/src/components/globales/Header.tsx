@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box } from '@mui/material';
-import UserMenu from './UserMenu';
+import UserMenu from '../usuarios/UserMenu';
 
 interface HeaderProps {
   isSidebarOpen: boolean;

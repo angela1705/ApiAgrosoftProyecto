@@ -1,12 +1,12 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import Register from '../components/Register';
+import Register from '../../components/usuarios/Register';
 
-import AgrosisLogotic from '../assets/def_AGROSIS_LOGOTIC.png';
-import LogoSena from '../assets/logo2.png';
+import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
+import LogoSena from '../../assets/logo2.png';
 
 const RegisterPage: React.FC = () => {
   const { isAuthenticated } = useAuth();

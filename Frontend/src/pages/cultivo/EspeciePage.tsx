@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "@/components/ReuInput";
+import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarEspecie, useEspecies } from "@/hooks/cultivo/useEspecie";
 import { useTipoEspecies } from "@/hooks/cultivo/usetipoespecie";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";

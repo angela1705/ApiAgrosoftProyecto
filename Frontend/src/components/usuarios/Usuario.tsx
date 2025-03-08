@@ -1,5 +1,5 @@
-import { useUsuarios } from "../hooks/usuarios/useUsuarios";
-import Tabla from "./Tabla";
+import { useUsuarios } from "../../hooks/usuarios/useUsuarios";
+import Tabla from "../globales/Tabla";
 
 const columns = [
   { uid: "id", name: "ID" },
