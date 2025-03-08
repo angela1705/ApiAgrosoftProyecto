@@ -19,10 +19,12 @@ import {
   FaWarehouse,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
+import LogoSena from "../assets/def_AGROSIS_LOGOTIC.png";
+import Sena from "../assets/logo sena.png";
 
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
-  { id: 2, label: "docs", path: "/docs", icon: <FaUser /> },
+  { id: 2, label: "Docs", path: "/docs", icon: <FaUser /> },
   { id: 3, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> },
   { id: 4, label: "Mapa", path: "/mapa", icon: <FaMapMarkerAlt /> },
   {
@@ -32,12 +34,12 @@ const menuItems = [
     subItems: [
       { id: 6, label: "Cultivo", path: "/cultivo/cultivo/" },
       { id: 7, label: "Especies", path: "/cultivo/especies/" },
-      { id: 8, label: "Tipo Especie", path: "/cultivo/tipoespecie/"},
+      { id: 8, label: "Tipo Especie", path: "/cultivo/tipoespecie/" },
       { id: 9, label: "Bancal", path: "/cultivo/bancal/" },
       { id: 10, label: "Lotes", path: "/cultivo/lotes/" },
-      { id: 11, label: "TipoActividad", path: "/cultivo/tipo_actividad/" },
+      { id: 11, label: "Tipo Actividad", path: "/cultivo/tipo_actividad/" },
       { id: 12, label: "Actividades", path: "/cultivo/actividad/" },
-      { id: 13, label: "Programacion", path: "/cultivo/programacion/" },
+      { id: 13, label: "Programación", path: "/cultivo/programacion/" },
     ],
   },
   { id: 14, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
@@ -48,8 +50,8 @@ const menuItems = [
     icon: <FaBox />,
     subItems: [
       { id: 21, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
-      { id: 22, label: "BodegaHerramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
-      { id: 23, label: "Movimientos", path: "/inventario/movimientos", icon: <FaBox /> },
+      { id: 22, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
+      { id: 23, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
     ],
   },
   {
@@ -62,10 +64,8 @@ const menuItems = [
       { id: 20, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
+  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
 ];
-
-import LogoSena from "../assets/def_AGROSIS_LOGOTIC.png";
-import Sena from "../assets/logo sena.png";
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   return (
@@ -83,7 +83,7 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
         <img src={LogoSena} alt="Logo Sena" className="w-40 transition-all" />
       </div>
 
-      <nav className="flex flex-col mt-6 gap-4">
+      <nav className="flex flex-col mt-6 gap-4 overflow-y-auto scrollbar-hidden flex-1">
         {menuItems.map((item) => (
           <SidebarItem key={item.id} item={item} isOpen={isOpen} />
         ))}
@@ -96,7 +96,6 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
   );
 }
 
-/* Componente de Item del Menú */
 function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -122,12 +121,7 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
       {isOpen && isExpanded && item.subItems && (
         <div className="flex flex-col gap-2 mt-2">
           {item.subItems.map((subItem: any) => (
-            <Link
-              key={subItem.id}
-              to={subItem.path}
-              className="flex items-center gap-2 p-3 rounded-full transition-all font-medium cursor-pointer
-              bg-white shadow-md hover:bg-gray-400 hover:text-white text-black w-5/6 mx-auto"
-            >
+            <Link key={subItem.id} to={subItem.path} className="flex items-center gap-2 p-3 rounded-full transition-all font-medium cursor-pointer bg-white shadow-md hover:bg-gray-400 hover:text-white text-black w-5/6 mx-auto">
               {subItem.icon}
               <span>{subItem.label}</span>
             </Link>

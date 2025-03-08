@@ -19,6 +19,7 @@ import CultivoPage from './pages/CultivoPage';
 import ActividadPage from './pages/ActividadPage';
 import BodegaPage from './pages/BodegaPage';
 import BodegaHerramientaPage from './pages/BodegaHerramientaPage';
+import HerramientasPage from './pages/HerramientasPage';
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,10 @@ function App() {
           <Route
             path="/inventario/bodegaherramienta"
             element={<PrivateRoute><BodegaHerramientaPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/herramientas"
+            element={<PrivateRoute><HerramientasPage /></PrivateRoute>}
           />
           <Route
             path="/docs"

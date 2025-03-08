@@ -1,6 +1,6 @@
 export interface BodegaHerramienta {
     id: number;
-    bodega: string;
+    bodega: number;
     herramienta: string; 
     cantidad: number;
 }

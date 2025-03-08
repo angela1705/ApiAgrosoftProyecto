@@ -24,11 +24,11 @@ export const useBodegaHerramienta = () => {
     });
 };
 
-const registrarBodegaHerramienta = async (bodegaHerramienta: BodegaHerramienta) => {
+const registrarBodegaHerramienta = async ({ bodega, herramienta, cantidad }: Omit<BodegaHerramienta, "id">) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.post(API_URL, bodegaHerramienta, {
+    const response = await axios.post(API_URL, { bodega, herramienta, cantidad }, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -53,11 +53,11 @@ export const useRegistrarBodegaHerramienta = () => {
     });
 };
 
-const actualizarBodegaHerramienta = async (bodegaHerramienta: BodegaHerramienta) => {
+const actualizarBodegaHerramienta = async ({ id, bodega, herramienta, cantidad }: BodegaHerramienta) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.put(`${API_URL}${bodegaHerramienta.id}/`, bodegaHerramienta, {
+    const response = await axios.put(`${API_URL}${id}/`, { bodega, herramienta, cantidad }, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
