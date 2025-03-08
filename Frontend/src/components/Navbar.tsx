@@ -10,18 +10,20 @@ import {
   FaCalendarAlt,
   FaMapMarkerAlt,
   FaLeaf,
-  FaTachometerAlt,
   FaDollarSign,
   FaBug,
   FaBox,
   FaCloudRain,
+  FaTachometerAlt,
   FaTemperatureHigh,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
+import LogoSena from "../assets/def_AGROSIS_LOGOTIC.png";
+import Sena from "../assets/logo sena.png"; 
 
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
-  { id: 2, label: "docs", path: "/docs", icon: <FaUser /> },
+  { id: 2, label: "Docs", path: "/docs", icon: <FaUser /> },
   { id: 3, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> },
   { id: 4, label: "Mapa", path: "/mapa", icon: <FaMapMarkerAlt /> },
   {
@@ -31,12 +33,12 @@ const menuItems = [
     subItems: [
       { id: 6, label: "Cultivo", path: "/cultivo/cultivo/" },
       { id: 7, label: "Especies", path: "/cultivo/especies/" },
-      { id: 8, label: "Tipo Especie", path: "/cultivo/tipoespecie/"},
+      { id: 8, label: "Tipo Especie", path: "/cultivo/tipoespecie/" },
       { id: 9, label: "Bancal", path: "/cultivo/bancal/" },
       { id: 10, label: "Lotes", path: "/cultivo/lotes/" },
-      { id: 11, label: "TipoActividad", path: "/cultivo/tipo_actividad/" },
+      { id: 11, label: "Tipo Actividad", path: "/cultivo/tipo_actividad/" },
       { id: 12, label: "Actividades", path: "/cultivo/actividad/" },
-      { id: 13, label: "Programacion", path: "/cultivo/programacion/" },
+      { id: 13, label: "Programación", path: "/cultivo/programacion/" },
     ],
   },
   { id: 14, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
@@ -52,10 +54,8 @@ const menuItems = [
       { id: 20, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
+  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },  
 ];
-
-import LogoSena from "../assets/def_AGROSIS_LOGOTIC.png";
-import Sena from "../assets/logo sena.png";
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   return (
@@ -70,23 +70,22 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
       </div>
 
       <div className={`flex items-center justify-center transition-all ${!isOpen ? "hidden" : ""}`}>
-        <img src={LogoSena} alt="Logo Sena" className="w-40 transition-all" />
+        <img src={LogoSena} alt="Logo Agrosis" className="w-40 transition-all" />
       </div>
 
-      <nav className="flex flex-col mt-6 gap-4">
+      <nav className="flex flex-col mt-6 gap-4 overflow-y-auto scrollbar-hidden flex-1">
         {menuItems.map((item) => (
           <SidebarItem key={item.id} item={item} isOpen={isOpen} />
         ))}
       </nav>
 
-      <div className={`mt-auto flex items-center justify-center transition-all ${!isOpen ? "hidden" : ""}`}>
+      <div className={`mt-6 flex items-center justify-center transition-all ${!isOpen ? "hidden" : ""}`}>
         <img src={Sena} alt="Logo Sena" className="w-20 transition-all" />
       </div>
     </aside>
   );
 }
 
-/* Componente de Item del Menú */
 function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -126,4 +125,19 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
       )}
     </div>
   );
+}
+
+// Estilos para ocultar la scrollbar 
+const styles = `
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hidden {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+`;
+
+export function GlobalStyles() {
+  return <style>{styles}</style>;
 }

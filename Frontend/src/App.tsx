@@ -17,6 +17,7 @@ import EspeciePage from './pages/EspeciePage';
 import ProgramacionPage from './pages/ProgramacionPage';
 import CultivoPage from './pages/CultivoPage';
 import ActividadPage from './pages/ActividadPage';
+import UsuariosPage from './pages/UsuariosPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -42,6 +43,8 @@ function App() {
             path="/cultivo/tipoespecie/"
             element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>}
           />
+          <Route path="/usuarios"
+            element={<PrivateRoute><UsuariosPage /></PrivateRoute>} />
            <Route
             path="/cultivo/tipo_actividad/"
             element={<PrivateRoute><TipoActividadPage /></PrivateRoute>}
