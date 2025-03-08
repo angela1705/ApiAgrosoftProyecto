@@ -17,11 +17,8 @@ import EspeciePage from './pages/EspeciePage';
 import ProgramacionPage from './pages/ProgramacionPage';
 import CultivoPage from './pages/CultivoPage';
 import ActividadPage from './pages/ActividadPage';
-import HerramientasPage from './pages/HerramientasPage';
-import InsumosPage from './pages/InsumosPage';
 import BodegaPage from './pages/BodegaPage';
 import BodegaHerramientaPage from './pages/BodegaHerramientaPage';
-import BodegaInsumoPage from './pages/BodegaInsumoPage';
 
 const queryClient = new QueryClient();
 
@@ -35,6 +32,14 @@ function App() {
           <Route
             path="/"
             element={<PrivateRoute><DashboardPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/bodega"
+            element={<PrivateRoute><BodegaPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/bodegaherramienta"
+            element={<PrivateRoute><BodegaHerramientaPage /></PrivateRoute>}
           />
           <Route
             path="/docs"
@@ -71,26 +76,6 @@ function App() {
           <Route
             path="/cultivo/actividad/"
             element={<PrivateRoute><ActividadPage /></PrivateRoute>}
-          />
-          <Route
-            path="/inventario/herramientas/"
-            element={<PrivateRoute><HerramientasPage /></PrivateRoute>}
-          />
-          <Route
-            path="/inventario/insumos/"
-            element={<PrivateRoute><InsumosPage /></PrivateRoute>}
-          />
-          <Route
-            path="/inventario/bodega/"
-            element={<PrivateRoute><BodegaPage /></PrivateRoute>}
-          />
-          <Route
-            path="/inventario/bodega_herramienta/"
-            element={<PrivateRoute><BodegaHerramientaPage /></PrivateRoute>}
-          />
-          <Route
-            path="/inventario/bodega_insumo/"
-            element={<PrivateRoute><BodegaInsumoPage /></PrivateRoute>}
           />
           <Route
             path="/pricing"

@@ -16,6 +16,7 @@ import {
   FaBox,
   FaCloudRain,
   FaTemperatureHigh,
+  FaWarehouse,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
 
@@ -41,7 +42,16 @@ const menuItems = [
   },
   { id: 14, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
   { id: 15, label: "Plagas", path: "/plagas", icon: <FaBug /> },
-  { id: 16, label: "Inventario", path: "/inventario", icon: <FaBox /> },
+  {
+    id: 16,
+    label: "Inventario",
+    icon: <FaBox />,
+    subItems: [
+      { id: 21, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
+      { id: 22, label: "BodegaHerramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
+      { id: 23, label: "Movimientos", path: "/inventario/movimientos", icon: <FaBox /> },
+    ],
+  },
   {
     id: 17,
     label: "IoT",
