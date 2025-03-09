@@ -18,9 +18,9 @@ import ProgramacionPage from './pages/cultivo/ProgramacionPage';
 import CultivoPage from './pages/cultivo/CultivoPage';
 import ActividadPage from './pages/cultivo/ActividadPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
-import BodegaPage from './pages/BodegaPage';
-import BodegaHerramientaPage from './pages/BodegaHerramientaPage';
-import HerramientasPage from './pages/HerramientasPage';
+import BodegaPage from './pages/inventario/BodegaPage';
+import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
+import HerramientasPage from './pages/inventario/HerramientasPage';
 
 const queryClient = new QueryClient();
 
