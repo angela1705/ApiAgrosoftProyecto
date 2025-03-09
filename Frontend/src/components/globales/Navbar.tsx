@@ -16,11 +16,14 @@ import {
   FaCloudRain,
   FaTachometerAlt,
   FaTemperatureHigh,
+  FaWarehouse,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
+// Importamos las imágenes desde la carpeta assets
 import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
-import Sena from "../../assets/logo sena.png"; 
+import Sena from "../../assets/logo sena.png";
 
+// Lista de elementos del menú con sus rutas e íconos
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
   { id: 2, label: "Docs", path: "/docs", icon: <FaUser /> },
@@ -43,7 +46,16 @@ const menuItems = [
   },
   { id: 14, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
   { id: 15, label: "Plagas", path: "/plagas", icon: <FaBug /> },
-  { id: 16, label: "Inventario", path: "/inventario", icon: <FaBox /> },
+  {
+    id: 16,
+    label: "Inventario",
+    icon: <FaBox />,
+    subItems: [
+      { id: 21, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
+      { id: 22, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
+      { id: 23, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
+    ],
+  },
   {
     id: 17,
     label: "IoT",
@@ -54,9 +66,10 @@ const menuItems = [
       { id: 20, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
-  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },  
+  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
 ];
 
+// Componente principal de la barra de navegación
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   return (
     <aside
@@ -86,6 +99,7 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
   );
 }
 
+// Componente para cada elemento del menú
 function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -111,12 +125,7 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
       {isOpen && isExpanded && item.subItems && (
         <div className="flex flex-col gap-2 mt-2">
           {item.subItems.map((subItem: any) => (
-            <Link
-              key={subItem.id}
-              to={subItem.path}
-              className="flex items-center gap-2 p-3 rounded-full transition-all font-medium cursor-pointer
-              bg-white shadow-md hover:bg-gray-400 hover:text-white text-black w-5/6 mx-auto"
-            >
+            <Link key={subItem.id} to={subItem.path} className="flex items-center gap-2 p-3 rounded-full transition-all font-medium cursor-pointer bg-white shadow-md hover:bg-gray-400 hover:text-white text-black w-5/6 mx-auto">
               {subItem.icon}
               <span>{subItem.label}</span>
             </Link>
@@ -127,13 +136,13 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
   );
 }
 
-// Estilos para ocultar la scrollbar 
+// Estilos para ocultar la barra de desplazamiento
 const styles = `
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
   }
   .scrollbar-hidden {
-    -ms-overflow-style: none; /* IE and Edge */
+    -ms-overflow-style: none; /* IE y Edge */
     scrollbar-width: none; /* Firefox */
   }
 `;

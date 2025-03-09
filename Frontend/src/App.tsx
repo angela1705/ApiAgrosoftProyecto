@@ -18,6 +18,10 @@ import ProgramacionPage from './pages/cultivo/ProgramacionPage';
 import CultivoPage from './pages/cultivo/CultivoPage';
 import ActividadPage from './pages/cultivo/ActividadPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
+import BodegaPage from './pages/BodegaPage';
+import BodegaHerramientaPage from './pages/BodegaHerramientaPage';
+import HerramientasPage from './pages/HerramientasPage';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -26,15 +30,25 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route element={<LoginPage />} path="/login" />
+          <Route element={<RegisterPage />} path="/register" />
           <Route
             path="/"
             element={<PrivateRoute><DashboardPage /></PrivateRoute>}
           />
-
-          {/* Ruta pública para registar */}
+          {/* Rutas de la versión remota */}
           <Route
-           element={<RegisterPage />} path="/register" />
-
+            path="/inventario/bodega"
+            element={<PrivateRoute><BodegaPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/bodegaherramienta"
+            element={<PrivateRoute><BodegaHerramientaPage /></PrivateRoute>}
+          />
+          <Route
+            path="/inventario/herramientas"
+            element={<PrivateRoute><HerramientasPage /></PrivateRoute>}
+          />
+          {/* Rutas de ambas versiones */}
           <Route
             path="/docs"
             element={<PrivateRoute><DocsPage /></PrivateRoute>}
@@ -43,13 +57,11 @@ function App() {
             path="/cultivo/tipoespecie/"
             element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>}
           />
-          <Route path="/usuarios"
-            element={<PrivateRoute><UsuariosPage /></PrivateRoute>} />
-           <Route
+          <Route
             path="/cultivo/tipo_actividad/"
             element={<PrivateRoute><TipoActividadPage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/lotes/"
             element={<PrivateRoute><LotesPage /></PrivateRoute>}
           />
@@ -57,21 +69,26 @@ function App() {
             path="/cultivo/bancal/"
             element={<PrivateRoute><BancalPage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/especies/"
             element={<PrivateRoute><EspeciePage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/programacion/"
             element={<PrivateRoute><ProgramacionPage /></PrivateRoute>}
           />
-           <Route
+          <Route
             path="/cultivo/cultivo/"
             element={<PrivateRoute><CultivoPage /></PrivateRoute>}
           />
           <Route
             path="/cultivo/actividad/"
             element={<PrivateRoute><ActividadPage /></PrivateRoute>}
+          />
+          {/* Ruta de la versión local */}
+          <Route
+            path="/usuarios"
+            element={<PrivateRoute><UsuariosPage /></PrivateRoute>}
           />
           <Route
             path="/pricing"

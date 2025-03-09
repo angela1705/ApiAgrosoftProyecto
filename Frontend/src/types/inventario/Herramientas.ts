@@ -1,6 +1,8 @@
-export interface Herramientas {
-    id?: number;
+export interface Herramienta {
+    id: number;
     nombre: string;
     descripcion: string;
     cantidad: number;
-}
+    estado: string;
+    activo: boolean;
+  }
