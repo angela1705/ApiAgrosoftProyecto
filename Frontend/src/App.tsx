@@ -1,25 +1,26 @@
 import { Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
-import DocsPage from './pages/docs';
-import PricingPage from './pages/pricing';
-import BlogPage from './pages/blog';
-import AboutPage from './pages/about';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/Dashboard';
-import PrivateRoute from './components/RutaPrivada';
-import TipoEspeciePage from './pages/TipoEspeciePage';
-import TipoActividadPage from './pages/TipoActividadPage';
-import LotesPage from './pages/LotesPage';
-import BancalPage from './pages/BancalPage';
-import EspeciePage from './pages/EspeciePage';
-import ProgramacionPage from './pages/ProgramacionPage';
-import CultivoPage from './pages/CultivoPage';
-import ActividadPage from './pages/ActividadPage';
-import BodegaPage from './pages/BodegaPage';
-import BodegaHerramientaPage from './pages/BodegaHerramientaPage';
-import HerramientasPage from './pages/HerramientasPage';
+import DocsPage from './pages/globales/docs';
+import PricingPage from './pages/globales/pricing';
+import BlogPage from './pages/globales/blog';
+import AboutPage from './pages/globales/about';
+import LoginPage from './pages/usuarios/LoginPage';
+import RegisterPage from './pages/usuarios/RegisterPage';
+import DashboardPage from './pages/globales/Dashboard';
+import PrivateRoute from './components/usuarios/RutaPrivada';
+import TipoEspeciePage from './pages/cultivo/TipoEspeciePage';
+import TipoActividadPage from './pages/cultivo/TipoActividadPage';
+import LotesPage from './pages/cultivo/LotesPage';
+import BancalPage from './pages/cultivo/BancalPage';
+import EspeciePage from './pages/cultivo/EspeciePage';
+import ProgramacionPage from './pages/cultivo/ProgramacionPage';
+import CultivoPage from './pages/cultivo/CultivoPage';
+import ActividadPage from './pages/cultivo/ActividadPage';
+import UsuariosPage from './pages/usuarios/UsuariosPage';
+import BodegaPage from './pages/inventario/BodegaPage';
+import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
+import HerramientasPage from './pages/inventario/HerramientasPage';
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ function App() {
             path="/"
             element={<PrivateRoute><DashboardPage /></PrivateRoute>}
           />
+          {/* Rutas de la versión remota */}
           <Route
             path="/inventario/bodega"
             element={<PrivateRoute><BodegaPage /></PrivateRoute>}
@@ -46,6 +48,7 @@ function App() {
             path="/inventario/herramientas"
             element={<PrivateRoute><HerramientasPage /></PrivateRoute>}
           />
+          {/* Rutas de ambas versiones */}
           <Route
             path="/docs"
             element={<PrivateRoute><DocsPage /></PrivateRoute>}
@@ -81,6 +84,11 @@ function App() {
           <Route
             path="/cultivo/actividad/"
             element={<PrivateRoute><ActividadPage /></PrivateRoute>}
+          />
+          {/* Ruta de la versión local */}
+          <Route
+            path="/usuarios"
+            element={<PrivateRoute><UsuariosPage /></PrivateRoute>}
           />
           <Route
             path="/pricing"

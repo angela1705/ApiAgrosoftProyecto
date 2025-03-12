@@ -5,4 +5,4 @@ export interface Herramienta {
     cantidad: number;
     estado: string;
     activo: boolean;
-}
+  }

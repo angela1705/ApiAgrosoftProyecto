@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
-import { Header } from "@/components/Header";
+import Navbar from "@/components/globales/Navbar";
+import { Header } from "@/components/globales/Header";
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from ..models import Roles
+from apps.Usuarios.roles.models import Roles
 
 class RolSerializer(serializers.ModelSerializer):
+    rol = serializers.CharField(source="get_nombre_display") 
+
     class Meta:
         model = Roles
-        fields = '__all__'
-        read_only_fields = ('fecha_creacion', 'fecha_actualizacion')
+        fields = ['id', 'rol']

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: number;
@@ -20,75 +20,65 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setAuthenticated] = useState<boolean>(
-    !!localStorage.getItem('access_token')
-  );
-  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(!!localStorage.getItem("access_token"));
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const navigate = useNavigate();
 
   const login = async (email: string, password: string) => {
     try {
-    
-      const response = await fetch('http://127.0.0.1:8000/auth/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("http://127.0.0.1:8000/auth/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Error en el login');
+        throw new Error(errorData.message || "Error en el login");
       }
 
       const data = await response.json();
-      const accessToken = data.access;
-      console.log('Access Token recibido:', accessToken); 
-
-     
-      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
       setAuthenticated(true);
 
-     
-      localStorage.setItem('refresh_token', data.refresh);
-
-      
-      const userResponse = await fetch('http://127.0.0.1:8000/usuarios/me/', {
-        method: 'GET',
+      const userResponse = await fetch("http://127.0.0.1:8000/usuarios/me/", {
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${accessToken}`, 
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.access}`,
+          "Content-Type": "application/json",
         },
       });
 
-      if (!userResponse.ok) {
-        const userErrorData = await userResponse.json();
-        console.error('Error en /usuarios/me/:', userErrorData); 
-        throw new Error('Error al obtener datos del usuario');
-      }
+      const userResponseText = await userResponse.text();
+      console.log("Respuesta de /usuarios/me/:", userResponseText);
+      const userData: User = JSON.parse(userResponseText);
 
-      const userData: User = await userResponse.json();
-      console.log('Datos del usuario:', userData); 
       setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
 
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Error en login:', error);
+      console.error("Error en login:", error);
       setAuthenticated(false);
       setUser(null);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
       throw error;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
     setAuthenticated(false);
     setUser(null);
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -101,7 +91,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth debe usarse dentro de un AuthProvider');
+    throw new Error("useAuth debe usarse dentro de un AuthProvider");
   }
   return context;
 };
