@@ -1,13 +1,18 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface Rol {
+  id: number;
+  rol: string;
+}
+
 interface User {
   id: number;
   nombre: string;
   apellido: string;
   email: string;
-  username: string;
-  rol: string | null;
+  username?: string;
+  rol: Rol | null;
 }
 
 interface AuthContextType {
@@ -15,6 +20,7 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateUser: (updatedUser: User) => void;  
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -81,8 +87,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     navigate("/login");
   };
 
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

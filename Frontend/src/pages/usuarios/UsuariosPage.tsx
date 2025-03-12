@@ -4,14 +4,21 @@ import { useUsuarios, UsuarioUpdate } from "@/hooks/usuarios/useUsuarios";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const UsuariosPage: React.FC = () => {
+  const { user } = useAuth();
   const { data: usuarios = [], isLoading, error, updateUsuario, deleteUsuario, roles = [], isLoadingRoles } = useUsuarios();
   console.log("Usuarios cargados:", usuarios);
   console.log("Roles disponibles:", roles);
   const [editUsuario, setEditUsuario] = useState<null | { id: number; nombre: string; apellido: string; email: string; username?: string; rol: { id: number; rol: string } | null }>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+
+  if (!user || user.rol?.rol.toLowerCase() !== "administrador") {
+    return <Navigate to="/perfil" replace />;
+}
 
   const columns = [
     { name: "ID", uid: "id" },
@@ -135,7 +142,6 @@ const UsuariosPage: React.FC = () => {
             </Table>
           )}
 
-          {/* Formulario de Edición */}
           {editUsuario && (
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 2.5, width: "100%", maxWidth: "600px", mx: "auto" }}>
               <Typography variant="h5" sx={{ textAlign: "center", fontWeight: "bold", color: "#1a202c" }}>
