@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { addToast } from "@heroui/react";
 import { Actividad } from "@/types/cultivo/Actividad";
 
 const API_URL = "http://127.0.0.1:8000/cultivo/actividades/";
@@ -39,7 +39,7 @@ const fetchUsuarios = async () => {
             Authorization: `Bearer ${token}`,
         },
     });
-    return response.data; // No se define un tipo específico
+    return response.data;
 };
 
 export const useUsuarios = () => {
@@ -49,7 +49,6 @@ export const useUsuarios = () => {
     });
 };
 
-// Fetch Insumos
 const fetchInsumos = async () => {
     const token = localStorage.getItem("access_token");
 
@@ -62,7 +61,7 @@ const fetchInsumos = async () => {
             Authorization: `Bearer ${token}`,
         },
     });
-    return response.data; // No se define un tipo específico
+    return response.data;
 };
 
 export const useInsumos = () => {
@@ -89,11 +88,6 @@ const registrarActividad = async (actividad: Actividad) => {
         return response.data;
     } catch (error: any) {
         console.error("Error en la API:", error.response?.data);
-        Swal.fire({
-            icon: "error",
-            title: "Error en la API",
-            text: JSON.stringify(error.response?.data || "Error desconocido"),
-        });
         throw error;
     }
 };
@@ -102,18 +96,16 @@ export const useRegistrarActividad = () => {
     return useMutation({
         mutationFn: (actividad: Actividad) => registrarActividad(actividad),
         onSuccess: () => {
-            Swal.fire({
-                icon: "success",
-                title: "Éxito",
-                text: "Actividad registrada con éxito",
+            addToast({
+              title: "Éxito",
+              description: "Actividad registrada con éxito",
             });
-        },
-        onError: () => {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Error al registrar la actividad",
+          },
+          onError: () => {
+            addToast({
+              title: "Error",
+              description: "Error al registrar la actividad",
             });
-        },
+          },
     });
 };

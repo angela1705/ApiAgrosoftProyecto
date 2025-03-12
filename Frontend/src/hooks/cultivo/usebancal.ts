@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { addToast } from "@heroui/react";
 import { Bancal } from "@/types/cultivo/Bancal"; 
 
 const API_URL = "http://127.0.0.1:8000/cultivo/Bancal/";
@@ -47,17 +47,15 @@ export const useRegistrarBancal = () => {
   return useMutation({
     mutationFn: (bancal: Bancal) => registrarBancal(bancal),
     onSuccess: () => {
-      Swal.fire({
-        icon: "success",
+      addToast({
         title: "Éxito",
-        text: "Bancal registrado con éxito",
+        description: "Bancal registrado con éxito",
       });
     },
     onError: () => {
-      Swal.fire({
-        icon: "error",
+      addToast({
         title: "Error",
-        text: "Error al registrar el bancal",
+        description: "Error al registrar el bancal",
       });
     },
   });

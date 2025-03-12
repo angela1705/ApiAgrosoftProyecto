@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { addToast } from "@heroui/react";
 import { Cultivo } from "@/types/cultivo/Cultivo";
 
 const API_URL = "http://127.0.0.1:8000/cultivo/cultivos/";
@@ -28,7 +28,7 @@ const registrarCultivo = async (cultivo: Cultivo) => {
     }
 
     try {
-        console.log("Enviando datos al backend:", cultivo); // Depuración
+        console.log("Enviando datos al backend:", cultivo); 
         const response = await axios.post(API_URL, cultivo, {
             headers: {
                 "Content-Type": "application/json",
@@ -37,12 +37,7 @@ const registrarCultivo = async (cultivo: Cultivo) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data); // Depuración
-        Swal.fire({
-            icon: "error",
-            title: "Error en la API",
-            text: JSON.stringify(error.response?.data || "Error desconocido"),
-        });
+        console.error("Error en la API:", error.response?.data); 
         throw error;
     }
 };
@@ -58,18 +53,16 @@ export const useRegistrarCultivo = () => {
     return useMutation({
         mutationFn: (cultivo: Cultivo) => registrarCultivo(cultivo),
         onSuccess: () => {
-            Swal.fire({
-                icon: "success",
-                title: "Éxito",
-                text: "Cultivo registrado con éxito",
+            addToast({
+              title: "Éxito",
+              description: "Cultivo registrado con éxito",
             });
-        },
-        onError: () => {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Error al registrar el cultivo",
+          },
+          onError: () => {
+            addToast({
+              title: "Error",
+              description: "Error al registrar el cultivo",
             });
-        },
+          },
     });
 };
