@@ -1,21 +1,17 @@
-
 import React, { useState, FormEvent } from "react";
 import DefaultLayout from "@/layouts/default";
-import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
+import { useUsuarios, UsuarioUpdate } from "@/hooks/usuarios/useUsuarios";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
 const UsuariosPage: React.FC = () => {
   const { data: usuarios = [], isLoading, error, updateUsuario, deleteUsuario, roles = [], isLoadingRoles } = useUsuarios();
-  const [editUsuario, setEditUsuario] = useState<null | {
-    id: number;
-    nombre: string;
-    apellido: string;
-    email: string;
-    username?: string;
-    rol: { id: number; rol: string } | null;
-  }>(null);
+  console.log("Usuarios cargados:", usuarios);
+  console.log("Roles disponibles:", roles);
+  const [editUsuario, setEditUsuario] = useState<null | { id: number; nombre: string; apellido: string; email: string; username?: string; rol: { id: number; rol: string } | null }>(null);
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
 
   const columns = [
     { name: "ID", uid: "id" },
@@ -29,23 +25,37 @@ const UsuariosPage: React.FC = () => {
 
   const handleEdit = (usuario: typeof editUsuario) => {
     setEditUsuario(usuario ? { ...usuario } : null);
+    setEditError(null);
   };
 
   const handleDelete = (id: number) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+    if (confirmDelete === id) {
       deleteUsuario(id);
+      setConfirmDelete(null);
+    } else {
+      setConfirmDelete(id);
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!editUsuario) return;
-
     try {
-      await updateUsuario(editUsuario);
+      const usuarioToUpdate: UsuarioUpdate = {
+        id: editUsuario.id,
+        nombre: editUsuario.nombre,
+        apellido: editUsuario.apellido,
+        email: editUsuario.email,
+        username: editUsuario.username,
+        rol_id: editUsuario.rol ? editUsuario.rol.id : null,
+      };
+      console.log("Enviando al backend:", usuarioToUpdate);
+      await updateUsuario(usuarioToUpdate);
       setEditUsuario(null);
-    } catch (err) {
-      console.error("Error al actualizar usuario:", err);
+      setEditError(null);
+    } catch (err: any) {
+      console.error("Error del backend:", err.response?.data);
+      setEditError(err.response?.data?.detail || "No se pudo actualizar el usuario. Verifica los datos.");
     }
   };
 
@@ -94,12 +104,30 @@ const UsuariosPage: React.FC = () => {
                       >
                         Editar
                       </button>
-                      <button
-                        className="text-red-500 hover:underline"
-                        onClick={() => handleDelete(usuario.id)}
-                      >
-                        Eliminar
-                      </button>
+                      {confirmDelete === usuario.id ? (
+                        <span className="text-gray-700">
+                          ¿Seguro?{" "}
+                          <button
+                            className="text-red-500 hover:underline ml-1"
+                            onClick={() => handleDelete(usuario.id)}
+                          >
+                            Sí
+                          </button>{" "}
+                          <button
+                            className="text-green-500 hover:underline ml-1"
+                            onClick={() => setConfirmDelete(null)}
+                          >
+                            No
+                          </button>
+                        </span>
+                      ) : (
+                        <button
+                          className="text-red-500 hover:underline"
+                          onClick={() => setConfirmDelete(usuario.id)}
+                        >
+                          Eliminar
+                        </button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -109,32 +137,17 @@ const UsuariosPage: React.FC = () => {
 
           {/* Formulario de Edición */}
           {editUsuario && (
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{
-                mt: 4,
-                display: "flex",
-                flexDirection: "column",
-                gap: 2.5,
-                width: "100%",
-                maxWidth: "600px",
-                mx: "auto",
-              }}
-            >
-              <Typography
-                variant="h5"
-                sx={{ textAlign: "center", fontWeight: "bold", color: "#1a202c" }}
-              >
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 2.5, width: "100%", maxWidth: "600px", mx: "auto" }}>
+              <Typography variant="h5" sx={{ textAlign: "center", fontWeight: "bold", color: "#1a202c" }}>
                 Editar Usuario
               </Typography>
-
+              {editError && (
+                <Typography variant="body2" sx={{ color: "#f56565", textAlign: "center" }}>
+                  {editError}
+                </Typography>
+              )}
               <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
                   <TextField
                     label="Nombre"
                     value={editUsuario.nombre}
@@ -143,11 +156,7 @@ const UsuariosPage: React.FC = () => {
                     required
                   />
                 </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
                   <TextField
                     label="Apellido"
                     value={editUsuario.apellido}
@@ -157,13 +166,8 @@ const UsuariosPage: React.FC = () => {
                   />
                 </motion.div>
               </Box>
-
               <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                >
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
                   <TextField
                     type="email"
                     label="Email"
@@ -173,11 +177,7 @@ const UsuariosPage: React.FC = () => {
                     required
                   />
                 </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                >
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
                   <TextField
                     label="Username"
                     value={editUsuario.username || ""}
@@ -186,13 +186,7 @@ const UsuariosPage: React.FC = () => {
                   />
                 </motion.div>
               </Box>
-
-              {/* Selección de Rol */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-              >
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
                 <select
                   value={editUsuario.rol?.id || ""}
@@ -211,22 +205,12 @@ const UsuariosPage: React.FC = () => {
                   )}
                 </select>
               </motion.div>
-
-              {/* Botones */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1 }}
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1 }}>
                 <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
                   <Button type="submit" variant="contained" sx={{ backgroundColor: "#2ecc71" }}>
                     Guardar
                   </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setEditUsuario(null)}
-                    sx={{ borderColor: "#f56565", color: "#f56565" }}
-                  >
+                  <Button variant="outlined" onClick={() => setEditUsuario(null)} sx={{ borderColor: "#f56565", color: "#f56565" }}>
                     Cancelar
                   </Button>
                 </Box>

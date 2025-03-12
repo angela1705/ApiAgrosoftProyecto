@@ -1,7 +1,5 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
 
 const API_URL = "http://127.0.0.1:8000/usuarios/";
 
@@ -19,96 +17,55 @@ export interface Usuario {
   rol: Rol | null;
 }
 
+export interface UsuarioUpdate {
+  id: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  username?: string;
+  rol_id: number | null;  // Ajustado a "rol_id"
+}
+
 export const useUsuarios = () => {
   const queryClient = useQueryClient();
 
-  // Obtener todos los usuarios
   const fetchUsuarios = async (): Promise<Usuario[]> => {
     const token = localStorage.getItem("access_token");
-    if (!token) {
-      throw new Error("No se encontró el token de autenticación.");
-    }
-
+    if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await axios.get(`${API_URL}usuarios/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
-    if (!Array.isArray(response.data)) {
-      throw new Error("La API no devolvió un array de usuarios.");
-    }
+    if (!Array.isArray(response.data)) throw new Error("La API no devolvió un array de usuarios.");
     return response.data;
   };
 
-  // Obtener todos los roles
   const fetchRoles = async (): Promise<Rol[]> => {
     const token = localStorage.getItem("access_token");
-    if (!token) {
-      throw new Error("No se encontró el token de autenticación.");
-    }
-
+    if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await axios.get(`${API_URL}roles/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
-    if (!Array.isArray(response.data)) {
-      throw new Error("La API no devolvió un array de roles.");
-    }
+    if (!Array.isArray(response.data)) throw new Error("La API no devolvió un array de roles.");
     return response.data;
   };
 
-  // Actualizar un usuario
-  const updateUsuario = async (usuario: Usuario): Promise<Usuario> => {
+  const updateUsuario = async (usuario: UsuarioUpdate): Promise<Usuario> => {
     const token = localStorage.getItem("access_token");
-    if (!token) {
-      throw new Error("No se encontró el token de autenticación.");
-    }
-
-    try {
-      const response = await axios.put(`${API_URL}usuarios/${usuario.id}/`, usuario, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      return response.data;
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al actualizar",
-        text: JSON.stringify(error.response?.data || "Error desconocido"),
-      });
-      throw error;
-    }
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+    const response = await axios.put(`${API_URL}usuarios/${usuario.id}/`, usuario, {
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    });
+    return response.data;
   };
 
-  // Eliminar un usuario
   const deleteUsuario = async (id: number): Promise<void> => {
     const token = localStorage.getItem("access_token");
-    if (!token) {
-      throw new Error("No se encontró el token de autenticación.");
-    }
-
-    try {
-      await axios.delete(`${API_URL}usuarios/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al eliminar",
-        text: JSON.stringify(error.response?.data || "Error desconocido"),
-      });
-      throw error;
-    }
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+    await axios.delete(`${API_URL}usuarios/${id}/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   };
 
-  // Consulta de usuarios
   const usuariosQuery = useQuery<Usuario[], Error>({
     queryKey: ["usuarios"],
     queryFn: fetchUsuarios,
@@ -116,7 +73,6 @@ export const useUsuarios = () => {
     enabled: !!localStorage.getItem("access_token"),
   });
 
-  // Consulta de roles
   const rolesQuery = useQuery<Rol[], Error>({
     queryKey: ["roles"],
     queryFn: fetchRoles,
@@ -124,28 +80,19 @@ export const useUsuarios = () => {
     enabled: !!localStorage.getItem("access_token"),
   });
 
-  // Mutación para actualizar usuario
-  const updateMutation = useMutation({
+  const updateMutation = useMutation<Usuario, Error, UsuarioUpdate>({
     mutationFn: updateUsuario,
-    onSuccess: () => {
-      Swal.fire({
-        icon: "success",
-        title: "Éxito",
-        text: "Usuario actualizado con éxito",
-      });
+    onSuccess: (updatedUsuario) => {
+      queryClient.setQueryData<Usuario[]>(["usuarios"], (oldData) =>
+        oldData ? oldData.map((u) => (u.id === updatedUsuario.id ? updatedUsuario : u)) : [updatedUsuario]
+      );
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
     },
   });
 
-  // Mutación para eliminar usuario
   const deleteMutation = useMutation({
     mutationFn: deleteUsuario,
     onSuccess: () => {
-      Swal.fire({
-        icon: "success",
-        title: "Éxito",
-        text: "Usuario eliminado con éxito",
-      });
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
     },
   });
@@ -154,7 +101,7 @@ export const useUsuarios = () => {
     ...usuariosQuery,
     roles: rolesQuery.data,
     isLoadingRoles: rolesQuery.isLoading,
-    updateUsuario: updateMutation.mutate,
+    updateUsuario: updateMutation.mutateAsync,
     deleteUsuario: deleteMutation.mutate,
   };
 };
