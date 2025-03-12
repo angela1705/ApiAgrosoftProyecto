@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { addToast } from "@heroui/react";
 import { TipoActividad } from "@/types/cultivo/TipoActividad";
 
 const API_URL = "http://127.0.0.1:8000/cultivo/tipo_actividad/";
@@ -50,17 +50,17 @@ export const useRegistrarTipoActividad = () => {
   return useMutation({
     mutationFn: (tipoEspecie: TipoActividad) => registrarTipoActividad(tipoEspecie),
     onSuccess: () => {
-      Swal.fire({
-        icon: "success",
+      addToast({
         title: "Éxito",
-        text: "Tipo de actividad registrado con éxito",
+        description: "Tipo de actividad registrado con éxito",
+        timeout: 3000,
       });
     },
     onError: () => {
-      Swal.fire({
-        icon: "error",
+      addToast({
         title: "Error",
-        text: "Error al registrar el tipo de actividad",
+        description: "Error al registrar el tipo de actividad",
+        timeout: 3000,
       });
     },
   });

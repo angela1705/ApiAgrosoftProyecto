@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { addToast } from "@heroui/react";
 import { Lote } from "@/types/cultivo/Lotes";
 
 const API_URL = "http://127.0.0.1:8000/cultivo/lote/";
@@ -55,17 +55,15 @@ export const useRegistrarLote = () => {
   return useMutation({
     mutationFn: (lote: Lote) => registrarLote(lote),
     onSuccess: () => {
-      Swal.fire({
-        icon: "success",
+      addToast({
         title: "Éxito",
-        text: "Lote registrado con éxito",
+        description: "Lote registrado con éxito",
       });
     },
     onError: () => {
-      Swal.fire({
-        icon: "error",
+      addToast({
         title: "Error",
-        text: "Error al registrar el lote",
+        description: "Error al registrar el lote",
       });
     },
   });

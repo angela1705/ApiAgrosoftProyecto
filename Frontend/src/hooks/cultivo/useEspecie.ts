@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
 import { Especie } from "@/types/cultivo/Especie";
+import { addToast } from "@heroui/react";
 
 const API_URL = "http://127.0.0.1:8000/cultivo/especies/";
 
@@ -46,18 +46,18 @@ export const useRegistrarEspecie = () => {
   return useMutation({
     mutationFn: (especie: FormData) => registrarEspecie(especie),
     onSuccess: () => {
-      Swal.fire({
-        icon: "success",
+      addToast({
         title: "Éxito",
-        text: "Especie registrada con éxito",
+        description: "Especie registrada con éxito",
       });
     },
     onError: () => {
-      Swal.fire({
-        icon: "error",
+      addToast({
         title: "Error",
-        text: "Error al registrar la especie",
+        description: "Error al registrar la especie",
       });
     },
   });
 };
+
+

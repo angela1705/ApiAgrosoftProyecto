@@ -1,7 +1,6 @@
-// hooks/programacion/useProgramacion.ts
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { addToast } from "@heroui/react";
 import { Programacion } from "@/types/cultivo/Programacion";
 
 const API_URL = "http://127.0.0.1:8000/cultivo/programacion/";
@@ -46,17 +45,17 @@ export const useRegistrarProgramacion = () => {
   return useMutation({
     mutationFn: (programacion: Programacion) => registrarProgramacion(programacion),
     onSuccess: () => {
-      Swal.fire({
-        icon: "success",
+      addToast({
         title: "Éxito",
-        text: "Programación registrada con éxito",
+        description: "Programación registrada con éxito",
+        timeout: 3000,
       });
     },
     onError: () => {
-      Swal.fire({
-        icon: "error",
+      addToast({
         title: "Error",
-        text: "Error al registrar la programación",
+        description: "Error al registrar la programación",
+        timeout: 3000,
       });
     },
   });
