@@ -2,8 +2,9 @@ import React, { useState, ChangeEvent } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "../../components/globales/ReuInput";
 import { TipoEspecie } from "../../types/cultivo/TipoEspecie";
-import { useRegistrarTipoEspecie, useTipoEspecies } from "../../hooks/cultivo/usetipoespecie";
+import { useRegistrarTipoEspecie, useTipoEspecies, useActualizarTipoEspecie, useEliminarTipoEspecie } from "../../hooks/cultivo/usetipoespecie";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import ReuModal from "../../components/globales/ReuModal";
 
 const TipoEspeciePage: React.FC = () => {
   const [tipoEspecie, setTipoEspecie] = useState<TipoEspecie>({
@@ -12,8 +13,14 @@ const TipoEspeciePage: React.FC = () => {
     img: null,
   });
 
+  const [selectedTipoEspecie, setSelectedTipoEspecie] = useState<TipoEspecie | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const mutation = useRegistrarTipoEspecie();
   const { data: especies, isLoading } = useTipoEspecies();
+  const actualizarMutation = useActualizarTipoEspecie();
+  const eliminarMutation = useEliminarTipoEspecie();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -27,6 +34,24 @@ const TipoEspeciePage: React.FC = () => {
     { name: "Imagen", uid: "imagen" },
     { name: "Acciones", uid: "acciones" },
   ];
+
+  const handleEdit = (especie: TipoEspecie) => {
+    setSelectedTipoEspecie(especie);
+    setTipoEspecie(especie); 
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (especie: TipoEspecie) => {
+    setSelectedTipoEspecie(especie);
+    setIsDeleteModalOpen(true);
+  };
+  const handleConfirmDelete = () => {
+    if (selectedTipoEspecie && selectedTipoEspecie.id !== undefined) {
+      eliminarMutation.mutate(selectedTipoEspecie.id as number); 
+      setIsDeleteModalOpen(false);
+    }
+  };
+  
 
   return (
     <DefaultLayout>
@@ -93,28 +118,77 @@ const TipoEspeciePage: React.FC = () => {
                     <TableCell>{especie.nombre}</TableCell>
                     <TableCell>{especie.descripcion}</TableCell>
                     <TableCell>
-                        {especie.img ? (
-                          <img
-                            src={typeof especie.img === "string" ? especie.img : URL.createObjectURL(especie.img)}
-                            alt={especie.nombre}
-                            className="w-10 h-10 rounded-full"
-                          />
-                        ) : (
-                          "Sin imagen"
-                        )}
-                      </TableCell>
+                      {especie.img ? (
+                        <img
+                          src={typeof especie.img === "string" ? especie.img : URL.createObjectURL(especie.img)}
+                          alt={especie.nombre}
+                          className="w-10 h-10 rounded-full"
+                        />
+                      ) : (
+                        "Sin imagen"
+                      )}
+                    </TableCell>
                     <TableCell>
-                      <button className="text-green-500 hover:underline mr-2">Editar</button>
-                      <button className="text-red-500 hover:underline">Eliminar</button>
+                      <button
+                        className="text-green-500 hover:underline mr-2"
+                        onClick={() => handleEdit(especie)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="text-red-500 hover:underline"
+                        onClick={() => handleDelete(especie)}
+                      >
+                        Eliminar
+                      </button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-
             </Table>
           )}
         </div>
       </div>
+
+      <ReuModal
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        title="Editar Tipo de Especie"
+        onConfirm={() => {
+          if (selectedTipoEspecie && selectedTipoEspecie.id !== undefined) {
+            actualizarMutation.mutate({
+              id: selectedTipoEspecie.id as number,
+              tipoEspecie,
+            });
+            setIsEditModalOpen(false);
+          }
+          
+        }}
+      >
+        <ReuInput
+          label="Nombre"
+          placeholder="Ingrese el nombre"
+          type="text"
+          value={tipoEspecie.nombre}
+          onChange={(e) => setTipoEspecie({ ...tipoEspecie, nombre: e.target.value })}
+        />
+        <ReuInput
+          label="Descripción"
+          placeholder="Ingrese la descripción"
+          type="text"
+          value={tipoEspecie.descripcion}
+          onChange={(e) => setTipoEspecie({ ...tipoEspecie, descripcion: e.target.value })}
+        />
+      </ReuModal>
+
+      <ReuModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title="¿Estás seguro de eliminar esta especie?"
+        onConfirm={handleConfirmDelete}
+      >
+        <p>Esta acción es irreversible.</p>
+      </ReuModal>
     </DefaultLayout>
   );
 };
