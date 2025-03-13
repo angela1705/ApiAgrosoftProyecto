@@ -21,7 +21,7 @@ import UsuariosPage from './pages/usuarios/UsuariosPage';
 import BodegaPage from './pages/inventario/BodegaPage';
 import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
 import HerramientasPage from './pages/inventario/HerramientasPage';
-
+import PerfilPage from './pages/usuarios/PerfilPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -35,6 +35,7 @@ function App() {
             path="/"
             element={<PrivateRoute><DashboardPage /></PrivateRoute>}
           />
+          <Route path="/perfil" element={<PerfilPage />} />
           {/* Rutas de la versión remota */}
           <Route
             path="/inventario/bodega"
