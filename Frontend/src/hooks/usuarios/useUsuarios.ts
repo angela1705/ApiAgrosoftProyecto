@@ -23,7 +23,7 @@ export interface UsuarioUpdate {
   apellido: string;
   email: string;
   username?: string;
-  rol_id: number | null;  // Ajustado a "rol_id"
+  rol_id: number | null;   
 }
 
 export const useUsuarios = () => {
@@ -55,9 +55,8 @@ export const useUsuarios = () => {
     const response = await axios.put(`${API_URL}usuarios/${usuario.id}/`, usuario, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
-    return response.data;
+    return response.data; 
   };
-
   const deleteUsuario = async (id: number): Promise<void> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
