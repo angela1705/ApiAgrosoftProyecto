@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "../../components/globales/ReuInput";
-import { useRegistrarLote } from "../../hooks/cultivo/uselotes";
+import { useRegistrarLote, useLotes, useActualizarLote, useEliminarLote } from "../../hooks/cultivo/uselotes";
 import { Lote } from "../../types/cultivo/Lotes";
 import Formulario from "../../components/globales/Formulario";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import ReuModal from "../../components/globales/ReuModal";
 
 const LotesPage: React.FC = () => {
-const [lote, setLote] = useState<Lote>({
+  const [lote, setLote] = useState<Lote>({
     nombre: "",
     descripcion: "",
     activo: false,
@@ -14,91 +16,257 @@ const [lote, setLote] = useState<Lote>({
     tam_y: 0,
     pos_x: 0,
     pos_y: 0,
-});
+  });
 
-const mutation = useRegistrarLote();
+  const [selectedLote, setSelectedLote] = useState<Lote | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-return (
+  const mutation = useRegistrarLote();
+  const actualizarMutation = useActualizarLote();
+  const eliminarMutation = useEliminarLote();
+  const { data: lotes, isLoading } = useLotes();
+
+  const columns = [
+    { name: "Nombre", uid: "nombre" },
+    { name: "Descripción", uid: "descripcion" },
+    { name: "Activo", uid: "activo" },
+    { name: "Tamaño X", uid: "tam_x" },
+    { name: "Tamaño Y", uid: "tam_y" },
+    { name: "Posición X", uid: "pos_x" },
+    { name: "Posición Y", uid: "pos_y" },
+    { name: "Acciones", uid: "acciones" },
+  ];
+
+  const handleEdit = (lote: Lote) => {
+    setSelectedLote(lote);
+    setLote(lote);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (lote: Lote) => {
+    setSelectedLote(lote);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedLote && selectedLote.id !== undefined) {
+      eliminarMutation.mutate(selectedLote.id);
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  return (
     <DefaultLayout>
-    <div className="w-full flex justify-center items-center min-h-screen">
-        <Formulario title="Registro de Lote">
+      <div className="w-full flex flex-col items-center min-h-screen p-6">
+        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
+          <Formulario title="Registro de Lote">
+            <ReuInput
+              label="Nombre"
+              placeholder="Ingrese el nombre"
+              type="text"
+              value={lote.nombre}
+              onChange={(e) => setLote({ ...lote, nombre: e.target.value })}
+            />
+
+            <ReuInput
+              label="Descripción"
+              placeholder="Ingrese la descripción"
+              type="text"
+              value={lote.descripcion}
+              onChange={(e) => setLote({ ...lote, descripcion: e.target.value })}
+            />
+
+            <label className="flex items-center space-x-2 text-gray-700">
+              <input
+                type="checkbox"
+                className="w-5 h-5 text-red-600 border-gray-300 rounded"
+                checked={lote.activo}
+                onChange={(e) => setLote({ ...lote, activo: e.target.checked })}
+              />
+              <span>Activo</span>
+            </label>
+
+            <div className="grid grid-cols-2 gap-4">
+              <ReuInput
+                label="Tamaño X"
+                placeholder="Ingrese tamaño X"
+                type="number"
+                value={lote.tam_x.toString()}
+                onChange={(e) => setLote({ ...lote, tam_x: parseFloat(e.target.value) })}
+              />
+
+              <ReuInput
+                label="Tamaño Y"
+                placeholder="Ingrese tamaño Y"
+                type="number"
+                value={lote.tam_y.toString()}
+                onChange={(e) => setLote({ ...lote, tam_y: parseFloat(e.target.value) })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <ReuInput
+                label="Posición X"
+                placeholder="Ingrese posición X"
+                type="number"
+                value={lote.pos_x.toString()}
+                onChange={(e) => setLote({ ...lote, pos_x: parseFloat(e.target.value) })}
+              />
+
+              <ReuInput
+                label="Posición Y"
+                placeholder="Ingrese posición Y"
+                type="number"
+                value={lote.pos_y.toString()}
+                onChange={(e) => setLote({ ...lote, pos_y: parseFloat(e.target.value) })}
+              />
+            </div>
+
+            <button
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
+              type="submit"
+              disabled={mutation.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                mutation.mutate(lote);
+              }}
+            >
+              {mutation.isPending ? "Registrando..." : "Guardar"}
+            </button>
+          </Formulario>
+        </div>
+
+        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Lotes</h2>
+          {isLoading ? (
+            <p className="text-gray-600">Cargando...</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                {columns.map((col) => (
+                  <TableColumn key={col.uid}>{col.name}</TableColumn>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {(lotes ?? []).map((lote) => (
+                  <TableRow key={lote.id}>
+                    <TableCell>{lote.nombre}</TableCell>
+                    <TableCell>{lote.descripcion}</TableCell>
+                    <TableCell>{lote.activo ? "Sí" : "No"}</TableCell>
+                    <TableCell>{lote.tam_x}</TableCell>
+                    <TableCell>{lote.tam_y}</TableCell>
+                    <TableCell>{lote.pos_x}</TableCell>
+                    <TableCell>{lote.pos_y}</TableCell>
+                    <TableCell>
+                      <button
+                        className="text-green-500 hover:underline mr-2"
+                        onClick={() => handleEdit(lote)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="text-red-500 hover:underline"
+                        onClick={() => handleDelete(lote)}
+                      >
+                        Eliminar
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
+      </div>
+
+      <ReuModal
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        title="Editar Lote"
+        onConfirm={() => {
+          if (selectedLote && selectedLote.id !== undefined) {
+            actualizarMutation.mutate({
+              id: selectedLote.id,
+              lote,
+            });
+            setIsEditModalOpen(false);
+          }
+        }}
+      >
         <ReuInput
-            label="Nombre"
-            placeholder="Ingrese el nombre"
-            type="text"
-            value={lote.nombre}
-            onChange={(e) => setLote({ ...lote, nombre: e.target.value })}
+          label="Nombre"
+          placeholder="Ingrese el nombre"
+          type="text"
+          value={lote.nombre}
+          onChange={(e) => setLote({ ...lote, nombre: e.target.value })}
         />
 
         <ReuInput
-            label="Descripción"
-            placeholder="Ingrese la descripción"
-            type="text"
-            value={lote.descripcion}
-            onChange={(e) => setLote({ ...lote, descripcion: e.target.value })}
+          label="Descripción"
+          placeholder="Ingrese la descripción"
+          type="text"
+          value={lote.descripcion}
+          onChange={(e) => setLote({ ...lote, descripcion: e.target.value })}
         />
 
         <label className="flex items-center space-x-2 text-gray-700">
-            <input
+          <input
             type="checkbox"
             className="w-5 h-5 text-red-600 border-gray-300 rounded"
             checked={lote.activo}
             onChange={(e) => setLote({ ...lote, activo: e.target.checked })}
-            />
-            <span>Activo</span>
+          />
+          <span>Activo</span>
         </label>
 
         <div className="grid grid-cols-2 gap-4">
-            <ReuInput
+          <ReuInput
             label="Tamaño X"
             placeholder="Ingrese tamaño X"
             type="number"
             value={lote.tam_x.toString()}
             onChange={(e) => setLote({ ...lote, tam_x: parseFloat(e.target.value) })}
-            />
+          />
 
-            <ReuInput
+          <ReuInput
             label="Tamaño Y"
             placeholder="Ingrese tamaño Y"
             type="number"
             value={lote.tam_y.toString()}
             onChange={(e) => setLote({ ...lote, tam_y: parseFloat(e.target.value) })}
-            />
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-            <ReuInput
+          <ReuInput
             label="Posición X"
             placeholder="Ingrese posición X"
             type="number"
             value={lote.pos_x.toString()}
             onChange={(e) => setLote({ ...lote, pos_x: parseFloat(e.target.value) })}
-            />
+          />
 
-            <ReuInput
+          <ReuInput
             label="Posición Y"
             placeholder="Ingrese posición Y"
             type="number"
             value={lote.pos_y.toString()}
             onChange={(e) => setLote({ ...lote, pos_y: parseFloat(e.target.value) })}
-            />
+          />
         </div>
+      </ReuModal>
 
-        <button
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4"
-            type="submit"
-            disabled={mutation.isPending}
-            onClick={(e) => {
-            e.preventDefault();
-            mutation.mutate(lote);
-            }}
-        >
-            {mutation.isPending ? "Registrando..." : "Guardar"}
-        </button>
-        </Formulario>
-    </div>
+      <ReuModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title="¿Estás seguro de eliminar este lote?"
+        onConfirm={handleConfirmDelete}
+      >
+        <p>Esta acción es irreversible.</p>
+      </ReuModal>
     </DefaultLayout>
-);
+  );
 };
 
 export default LotesPage;
