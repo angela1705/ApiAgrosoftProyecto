@@ -22,14 +22,21 @@ const ActividadNotifications: React.FC<ActividadNotificationsProps> = ({ userId 
     const wsUrl = `ws://127.0.0.1:8000/ws/actividad/${userId}/`;
     const socket = new WebSocket(wsUrl);
 
-    socket.onopen = () => console.log("Conectado al WebSocket:", wsUrl);
+    socket.onopen = () => {
+      console.log("Conectado al WebSocket:", wsUrl);
+    };
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log("Mensaje recibido:", data.message);
 
-      setNotifications((prev) => [...prev, { message: data.message }]);
+      setNotifications((prev) => {
+        const newNotifications = [...prev, { message: data.message }];
+        console.log("Actualizando notificaciones:", newNotifications);
+        return newNotifications;
+      });
 
+      // Asegurarse de que la notificación aparece
       addToast({
         title: "Nueva Actividad",
         description: data.message,
@@ -37,8 +44,13 @@ const ActividadNotifications: React.FC<ActividadNotificationsProps> = ({ userId 
       });
     };
 
-    socket.onerror = (error) => console.error("Error en WebSocket:", error);
-    socket.onclose = (event) => console.log("WebSocket cerrado", event);
+    socket.onerror = (error) => {
+      console.error("Error en WebSocket:", error);
+    };
+
+    socket.onclose = (event) => {
+      console.log("WebSocket cerrado", event);
+    };
 
     return () => {
       socket.close();
