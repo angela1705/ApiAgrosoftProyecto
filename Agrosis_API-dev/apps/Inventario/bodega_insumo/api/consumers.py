@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from asgiref.sync import sync_to_async
+from asgiref.sync import async_to_sync, sync_to_async
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from apps.Inventario.bodega_insumo.models import BodegaInsumo
@@ -36,8 +36,8 @@ class BodegaInsumoConsumer(AsyncWebsocketConsumer):
 def insumo_updated(sender, instance, **kwargs):
     channel_layer = get_channel_layer()
 
-    async def send_update():
-        await channel_layer.group_send(
+    def send_update():
+        async_to_sync(channel_layer.group_send)(
             "bodega_insumo",
             {
                 "type": "send_update",
@@ -51,4 +51,4 @@ def insumo_updated(sender, instance, **kwargs):
             }
         )
 
-    sync_to_async(send_update)()
+    send_update()

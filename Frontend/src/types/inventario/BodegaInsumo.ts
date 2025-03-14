@@ -1,6 +1,6 @@
 export interface BodegaInsumo {
-    id?: number;
-    nombre: string;
-    descripcion: string;
-    cantidad: number;
+  id: number;
+  bodega: number;  
+  insumo: number;  
+  cantidad: number;
 }

@@ -2,8 +2,8 @@ from rest_framework import serializers
 from ..models import BodegaHerramienta, Bodega, Herramienta
 
 class BodegaHerramientaSerializer(serializers.ModelSerializer):
-    bodega = serializers.PrimaryKeyRelatedField(queryset=Bodega.objects.all())
-    herramienta = serializers.PrimaryKeyRelatedField(queryset=Herramienta.objects.all())
+    bodega = serializers.StringRelatedField() 
+    herramienta = serializers.StringRelatedField()  
 
     class Meta:
         model = BodegaHerramienta

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 import { BodegaHerramienta } from "@/types/inventario/BodegaHerramienta";
 
 const API_URL = "http://127.0.0.1:8000/inventario/bodega_herramienta/";
@@ -28,7 +28,13 @@ const registrarBodegaHerramienta = async ({ bodega, herramienta, cantidad }: Omi
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.post(API_URL, { bodega, herramienta, cantidad }, {
+    const payload = {
+        bodega,
+        herramienta: Number(herramienta),  
+        cantidad,
+    };
+
+    const response = await axios.post(API_URL, payload, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -44,11 +50,11 @@ export const useRegistrarBodegaHerramienta = () => {
     return useMutation({
         mutationFn: registrarBodegaHerramienta,
         onSuccess: () => {
-            Swal.fire("Éxito", "Registro guardado con éxito", "success");
+            toast.success("Registro guardado con éxito");
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
         onError: () => {
-            Swal.fire("Error", "Error al registrar", "error");
+            toast.error("Error al registrar");
         },
     });
 };
@@ -57,7 +63,13 @@ const actualizarBodegaHerramienta = async ({ id, bodega, herramienta, cantidad }
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.put(`${API_URL}${id}/`, { bodega, herramienta, cantidad }, {
+    const payload = {
+        bodega,
+        herramienta: Number(herramienta), 
+        cantidad,
+    };
+
+    const response = await axios.put(`${API_URL}${id}/`, payload, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -73,11 +85,11 @@ export const useActualizarBodegaHerramienta = () => {
     return useMutation({
         mutationFn: actualizarBodegaHerramienta,
         onSuccess: () => {
-            Swal.fire("Éxito", "Registro actualizado con éxito", "success");
+            toast.success("Registro actualizado con éxito");
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
         onError: () => {
-            Swal.fire("Error", "Error al actualizar", "error");
+            toast.error("Error al actualizar");
         },
     });
 };
@@ -97,11 +109,11 @@ export const useEliminarBodegaHerramienta = () => {
     return useMutation({
         mutationFn: eliminarBodegaHerramienta,
         onSuccess: () => {
-            Swal.fire("Eliminado", "Registro eliminado con éxito", "success");
+            toast.success("Registro eliminado con éxito");
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
         onError: () => {
-            Swal.fire("Error", "No se pudo eliminar el registro", "error");
+            toast.error("No se pudo eliminar el registro");
         },
     });
 };

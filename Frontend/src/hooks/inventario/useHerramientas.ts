@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 import { Herramienta } from "@/types/inventario/Herramientas";
 
 const API_URL = "http://127.0.0.1:8000/inventario/herramientas/";
@@ -44,11 +44,11 @@ export const useRegistrarHerramienta = () => {
     return useMutation({
         mutationFn: registrarHerramienta,
         onSuccess: () => {
-            Swal.fire("Éxito", "Herramienta registrada con éxito", "success");
+            toast.success("Herramienta registrada con éxito");
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
         onError: () => {
-            Swal.fire("Error", "Error al registrar la herramienta", "error");
+            toast.error("Error al registrar la herramienta");
         },
     });
 };
@@ -73,11 +73,11 @@ export const useActualizarHerramienta = () => {
     return useMutation({
         mutationFn: actualizarHerramienta,
         onSuccess: () => {
-            Swal.fire("Éxito", "Herramienta actualizada con éxito", "success");
+            toast.success("Herramienta actualizada con éxito");
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
         onError: () => {
-            Swal.fire("Error", "Error al actualizar la herramienta", "error");
+            toast.error("Error al actualizar la herramienta");
         },
     });
 };
@@ -97,11 +97,11 @@ export const useEliminarHerramienta = () => {
     return useMutation({
         mutationFn: eliminarHerramienta,
         onSuccess: () => {
-            Swal.fire("Eliminado", "Herramienta eliminada con éxito", "success");
+            toast.success("Herramienta eliminada con éxito");
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
         onError: () => {
-            Swal.fire("Error", "No se pudo eliminar la herramienta", "error");
+            toast.error("No se pudo eliminar la herramienta");
         },
     });
 };
