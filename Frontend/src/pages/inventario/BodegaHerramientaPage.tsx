@@ -2,22 +2,27 @@ import React, { useState, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useRegistrarBodegaHerramienta, useBodegaHerramienta, useActualizarBodegaHerramienta, useEliminarBodegaHerramienta } from "@/hooks/inventario/useBodegaHerramienta";
 import { useBodegas } from "@/hooks/inventario/useBodega";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import { useHerramientas } from "@/hooks/inventario/useHerramientas"; 
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
 import { BodegaHerramienta } from "@/types/inventario/BodegaHerramienta";
+import { Herramienta } from "@/types/inventario/Herramientas";
+import ReuModal from "@/components/globales/ReuModal";
 
 const BodegaHerramientaPage: React.FC = () => {
   const [bodegaHerramienta, setBodegaHerramienta] = useState<BodegaHerramienta>({
     id: 0,
-    bodega: 0, 
-    herramienta:"", 
+    bodega: 0,
+    herramienta: 0,
     cantidad: 0,
   });
 
+  const [modalOpen, setModalOpen] = useState(false);
   const mutation = useRegistrarBodegaHerramienta();
   const { data, isLoading, refetch } = useBodegaHerramienta();
   const updateMutation = useActualizarBodegaHerramienta();
   const deleteMutation = useEliminarBodegaHerramienta();
   const { data: bodegas } = useBodegas();
+  const { data: herramientas } = useHerramientas();
 
   const bodegasHerramientas = data ?? [];
 
@@ -48,7 +53,14 @@ const BodegaHerramientaPage: React.FC = () => {
       updateMutation.mutate(bodegaHerramienta, { onSuccess: () => refetch() });
     }
 
-    setBodegaHerramienta({ id: 0, bodega: 1, herramienta: "", cantidad: 1 });
+    setBodegaHerramienta({ id: 0, bodega: 0, herramienta: 0, cantidad: 1 });
+    setModalOpen(false);
+  };
+
+  const handleDelete = (id: number) => deleteMutation.mutate(id, { onSuccess: () => refetch() });
+  const handleUpdate = (item: BodegaHerramienta) => {
+    setBodegaHerramienta(item);
+    setModalOpen(true);
   };
 
   return (
@@ -58,12 +70,17 @@ const BodegaHerramientaPage: React.FC = () => {
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Bodega Herramienta</h2>
           <form onSubmit={handleSubmit}>
             <select name="bodega" value={bodegaHerramienta.bodega} onChange={handleChange} className="w-full p-2 border rounded mb-2">
-              <option value="">Seleccione una bodega</option>
+              <option value="0">Seleccione una bodega</option>
               {bodegas?.map((bodega) => (
                 <option key={bodega.id} value={bodega.id}>{bodega.nombre}</option>
               ))}
             </select>
-            <input type="number" name="herramienta" value={bodegaHerramienta.herramienta} onChange={handleChange} className="w-full p-2 border rounded mb-2" placeholder="ID Herramienta" />
+            <select name="herramienta" value={bodegaHerramienta.herramienta} onChange={handleChange} className="w-full p-2 border rounded mb-2">
+              <option value="0">Seleccione una herramienta</option>
+              {herramientas?.map((herramienta) => (
+                <option key={herramienta.id} value={herramienta.id}>{herramienta.nombre}</option>
+              ))}
+            </select>
             <input type="number" name="cantidad" value={bodegaHerramienta.cantidad} onChange={handleChange} className="w-full p-2 border rounded mb-2" placeholder="Cantidad" />
             <button className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4" type="submit">
               {bodegaHerramienta.id === 0 ? "Guardar" : "Actualizar"}
@@ -86,12 +103,12 @@ const BodegaHerramientaPage: React.FC = () => {
               <TableBody>
                 {bodegasHerramientas.map((item: BodegaHerramienta) => (
                   <TableRow key={item.id}>
-                    <TableCell>{item.bodega}</TableCell>
-                    <TableCell>{item.herramienta}</TableCell>
+                    <TableCell>{bodegas?.find((b) => b.id === item.bodega)?.nombre || "Desconocido"}</TableCell>
+                    <TableCell>{herramientas?.find((h) => h.id === item.herramienta)?.nombre || "Desconocido"}</TableCell>
                     <TableCell>{item.cantidad}</TableCell>
                     <TableCell>
-                      <button className="text-yellow-600 hover:bg-yellow-200 px-3 py-1 rounded" onClick={() => setBodegaHerramienta(item)}>Editar</button>
-                      <button className="text-red-600 hover:bg-red-200 px-3 py-1 rounded ml-2" onClick={() => deleteMutation.mutate(item.id)}>Eliminar</button>
+                      <button className="text-yellow-600 hover:bg-yellow-200 px-3 py-1 rounded" onClick={() => handleUpdate(item)}>Editar</button>
+                      <button className="text-red-600 hover:bg-red-200 px-3 py-1 rounded ml-2" onClick={() => handleDelete(item.id)}>Eliminar</button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -100,6 +117,29 @@ const BodegaHerramientaPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      <ReuModal isOpen={modalOpen} onOpenChange={setModalOpen} title="Editar Bodega Herramienta">
+        <div className="w-full max-w-xs mx-auto p-4 bg-white rounded-lg shadow-md">
+          <form onSubmit={handleSubmit}>
+            <select name="bodega" value={bodegaHerramienta.bodega} onChange={handleChange} className="w-full mb-4 p-2 border rounded">
+              <option value="0">Seleccione una Bodega</option>
+              {bodegas?.map((bodega: { id: number; nombre: string }) => (
+                <option key={bodega.id} value={bodega.id}>{bodega.nombre}</option>
+              ))}
+            </select>
+            <select name="herramienta" value={bodegaHerramienta.herramienta} onChange={handleChange} className="w-full mb-4 p-2 border rounded">
+              <option value="0">Seleccione una Herramienta</option>
+              {herramientas?.map((herramienta: Herramienta) => (
+                <option key={herramienta.id} value={herramienta.id}>{herramienta.nombre}</option>
+              ))}
+            </select>
+            <input type="number" name="cantidad" value={bodegaHerramienta.cantidad} onChange={handleChange} className="w-full mb-4 p-2 border rounded" placeholder="Cantidad" />
+            <Button className="bg-green-600 text-white w-full" type="submit" disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? "Actualizando..." : "Actualizar"}
+            </Button>
+          </form>
+        </div>
+      </ReuModal>
     </DefaultLayout>
   );
 };

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useRegistrarHerramienta, useHerramientas, useActualizarHerramienta, useEliminarHerramienta } from "@/hooks/inventario/useHerramientas";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
+import ReuModal from "@/components/globales/ReuModal";
 
 const ReusableInput: React.FC<{ label: string; type: string; name: string; value: string; placeholder?: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void; }> = ({ label, type, name, value, placeholder, onChange }) => (
   <div className="mb-4">
@@ -27,19 +28,16 @@ const HerramientaPage: React.FC = () => {
     activo: true,
   });
 
+  const [modalOpen, setModalOpen] = useState(false);
   const mutation = useRegistrarHerramienta();
   const { data: herramientas, isLoading, refetch } = useHerramientas();
   const updateMutation = useActualizarHerramienta();
   const deleteMutation = useEliminarHerramienta();
 
-  const columns = [
-    { name: "Nombre", uid: "nombre" },
-    { name: "Descripción", uid: "descripcion" },
-    { name: "Cantidad", uid: "cantidad" },
-    { name: "Estado", uid: "estado" },
-    { name: "Activo", uid: "activo" },
-    { name: "Acciones", uid: "acciones" },
-  ];
+  const handleUpdate = (herramienta: any) => {
+    setHerramienta(herramienta);
+    setModalOpen(true);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -78,10 +76,6 @@ const HerramientaPage: React.FC = () => {
     });
   };
 
-  const handleUpdate = (herramienta: any) => {
-    setHerramienta(herramienta);
-  };
-
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
@@ -109,9 +103,12 @@ const HerramientaPage: React.FC = () => {
           ) : (
             <Table>
               <TableHeader>
-                {columns.map((col) => (
-                  <TableColumn key={col.uid}>{col.name}</TableColumn>
-                ))}
+                <TableColumn>Nombre</TableColumn>
+                <TableColumn>Descripción</TableColumn>
+                <TableColumn>Cantidad</TableColumn>
+                <TableColumn>Estado</TableColumn>
+                <TableColumn>Activo</TableColumn>
+                <TableColumn>Acciones</TableColumn>
               </TableHeader>
               <TableBody>
                 {(herramientas ?? []).map((herramienta) => (
@@ -132,6 +129,24 @@ const HerramientaPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      <ReuModal isOpen={modalOpen} onOpenChange={setModalOpen} title="Editar Herramienta">
+        <div className="w-full max-w-xs mx-auto p-4 bg-white rounded-lg shadow-md">
+          <form onSubmit={handleSubmit}>
+            <ReusableInput label="Nombre" placeholder="Ingrese el nombre" type="text" name="nombre" value={herramienta.nombre} onChange={handleChange} />
+            <ReusableInput label="Descripción" placeholder="Ingrese la descripción" type="text" name="descripcion" value={herramienta.descripcion} onChange={handleChange} />
+            <ReusableInput label="Cantidad" type="number" name="cantidad" value={String(herramienta.cantidad)} onChange={handleChange} />
+            <ReusableInput label="Estado" type="text" name="estado" value={herramienta.estado} onChange={handleChange} />
+            <div className="mb-4 flex items-center">
+              <input type="checkbox" name="activo" checked={herramienta.activo} onChange={handleChange} className="mr-2 leading-tight" />
+              <label className="text-gray-700 text-sm font-bold">Activo</label>
+            </div>
+            <Button className="bg-green-600 text-white w-full" type="submit" disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? "Actualizando..." : "Actualizar"}
+            </Button>
+          </form>
+        </div>
+      </ReuModal>
     </DefaultLayout>
   );
 };

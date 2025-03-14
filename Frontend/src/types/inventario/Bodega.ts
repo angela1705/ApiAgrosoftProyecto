@@ -4,6 +4,6 @@ export interface Bodega {
   direccion: string;
   telefono: string;
   activo: boolean;
-  capacidad: number;
-  ubicacion: string;
+  capacidad: number;  
+  ubicacion: string;  
 }

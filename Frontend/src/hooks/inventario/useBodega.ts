@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import Swal from "sweetalert2";
 import { Bodega } from "@/types/inventario/Bodega";
+import { toast } from "react-hot-toast";
 
 const API_URL = "http://127.0.0.1:8000/inventario/bodega/";
 
@@ -62,11 +62,11 @@ export const useRegistrarBodega = () => {
     return useMutation({
         mutationFn: registrarBodega,
         onSuccess: () => {
-            Swal.fire("Éxito", "Bodega registrada con éxito", "success");
+            toast.success("Bodega registrada con éxito");
             queryClient.invalidateQueries({ queryKey: ["bodegas"] });
         },
         onError: () => {
-            Swal.fire("Error", "Error al registrar la bodega", "error");
+            toast.error("Error al registrar la bodega");
         },
     });
 };
@@ -91,11 +91,11 @@ export const useActualizarBodega = () => {
     return useMutation({
         mutationFn: actualizarBodega,
         onSuccess: () => {
-            Swal.fire("Éxito", "Bodega actualizada con éxito", "success");
+            toast.success("Bodega actualizada con éxito");
             queryClient.invalidateQueries({ queryKey: ["bodegas"] });
         },
         onError: () => {
-            Swal.fire("Error", "Error al actualizar la bodega", "error");
+            toast.error("Error al actualizar la bodega");
         },
     });
 };
@@ -115,11 +115,11 @@ export const useEliminarBodega = () => {
     return useMutation({
         mutationFn: eliminarBodega,
         onSuccess: () => {
-            Swal.fire("Eliminado", "Bodega eliminada con éxito", "success");
+            toast.success("Bodega eliminada con éxito");
             queryClient.invalidateQueries({ queryKey: ["bodegas"] });
         },
         onError: () => {
-            Swal.fire("Error", "No se pudo eliminar la bodega", "error");
+            toast.error("No se pudo eliminar la bodega");
         },
     });
 };
