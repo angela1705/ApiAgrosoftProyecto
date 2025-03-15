@@ -2,6 +2,10 @@
   "dependencies": {
     "@tanstack/react-query": "^5.67.2",
     "axios": "^1.8.2",
+    "recharts": "^2.15.1",
     "sweetalert2": "^11.17.2"
+  },
+  "devDependencies": {
+    "@types/recharts": "^1.8.29"
   }
 }
