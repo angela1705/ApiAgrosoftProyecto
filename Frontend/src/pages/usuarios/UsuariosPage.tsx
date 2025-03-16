@@ -11,7 +11,7 @@ const UsuariosPage: React.FC = () => {
   const { user } = useAuth();
   const { data: usuarios = [], isLoading, error, updateUsuario, deleteUsuario, roles = [], isLoadingRoles } = useUsuarios();
   
-  const [editUsuario, setEditUsuario] = useState<null | { id: number; nombre: string; apellido: string; email: string; username?: string; rol: { id: number; rol: string } | null }>(null);
+  const [editUsuario, setEditUsuario] = useState<{ id: number; nombre: string; apellido: string; email: string; username?: string; rol: { id: number; rol: string } | null } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -50,10 +50,20 @@ const UsuariosPage: React.FC = () => {
   }, [usuarios, searchTerm]);
 
   const totalPages = Math.ceil(filteredUsuarios.length / usersPerPage);
-  const paginatedUsuarios = filteredUsuarios.slice(
-    (currentPage - 1) * usersPerPage,
-    currentPage * usersPerPage
-  );
+  const paginatedUsuarios = useMemo(() => {
+    const start = (currentPage - 1) * usersPerPage;
+    const end = start + usersPerPage;
+    return filteredUsuarios.slice(start, end);
+  }, [filteredUsuarios, currentPage, usersPerPage]);
+
+  // Funciones de paginación sin límite
+  const handleNextPage = () => {
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
 
   const handleEdit = (usuario: typeof editUsuario) => {
     setEditUsuario(usuario ? { ...usuario } : null);
@@ -100,6 +110,8 @@ const UsuariosPage: React.FC = () => {
     }
   };
 
+  console.log("Rendering pagination - Current page:", currentPage, "Total pages:", totalPages);
+
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
@@ -134,67 +146,55 @@ const UsuariosPage: React.FC = () => {
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {paginatedUsuarios.map((usuario) => (
-                    <TableRow key={usuario.id}>
-                      <TableCell>{usuario.id}</TableCell>
-                      <TableCell>{usuario.nombre}</TableCell>
-                      <TableCell>{usuario.apellido}</TableCell>
-                      <TableCell>{usuario.email}</TableCell>
-                      <TableCell>{usuario.username || "N/A"}</TableCell>
-                      <TableCell>{usuario.rol?.rol || "Sin rol"}</TableCell>
-                      <TableCell>
-                        <button
-                          className="text-green-500 hover:underline mr-2"
-                          onClick={() => handleEdit(usuario)}
-                        >
-                          Editar
-                        </button>
-                        {confirmDelete === usuario.id ? (
-                          <span className="text-gray-700">
-                            ¿Seguro?{" "}
-                            <button
-                              className="text-red-500 hover:underline ml-1"
-                              onClick={() => handleDelete(usuario.id)}
-                            >
-                              Sí
-                            </button>{" "}
-                            <button
-                              className="text-green-500 hover:underline ml-1"
-                              onClick={() => setConfirmDelete(null)}
-                            >
-                              No
-                            </button>
-                          </span>
-                        ) : (
-                          <button
-                            className="text-red-500 hover:underline"
-                            onClick={() => setConfirmDelete(usuario.id)}
-                          >
-                            Eliminar
-                          </button>
-                        )}
+                  {paginatedUsuarios.length === 0 && currentPage > totalPages ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-gray-600">
+                        No hay más datos disponibles.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    paginatedUsuarios.map((usuario) => (
+                      <TableRow key={usuario.id}>
+                        <TableCell>{usuario.id}</TableCell>
+                        <TableCell>{usuario.nombre}</TableCell>
+                        <TableCell>{usuario.apellido}</TableCell>
+                        <TableCell>{usuario.email}</TableCell>
+                        <TableCell>{usuario.username || "N/A"}</TableCell>
+                        <TableCell>{usuario.rol?.rol || "Sin rol"}</TableCell>
+                        <TableCell>
+                          <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(usuario)}>
+                            Editar
+                          </button>
+                          {confirmDelete === usuario.id ? (
+                            <span className="text-gray-700">
+                              ¿Seguro?{" "}
+                              <button className="text-red-500 hover:underline ml-1" onClick={() => handleDelete(usuario.id)}>
+                                Sí
+                              </button>{" "}
+                              <button className="text-green-500 hover:underline ml-1" onClick={() => setConfirmDelete(null)}>
+                                No
+                              </button>
+                            </span>
+                          ) : (
+                            <button className="text-red-500 hover:underline" onClick={() => setConfirmDelete(usuario.id)}>
+                              Eliminar
+                            </button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
-              {totalPages > 1 && (
-                <div className="flex justify-center mt-4 gap-4">
-                  <Button
-                    variant="outlined"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                  >
+              {totalPages > 0 && (
+                <div className="flex justify-center mt-4 gap-4" key={currentPage}>
+                  <Button variant="outlined" onClick={handlePrevPage} disabled={currentPage === 1}>
                     ← Anterior
                   </Button>
                   <span className="self-center text-gray-700">
                     Página {currentPage} de {totalPages}
                   </span>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                  >
+                  <Button variant="outlined" onClick={handleNextPage}>
                     Siguiente →
                   </Button>
                 </div>
