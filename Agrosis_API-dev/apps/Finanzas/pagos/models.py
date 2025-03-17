@@ -1,4 +1,4 @@
- from django.db import models
+from django.db import models
 
 class Pago(models.Model):
     horas_trabajadas = models.IntegerField()

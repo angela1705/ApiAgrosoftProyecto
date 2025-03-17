@@ -3,8 +3,8 @@ import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "../../components/globales/ReuInput";
 import { TipoActividad } from "@/types/cultivo/TipoActividad";
 import { useRegistrarTipoActividad, useTipoActividad, useActualizarTipoActividad, useEliminarTipoActividad } from "../../hooks/cultivo/usetipoactividad";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 import ReuModal from "../../components/globales/ReuModal";
+import Tabla from "@/components/globales/Tabla";
 
 const TipoActividadPage: React.FC = () => {
   const [tipoActividad, setTipoActividad] = useState<TipoActividad>({
@@ -44,6 +44,28 @@ const TipoActividadPage: React.FC = () => {
       setIsDeleteModalOpen(false);
     }
   };
+
+  const transformedData = (tipoActividades ?? []).map((tipoActividad) => ({
+    id: tipoActividad.id?.toString() || '',
+    nombre: tipoActividad.nombre,
+    descripcion: tipoActividad.descripcion,
+    acciones: (
+      <>
+        <button
+          className="text-green-500 hover:underline mr-2"
+          onClick={() => handleEdit(tipoActividad)}
+        >
+          Editar
+        </button>
+        <button
+          className="text-red-500 hover:underline"
+          onClick={() => handleDelete(tipoActividad)}
+        >
+          Eliminar
+        </button>
+      </>
+    ),
+  }));
 
   return (
     <DefaultLayout>
@@ -85,35 +107,7 @@ const TipoActividadPage: React.FC = () => {
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
           ) : (
-            <Table>
-              <TableHeader>
-                {columns.map((col) => (
-                  <TableColumn key={col.uid}>{col.name}</TableColumn>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {(tipoActividades ?? []).map((tipoActividad) => (
-                  <TableRow key={tipoActividad.id}>
-                    <TableCell>{tipoActividad.nombre}</TableCell>
-                    <TableCell>{tipoActividad.descripcion}</TableCell>
-                    <TableCell>
-                      <button
-                        className="text-green-500 hover:underline mr-2"
-                        onClick={() => handleEdit(tipoActividad)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="text-red-500 hover:underline"
-                        onClick={() => handleDelete(tipoActividad)}
-                      >
-                        Eliminar
-                      </button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <Tabla columns={columns} data={transformedData} />
           )}
         </div>
       </div>
