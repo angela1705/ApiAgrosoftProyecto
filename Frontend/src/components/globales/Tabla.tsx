@@ -26,10 +26,11 @@ const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const filteredItems = data.filter((item) =>
-    item.nombre.toLowerCase().includes(filterValue.toLowerCase())
-  );
-
+  const filteredItems = data.filter((item) => {
+    const searchField = item.nombre || item.ubicacion || ""; 
+    return searchField.toLowerCase().includes(filterValue.toLowerCase());
+  });
+  
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = filteredItems.slice((page - 1) * rowsPerPage, page * rowsPerPage);
