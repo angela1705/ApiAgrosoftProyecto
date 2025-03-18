@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { addToast } from "@heroui/react";
 import { Herramienta } from "@/types/inventario/Herramientas";
 
 const API_URL = "http://127.0.0.1:8000/inventario/herramientas/";
@@ -44,11 +44,11 @@ export const useRegistrarHerramienta = () => {
     return useMutation({
         mutationFn: registrarHerramienta,
         onSuccess: () => {
-            toast.success("Herramienta registrada con éxito");
+            addToast({ title: "Éxito", description: "Herramienta registrada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
         onError: () => {
-            toast.error("Error al registrar la herramienta");
+            addToast({ title: "Error", description: "Error al registrar la herramienta" });
         },
     });
 };
@@ -73,11 +73,11 @@ export const useActualizarHerramienta = () => {
     return useMutation({
         mutationFn: actualizarHerramienta,
         onSuccess: () => {
-            toast.success("Herramienta actualizada con éxito");
+            addToast({ title: "Éxito", description: "Herramienta actualizada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
         onError: () => {
-            toast.error("Error al actualizar la herramienta");
+            addToast({ title: "Error", description: "Error al actualizar la herramienta" });
         },
     });
 };
@@ -97,11 +97,11 @@ export const useEliminarHerramienta = () => {
     return useMutation({
         mutationFn: eliminarHerramienta,
         onSuccess: () => {
-            toast.success("Herramienta eliminada con éxito");
+            addToast({ title: "Éxito", description: "Herramienta eliminada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
         onError: () => {
-            toast.error("No se pudo eliminar la herramienta");
+            addToast({ title: "Error", description: "No se pudo eliminar la herramienta" });
         },
     });
 };

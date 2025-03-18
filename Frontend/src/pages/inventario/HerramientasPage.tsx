@@ -1,25 +1,20 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { useRegistrarHerramienta, useHerramientas, useActualizarHerramienta, useEliminarHerramienta } from "@/hooks/inventario/useHerramientas";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
-import ReuModal from "@/components/globales/ReuModal";
+import { useRegistrarHerramienta } from "@/hooks/inventario/useHerramientas";
+import { ReuInput } from "@/components/globales/ReuInput";
 
-const ReusableInput: React.FC<{ label: string; type: string; name: string; value: string; placeholder?: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void; }> = ({ label, type, name, value, placeholder, onChange }) => (
-  <div className="mb-4">
-    <label className="block text-gray-700 text-sm font-bold mb-2">{label}</label>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      placeholder={placeholder}
-      onChange={onChange}
-      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    />
-  </div>
-);
+interface Herramienta {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  cantidad: number;
+  estado: string;
+  activo: boolean;
+}
 
 const HerramientaPage: React.FC = () => {
-  const [herramienta, setHerramienta] = useState({
+  const [herramienta, setHerramienta] = useState<Herramienta>({
     id: 0,
     nombre: "",
     descripcion: "",
@@ -28,50 +23,21 @@ const HerramientaPage: React.FC = () => {
     activo: true,
   });
 
-  const [modalOpen, setModalOpen] = useState(false);
   const mutation = useRegistrarHerramienta();
-  const { data: herramientas, isLoading, refetch } = useHerramientas();
-  const updateMutation = useActualizarHerramienta();
-  const deleteMutation = useEliminarHerramienta();
-
-  const handleUpdate = (herramienta: any) => {
-    setHerramienta(herramienta);
-    setModalOpen(true);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      const checked = (e.target as HTMLInputElement).checked;
-      setHerramienta((prev) => ({ ...prev, [name]: checked }));
-    } else {
-      setHerramienta((prev) => ({ ...prev, [name]: name === "cantidad" ? Number(value) : value }));
-    }
-  };
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (herramienta.id === 0) {
-      mutation.mutate(herramienta, {
-        onSuccess: () => {
-          refetch();
-          setHerramienta({ id: 0, nombre: "", descripcion: "", cantidad: 0, estado: "Disponible", activo: true });
-        },
-      });
-    } else {
-      updateMutation.mutate(herramienta, {
-        onSuccess: () => {
-          refetch();
-          setHerramienta({ id: 0, nombre: "", descripcion: "", cantidad: 0, estado: "Disponible", activo: true });
-        },
-      });
-    }
-  };
-
-  const handleDelete = (id: number) => {
-    deleteMutation.mutate(id, {
+    mutation.mutate(herramienta, {
       onSuccess: () => {
-        refetch();
+        setHerramienta({
+          id: 0,
+          nombre: "",
+          descripcion: "",
+          cantidad: 0,
+          estado: "Disponible",
+          activo: true,
+        });
       },
     });
   };
@@ -82,71 +48,73 @@ const HerramientaPage: React.FC = () => {
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Herramienta</h2>
           <form onSubmit={handleSubmit}>
-            <ReusableInput label="Nombre" placeholder="Ingrese el nombre" type="text" name="nombre" value={herramienta.nombre} onChange={handleChange} />
-            <ReusableInput label="Descripción" placeholder="Ingrese la descripción" type="text" name="descripcion" value={herramienta.descripcion} onChange={handleChange} />
-            <ReusableInput label="Cantidad" type="number" name="cantidad" value={String(herramienta.cantidad)} onChange={handleChange} />
-            <ReusableInput label="Estado" type="text" name="estado" value={herramienta.estado} onChange={handleChange} />
+            <ReuInput
+              label="Nombre"
+              placeholder="Ingrese el nombre"
+              type="text"
+              value={herramienta.nombre}
+              onChange={(e) =>
+                setHerramienta({ ...herramienta, nombre: e.target.value })
+              }
+            />
+            <ReuInput
+              label="Descripción"
+              placeholder="Ingrese la descripción"
+              type="text"
+              value={herramienta.descripcion}
+              onChange={(e) =>
+                setHerramienta({ ...herramienta, descripcion: e.target.value })
+              }
+            />
+            <ReuInput
+              label="Cantidad"
+              placeholder="Ingrese la cantidad"
+              type="number"
+              value={herramienta.cantidad.toString()}
+              onChange={(e) =>
+                setHerramienta({
+                  ...herramienta,
+                  cantidad: Number(e.target.value),
+                })
+              }
+            />
+            <ReuInput
+              label="Estado"
+              placeholder="Ingrese el estado"
+              type="text"
+              value={herramienta.estado}
+              onChange={(e) =>
+                setHerramienta({ ...herramienta, estado: e.target.value })
+              }
+            />
             <div className="mb-4 flex items-center">
-              <input type="checkbox" name="activo" checked={herramienta.activo} onChange={handleChange} className="mr-2 leading-tight" />
+              <input
+                type="checkbox"
+                checked={herramienta.activo}
+                onChange={(e) =>
+                  setHerramienta({ ...herramienta, activo: e.target.checked })
+                }
+                className="mr-2 leading-tight"
+              />
               <label className="text-gray-700 text-sm font-bold">Activo</label>
             </div>
-            <button className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4" type="submit" disabled={mutation.isPending || updateMutation.isPending}>
-              {mutation.isPending || updateMutation.isPending ? "Guardando..." : herramienta.id === 0 ? "Guardar" : "Actualizar"}
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? "Registrando..." : "Guardar"}
+            </button>
+            <button
+              type="button"
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
+              onClick={() => navigate("/inventario/listarherramientas/")}
+            >
+              Listar Herramientas
             </button>
           </form>
         </div>
-
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Herramientas</h2>
-          {isLoading ? (
-            <p className="text-gray-600">Cargando...</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableColumn>Nombre</TableColumn>
-                <TableColumn>Descripción</TableColumn>
-                <TableColumn>Cantidad</TableColumn>
-                <TableColumn>Estado</TableColumn>
-                <TableColumn>Activo</TableColumn>
-                <TableColumn>Acciones</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {(herramientas ?? []).map((herramienta) => (
-                  <TableRow key={herramienta.id}>
-                    <TableCell>{herramienta.nombre}</TableCell>
-                    <TableCell>{herramienta.descripcion}</TableCell>
-                    <TableCell>{herramienta.cantidad}</TableCell>
-                    <TableCell>{herramienta.estado}</TableCell>
-                    <TableCell>{herramienta.activo ? "Sí" : "No"}</TableCell>
-                    <TableCell>
-                      <button className="text-yellow-600 hover:bg-yellow-200 px-3 py-1 rounded" onClick={() => handleUpdate(herramienta)}>Editar</button>
-                      <button className="text-red-600 hover:bg-red-200 px-3 py-1 rounded ml-2" onClick={() => handleDelete(herramienta.id)}>Eliminar</button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </div>
       </div>
-
-      <ReuModal isOpen={modalOpen} onOpenChange={setModalOpen} title="Editar Herramienta">
-        <div className="w-full max-w-xs mx-auto p-4 bg-white rounded-lg shadow-md">
-          <form onSubmit={handleSubmit}>
-            <ReusableInput label="Nombre" placeholder="Ingrese el nombre" type="text" name="nombre" value={herramienta.nombre} onChange={handleChange} />
-            <ReusableInput label="Descripción" placeholder="Ingrese la descripción" type="text" name="descripcion" value={herramienta.descripcion} onChange={handleChange} />
-            <ReusableInput label="Cantidad" type="number" name="cantidad" value={String(herramienta.cantidad)} onChange={handleChange} />
-            <ReusableInput label="Estado" type="text" name="estado" value={herramienta.estado} onChange={handleChange} />
-            <div className="mb-4 flex items-center">
-              <input type="checkbox" name="activo" checked={herramienta.activo} onChange={handleChange} className="mr-2 leading-tight" />
-              <label className="text-gray-700 text-sm font-bold">Activo</label>
-            </div>
-            <Button className="bg-green-600 text-white w-full" type="submit" disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? "Actualizando..." : "Actualizar"}
-            </Button>
-          </form>
-        </div>
-      </ReuModal>
     </DefaultLayout>
   );
 };

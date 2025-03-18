@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { addToast } from "@heroui/react";
 import { BodegaHerramienta } from "@/types/inventario/BodegaHerramienta";
 
 const API_URL = "http://127.0.0.1:8000/inventario/bodega_herramienta/";
@@ -50,11 +50,11 @@ export const useRegistrarBodegaHerramienta = () => {
     return useMutation({
         mutationFn: registrarBodegaHerramienta,
         onSuccess: () => {
-            toast.success("Registro guardado con éxito");
+            addToast({ title: "Éxito", description: "Registro guardado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
         onError: () => {
-            toast.error("Error al registrar");
+            addToast({ title: "Error", description: "Error al registrar" });
         },
     });
 };
@@ -85,11 +85,11 @@ export const useActualizarBodegaHerramienta = () => {
     return useMutation({
         mutationFn: actualizarBodegaHerramienta,
         onSuccess: () => {
-            toast.success("Registro actualizado con éxito");
+            addToast({ title: "Éxito", description: "Registro actualizado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
         onError: () => {
-            toast.error("Error al actualizar");
+            addToast({ title: "Error", description: "Error al actualizar" });
         },
     });
 };
@@ -109,11 +109,11 @@ export const useEliminarBodegaHerramienta = () => {
     return useMutation({
         mutationFn: eliminarBodegaHerramienta,
         onSuccess: () => {
-            toast.success("Registro eliminado con éxito");
+            addToast({ title: "Éxito", description: "Registro eliminado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
         onError: () => {
-            toast.error("No se pudo eliminar el registro");
+            addToast({ title: "Error", description: "No se pudo eliminar el registro" });
         },
     });
 };
