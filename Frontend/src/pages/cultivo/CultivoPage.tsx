@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
-import { useRegistrarCultivo, useCultivos } from "@/hooks/cultivo/useCultivo";
+import { useRegistrarCultivo } from "@/hooks/cultivo/useCultivo";
 import { useEspecies } from "@/hooks/cultivo/useEspecie";
 import { useBancales } from "@/hooks/cultivo/usebancal";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import { useNavigate } from "react-router-dom";
 
 const CultivoPage: React.FC = () => {
     const [cultivo, setCultivo] = useState({
@@ -17,20 +17,11 @@ const CultivoPage: React.FC = () => {
     });
 
     const mutation = useRegistrarCultivo();
-    const { data: cultivos, isLoading } = useCultivos();
     const { data: especies } = useEspecies();
     const { data: bancales } = useBancales();
+    const navigate = useNavigate()
 
-    const columns = [
-        { name: "Nombre", uid: "nombre" },
-        { name: "Unidad de Medida", uid: "unidad_de_medida" },
-        { name: "Activo", uid: "activo" },
-        { name: "Fecha de Siembra", uid: "fechaSiembra" },
-        { name: "Especie", uid: "Especie" }, 
-        { name: "Bancal", uid: "Bancal" },
-        { name: "Acciones", uid: "acciones" },
-    ];
-
+  
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         
@@ -107,37 +98,12 @@ const CultivoPage: React.FC = () => {
                         {mutation.isPending ? "Registrando..." : "Guardar"}
                     </button>
                 </div>
-
-                <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Cultivos</h2>
-                    {isLoading ? (
-                        <p className="text-gray-600">Cargando...</p>
-                    ) : (
-                        <Table>
-                            <TableHeader>
-                                {columns.map((col) => (
-                                    <TableColumn key={col.uid}>{col.name}</TableColumn>
-                                ))}
-                            </TableHeader>
-                            <TableBody>
-                                {(cultivos ?? []).map((cultivo) => (
-                                    <TableRow key={cultivo.id}>
-                                        <TableCell>{cultivo.nombre}</TableCell>
-                                        <TableCell>{cultivo.unidad_de_medida}</TableCell>
-                                        <TableCell>{cultivo.activo ? "Sí" : "No"}</TableCell>
-                                        <TableCell>{cultivo.fechaSiembra}</TableCell>
-                                        <TableCell>{cultivo.fk_especie}</TableCell>
-                                        <TableCell>{cultivo.fk_bancal}</TableCell>
-                                        <TableCell>
-                                            <button className="text-green-500 hover:underline mr-2">Editar</button>
-                                            <button className="text-red-500 hover:underline">Eliminar</button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    )}
-                </div>
+                <button
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
+            onClick={() => navigate("/cultivo/listarcultivos/")}
+          >
+            Listar cultivos
+          </button>
             </div>
         </DefaultLayout>
     );
