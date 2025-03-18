@@ -64,6 +64,7 @@ export const useRegistrarLote = () => {
       addToast({
         title: "Error",
         description: "Error al registrar el lote",
+    
       });
     },
   });
