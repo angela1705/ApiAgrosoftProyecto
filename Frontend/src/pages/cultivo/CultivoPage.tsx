@@ -13,7 +13,7 @@ const CultivoPage: React.FC = () => {
         activo: false,
         fechaSiembra: "",
         fk_especie: 0,
-        fk_bancal: 0,
+        fk_bancal: 0, 
     });
 
     const mutation = useRegistrarCultivo();

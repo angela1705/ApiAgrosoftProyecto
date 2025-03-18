@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableHeader,
@@ -6,92 +6,108 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  User,
-  Chip,
-  Tooltip,
+  Input,
+  Button,
+  Pagination,
 } from "@heroui/react";
-
-type StatusType = "active" | "paused" | "vacation";
-
-type ChipColor = "success" | "danger" | "warning" | "default" | "primary" | "secondary" | undefined;
-
-const statusColorMap: Record<StatusType, ChipColor> = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
 
 interface Column {
   uid: string;
   name: string;
 }
 
-interface Item {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  status: StatusType;
-}
-
 interface TablaProps {
-  apiEndpoint: string;
   columns: Column[];
+  data: any[];
 }
 
-const Tabla: React.FC<TablaProps> = ({ apiEndpoint, columns }) => {
-  const [data, setData] = useState<Item[]>([]);
+const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
+  const [filterValue, setFilterValue] = useState("");
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  useEffect(() => {
-    fetch(apiEndpoint)
-      .then((response) => response.json())
-      .then((data: Item[]) => setData(data))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, [apiEndpoint]);
+  const filteredItems = data.filter((item) =>
+    item.nombre.toLowerCase().includes(filterValue.toLowerCase())
+  );
 
-  const renderCell = (item: Item, columnKey: string) => {
-    const cellValue = item[columnKey as keyof Item];
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-    switch (columnKey) {
-      case "name":
-        return (
-          <User avatarProps={{ radius: "lg", src: item.avatar }} description={item.email} name={cellValue as string} />
-        );
-      case "status":
-        return <Chip color={statusColorMap[item.status]}>{item.status}</Chip>;
-      case "actions":
-        return (
-          <div className="flex items-center gap-2">
-            <Tooltip content="Edit">
-              <span className="cursor-pointer text-blue-500">✏️</span>
-            </Tooltip>
-            <Tooltip content="Delete">
-              <span className="cursor-pointer text-red-500">🗑️</span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
+  const items = filteredItems.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+
+  const onSearchChange = (value: string) => {
+    setFilterValue(value);
+    setPage(1);
+  };
+
+  const onClear = () => {
+    setFilterValue("");
+    setPage(1);
+  };
+
+  const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
   };
 
   return (
-    <Table>
-      <TableHeader>
-        {columns.map((column) => (
-          <TableColumn key={column.uid}>{column.name}</TableColumn>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {data.map((item) => (
-          <TableRow key={item.id}>
-            {columns.map((column) => (
-              <TableCell key={column.uid}>{renderCell(item, column.uid)}</TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div>
+      <div className="flex justify-between gap-3 items-end mb-4">
+        <Input
+          isClearable
+          className="w-full sm:max-w-[44%]"
+          placeholder="Buscar por nombre"
+          value={filterValue}
+          onClear={onClear}
+          onValueChange={onSearchChange}
+        />
+        <label className="flex items-center text-default-400 text-small">
+          Filas:
+          <select
+            className="bg-transparent outline-none text-default-400 text-small"
+            onChange={onRowsPerPageChange}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+          </select>
+        </label>
+      </div>
+      <Table>
+        <TableHeader>
+          {columns.map((column) => (
+            <TableColumn key={column.uid}>{column.name}</TableColumn>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {items.map((item) => (
+            <TableRow key={item.id}>
+              {columns.map((column) => (
+                <TableCell key={column.uid}>{item[column.uid]}</TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div className="py-2 px-2 flex justify-between items-center">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+          <Button isDisabled={page === 1} size="sm" variant="flat" onPress={() => setPage(page - 1)}>
+            Anterior
+          </Button>
+          <Button isDisabled={page === pages} size="sm" variant="flat" onPress={() => setPage(page + 1)}>
+            Siguiente
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 
