@@ -35,17 +35,31 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Toaster position="top-right" reverseOrder={false} />
-        <BodegaInsumoNotifications />
-        <BodegaHerramientaNotifications /> 
         <Routes>
           <Route element={<LoginPage />} path="/login" />
           <Route element={<RegisterPage />} path="/register" />
           <Route path="/" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
-          <Route path="/perfil" element={<PerfilPage />} />
+          <Route path="/perfil" element={<PrivateRoute><PerfilPage /></PrivateRoute>} />
           <Route path="/inventario/bodega" element={<PrivateRoute><BodegaPage /></PrivateRoute>} />
-          <Route path="/inventario/bodegaherramienta" element={<PrivateRoute><BodegaHerramientaPage /></PrivateRoute>} />
+          <Route
+            path="/inventario/bodegaherramienta"
+            element={
+              <PrivateRoute>
+                <BodegaHerramientaPage />
+                <BodegaHerramientaNotifications />
+              </PrivateRoute>
+            }
+          />
           <Route path="/inventario/herramientas" element={<PrivateRoute><HerramientasPage /></PrivateRoute>} />
-          <Route path="/inventario/bodegainsumo" element={<PrivateRoute><BodegaInsumoPage /></PrivateRoute>} />
+          <Route
+            path="/inventario/bodegainsumo"
+            element={
+              <PrivateRoute>
+                <BodegaInsumoPage />
+                <BodegaInsumoNotifications />
+              </PrivateRoute>
+            }
+          />
           <Route path="/inventario/insumo" element={<PrivateRoute><InsumoPage /></PrivateRoute>} />
           <Route path="/docs" element={<PrivateRoute><DocsPage /></PrivateRoute>} />
           <Route path="/cultivo/tipoespecie/" element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>} />

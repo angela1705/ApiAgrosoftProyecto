@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useRegistrarBodegaHerramienta, useBodegaHerramienta, useActualizarBodegaHerramienta, useEliminarBodegaHerramienta } from "@/hooks/inventario/useBodegaHerramienta";
 import { useBodegas } from "@/hooks/inventario/useBodega";
@@ -25,12 +25,6 @@ const BodegaHerramientaPage: React.FC = () => {
   const { data: herramientas } = useHerramientas();
 
   const bodegasHerramientas = data ?? [];
-
-  useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8000/ws/inventario/bodega_herramienta/");
-    socket.onmessage = () => refetch();
-    return () => socket.close();
-  }, [refetch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
