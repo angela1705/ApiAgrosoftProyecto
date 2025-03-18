@@ -19,6 +19,8 @@ import ProgramacionPage from './pages/cultivo/ProgramacionPage';
 import CultivoPage from './pages/cultivo/CultivoPage';
 import ActividadPage from './pages/cultivo/ActividadPage';
 import ListaTipoEspeciePage from './pages/cultivo/ListaTipoEspeciePage';
+import ListaTipoActividadPage from './pages/cultivo/ListaTipoActividadPage';
+import ListarLotesPage from './pages/cultivo/ListaLotesPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
 import BodegaPage from './pages/inventario/BodegaPage';
 import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
@@ -52,8 +54,9 @@ function App() {
           <Route path="/cultivo/tipoespecie/" element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>} />
           <Route path="/cultivo/listartipoespecie/" element={<PrivateRoute><ListaTipoEspeciePage /></PrivateRoute>} />
           <Route path="/cultivo/tipo_actividad/" element={<PrivateRoute><TipoActividadPage /></PrivateRoute>} />
-          <Route path="/cultivo/listartipoactividad/" element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>} />
+          <Route path="/cultivo/listartipoactividad/" element={<PrivateRoute><ListaTipoActividadPage/></PrivateRoute>} />
           <Route path="/cultivo/lotes/" element={<PrivateRoute><LotesPage /></PrivateRoute>} />
+          <Route path="/cultivo/listarlotes/" element={<PrivateRoute><ListarLotesPage/></PrivateRoute>} />
           <Route path="/cultivo/bancal/" element={<PrivateRoute><BancalPage /></PrivateRoute>} />
           <Route path="/cultivo/especies/" element={<PrivateRoute><EspeciePage /></PrivateRoute>} />
           <Route path="/cultivo/programacion/" element={<PrivateRoute><ProgramacionPage /></PrivateRoute>} />

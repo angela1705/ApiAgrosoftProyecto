@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarEspecie, useEspecies, useActualizarEspecie, useEliminarEspecie } from "@/hooks/cultivo/useEspecie";
-import { useTipoEspecies } from "@/hooks/cultivo/usetipoespecie";
+import { useTipoEspecies } from "@/hooks/cultivo/usetipoEspecie";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 import ReuModal from "@/components/globales/ReuModal";
 

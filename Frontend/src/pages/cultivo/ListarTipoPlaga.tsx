@@ -150,8 +150,6 @@ const ListaTipoEspeciePage: React.FC = () => {
     >
       <p>Esta acción es irreversible.</p>
     </ReuModal>
-
-    
   </DefaultLayout>
   
   );
