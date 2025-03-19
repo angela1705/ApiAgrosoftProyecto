@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "../../components/globales/ReuInput";
 import { Programacion } from "../../types/cultivo/Programacion";
-import { useRegistrarProgramacion, useProgramaciones } from "../../hooks/cultivo/useProgramacion";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import { useRegistrarProgramacion} from "../../hooks/cultivo/useProgramacion";
+import { useNavigate } from "react-router-dom";
 
 const ProgramacionPage: React.FC = () => {
   const [programacion, setProgramacion] = useState<Programacion>({
@@ -14,15 +14,7 @@ const ProgramacionPage: React.FC = () => {
   });
 
   const mutation = useRegistrarProgramacion();
-  const { data: programaciones, isLoading } = useProgramaciones();
-
-  const columns = [
-    { name: "Ubicación", uid: "ubicacion" },
-    { name: "Hora Programada", uid: "hora_prog" },
-    { name: "Fecha Programada", uid: "fecha_prog" },
-    { name: "Estado", uid: "estado" },
-    { name: "Acciones", uid: "acciones" },
-  ];
+  const navigate = useNavigate()
 
   return (
     <DefaultLayout>
@@ -54,17 +46,8 @@ const ProgramacionPage: React.FC = () => {
             onChange={(e) => setProgramacion({ ...programacion, fecha_prog: e.target.value })}
           />
 
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700">Estado</label>
-            <input
-              type="checkbox"
-              checked={programacion.estado}
-              onChange={(e) => setProgramacion({ ...programacion, estado: e.target.checked })}
-            />
-          </div>
-
           <button
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4"
+            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
             type="submit"
             disabled={mutation.isPending}
             onClick={(e) => {
@@ -74,37 +57,15 @@ const ProgramacionPage: React.FC = () => {
           >
             {mutation.isPending ? "Registrando..." : "Guardar"}
           </button>
-        </div>
-
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Programaciones</h2>
-          {isLoading ? (
-            <p className="text-gray-600">Cargando...</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                {columns.map((col) => (
-                  <TableColumn key={col.uid}>{col.name}</TableColumn>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {(programaciones ?? []).map((prog) => (
-                  <TableRow key={prog.id}>
-                    <TableCell>{prog.ubicacion}</TableCell>
-                    <TableCell>{prog.hora_prog}</TableCell>
-                    <TableCell>{prog.fecha_prog}</TableCell>
-                    <TableCell>{prog.estado ? "Activo" : "Inactivo"}</TableCell>
-                    <TableCell>
-                      <button className="text-green-500 hover:underline mr-2">Editar</button>
-                      <button className="text-red-500 hover:underline">Eliminar</button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+          <button
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
+            onClick={() => navigate("/cultivo/listarprogramaciones/")}
+          >
+            Listar programaciones
+          </button>
         </div>
       </div>
+
     </DefaultLayout>
   );
 };

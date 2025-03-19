@@ -1,41 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "@/components/globales/ReuInput";
-import { useRegistrarBodegaInsumo, useBodegaInsumos } from "@/hooks/inventario/useBodegaInsumo";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
-import useWebSocket from "@/hooks/useWebSocket";
+import { BodegaInsumo } from "@/types/inventario/BodegaInsumo";
+import { useRegistrarBodegaInsumo } from "@/hooks/inventario/useBodegaInsumo";
+import { useBodegas } from "@/hooks/inventario/useBodega";
+import { useInsumos } from "@/hooks/inventario/useInsumo";
+import { Insumo } from "@/types/inventario/Insumo";
 
 const BodegaInsumoPage: React.FC = () => {
-  const [bodegaInsumo, setBodegaInsumo] = useState({
-    bodega: "",
-    insumo: "",
+  const [bodegaInsumo, setBodegaInsumo] = useState<BodegaInsumo>({
+    id: 0,
+    bodega: 0,
+    insumo: 0,
     cantidad: 0,
   });
 
+  const { data: bodegas } = useBodegas();
+  const { data: insumos } = useInsumos();
   const mutation = useRegistrarBodegaInsumo();
-  const { data: bodegaInsumos, isLoading, refetch } = useBodegaInsumos();
+  const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setBodegaInsumo((prev) => ({
       ...prev,
-      [name]: name === "cantidad" ? Number(value) : value,
+      [name]: Number(value),
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(bodegaInsumo);
+    mutation.mutate(bodegaInsumo, {
+      onSuccess: () => {
+        setBodegaInsumo({ id: 0, bodega: 0, insumo: 0, cantidad: 0 });
+        navigate("/inventario/listarbodegainsumos/");
+      },
+    });
   };
-
-  const handleWebSocketMessage = (event: MessageEvent) => {
-    const data = JSON.parse(event.data);
-    if (data.action === "update") {
-      refetch();
-    }
-  };
-
-  useWebSocket("ws://127.0.0.1:8000/ws/inventario/bodega_insumo/", handleWebSocketMessage);
 
   return (
     <DefaultLayout>
@@ -43,56 +44,56 @@ const BodegaInsumoPage: React.FC = () => {
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Bodega Insumo</h2>
           <form onSubmit={handleSubmit}>
-            <ReuInput
-              label="Bodega"
-              placeholder="Ingrese la bodega"
-              type="text"
+            <select
               name="bodega"
               value={bodegaInsumo.bodega}
               onChange={handleChange}
-            />
-            <ReuInput
-              label="Insumo"
-              placeholder="Ingrese el insumo"
-              type="text"
+              className="w-full mb-4 p-2 border rounded"
+            >
+              <option value="0">Seleccione una Bodega</option>
+              {bodegas?.map((bodega: { id: number; nombre: string }) => (
+                <option key={bodega.id} value={bodega.id}>
+                  {bodega.nombre}
+                </option>
+              ))}
+            </select>
+            <select
               name="insumo"
               value={bodegaInsumo.insumo}
               onChange={handleChange}
-            />
-            <ReuInput
-              label="Cantidad"
-              placeholder="Ingrese la cantidad"
+              className="w-full mb-4 p-2 border rounded"
+            >
+              <option value="0">Seleccione un Insumo</option>
+              {insumos?.map((insumo: Insumo) => (
+                <option key={insumo.id} value={insumo.id}>
+                  {insumo.nombre}
+                </option>
+              ))}
+            </select>
+            <input
               type="number"
               name="cantidad"
               value={bodegaInsumo.cantidad}
               onChange={handleChange}
+              className="w-full mb-4 p-2 border rounded"
+              placeholder="Cantidad"
             />
-            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-lg mt-4">
-              Agregar Bodega Insumo
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? "Registrando..." : "Guardar"}
+            </button>
+            <button
+              type="button"
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
+              onClick={() => navigate("/inventario/listarbodegainsumos/")}
+            >
+              Listar Bodega Insumos
             </button>
           </form>
         </div>
-
-        {isLoading ? (
-          <p>Cargando...</p>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableColumn>Bodega</TableColumn>
-              <TableColumn>Insumo</TableColumn>
-              <TableColumn>Cantidad</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {bodegaInsumos?.map((bodegaInsumo) => (
-                <TableRow key={bodegaInsumo.id}>
-                  <TableCell>{bodegaInsumo.bodega}</TableCell>
-                  <TableCell>{bodegaInsumo.insumo}</TableCell>
-                  <TableCell>{bodegaInsumo.cantidad}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
       </div>
     </DefaultLayout>
   );
