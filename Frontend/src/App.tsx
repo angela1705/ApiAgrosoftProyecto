@@ -19,7 +19,7 @@ import ProgramacionPage from './pages/cultivo/ProgramacionPage';
 import CultivoPage from './pages/cultivo/CultivoPage';
 import ActividadPage from './pages/cultivo/ActividadPage';
 import ListaTipoEspeciePage from './pages/cultivo/ListaTipoEspeciePage';
-import ListaTipoActividadPage from './pages/cultivo/ListaTipoActividadPage';
+import ListaTipoActividadPage from './pages/cultivo/listaTipoActividadPage';
 import ListarLotesPage from './pages/cultivo/ListaLotesPage';
 import ListaBancalPage from './pages/cultivo/ListaBancalPage';
 import ListaEspeciePage from './pages/cultivo/ListaEspeciePage';
@@ -38,12 +38,14 @@ import ListaBodegaInsumoPage from './pages/inventario/ListaBodegaInsumoPage';
 import InsumoPage from './pages/inventario/InsumoPage';
 import ListaInsumoPage from './pages/inventario/ListaInsumoPage';
 import PerfilPage from './pages/usuarios/PerfilPage';
+import SensoresPage from './pages/iot/SensoresPage';
+import DatosMeteorologicosPage from './pages/iot/DatosMeteorologicosPage';  
 import BodegaInsumoNotifications from './components/inventario/BodegaInsumoNotifications';
 import BodegaHerramientaNotifications from './components/inventario/BodegaHerramientaNotifications';
 
 const queryClient = new QueryClient();
 
-function App() {
+const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -113,6 +115,8 @@ function App() {
           <Route path="/cultivo/actividad/" element={<PrivateRoute><ActividadPage /></PrivateRoute>} />
           <Route path="/cultivo/listaractividad/" element={<PrivateRoute><ListaActividadPage /></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><UsuariosPage /></PrivateRoute>} />
+          <Route path="/iot/sensores" element={<PrivateRoute><SensoresPage /></PrivateRoute>} />
+          <Route path="/iot/datosmetereologicos" element={<PrivateRoute><DatosMeteorologicosPage /></PrivateRoute>} />
           <Route path="/pricing" element={<PrivateRoute><PricingPage /></PrivateRoute>} />
           <Route path="/blog" element={<PrivateRoute><BlogPage /></PrivateRoute>} />
           <Route path="/about" element={<PrivateRoute><AboutPage /></PrivateRoute>} />
@@ -121,6 +125,6 @@ function App() {
       </AuthProvider>
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

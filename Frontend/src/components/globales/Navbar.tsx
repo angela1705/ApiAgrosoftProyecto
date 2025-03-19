@@ -26,7 +26,7 @@ import Sena from "../../assets/logo sena.png";
 // Lista de elementos del menú con sus rutas e íconos
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
-  { id: 2, label: "Docs", path: "/docs", icon: <FaUser /> },
+  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
   { id: 3, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> },
   { id: 4, label: "Mapa", path: "/mapa", icon: <FaMapMarkerAlt /> },
   {
@@ -68,7 +68,7 @@ const menuItems = [
       { id: 20, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
-  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
+  { id: 2, label: "Docs", path: "/docs", icon: <FaUser /> },
 ];
 
 // Componente principal de la barra de navegación

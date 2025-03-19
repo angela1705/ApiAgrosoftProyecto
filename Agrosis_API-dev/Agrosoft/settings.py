@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-y25f0nlxx-^y1tc$12**4)gsf=uy7wkcvt%ahr(*l)cf=7#m5i
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.X', '192.168.1.12']
     
 
 
@@ -89,6 +88,7 @@ INSTALLED_APPS = [
     'apps.Cultivo.lotes',
     'channels',
     'corsheaders',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +125,10 @@ ASGI_APPLICATION = "Agrosoft.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
     },
 }
 
@@ -138,7 +141,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'agrosoft_proyecto',
         'USER': 'postgres',
-        'PASSWORD': 'root',
+        'PASSWORD': 'adso2024',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
