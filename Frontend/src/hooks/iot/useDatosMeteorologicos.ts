@@ -8,7 +8,7 @@ export const useDatosMeteorologicos = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://192.168.1.12:8000/ws/realtime/");
+    const ws = new WebSocket("ws://10.8.12.211:8000/ws/realtime/");
 
     ws.onopen = () => {
       console.log("Conectado al WebSocket de tiempo real");
