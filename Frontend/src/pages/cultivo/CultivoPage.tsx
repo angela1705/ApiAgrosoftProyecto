@@ -97,13 +97,13 @@ const CultivoPage: React.FC = () => {
                     >
                         {mutation.isPending ? "Registrando..." : "Guardar"}
                     </button>
-                </div>
-                <button
+                    <button
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
             onClick={() => navigate("/cultivo/listarcultivos/")}
           >
             Listar cultivos
           </button>
+                </div>
             </div>
         </DefaultLayout>
     );
