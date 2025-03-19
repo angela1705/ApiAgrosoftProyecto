@@ -27,7 +27,7 @@ const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const filteredItems = data.filter((item) => {
-    const searchField = item.nombre || item.ubicacion || ""; 
+    const searchField = item.nombre || item.ubicacion || item.descripcion ||"";  
     return searchField.toLowerCase().includes(filterValue.toLowerCase());
   });
   
