@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "../../components/globales/ReuInput";
 import { TipoEspecie } from "../../types/cultivo/TipoEspecie";
-import { useRegistrarTipoEspecie } from "../../hooks/cultivo/usetipoEspecie";
+import { useRegistrarTipoEspecie } from "../../hooks/cultivo/usetipoespecie";
 
 const TipoEspeciePage: React.FC = () => {
   const [tipoEspecie, setTipoEspecie] = useState<TipoEspecie>({
