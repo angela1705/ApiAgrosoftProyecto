@@ -2,22 +2,22 @@ import React, { useState, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "../../components/globales/ReuInput";
-import { TipoEspecie } from "../../types/cultivo/TipoEspecie";
-import { useRegistrarTipoEspecie } from "../../hooks/cultivo/usetipoEspecie";
+import { TipoPlaga } from "../../types/cultivo/TipoPlaga"; 
+import { useRegistrarTipoPlaga } from "../../hooks/cultivo/usetipoplaga"; 
 
-const TipoEspeciePage: React.FC = () => {
-  const [tipoEspecie, setTipoEspecie] = useState<TipoEspecie>({
+const TipoPlagaPage: React.FC = () => {
+  const [tipoPlaga, setTipoPlaga] = useState<TipoPlaga>({
     nombre: "",
     descripcion: "",
     img: null,
   });
 
-  const mutation = useRegistrarTipoEspecie();
+  const mutation = useRegistrarTipoPlaga();
   const navigate = useNavigate();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setTipoEspecie((prev) => ({ ...prev, img: e.target.files![0] }));
+      setTipoPlaga((prev) => ({ ...prev, img: e.target.files![0] }));
     }
   };
 
@@ -25,22 +25,22 @@ const TipoEspeciePage: React.FC = () => {
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Tipo de Especie</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registro de Tipo de Plaga</h2>
 
           <ReuInput
             label="Nombre"
             placeholder="Ingrese el nombre"
             type="text"
-            value={tipoEspecie.nombre}
-            onChange={(e) => setTipoEspecie({ ...tipoEspecie, nombre: e.target.value })}
+            value={tipoPlaga.nombre}
+            onChange={(e) => setTipoPlaga({ ...tipoPlaga, nombre: e.target.value })}
           />
 
           <ReuInput
             label="Descripción"
             placeholder="Ingrese la descripción"
             type="text"
-            value={tipoEspecie.descripcion}
-            onChange={(e) => setTipoEspecie({ ...tipoEspecie, descripcion: e.target.value })}
+            value={tipoPlaga.descripcion}
+            onChange={(e) => setTipoPlaga({ ...tipoPlaga, descripcion: e.target.value })}
           />
 
           <div className="mb-6">
@@ -62,7 +62,7 @@ const TipoEspeciePage: React.FC = () => {
             disabled={mutation.isPending}
             onClick={(e) => {
               e.preventDefault();
-              mutation.mutate(tipoEspecie);
+              mutation.mutate(tipoPlaga);
             }}
           >
             {mutation.isPending ? "Registrando..." : "Guardar"}
@@ -70,9 +70,9 @@ const TipoEspeciePage: React.FC = () => {
 
           <button
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
-            onClick={() => navigate("/cultivo/listartipoespecie/")}
+            onClick={() => navigate("/cultivo/listartipoplaga/")}
           >
-            Listar Tipo de Especie
+            Listar Tipo de Plaga
           </button>
         </div>
       </div>
@@ -80,4 +80,4 @@ const TipoEspeciePage: React.FC = () => {
   );
 };
 
-export default TipoEspeciePage;
+export default TipoPlagaPage;

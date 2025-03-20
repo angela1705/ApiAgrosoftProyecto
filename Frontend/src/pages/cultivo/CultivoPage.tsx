@@ -35,7 +35,7 @@ const CultivoPage: React.FC = () => {
         <DefaultLayout>
             <div className="w-full flex flex-col items-center min-h-screen p-6">
                 <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-                    <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Cultivo</h2>
+                    <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registro de Cultivo</h2>
 
                     <ReuInput
                         label="Nombre"
@@ -71,20 +71,34 @@ const CultivoPage: React.FC = () => {
                     </label>
 
                     <label className="block text-sm font-medium text-gray-700 mt-4">Especie</label>
-                    <select name="Especie" value={cultivo.fk_especie || ""} onChange={handleChange}>
-                        <option value="">Seleccione una especie</option>
-                        {especies?.map((especie) => (
-                            <option key={especie.id} value={especie.id}>{especie.nombre}</option>
-                        ))}
-                    </select>
+                        <select
+                            name="Especie"
+                            value={cultivo.fk_especie || ""}
+                            onChange={handleChange}
+                            className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                        >
+                            <option value="">Seleccione una especie</option>
+                            {especies?.map((especie) => (
+                                <option key={especie.id} value={especie.id}>
+                                    {especie.nombre}
+                                </option>
+                            ))}
+                        </select>
 
                     <label className="block text-sm font-medium text-gray-700 mt-4">Bancal</label>
-                    <select name="Bancal" value={cultivo.fk_bancal || ""} onChange={handleChange}>
-                        <option value="">Seleccione un bancal</option>
-                        {bancales?.map((bancal) => (
-                            <option key={bancal.id} value={bancal.id}>{bancal.nombre}</option>
-                        ))}
-                    </select>
+                        <select
+                            name="Bancal"
+                            value={cultivo.fk_bancal || ""}
+                            onChange={handleChange}
+                            className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                        >
+                            <option value="">Seleccione un bancal</option>
+                            {bancales?.map((bancal) => (
+                                <option key={bancal.id} value={bancal.id}>
+                                    {bancal.nombre}
+                                </option>
+                            ))}
+                        </select>
 
                     <button
                         className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4"
