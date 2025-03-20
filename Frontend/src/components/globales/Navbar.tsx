@@ -49,7 +49,7 @@ const menuItems = [
     icon: <FaBug />,
     subItems: [
       { id: 16, label: "Tipo Plaga", path: "/cultivo/tipoplaga/"},
-      { id: 17, label: "Plaga", path: "/inventario/bodegaherramienta"},
+      { id: 17, label: "Plaga", path: "/cultivo/plaga/"},
       { id: 18, label: "Control", path: "/inventario/bodegaherramienta" },
 
     ],
