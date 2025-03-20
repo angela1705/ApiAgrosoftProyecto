@@ -42,6 +42,8 @@ import SensoresPage from './pages/iot/SensoresPage';
 import DatosMeteorologicosPage from './pages/iot/DatosMeteorologicosPage';  
 import BodegaInsumoNotifications from './components/inventario/BodegaInsumoNotifications';
 import BodegaHerramientaNotifications from './components/inventario/BodegaHerramientaNotifications';
+import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
+import ListarSensores from "@/components/Iot/ListarSensores";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +55,8 @@ const App: React.FC = () => {
         <Routes>
           <Route element={<LoginPage />} path="/login" />
           <Route element={<RegisterPage />} path="/register" />
+          <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
+          <Route path="/iot/listar-sensores" element={<ListarSensores />} />
           <Route path="/" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
           <Route path="/perfil" element={<PrivateRoute><PerfilPage /></PrivateRoute>} />
           <Route path="/inventario/bodega/" element={<PrivateRoute><BodegaPage /></PrivateRoute>} />
