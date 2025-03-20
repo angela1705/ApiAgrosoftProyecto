@@ -1,33 +1,44 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { useCosechas, useEliminarCosecha } from "@/hooks/cultivo/usecosecha";
-import Tabla from "@/components/globales/Tabla";
+import { ReuInput } from "@/components/globales/ReuInput";
+import { useCosechas, useActualizarCosecha, useEliminarCosecha } from "@/hooks/cultivo/usecosecha";
+import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import ReuModal from "@/components/globales/ReuModal";
+import Tabla from "@/components/globales/Tabla";
+import { useNavigate } from "react-router-dom";
 
-const ListaCosechasPage: React.FC = () => {
-  const { data: cosechas, isLoading, refetch } = useCosechas();
-  const [selectedCosechaId, setSelectedCosechaId] = useState<number | null>(null);
+const ListarCosechaPage: React.FC = () => {
+  const [selectedCosecha, setSelectedCosecha] = useState<any>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const { data: cosechas, isLoading, refetch } = useCosechas();
+  const { data: cultivos } = useCultivos();
+  const actualizarMutation = useActualizarCosecha();
   const eliminarMutation = useEliminarCosecha();
   const navigate = useNavigate();
 
   const columns = [
-    { name: "ID Cultivo", uid: "id_cultivo" },
+    { name: "Cultivo", uid: "cultivo" },
     { name: "Cantidad", uid: "cantidad" },
-    { name: "Unidades", uid: "unidades_de_medida" },
+    { name: "Unidades de Medida", uid: "unidades_de_medida" },
     { name: "Fecha", uid: "fecha" },
     { name: "Acciones", uid: "acciones" },
   ];
 
-  const handleDelete = (id: number) => {
-    setSelectedCosechaId(id);
+  const handleEdit = (cosecha: any) => {
+    setSelectedCosecha(cosecha);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (cosecha: any) => {
+    setSelectedCosecha(cosecha);
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = () => {
-    if (selectedCosechaId !== null) {
-      eliminarMutation.mutate(selectedCosechaId, {
+    if (selectedCosecha && selectedCosecha.id !== undefined) {
+      eliminarMutation.mutate(selectedCosecha.id, {
         onSuccess: () => {
           setIsDeleteModalOpen(false);
           refetch();
@@ -37,16 +48,22 @@ const ListaCosechasPage: React.FC = () => {
   };
 
   const transformedData = (cosechas ?? []).map((cosecha) => ({
-    id: cosecha.id?.toString() || "",
-    id_cultivo: cosecha.id_cultivo.toString(),
-    cantidad: cosecha.cantidad.toString(),
+    id: cosecha.id?.toString() || '',
+    cultivo: cultivos?.find((cultivo) => cultivo.id === cosecha.id_cultivo)?.nombre || 'Sin cultivo',
+    cantidad: cosecha.cantidad,
     unidades_de_medida: cosecha.unidades_de_medida,
-    fecha: cosecha.fecha,
+    fecha: new Date(cosecha.fecha).toLocaleDateString(),
     acciones: (
       <>
         <button
+          className="text-green-500 hover:underline mr-2"
+          onClick={() => handleEdit(cosecha)}
+        >
+          Editar
+        </button>
+        <button
           className="text-red-500 hover:underline"
-          onClick={() => handleDelete(cosecha.id!)}
+          onClick={() => handleDelete(cosecha)}
         >
           Eliminar
         </button>
@@ -59,7 +76,6 @@ const ListaCosechasPage: React.FC = () => {
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Cosechas</h2>
-
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
           ) : (
@@ -67,8 +83,10 @@ const ListaCosechasPage: React.FC = () => {
               <Tabla columns={columns} data={transformedData} />
               <div className="flex justify-end mt-4">
                 <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
-                  onClick={() => navigate("/cultivo/cosecha/")}
+                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
+                             hover:bg-blue-700 transition-all duration-300 ease-in-out 
+                             shadow-md hover:shadow-lg transform hover:scale-105"
+                  onClick={() => navigate('/cultivo/cosecha/')}
                 >
                   Registrar Cosecha
                 </button>
@@ -77,6 +95,80 @@ const ListaCosechasPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      <ReuModal
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        title="Editar Cosecha"
+        onConfirm={() => {
+          if (selectedCosecha && selectedCosecha.id !== undefined) {
+            actualizarMutation.mutate(
+              { id: selectedCosecha.id, cosecha: selectedCosecha },
+              {
+                onSuccess: () => {
+                  setIsEditModalOpen(false);
+                  refetch();
+                },
+              }
+            );
+          }
+        }}
+      >
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700">Cultivo</label>
+          <select
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedCosecha?.id_cultivo || 0}
+            onChange={(e) =>
+              setSelectedCosecha((prev: any) => ({
+                ...prev,
+                id_cultivo: parseInt(e.target.value),
+              }))
+            }
+          >
+            <option value="">Seleccione un cultivo</option>
+            {cultivos?.map((cultivo) => (
+              <option key={cultivo.id} value={cultivo.id}>{cultivo.nombre}</option>
+            ))}
+          </select>
+        </div>
+        <ReuInput
+          label="Cantidad"
+          placeholder="Ingrese la cantidad"
+          type="number"
+          value={selectedCosecha?.cantidad || 0}
+          onChange={(e) =>
+            setSelectedCosecha((prev: any) => ({
+              ...prev,
+              cantidad: parseFloat(e.target.value),
+            }))
+          }
+        />
+        <ReuInput
+          label="Unidades de Medida"
+          placeholder="Ingrese las unidades de medida"
+          type="text"
+          value={selectedCosecha?.unidades_de_medida || ''}
+          onChange={(e) =>
+            setSelectedCosecha((prev: any) => ({
+              ...prev,
+              unidades_de_medida: e.target.value,
+            }))
+          }
+        />
+        <ReuInput
+          label="Fecha"
+          placeholder="Ingrese la fecha"
+          type="date"
+          value={selectedCosecha?.fecha || ''}
+          onChange={(e) =>
+            setSelectedCosecha((prev: any) => ({
+              ...prev,
+              fecha: e.target.value,
+            }))
+          }
+        />
+      </ReuModal>
 
       <ReuModal
         isOpen={isDeleteModalOpen}
@@ -90,4 +182,4 @@ const ListaCosechasPage: React.FC = () => {
   );
 };
 
-export default ListaCosechasPage;
+export default ListarCosechaPage;

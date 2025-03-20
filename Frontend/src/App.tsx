@@ -19,7 +19,7 @@ import ProgramacionPage from './pages/cultivo/ProgramacionPage';
 import CultivoPage from './pages/cultivo/CultivoPage';
 import ActividadPage from './pages/cultivo/ActividadPage';
 import ListaTipoEspeciePage from './pages/cultivo/ListaTipoEspeciePage';
-import ListaTipoActividadPage from './pages/cultivo/ListaTipoActividadPage';
+import ListaTipoActividadPage from './pages/cultivo/listaTipoActividadPage';
 import ListarLotesPage from './pages/cultivo/ListaLotesPage';
 import ListaBancalPage from './pages/cultivo/ListaBancalPage';
 import ListaEspeciePage from './pages/cultivo/ListaEspeciePage';
