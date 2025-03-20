@@ -18,7 +18,6 @@ const BancalPage: React.FC = () => {
 
 
   const mutation = useRegistrarBancal();
-  const { data: lotes } = useLotes();
   const navigate = useNavigate()
 
 
@@ -41,7 +40,7 @@ const BancalPage: React.FC = () => {
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Bancal</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registro de Bancal</h2>
 
           <ReuInput
             label="Nombre"
