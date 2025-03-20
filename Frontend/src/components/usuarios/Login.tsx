@@ -1,13 +1,16 @@
 import React, { useState, FormEvent } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, IconButton, InputAdornment } from '@mui/material';
 import { motion } from 'framer-motion';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const { login } = useAuth();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -16,12 +19,31 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(email, password); 
+      await login(email, password);
     } catch (err) {
       setError('Error de autenticación. Verifica tus credenciales.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const textFieldStyles = {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: '#fff', // Fondo blanco
+      transition: 'all 0.3s ease-in-out',
+      '& fieldset': { borderColor: '#e2e8f0' },
+      '&:hover fieldset': { borderColor: '#cbd5e1' },
+      '&.Mui-focused fieldset': { borderColor: '#2ecc71' },
+      '& .MuiInputAdornment-root': {
+        backgroundColor: 'inherit', // Fondo uniforme con el campo
+        height: '100%',
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#a0aec0',
+      '&.Mui-focused': { color: '#2ecc71' },
+    },
   };
 
   return (
@@ -48,24 +70,7 @@ const Login: React.FC = () => {
           variant="outlined"
           fullWidth
           required
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              backgroundColor: '#f9fafb',
-              transition: 'all 0.3s ease-in-out',
-              '& fieldset': { borderColor: '#e2e8f0' },
-              '&:hover fieldset': { borderColor: '#cbd5e1' },
-              '&.Mui-focused fieldset': { borderColor: '#2ecc71' },
-              '&.Mui-focused': {
-                backgroundColor: '#fff',
-                boxShadow: '0 0 0 4px rgba(46, 204, 113, 0.1)',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: '#a0aec0',
-              '&.Mui-focused': { color: '#2ecc71' },
-            },
-          }}
+          sx={textFieldStyles}
         />
       </motion.div>
       <motion.div
@@ -74,31 +79,27 @@ const Login: React.FC = () => {
         transition={{ duration: 0.5, delay: 0.4 }}
       >
         <TextField
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           label="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           variant="outlined"
           fullWidth
           required
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              backgroundColor: '#f9fafb',
-              transition: 'all 0.3s ease-in-out',
-              '& fieldset': { borderColor: '#e2e8f0' },
-              '&:hover fieldset': { borderColor: '#cbd5e1' },
-              '&.Mui-focused fieldset': { borderColor: '#2ecc71' },
-              '&.Mui-focused': {
-                backgroundColor: '#fff',
-                boxShadow: '0 0 0 4px rgba(46, 204, 113, 0.1)',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: '#a0aec0',
-              '&.Mui-focused': { color: '#2ecc71' },
-            },
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
+          sx={textFieldStyles}
         />
       </motion.div>
       {error && (

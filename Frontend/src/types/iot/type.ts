@@ -6,3 +6,4 @@ export interface SensorData {
     fecha_medicion?: string;
     message?: string;
   }
+  

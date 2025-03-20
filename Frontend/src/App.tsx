@@ -48,7 +48,10 @@ import SensoresPage from './pages/iot/SensoresPage';
 import DatosMeteorologicosPage from './pages/iot/DatosMeteorologicosPage';  
 import BodegaInsumoNotifications from './components/inventario/BodegaInsumoNotifications';
 import BodegaHerramientaNotifications from './components/inventario/BodegaHerramientaNotifications';
-
+import ForgotPasswordPage from './pages/usuarios/ForgotPasswordPage';  
+import ResetPasswordPage from './pages/usuarios/ResetPasswordPage';  
+import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
+import ListarSensores from "@/components/Iot/ListarSensores";
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -57,6 +60,10 @@ const App: React.FC = () => {
       <AuthProvider>
         <Toaster position="top-right" reverseOrder={false} />
         <Routes>
+          <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
+          <Route path="/iot/listar-sensores" element={<ListarSensores />} />
+          <Route element={<ForgotPasswordPage />} path="/forgot-password" />  
+          <Route element={<ResetPasswordPage />} path="/reset-password/:token" />  
           <Route element={<LoginPage />} path="/login" />
           <Route element={<RegisterPage />} path="/register" />
           <Route path="/" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
