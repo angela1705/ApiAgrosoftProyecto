@@ -40,42 +40,44 @@ const menuItems = [
       { id: 11, label: "Tipo Actividad", path: "/cultivo/tipo_actividad/" },
       { id: 12, label: "Actividades", path: "/cultivo/actividad/" },
       { id: 13, label: "Programación", path: "/cultivo/programacion/" },
+      { id: 14, label: "Cosecha", path: "/cultivo/cosecha/" },
+
     ],
   },
-  { id: 14, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
+  { id: 15, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
   {
-    id: 15,
+    id: 16,
     label: "Plagas",
     icon: <FaBug />,
     subItems: [
-      { id: 16, label: "Tipo Plaga", path: "/cultivo/tipoplaga/"},
-      { id: 17, label: "Plaga", path: "/cultivo/plaga/"},
-      { id: 18, label: "Control", path: "/inventario/bodegaherramienta" },
+      { id: 17, label: "Tipo Plaga", path: "/cultivo/tipoplaga/"},
+      { id: 18, label: "Plaga", path: "/cultivo/plaga/"},
+      { id: 19, label: "Control", path: "/inventario/bodegaherramienta" },
 
     ],
   },  {
-    id: 19,
+    id: 20,
     label: "Inventario",
     icon: <FaBox />,
     subItems: [
-      { id: 20, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
-      { id: 21, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
-      { id: 22, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
-      { id: 23, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
-      { id: 24, label: "Insumos", path: "/inventario/insumo", icon: <FaBox /> },
+      { id: 21, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
+      { id: 22, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
+      { id: 23, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
+      { id: 24, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
+      { id: 25, label: "Insumos", path: "/inventario/insumo", icon: <FaBox /> },
     ],
   },
   {
-    id: 25,
+    id: 26,
     label: "IoT",
     icon: <GiProcessor />,
     subItems: [
-      { id: 26, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
-      { id: 27, label: "Sensores", path: "/iot/sensores", icon: <FaTachometerAlt /> },
-      { id: 28, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
+      { id: 27, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
+      { id: 28, label: "Sensores", path: "/iot/sensores", icon: <FaTachometerAlt /> },
+      { id: 29, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
-  { id: 29, label: "Docs", path: "/docs", icon: <FaUser /> },
+  { id: 30, label: "Docs", path: "/docs", icon: <FaUser /> },
 ];
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
