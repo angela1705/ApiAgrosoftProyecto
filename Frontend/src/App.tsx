@@ -30,6 +30,8 @@ import TipoPlagaPage from './pages/cultivo/TipoPlagaPage';
 import ListaTipoPlagaPage from './pages/cultivo/ListaTipoPlagaPage';
 import PlagaPage from './pages/cultivo/PlagaPage';
 import ListaPlagasPage from './pages/cultivo/ListaPlagaPage';
+import CosechaPage from './pages/cultivo/CosechaPage';
+import ListaCosechasPage from './pages/cultivo/ListaCosechaPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
 import BodegaPage from './pages/inventario/BodegaPage';
 import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
@@ -122,6 +124,8 @@ const App: React.FC = () => {
           <Route path="/cultivo/listartipoplaga/" element={<PrivateRoute><ListaTipoPlagaPage /></PrivateRoute>} />
           <Route path="/cultivo/plaga/" element={<PrivateRoute><PlagaPage /></PrivateRoute>} />
           <Route path="/cultivo/listarplaga/" element={<PrivateRoute><ListaPlagasPage /></PrivateRoute>} />
+          <Route path="/cultivo/cosecha/" element={<PrivateRoute><CosechaPage /></PrivateRoute>} />
+          <Route path="/cultivo/listarcosechas/" element={<PrivateRoute><ListaCosechasPage /></PrivateRoute>} />
           <Route path="/usuarios" element={<PrivateRoute><UsuariosPage /></PrivateRoute>} />
           <Route path="/iot/sensores" element={<PrivateRoute><SensoresPage /></PrivateRoute>} />
           <Route path="/iot/datosmetereologicos" element={<PrivateRoute><DatosMeteorologicosPage /></PrivateRoute>} />
