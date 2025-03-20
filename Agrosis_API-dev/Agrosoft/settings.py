@@ -139,7 +139,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_proyecto',
+        'NAME': 'agrosoft',
         'USER': 'postgres',
         'PASSWORD': 'adso2024',
         'HOST': 'localhost', 
@@ -237,3 +237,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'steventu06@gmail.com'
+EMAIL_HOST_PASSWORD = 'ytjb ipyp odsw ryqr' 
+DEFAULT_FROM_EMAIL = 'steventu06@gmail.com'

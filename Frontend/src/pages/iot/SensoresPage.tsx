@@ -1,5 +1,6 @@
-import { useDatosMeteorologicos } from "../../hooks/iot/useDatosMeteorologicos";
-import { SensorData } from "../../types/iot/type";
+import React from "react";
+import { useDatosMeteorologicos } from "@/hooks/iot/useDatosMeteorologicos";
+import { SensorData } from "@/types/iot/type";
 import DefaultLayout from "@/layouts/default";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 import { Link } from "react-router-dom";
@@ -42,12 +43,20 @@ export default function SensoresPage() {
         <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-semibold text-gray-700">Sensores Activos en Tiempo Real</h1>
-            <Link
-              to="/iot/datosmetereologicos"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Ver Datos Históricos
-            </Link>
+            <div className="space-x-4">
+              <Link
+                to="/iot/datosmetereologicos"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Ver Datos Históricos
+              </Link>
+              <Link
+                to="/iot/listar-sensores"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Sensores
+              </Link>
+            </div>
           </div>
           {isLoading ? (
             <p className="text-gray-600 text-center">Cargando datos de sensores...</p>

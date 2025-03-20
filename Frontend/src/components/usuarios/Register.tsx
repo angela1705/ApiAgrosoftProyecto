@@ -1,7 +1,9 @@
 import React, { useState, FormEvent } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, IconButton, InputAdornment } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Register: React.FC = () => {
   const [nombre, setNombre] = useState<string>('');
@@ -12,6 +14,7 @@ const Register: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -52,6 +55,25 @@ const Register: React.FC = () => {
     }
   };
 
+  const textFieldStyles = {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: '#fff', // Fondo blanco
+      transition: 'all 0.3s ease-in-out',
+      '& fieldset': { borderColor: '#e2e8f0' },
+      '&:hover fieldset': { borderColor: '#cbd5e1' },
+      '&.Mui-focused fieldset': { borderColor: '#2ecc71' },
+      '& .MuiInputAdornment-root': {
+        backgroundColor: 'inherit', // Fondo uniforme con el campo
+        height: '100%',
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#a0aec0',
+      '&.Mui-focused': { color: '#2ecc71' },
+    },
+  };
+
   return (
     <Box
       component="form"
@@ -63,7 +85,6 @@ const Register: React.FC = () => {
         width: '100%',
       }}
     >
-      {/* Primera fila: Nombre y Apellido */}
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
           <TextField
@@ -72,6 +93,7 @@ const Register: React.FC = () => {
             onChange={(e) => setNombre(e.target.value)}
             fullWidth
             required
+            sx={textFieldStyles}
           />
         </motion.div>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
@@ -81,20 +103,34 @@ const Register: React.FC = () => {
             onChange={(e) => setApellido(e.target.value)}
             fullWidth
             required
+            sx={textFieldStyles}
           />
         </motion.div>
       </Box>
 
-      {/* Segunda fila: Contraseña y Username */}
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
           <TextField
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             label="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={textFieldStyles}
           />
         </motion.div>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
@@ -104,11 +140,11 @@ const Register: React.FC = () => {
             onChange={(e) => setUsername(e.target.value)}
             fullWidth
             required
+            sx={textFieldStyles}
           />
         </motion.div>
       </Box>
 
-      {/* Tercera fila: Email (ancho completo) */}
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
         <TextField
           type="email"
@@ -117,10 +153,10 @@ const Register: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
           required
+          sx={textFieldStyles}
         />
       </motion.div>
 
-      {/* Mensajes de error o éxito */}
       {error && (
         <Typography variant="body2" sx={{ color: '#f56565', textAlign: 'center', fontSize: '0.875rem' }}>
           {error}
@@ -132,7 +168,6 @@ const Register: React.FC = () => {
         </Typography>
       )}
 
-      {/* Botón de registro */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1 }}>
         <Button
           type="submit"
@@ -145,7 +180,6 @@ const Register: React.FC = () => {
         </Button>
       </motion.div>
 
-      {/* Enlace a login */}
       <Typography
         variant="body2"
         sx={{ textAlign: 'center', color: '#718096', fontSize: '0.9rem', mt: 1 }}
