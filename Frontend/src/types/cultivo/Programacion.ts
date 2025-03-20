@@ -1,7 +1,7 @@
 export interface Programacion {
     id?: number;
     ubicacion: string;
-    hora_prog: string; // Puedes usar `Date` si prefieres manejar fechas directamente
-    fecha_prog: string; // Puedes usar `Date` si prefieres manejar fechas directamente
+    hora_prog: string; 
+    fecha_prog: string;
     estado: boolean;
 }

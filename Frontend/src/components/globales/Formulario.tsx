@@ -14,9 +14,9 @@ const Formulario: React.FC<FormContainerProps> = ({ title, children, onSubmit, c
   };
 
   return (
-    <div className={`flex justify-center items-center min-h-screen ${className}`}>
-      <div className="w-full max-w-md shadow-lg rounded-2xl bg-white p-8">
-        <h1 id="form-title" className="text-center text-2xl font-bold text-gray-900">
+    <div className={`flex justify-center items-center min-h-screen${className}`}>
+      <div className="w-full max-w-md rounded-2xl p-8 transform transition-all duration-300 hover:shadow-3xl">
+        <h1 id="form-title" className="text-center text-3xl font-extrabold text-gray-900 mb-8">
           {title}
         </h1>
         <form className="space-y-6" onSubmit={handleSubmit} aria-labelledby="form-title">
