@@ -19,6 +19,7 @@ const BancalPage: React.FC = () => {
 
   const mutation = useRegistrarBancal();
   const navigate = useNavigate()
+  const {data : lotes} = useLotes()
 
 
 
