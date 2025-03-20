@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { addToast } from "@heroui/react";
 import { Venta } from "@/types/finanzas/Venta";
 
 const API_URL = "http://127.0.0.1:8000/finanzas/venta/";
@@ -7,6 +8,8 @@ const API_URL = "http://127.0.0.1:8000/finanzas/venta/";
 
 const fetchVentas = async (): Promise<Venta[]> => {
     const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+
     const response = await axios.get(API_URL, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -25,6 +28,7 @@ export const useVentas = () => {
 
 const registrarVenta = async (venta: Venta) => {
     const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
     const response = await axios.post(API_URL, venta, {
         headers: {
             "Content-Type": "application/json",

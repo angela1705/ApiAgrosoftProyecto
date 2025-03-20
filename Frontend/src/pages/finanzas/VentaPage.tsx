@@ -3,7 +3,6 @@ import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useVentas, useRegistrarVenta, useActualizarVenta, useEliminarVenta } from "@/hooks/finanzas/useVentas";
 import { useCultivos } from "@/hooks/finanzas/useCultivos";
-import VentaNotifications from "@/components/finanzas/VentaNotifications";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 
 const VentaPage: React.FC = () => {

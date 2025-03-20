@@ -44,7 +44,14 @@ const menuItems = [
 
     ],
   },
-  { id: 15, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
+  { id: 15, 
+    label: "Finanzas",
+     path: "/finanzas",
+     icon: <FaDollarSign />,
+    subItems:[
+      { id: 31, label: "Salario", path: "/finanzas/salario/" },
+      { id: 32, label: "Ventas", path: "/finanzas/ventas/" },
+    ] },
   {
     id: 16,
     label: "Plagas",

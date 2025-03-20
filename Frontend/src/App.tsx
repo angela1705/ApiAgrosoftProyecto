@@ -52,6 +52,8 @@ import ForgotPasswordPage from './pages/usuarios/ForgotPasswordPage';
 import ResetPasswordPage from './pages/usuarios/ResetPasswordPage';  
 import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
 import ListarSensores from "@/components/Iot/ListarSensores";
+import SalarioPage from './pages/finanzas/SalarioPage';
+import VentaPage from './pages/finanzas/VentaPage';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -108,6 +110,9 @@ const App: React.FC = () => {
               </PrivateRoute>
             } 
           />
+          <Route path="/finanzas/salario/" element={<PrivateRoute><SalarioPage /></PrivateRoute>} />
+          <Route path="/finanzas/venta/" element={<PrivateRoute><VentaPage /></PrivateRoute>} />
+          
           <Route path="/inventario/insumos/" element={<PrivateRoute><InsumoPage /></PrivateRoute>} />
           <Route path="/inventario/listarinsumos/" element={<PrivateRoute><ListaInsumoPage /></PrivateRoute>} />
           <Route path="/docs" element={<PrivateRoute><DocsPage /></PrivateRoute>} />

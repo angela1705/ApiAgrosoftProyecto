@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
-import { useSalarios, useRegistrarSalario, useActualizarSalario, useEliminarSalario } from "@/hooks/finanzas/useSalarios";
-import SalarioNotifications from "@/components/finanzas/SalarioNotifications";
+import { useSalarios, useRegistrarSalario, useActualizarSalario, useEliminarSalario } from "@/hooks/finanzas/useSalario";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import ReuModal from "@/components/globales/ReuModal";
 
 const SalarioPage: React.FC = () => {
     const [salario, setSalario] = useState({
@@ -11,21 +11,39 @@ const SalarioPage: React.FC = () => {
         valor_por_hora: 0,
     });
 
+    const [selectedSalario, setSelectedSalario] = useState<any>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
     const mutation = useRegistrarSalario();
+    const actualizarMutation = useActualizarSalario();
+    const eliminarMutation = useEliminarSalario();
+    
     const { data: salarios, isLoading } = useSalarios();
 
     const columns = [
         { name: "Salario Base", uid: "salario_base" },
         { name: "Valor por Hora", uid: "valor_por_hora" },
-        { name: "Acciones", uid: "acciones" },
+        
     ];
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSalario((prev) => ({
-            ...prev,
-            [name]: Number(value),
-        }));
+
+    const handleEdit = (salario: any) => {
+        setSelectedSalario(salario);
+        setSalario(salario);
+        setIsEditModalOpen(true);
+    };
+
+    const handleDelete = (salario: any) => {
+        setSelectedSalario(salario);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (selectedSalario && selectedSalario.id !== undefined) {
+            eliminarMutation.mutate(selectedSalario.id);
+            setIsDeleteModalOpen(false);
+        }
     };
 
     return (
@@ -38,16 +56,16 @@ const SalarioPage: React.FC = () => {
                         label="Salario Base"
                         type="number"
                         value={salario.salario_base}
-                        onChange={handleChange}
-                        name="salario_base"
+                        onChange={(e) => setSalario({ ...salario, salario_base:Number(e.target.value ) })}
+                
                     />
 
                     <ReuInput
                         label="Valor por Hora"
                         type="number"
                         value={salario.valor_por_hora}
-                        onChange={handleChange}
-                        name="valor_por_hora"
+                        onChange={(e) => setSalario({ ...salario, valor_por_hora: Number(e.target.value) })}
+                        
                     />
 
                     <button
@@ -82,17 +100,14 @@ const SalarioPage: React.FC = () => {
                                         <TableCell>
                                             <button
                                                 className="text-green-500 hover:underline mr-2"
-                                                onClick={() => {
-                                                    // Lógica para editar
-                                                }}
+                                                onClick={() => handleEdit(salario)}
+                                                
                                             >
                                                 Editar
                                             </button>
                                             <button
                                                 className="text-red-500 hover:underline"
-                                                onClick={() => {
-                                                    // Lógica para eliminar
-                                                }}
+                                                onClick={() => handleDelete(salario)}
                                             >
                                                 Eliminar
                                             </button>
@@ -104,7 +119,54 @@ const SalarioPage: React.FC = () => {
                     )}
                 </div>
             </div>
-            <SalarioNotifications userId={1} />
+
+
+            <ReuModal
+                isOpen={isEditModalOpen}
+                onOpenChange={setIsEditModalOpen}
+                title="Editar Salario"
+                onConfirm={() => {
+                    if (selectedSalario && selectedSalario.id !== undefined) {
+                        actualizarMutation.mutate({
+                            id: selectedSalario.id,
+                            salario,
+                        });
+                        setIsEditModalOpen(false);
+                    }
+                }}
+            >
+                 <ReuInput
+                        label="Salario Base"
+                        type="number"
+                        value={salario.salario_base}
+                        onChange={(e) => setSalario({ ...salario, salario_base:Number(e.target.value ) })}
+                
+                    />
+
+                    <ReuInput
+                        label="Valor por Hora"
+                        type="number"
+                        value={salario.valor_por_hora}
+                        onChange={(e) => setSalario({ ...salario, valor_por_hora: Number(e.target.value) })}
+                        
+                    />
+            </ReuModal>
+                
+                    
+
+
+            <ReuModal
+                isOpen={isDeleteModalOpen}
+                onOpenChange={setIsDeleteModalOpen}
+                title="¿Estás seguro de eliminar este salario?"
+                onConfirm={handleConfirmDelete}
+            >
+                <p>Esta acción es irreversible.</p>
+            </ReuModal>
+
+
+
+            
         </DefaultLayout>
     );
 };
