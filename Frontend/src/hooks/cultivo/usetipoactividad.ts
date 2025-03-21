@@ -20,7 +20,7 @@ const fetchTipoActividad = async (): Promise<TipoActividad[]> => {
   return response.data;
 };
 
-const registrarTipoActividad = async (tipoEspecie: TipoActividad) => {
+const registrarTipoActividad = async (tipoActividad: TipoActividad) => {
   const token = localStorage.getItem("access_token");
 
   if (!token) {
@@ -28,12 +28,12 @@ const registrarTipoActividad = async (tipoEspecie: TipoActividad) => {
   }
 
   const formData = new FormData();
-  formData.append("nombre", tipoEspecie.nombre);
-  formData.append("descripcion", tipoEspecie.descripcion);
+  formData.append("nombre", tipoActividad.nombre);
+  formData.append("descripcion", tipoActividad.descripcion);
 
   return axios.post(API_URL, formData, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
@@ -41,7 +41,7 @@ const registrarTipoActividad = async (tipoEspecie: TipoActividad) => {
 
 export const useTipoActividad = () => {
   return useQuery<TipoActividad[], Error>({
-    queryKey: ["tipoEspecies"],
+    queryKey: ["tipoActividades"],
     queryFn: fetchTipoActividad,
   });
 };

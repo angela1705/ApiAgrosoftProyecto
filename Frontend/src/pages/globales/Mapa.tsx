@@ -30,7 +30,7 @@ const MapaPage: React.FC = () => {
               attribution='&copy; OpenStreetMap contributors'
             />
             <Marker position={position as [number, number]} icon={customIcon}>
-              <Popup>📍 Barranquilla, Colombia</Popup>
+              <Popup>📍 Pitalito - Huila</Popup>
             </Marker>
           </MapContainer>
         </div>

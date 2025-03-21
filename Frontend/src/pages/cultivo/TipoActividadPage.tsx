@@ -12,16 +12,7 @@ const TipoActividadPage: React.FC = () => {
   });
 
   const navigate = useNavigate();
-
   const mutation = useRegistrarTipoActividad();
-
-
-
-
-
-
-
-
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
