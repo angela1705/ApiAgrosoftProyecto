@@ -1,42 +1,36 @@
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
+from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from apps.Usuarios.usuarios.models import Usuarios, PasswordResetToken
 from apps.Usuarios.usuarios.api.serializer import UsuariosSerializer, RegistroUsuarioSerializer
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
-from django.utils import timezone
-from datetime import timedelta
 
-class UsuariosViewSet(viewsets.ModelViewSet):
+class UsuariosViewSet(ModelViewSet):
     queryset = Usuarios.objects.all()
     serializer_class = UsuariosSerializer
-    permission_classes = [IsAuthenticated]  
 
-    def get_permissions(self):
-        """Sobrescribe permisos según la acción."""
-        if self.action in ['create', 'password_reset_request', 'password_reset_confirm']:
-            return [AllowAny()]
-        return [IsAuthenticated()]
-
-    # Acción por defecto del ModelViewSet para crear  
-    def create(self, request, *args, **kwargs):
+class RegistroUsuarioView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
         serializer = RegistroUsuarioSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Acción personalizada para obtener el usuario actual  
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
-    def me(self, request):
-        serializer = UsuariosSerializer(request.user)
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        serializer = UsuariosSerializer(user)
         return Response(serializer.data)
 
-    # Acción personalizada para solicitar restablecimiento de contraseña  
-    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
-    def password_reset_request(self, request):
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
         email = request.data.get('email')
         if not email:
             return Response({'error': 'El correo es requerido'}, status=status.HTTP_400_BAD_REQUEST)
@@ -58,9 +52,9 @@ class UsuariosViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': f'Error del servidor: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # Acción personalizada para confirmar restablecimiento de contraseña  
-    @action(detail=False, methods=['post'], url_path='password-reset-confirm/(?P<token>[^/.]+)', permission_classes=[AllowAny])
-    def password_reset_confirm(self, request, token=None):
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request, token):
         password = request.data.get('password')
         if not password:
             return Response({'error': 'La contraseña es requerida'}, status=status.HTTP_400_BAD_REQUEST)
@@ -78,10 +72,10 @@ class UsuariosViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Token inválido'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': f'Error del servidor: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
- 
-    # Acción personalizada para cambiar contraseña 
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
-    def change_password(self, request):
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
         user = request.user
         current_password = request.data.get('current_password')
         new_password = request.data.get('new_password')
