@@ -57,6 +57,11 @@ import ResetPasswordPage from './pages/usuarios/ResetPasswordPage';
 import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
 import ListarSensores from "@/components/Iot/ListarSensores";
 import Mapa from './pages/globales/Mapa';
+import SalarioPage from './pages/finanzas/SalarioPage';
+import VentaPage from './pages/finanzas/VentaPage';
+import ListaVentaPage from './pages/finanzas/ListaVentaPage';
+import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
+
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -113,6 +118,11 @@ const App: React.FC = () => {
               </PrivateRoute>
             } 
           />
+          
+          <Route path="/finanzas/salario/" element={<PrivateRoute><SalarioPage /></PrivateRoute>} />
+          <Route path="/finanzas/listarsalarios/" element={<PrivateRoute><ListaSalarioPage /></PrivateRoute>} /> {/* Nueva ruta */}
+          <Route path="/finanzas/ventas/" element={<PrivateRoute><VentaPage /></PrivateRoute>} />
+          <Route path="/finanzas/listarventas/" element={<PrivateRoute><ListaVentaPage /></PrivateRoute>} />
           <Route path="/inventario/insumos/" element={<PrivateRoute><InsumoPage /></PrivateRoute>} />
           <Route path="/inventario/listarinsumos/" element={<PrivateRoute><ListaInsumoPage /></PrivateRoute>} />
           <Route path="/docs" element={<PrivateRoute><DocsPage /></PrivateRoute>} />
