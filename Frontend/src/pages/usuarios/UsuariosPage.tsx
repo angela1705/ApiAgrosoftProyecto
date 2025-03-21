@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useMemo } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useUsuarios, UsuarioUpdate } from "@/hooks/usuarios/useUsuarios";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
@@ -10,25 +10,60 @@ import { Navigate } from "react-router-dom";
 const UsuariosPage: React.FC = () => {
   const { user } = useAuth();
   const { data: usuarios = [], isLoading, error, updateUsuario, deleteUsuario, roles = [], isLoadingRoles } = useUsuarios();
-  console.log("Usuarios cargados:", usuarios);
-  console.log("Roles disponibles:", roles);
-  const [editUsuario, setEditUsuario] = useState<null | { id: number; nombre: string; apellido: string; email: string; username?: string; rol: { id: number; rol: string } | null }>(null);
+  
+  const [editUsuario, setEditUsuario] = useState<{ id: number; nombre: string; apellido: string; email: string; username?: string; rol: { id: number; rol: string } | null } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const usersPerPage = 10;
 
   if (!user || user.rol?.rol.toLowerCase() !== "administrador") {
     return <Navigate to="/perfil" replace />;
-}
+  }
 
   const columns = [
-    { name: "ID", uid: "id" },
+    { name: "IDENTIFICACIÓN", uid: "id" },
     { name: "Nombre", uid: "nombre" },
     { name: "Apellido", uid: "apellido" },
-    { name: "Email", uid: "email" },
-    { name: "Username", uid: "username" },
+    { name: "Correo electrónico", uid: "email" },
+    { name: "Nombre de usuario", uid: "username" },
     { name: "Rol", uid: "rol" },
     { name: "Acciones", uid: "acciones" },
   ];
+
+  const filteredUsuarios = useMemo(() => {
+    let result = [...usuarios];
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      result = result.filter((u) =>
+        String(u.id).includes(lowerSearch) ||
+        u.nombre.toLowerCase().includes(lowerSearch) ||
+        u.apellido.toLowerCase().includes(lowerSearch) ||
+        u.email.toLowerCase().includes(lowerSearch) ||
+        (u.username && u.username.toLowerCase().includes(lowerSearch)) ||
+        (u.rol && u.rol.rol.toLowerCase().includes(lowerSearch))
+      );
+    }
+    result.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    return result;
+  }, [usuarios, searchTerm]);
+
+  const totalPages = Math.ceil(filteredUsuarios.length / usersPerPage);
+  const paginatedUsuarios = useMemo(() => {
+    const start = (currentPage - 1) * usersPerPage;
+    const end = start + usersPerPage;
+    return filteredUsuarios.slice(start, end);
+  }, [filteredUsuarios, currentPage, usersPerPage]);
+
+  // Funciones de paginación sin límite
+  const handleNextPage = () => {
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
 
   const handleEdit = (usuario: typeof editUsuario) => {
     setEditUsuario(usuario ? { ...usuario } : null);
@@ -56,13 +91,11 @@ const UsuariosPage: React.FC = () => {
         username: editUsuario.username,
         rol_id: editUsuario.rol ? editUsuario.rol.id : null,
       };
-      console.log("Enviando al backend:", usuarioToUpdate);
       await updateUsuario(usuarioToUpdate);
       setEditUsuario(null);
       setEditError(null);
     } catch (err: any) {
-      console.error("Error del backend:", err.response?.data);
-      setEditError(err.response?.data?.detail || "No se pudo actualizar el usuario. Verifica los datos.");
+      setEditError(err.response?.data?.detail || "No se pudo actualizar el usuario.");
     }
   };
 
@@ -77,69 +110,96 @@ const UsuariosPage: React.FC = () => {
     }
   };
 
+  console.log("Rendering pagination - Current page:", currentPage, "Total pages:", totalPages);
+
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Usuarios</h2>
+        <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-700">Lista de Usuarios</h2>
+            <div className="w-64">
+              <TextField
+                label="Buscar"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                fullWidth
+                variant="outlined"
+                size="small"
+                placeholder="ID, nombre, email..."
+              />
+            </div>
+          </div>
+
           {isLoading ? (
-            <p className="text-gray-600">Cargando usuarios...</p>
+            <p className="text-gray-600 text-center">Cargando usuarios...</p>
           ) : error ? (
-            <p className="text-red-500">Error al cargar usuarios: {error.message}</p>
-          ) : usuarios.length === 0 ? (
-            <p className="text-gray-600">No hay usuarios disponibles.</p>
+            <p className="text-red-500 text-center">Error al cargar usuarios: {error.message}</p>
+          ) : filteredUsuarios.length === 0 ? (
+            <p className="text-gray-600 text-center">No hay usuarios disponibles.</p>
           ) : (
-            <Table>
-              <TableHeader>
-                {columns.map((col) => (
-                  <TableColumn key={col.uid}>{col.name}</TableColumn>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {usuarios.map((usuario) => (
-                  <TableRow key={usuario.id}>
-                    <TableCell>{usuario.id}</TableCell>
-                    <TableCell>{usuario.nombre}</TableCell>
-                    <TableCell>{usuario.apellido}</TableCell>
-                    <TableCell>{usuario.email}</TableCell>
-                    <TableCell>{usuario.username || "N/A"}</TableCell>
-                    <TableCell>{usuario.rol?.rol || "Sin rol"}</TableCell>
-                    <TableCell>
-                      <button
-                        className="text-green-500 hover:underline mr-2"
-                        onClick={() => handleEdit(usuario)}
-                      >
-                        Editar
-                      </button>
-                      {confirmDelete === usuario.id ? (
-                        <span className="text-gray-700">
-                          ¿Seguro?{" "}
-                          <button
-                            className="text-red-500 hover:underline ml-1"
-                            onClick={() => handleDelete(usuario.id)}
-                          >
-                            Sí
-                          </button>{" "}
-                          <button
-                            className="text-green-500 hover:underline ml-1"
-                            onClick={() => setConfirmDelete(null)}
-                          >
-                            No
+            <>
+              <Table aria-label="Tabla de usuarios">
+                <TableHeader>
+                  {columns.map((col) => (
+                    <TableColumn key={col.uid}>{col.name}</TableColumn>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {paginatedUsuarios.length === 0 && currentPage > totalPages ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-gray-600">
+                        No hay más datos disponibles.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedUsuarios.map((usuario) => (
+                      <TableRow key={usuario.id}>
+                        <TableCell>{usuario.id}</TableCell>
+                        <TableCell>{usuario.nombre}</TableCell>
+                        <TableCell>{usuario.apellido}</TableCell>
+                        <TableCell>{usuario.email}</TableCell>
+                        <TableCell>{usuario.username || "N/A"}</TableCell>
+                        <TableCell>{usuario.rol?.rol || "Sin rol"}</TableCell>
+                        <TableCell>
+                          <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(usuario)}>
+                            Editar
                           </button>
-                        </span>
-                      ) : (
-                        <button
-                          className="text-red-500 hover:underline"
-                          onClick={() => setConfirmDelete(usuario.id)}
-                        >
-                          Eliminar
-                        </button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          {confirmDelete === usuario.id ? (
+                            <span className="text-gray-700">
+                              ¿Seguro?{" "}
+                              <button className="text-red-500 hover:underline ml-1" onClick={() => handleDelete(usuario.id)}>
+                                Sí
+                              </button>{" "}
+                              <button className="text-green-500 hover:underline ml-1" onClick={() => setConfirmDelete(null)}>
+                                No
+                              </button>
+                            </span>
+                          ) : (
+                            <button className="text-red-500 hover:underline" onClick={() => setConfirmDelete(usuario.id)}>
+                              Eliminar
+                            </button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+              {totalPages > 0 && (
+                <div className="flex justify-center mt-4 gap-4" key={currentPage}>
+                  <Button variant="outlined" onClick={handlePrevPage} disabled={currentPage === 1}>
+                    ← Anterior
+                  </Button>
+                  <span className="self-center text-gray-700">
+                    Página {currentPage} de {totalPages}
+                  </span>
+                  <Button variant="outlined" onClick={handleNextPage}>
+                    Siguiente →
+                  </Button>
+                </div>
+              )}
+            </>
           )}
 
           {editUsuario && (

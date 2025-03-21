@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from apps.Usuarios.usuarios.api.views import (
+    RegistroUsuarioView, CurrentUserView, PasswordResetRequestView, PasswordResetConfirmView, ChangePasswordView)
 from apps.Usuarios.permisos.api.routers import PermisosRouter
 from apps.Usuarios.rol_permiso.api.routers import RolPermisoRouter
 from apps.Usuarios.roles_acciones.api.routers import RolesAccionesRouter
@@ -44,7 +48,17 @@ from apps.Inventario.herramientas.api.routers import herramientaRouter
 from apps.Inventario.insumos.api.routers import insumoRouter
 from apps.Iot.datos_meteorologicos.api.routers import Datos_metereologicosRouter
 from apps.Iot.sensores.api.routers import SensoresRouter
-
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Documentación API",
+        default_version='v0.1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+)
 router = DefaultRouter()
 routerUsuarios = DefaultRouter()
 routerCultivo = DefaultRouter()
@@ -114,7 +128,6 @@ schema_view = get_schema_view(
    ),
    public=True,
 )
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
@@ -127,6 +140,9 @@ urlpatterns = [
     path('inventario/', include(routerInventario.urls)),
     path('usuarios/registro/', RegistroUsuarioView.as_view(), name='registro_usuario'),
     path('usuarios/me/', CurrentUserView.as_view(), name='current_user'),
+    path('usuarios/password_reset/', PasswordResetRequestView.as_view(), name='password_reset'),
+    path('usuarios/change_password/', ChangePasswordView.as_view(), name='change_password'),
+    path('usuarios/password_reset_confirm/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

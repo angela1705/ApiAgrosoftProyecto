@@ -18,8 +18,8 @@ const BancalPage: React.FC = () => {
 
 
   const mutation = useRegistrarBancal();
-  const { data: lotes } = useLotes();
   const navigate = useNavigate()
+  const {data : lotes} = useLotes()
 
 
 
@@ -41,7 +41,7 @@ const BancalPage: React.FC = () => {
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Bancal</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registro de Bancal</h2>
 
           <ReuInput
             label="Nombre"
@@ -113,13 +113,13 @@ const BancalPage: React.FC = () => {
           >
             {mutation.isPending ? "Registrando..." : "Guardar"}
           </button>
-        </div>
-        <button
+          <button
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
             onClick={() => navigate("/cultivo/listarbancal/")}
           >
             Listar Bancales
           </button>
+        </div>
       </div>
 
     </DefaultLayout>

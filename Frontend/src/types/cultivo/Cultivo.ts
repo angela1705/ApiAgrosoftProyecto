@@ -1,9 +1,9 @@
 export interface Cultivo {
   id?: number;
-  fk_especie: number; // ID de la especie
-  fk_bancal: number; // ID del bancal
+  fk_especie: number; 
+  fk_bancal: number; 
   nombre: string;
   unidad_de_medida?: string;
   activo: boolean;
-  fechaSiembra: string; // Formato: YYYY-MM-DD
+  fechaSiembra: string; 
 }
