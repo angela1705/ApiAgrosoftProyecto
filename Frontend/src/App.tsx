@@ -34,6 +34,8 @@ import CosechaPage from './pages/cultivo/CosechaPage';
 import ListaCosechasPage from './pages/cultivo/ListaCosechaPage';
 import TipoControlPage from './pages/cultivo/TipoControlPage';
 import ListaTipoControlPage from './pages/cultivo/ListaTipoControlPage';
+import ProductosControlPage from './pages/cultivo/ProductosControlPage';
+import ListaProductoControlPage from './pages/cultivo/ListaProductosControlPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
 import BodegaPage from './pages/inventario/BodegaPage';
 import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
@@ -138,6 +140,8 @@ const App: React.FC = () => {
           <Route path="/cultivo/listarcosechas/" element={<PrivateRoute><ListaCosechasPage /></PrivateRoute>} />
           <Route path="/cultivo/tipo_control/" element={<PrivateRoute><TipoControlPage /></PrivateRoute>} />
           <Route path="/cultivo/listartipocontrol/" element={<PrivateRoute><ListaTipoControlPage /></PrivateRoute>} />
+          <Route path="/cultivo/productoscontrol/" element={<PrivateRoute><ProductosControlPage /></PrivateRoute>} />
+          <Route path="/cultivo/listarproductoscontrol/" element={<PrivateRoute><ListaProductoControlPage /></PrivateRoute>} />
 
           <Route path="/usuarios" element={<PrivateRoute><UsuariosPage /></PrivateRoute>} />
           <Route path="/iot/sensores" element={<PrivateRoute><SensoresPage /></PrivateRoute>} />
