@@ -52,8 +52,12 @@ import ForgotPasswordPage from './pages/usuarios/ForgotPasswordPage';
 import ResetPasswordPage from './pages/usuarios/ResetPasswordPage';  
 import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
 import ListarSensores from "@/components/Iot/ListarSensores";
+<<<<<<< HEAD
 import SalarioPage from './pages/finanzas/SalarioPage';
 import VentaPage from './pages/finanzas/VentaPage';
+=======
+import Mapa from './pages/globales/Mapa';
+>>>>>>> 1f66cc5778e312e7cfce8b30484a802f05c3f268
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -142,6 +146,8 @@ const App: React.FC = () => {
           <Route path="/iot/sensores" element={<PrivateRoute><SensoresPage /></PrivateRoute>} />
           <Route path="/iot/datosmetereologicos" element={<PrivateRoute><DatosMeteorologicosPage /></PrivateRoute>} />
           <Route path="/pricing" element={<PrivateRoute><PricingPage /></PrivateRoute>} />
+          <Route path="/mapa" element={<PrivateRoute><Mapa /></PrivateRoute>} />
+
           <Route path="/blog" element={<PrivateRoute><BlogPage /></PrivateRoute>} />
           <Route path="/about" element={<PrivateRoute><AboutPage /></PrivateRoute>} />
           <Route path="*" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
