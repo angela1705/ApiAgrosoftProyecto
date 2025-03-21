@@ -132,11 +132,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-<<<<<<< HEAD
         'NAME': 'apidiego',
-=======
-        'NAME': 'agrosoft_proyecto',
->>>>>>> 1f66cc5778e312e7cfce8b30484a802f05c3f268
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost', 

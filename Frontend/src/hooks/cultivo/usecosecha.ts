@@ -26,7 +26,7 @@ const registrarCosecha = async (cosecha: Cosecha) => {
 
   return axios.post(API_URL, formData, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type":"application/json",
       Authorization: `Bearer ${token}`,
     },
   });

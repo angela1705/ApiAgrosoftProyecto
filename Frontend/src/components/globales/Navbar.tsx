@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/button";
@@ -46,11 +44,10 @@ const menuItems = [
   },
   { id: 15, 
     label: "Finanzas",
-     path: "/finanzas",
      icon: <FaDollarSign />,
     subItems:[
-      { id: 31, label: "Salario", path: "/finanzas/salario/" },
-      { id: 32, label: "Ventas", path: "/finanzas/ventas/" },
+      { id: 34, label: "Salario", path: "/finanzas/salario/" },
+      { id: 35, label: "Ventas", path: "/finanzas/ventas/" },
     ] },
   {
     id: 16,
@@ -59,32 +56,38 @@ const menuItems = [
     subItems: [
       { id: 17, label: "Tipo Plaga", path: "/cultivo/tipoplaga/"},
       { id: 18, label: "Plaga", path: "/cultivo/plaga/"},
-      { id: 19, label: "Control", path: "/inventario/bodegaherramienta" },
+      { id: 19, label: "Control", path: "/cultivo/control/" },
+      { id: 20, label: "Tipo Control", path: "/cultivo/tipo_control/" },
+      { id: 21, label: "Afecciones", path: "/cultivo/afecciones/" },
+      { id: 22, label: "Productos Control", path: "/cultivo/productoscontrol/" },
+
+
+
 
     ],
   },  {
-    id: 20,
+    id: 23,
     label: "Inventario",
     icon: <FaBox />,
     subItems: [
-      { id: 21, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
-      { id: 22, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
-      { id: 23, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
-      { id: 24, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
-      { id: 25, label: "Insumos", path: "/inventario/insumo", icon: <FaBox /> },
+      { id: 24, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
+      { id: 25, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
+      { id: 26, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
+      { id: 27, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
+      { id: 28, label: "Insumos", path: "/inventario/insumo", icon: <FaBox /> },
     ],
   },
   {
-    id: 26,
+    id: 29,
     label: "IoT",
     icon: <GiProcessor />,
     subItems: [
-      { id: 27, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
-      { id: 28, label: "Sensores", path: "/iot/sensores", icon: <FaTachometerAlt /> },
-      { id: 29, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
+      { id: 30, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
+      { id: 31, label: "Sensores", path: "/iot/sensores", icon: <FaTachometerAlt /> },
+      { id: 32, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
-  { id: 30, label: "Docs", path: "/docs", icon: <FaUser /> },
+  { id: 33, label: "Docs", path: "/docs", icon: <FaUser /> },
 ];
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {

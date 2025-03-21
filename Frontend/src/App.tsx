@@ -32,6 +32,10 @@ import PlagaPage from './pages/cultivo/PlagaPage';
 import ListaPlagasPage from './pages/cultivo/ListaPlagaPage';
 import CosechaPage from './pages/cultivo/CosechaPage';
 import ListaCosechasPage from './pages/cultivo/ListaCosechaPage';
+import TipoControlPage from './pages/cultivo/TipoControlPage';
+import ListaTipoControlPage from './pages/cultivo/ListaTipoControlPage';
+import ProductosControlPage from './pages/cultivo/ProductosControlPage';
+import ListaProductoControlPage from './pages/cultivo/ListaProductosControlPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
 import BodegaPage from './pages/inventario/BodegaPage';
 import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
@@ -52,12 +56,12 @@ import ForgotPasswordPage from './pages/usuarios/ForgotPasswordPage';
 import ResetPasswordPage from './pages/usuarios/ResetPasswordPage';  
 import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
 import ListarSensores from "@/components/Iot/ListarSensores";
-<<<<<<< HEAD
+import Mapa from './pages/globales/Mapa';
 import SalarioPage from './pages/finanzas/SalarioPage';
 import VentaPage from './pages/finanzas/VentaPage';
-=======
-import Mapa from './pages/globales/Mapa';
->>>>>>> 1f66cc5778e312e7cfce8b30484a802f05c3f268
+import ListaVentaPage from './pages/finanzas/ListaVentaPage';
+import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
+
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -114,9 +118,11 @@ const App: React.FC = () => {
               </PrivateRoute>
             } 
           />
-          <Route path="/finanzas/salario/" element={<PrivateRoute><SalarioPage /></PrivateRoute>} />
-          <Route path="/finanzas/venta/" element={<PrivateRoute><VentaPage /></PrivateRoute>} />
           
+          <Route path="/finanzas/salario/" element={<PrivateRoute><SalarioPage /></PrivateRoute>} />
+          <Route path="/finanzas/listarsalarios/" element={<PrivateRoute><ListaSalarioPage /></PrivateRoute>} /> {/* Nueva ruta */}
+          <Route path="/finanzas/ventas/" element={<PrivateRoute><VentaPage /></PrivateRoute>} />
+          <Route path="/finanzas/listarventas/" element={<PrivateRoute><ListaVentaPage /></PrivateRoute>} />
           <Route path="/inventario/insumos/" element={<PrivateRoute><InsumoPage /></PrivateRoute>} />
           <Route path="/inventario/listarinsumos/" element={<PrivateRoute><ListaInsumoPage /></PrivateRoute>} />
           <Route path="/docs" element={<PrivateRoute><DocsPage /></PrivateRoute>} />
@@ -142,6 +148,11 @@ const App: React.FC = () => {
           <Route path="/cultivo/listarplaga/" element={<PrivateRoute><ListaPlagasPage /></PrivateRoute>} />
           <Route path="/cultivo/cosecha/" element={<PrivateRoute><CosechaPage /></PrivateRoute>} />
           <Route path="/cultivo/listarcosechas/" element={<PrivateRoute><ListaCosechasPage /></PrivateRoute>} />
+          <Route path="/cultivo/tipo_control/" element={<PrivateRoute><TipoControlPage /></PrivateRoute>} />
+          <Route path="/cultivo/listartipocontrol/" element={<PrivateRoute><ListaTipoControlPage /></PrivateRoute>} />
+          <Route path="/cultivo/productoscontrol/" element={<PrivateRoute><ProductosControlPage /></PrivateRoute>} />
+          <Route path="/cultivo/listarproductoscontrol/" element={<PrivateRoute><ListaProductoControlPage /></PrivateRoute>} />
+
           <Route path="/usuarios" element={<PrivateRoute><UsuariosPage /></PrivateRoute>} />
           <Route path="/iot/sensores" element={<PrivateRoute><SensoresPage /></PrivateRoute>} />
           <Route path="/iot/datosmetereologicos" element={<PrivateRoute><DatosMeteorologicosPage /></PrivateRoute>} />
