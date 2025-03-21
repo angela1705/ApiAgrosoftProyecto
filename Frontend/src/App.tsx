@@ -48,9 +48,8 @@ import SensoresPage from './pages/iot/SensoresPage';
 import DatosMeteorologicosPage from './pages/iot/DatosMeteorologicosPage';  
 import BodegaInsumoNotifications from './components/inventario/BodegaInsumoNotifications';
 import BodegaHerramientaNotifications from './components/inventario/BodegaHerramientaNotifications';
-import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
-import ListarSensores from "@/components/Iot/ListarSensores";
-
+import RegistrarSensorPage from './pages/iot/RegistrarSensorPage';
+import ListarSensores from './pages/iot/ListarSensoresPage';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {

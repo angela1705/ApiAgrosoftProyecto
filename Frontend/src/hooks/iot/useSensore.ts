@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Sensor {
   id?: number;
@@ -12,43 +11,34 @@ interface Sensor {
 }
 
 export const useSensores = () => {
-  const [sensores, setSensores] = useState<Sensor[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
   const token = localStorage.getItem("access_token");
 
-  useEffect(() => {
-    const fetchSensores = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/iot/sensores/", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-        const result: Sensor[] = await response.json();
-        setSensores(result);
-        setIsLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error("Unknown error"));
-        setIsLoading(false);
+  const { data: sensores = [], isLoading, error } = useQuery<Sensor[], Error>({
+    queryKey: ["sensores"],
+    queryFn: async () => {
+      const response = await fetch("http://127.0.0.1:8000/iot/sensores/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `Error ${response.status}: ${response.statusText}`);
       }
-    };
-
-    if (token) fetchSensores();
-    else {
-      setError(new Error("Not authenticated"));
-      setIsLoading(false);
-    }
-  }, [token]);
+      return response.json();
+    },
+    enabled: !!token, // Solo ejecuta si hay token
+  });
 
   return { sensores, isLoading, error };
 };
 
 export const useRegistrarSensor = () => {
   const token = localStorage.getItem("access_token");
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (sensor: Sensor) => {
       const response = await fetch("http://127.0.0.1:8000/iot/sensores/", {
@@ -59,8 +49,14 @@ export const useRegistrarSensor = () => {
         },
         body: JSON.stringify(sensor),
       });
-      if (!response.ok) throw new Error("Error al registrar el sensor");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Error al registrar el sensor");
+      }
       return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sensores"] }); // Actualiza la lista de sensores
     },
   });
 };
