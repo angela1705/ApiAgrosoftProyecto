@@ -1,9 +1,23 @@
 ---
-title: Instalación
+title: "Módulo de IoT"
 slug: modules/IoT/index
-description: Cómo instalar y configurar la API Agrosoft.
+description: "Gestión de sensores IoT en Agrosoft para monitoreo en tiempo real de condiciones meteorológicas en cultivos."
 ---
 
-# Instalación de Agrosoft API
+# Módulo de IoT
 
-Aquí encontrarás los pasos para instalar y configurar la API.
+El módulo de IoT permite conectar sensores físicos a Agrosoft para recopilar datos meteorológicos en tiempo real, como temperatura y humedad, en los lotes de cultivo. Estos datos se integran con el módulo de trazabilidad para un control completo del proceso agrícola.
+
+## Características principales
+- Registro de **sensores** asociados a lotes de cultivo.
+- Monitoreo en tiempo real de **temperatura** y **humedad** mediante WebSocket.
+- Almacenamiento de **datos históricos** a través de peticiones HTTP.
+- Visualización de datos en la interfaz de Agrosoft.
+- Integración con el módulo de **Trazabilidad** para asociar datos a lotes específicos.
+
+## Secciones del módulo
+1. **[Sensores](./sensores)** - Definición y gestión de sensores IoT.
+2. **Datos Meteorológicos** - Registro y visualización de datos recopilados.
+3. **Configuración** - Ajustes para la conexión de sensores y servidores.
+
+**Sigue con la documentación de [Sensores](./sensores) para aprender más.**
