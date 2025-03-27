@@ -17,7 +17,7 @@ El módulo de IoT permite conectar sensores físicos a Agrosoft para recopilar d
 
 ## Secciones del módulo
 1. **[Sensores](./sensores)** - Definición y gestión de sensores IoT.
-2. **Datos Meteorológicos** - Registro y visualización de datos recopilados.
-3. **Configuración** - Ajustes para la conexión de sensores y servidores.
+2. **[Datos Meteorológicos](./datos-meteorologicos)** - Registro y visualización de datos recopilados.
+3. **[Configuración](./configuracion)** - Ajustes para la conexión de sensores y servidores.
 
 **Sigue con la documentación de [Sensores](./sensores) para aprender más.**
