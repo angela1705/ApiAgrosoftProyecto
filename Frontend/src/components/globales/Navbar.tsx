@@ -60,10 +60,6 @@ const menuItems = [
       { id: 20, label: "Tipo Control", path: "/cultivo/tipo_control/" },
       { id: 21, label: "Afecciones", path: "/cultivo/afecciones/" },
       { id: 22, label: "Productos Control", path: "/cultivo/productoscontrol/" },
-
-
-
-
     ],
   },  {
     id: 23,
@@ -74,7 +70,7 @@ const menuItems = [
       { id: 25, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
       { id: 26, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
       { id: 27, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
-      { id: 28, label: "Insumos", path: "/inventario/insumo", icon: <FaBox /> },
+      { id: 28, label: "Insumos", path: "/inventario/insumos/", icon: <FaBox /> },
     ],
   },
   {
@@ -142,11 +138,17 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
       </Link>
 
       {isOpen && isExpanded && item.subItems && (
-        <div className="flex flex-col gap-2 mt-2">
+        <div className="flex flex-col gap-2 mt-2 ml-8">
           {item.subItems.map((subItem: any) => (
-            <Link key={subItem.id} to={subItem.path} className="flex items-center gap-2 p-3 rounded-full transition-all font-medium cursor-pointer bg-white shadow-md hover:bg-gray-400 hover:text-white text-black w-5/6 mx-auto">
-              {subItem.icon}
-              <span>{subItem.label}</span>
+            <Link 
+              key={subItem.id} 
+              to={subItem.path} 
+              className="flex items-center gap-2 p-2 pl-6 rounded-full transition-all font-medium cursor-pointer 
+              bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto
+              relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
+            >
+              {subItem.icon && <span className="text-gray-600">{subItem.icon}</span>}
+              <span className="text-sm">{subItem.label}</span>
             </Link>
           ))}
         </div>
