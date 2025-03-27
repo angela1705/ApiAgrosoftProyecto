@@ -134,7 +134,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apidiego',
         'USER': 'postgres',
-        'PASSWORD': '1234',
+        'PASSWORD': '1075',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
