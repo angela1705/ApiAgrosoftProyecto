@@ -35,7 +35,7 @@ Cada lote tiene la siguiente información:
 
 ## Ejemplo de API para crear un lote
 ```json
-POST /api/lotes
+POST /cultivo/lotes
 {
   "nombre": "Lote A",
   "descripcion": "Lote principal del cultivo",
