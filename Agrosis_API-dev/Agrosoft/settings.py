@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-y25f0nlxx-^y1tc$12**4)gsf=uy7wkcvt%ahr(*l)cf=7#m5i
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.X', '192.168.1.12']
     
 
 
@@ -64,13 +63,6 @@ INSTALLED_APPS = [
     'apps.Cultivo.actividades',
     'apps.Iot.datos_meteorologicos',
     'apps.Iot.sensores',
-    'apps.Iot.configuraciones',
-    'apps.Iot.evotranspiraciones',
-    'apps.Iot.humedadambiental',
-    'apps.Iot.humedadterreno',
-    'apps.Iot.iluminaciones',
-    'apps.Iot.temperaturas',
-    'apps.Iot.velocidadviento',
     'apps.Finanzas.pagos',
     'apps.Finanzas.venta',
     'apps.Finanzas.salario',
@@ -89,6 +81,7 @@ INSTALLED_APPS = [
     'apps.Cultivo.lotes',
     'channels',
     'corsheaders',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +118,10 @@ ASGI_APPLICATION = "Agrosoft.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
     },
 }
 
@@ -234,3 +230,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'steventu06@gmail.com'
+EMAIL_HOST_PASSWORD = 'ytjb ipyp odsw ryqr' 
+DEFAULT_FROM_EMAIL = 'steventu06@gmail.com'

@@ -8,18 +8,18 @@ from apps.Usuarios.roles.api.serializer import RolSerializer
 class UsuariosSerializer(serializers.ModelSerializer):
     rol = RolSerializer(read_only=True) 
     rol_id = serializers.PrimaryKeyRelatedField(
-        queryset=Roles.objects.all(), source="rol", write_only=True, allow_null=True
+        queryset=Roles.objects.all(), source="rol", write_only=True, required=False, allow_null=True
     ) 
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'rol_id']
+        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'rol_id','password']
 class RegistroUsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'password']
+        fields = ['id', 'nombre', 'apellido', 'email', 'username',  'password']
 
     def create(self, validated_data):
         # Asignar un rol por defecto si no se proporciona

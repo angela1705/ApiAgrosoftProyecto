@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "../../components/globales/ReuInput";
 import { TipoEspecie } from "../../types/cultivo/TipoEspecie";
-import { useRegistrarTipoEspecie } from "../../hooks/cultivo/usetipoEspecie";
+import { useRegistrarTipoEspecie } from "../../hooks/cultivo/usetipoespecie";
 
 const TipoEspeciePage: React.FC = () => {
   const [tipoEspecie, setTipoEspecie] = useState<TipoEspecie>({
@@ -25,7 +25,7 @@ const TipoEspeciePage: React.FC = () => {
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Tipo de Especie</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registro de Tipo de Especie</h2>
 
           <ReuInput
             label="Nombre"

@@ -38,7 +38,7 @@ const registrarLote = async (lote: Lote) => {
 
   return axios.post(API_URL, formData, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type":"application/json",
       Authorization: `Bearer ${token}`,
     },
   });
@@ -64,6 +64,7 @@ export const useRegistrarLote = () => {
       addToast({
         title: "Error",
         description: "Error al registrar el lote",
+    
       });
     },
   });

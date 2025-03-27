@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Box, Typography, Link, Divider } from '@mui/material';
 import { motion } from 'framer-motion';
 import Login from '../../components/usuarios/Login';
-import { Link as RouterLink } from 'react-router-dom'; 
+import { Link as RouterLink } from 'react-router-dom';
 import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
 import LogoSena from '../../assets/logo2.png';
 
@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
         </svg>
       </Box>
 
-      {/* Logo AGROSIS en la esquina superior izquierda del fondo */}
+      {/* Logo AGROSIS en la esquina superior izquierda */}
       <Box
         sx={{
           position: 'absolute',
@@ -77,7 +77,7 @@ const LoginPage: React.FC = () => {
         />
       </Box>
 
-      {/* Logo SENA en la esquina inferior izquierda del fondo */}
+      {/* Logo SENA en la esquina inferior izquierda */}
       <Box
         sx={{
           position: 'absolute',
@@ -150,7 +150,8 @@ const LoginPage: React.FC = () => {
             </Typography>
             <Login />
             <Link
-              href="#"
+              component={RouterLink}
+              to="/forgot-password"  // Enlace a la página de recuperación
               sx={{
                 mt: 2,
                 color: '#718096',
@@ -197,7 +198,7 @@ const LoginPage: React.FC = () => {
           }}
         />
 
-        {/* Mitad derecha: Sección decorativa ("AGROSIS") */}
+        {/* Mitad derecha: Sección decorativa */}
         <Box
           sx={{
             flex: 1,

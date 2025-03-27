@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/button";
@@ -19,14 +17,12 @@ import {
   FaWarehouse,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
-// Importamos las imágenes desde la carpeta assets
 import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
 import Sena from "../../assets/logo sena.png";
 
-// Lista de elementos del menú con sus rutas e íconos
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
-  { id: 2, label: "Docs", path: "/docs", icon: <FaUser /> },
+  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
   { id: 3, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> },
   { id: 4, label: "Mapa", path: "/mapa", icon: <FaMapMarkerAlt /> },
   {
@@ -42,36 +38,58 @@ const menuItems = [
       { id: 11, label: "Tipo Actividad", path: "/cultivo/tipo_actividad/" },
       { id: 12, label: "Actividades", path: "/cultivo/actividad/" },
       { id: 13, label: "Programación", path: "/cultivo/programacion/" },
+      { id: 14, label: "Cosecha", path: "/cultivo/cosecha/" },
+
     ],
   },
-  { id: 14, label: "Finanzas", path: "/finanzas", icon: <FaDollarSign /> },
-  { id: 15, label: "Plagas", path: "/plagas", icon: <FaBug /> },
+  { id: 15, 
+    label: "Finanzas",
+     icon: <FaDollarSign />,
+    subItems:[
+      { id: 34, label: "Salario", path: "/finanzas/salario/" },
+      { id: 35, label: "Ventas", path: "/finanzas/ventas/" },
+    ] },
   {
     id: 16,
+    label: "Plagas",
+    icon: <FaBug />,
+    subItems: [
+      { id: 17, label: "Tipo Plaga", path: "/cultivo/tipoplaga/"},
+      { id: 18, label: "Plaga", path: "/cultivo/plaga/"},
+      { id: 19, label: "Control", path: "/cultivo/control/" },
+      { id: 20, label: "Tipo Control", path: "/cultivo/tipo_control/" },
+      { id: 21, label: "Afecciones", path: "/cultivo/afecciones/" },
+      { id: 22, label: "Productos Control", path: "/cultivo/productoscontrol/" },
+
+
+
+
+    ],
+  },  {
+    id: 23,
     label: "Inventario",
     icon: <FaBox />,
     subItems: [
-      { id: 21, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
-      { id: 22, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
-      { id: 23, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
-      { id: 24, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
-      { id: 25, label: "Insumos", path: "/inventario/insumos", icon: <FaBox /> },
+      { id: 24, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
+      { id: 25, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
+      { id: 26, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
+      { id: 27, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
+      { id: 28, label: "Insumos", path: "/inventario/insumos", icon: <FaBox /> },
     ],
   },
   {
-    id: 17,
+    id: 29,
     label: "IoT",
     icon: <GiProcessor />,
     subItems: [
-      { id: 18, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
-      { id: 19, label: "Sensores", path: "/iot/sensores", icon: <FaTachometerAlt /> },
-      { id: 20, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
+      { id: 30, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
+      { id: 31, label: "Sensores", path: "/iot/sensores", icon: <FaTachometerAlt /> },
+      { id: 32, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
-  { id: 21, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
+  { id: 33, label: "Docs", path: "/docs", icon: <FaUser /> },
 ];
 
-// Componente principal de la barra de navegación
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   return (
     <aside
@@ -101,7 +119,6 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
   );
 }
 
-// Componente para cada elemento del menú
 function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -138,7 +155,6 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
   );
 }
 
-// Estilos para ocultar la barra de desplazamiento
 const styles = `
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
