@@ -17,8 +17,7 @@ Este modulo permite gestionar todo lo relacionado con los usuarios, incluyendo s
 
 ## Secciones del módulo
 1. **[Usuarios](./usuarios)** - Gestión de individuos registrados.
-2. **[Permisos](./permisos)** -Definición de  Acciones que puede realizar un usuario en el sistema.
-3. **[Roles](./roles)** -Conjunto definido de permisos para determinados usuarios.
+2. **[Roles](./roles)** -Conjunto definido de permisos para determinados usuarios.
 
 
  **Sigue con la documentación de [Usuarios](./usuarios) para aprender más.**
