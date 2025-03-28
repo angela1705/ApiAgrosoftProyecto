@@ -1,93 +1,89 @@
 ---
 title: "Gestión de actividades"
 ---
-Los **registros de Actividad** documentan las labores realizadas en los cultivos (riego, fertilización, poda, etc.), incluyendo recursos utilizados, fechas y responsables. Esta documentación cubre los endpoints RESTful para su gestión.
+## Estructura de Datos
+
+| Campo               | Tipo                | Descripción |  
+|---------------------|---------------------|-------------|  
+| **id**              | `AutoField`         | Identificador único |  
+| **tipo_actividad**  | `ForeignKey`        | Relación con tabla TipoActividad |  
+| **programacion**    | `ForeignKey`        | Relación con tabla Programación |  
+| **descripcion**     | `TextField`         | Detalles de la actividad |  
+| **fecha_inicio**    | `DateField`         | Fecha de inicio |  
+| **fecha_fin**       | `DateField`         | Fecha de finalización |  
+| **usuario**         | `ForeignKey`        | Usuario responsable |  
+| **cultivo**         | `ForeignKey`        | Cultivo asociado |  
+| **insumo**          | `ForeignKey`        | Insumo utilizado |  
+| **cantidadUsada**   | `IntegerField`      | Cantidad de insumo utilizada |  
 
 ---
 
-## **Endpoints de la API**
+## Ejemplo de API  
 
-### **GET /actividades**
-Obtiene todas las actividades registradas con filtros opcionales.
+```json  
+POST /actividades/  
+{  
+  "tipo_actividad": 3,  
+  "programacion": 5,  
+  "descripcion": "Aplicación de fertilizante orgánico",  
+  "fecha_inicio": "2023-11-20",  
+  "fecha_fin": "2023-11-21",  
+  "usuario": 12,  
+  "cultivo": 45,  
+  "insumo": 8,  
+  "cantidadUsada": 5  
+}  
+```  
 
-**Ejemplo de respuesta (200 OK):**
+**Ejemplo de respuesta (201 Created):**
 ```json
-[
-  {
-    "id": 1,
-    "tipo_actividad": {"id": 3, "nombre": "Fertilización"},
-    "cultivo": {"id": 45, "nombre": "Tomate Bancal 2"},
-    "fecha_inicio": "2023-11-15",
-    "fecha_fin": "2023-11-15",
-    "usuario": {"id": 8, "nombre": "María Gómez"},
-    "insumo": {"id": 12, "nombre": "Fertilizante NPK"},
-    "cantidadUsada": 5,
-    "descripcion": "Aplicación en base al calendario nutricional"
-  }
-]
+{
+  "id": 1,
+  "tipo_actividad": 3,
+  "programacion": 5,
+  "descripcion": "Aplicación de fertilizante orgánico",
+  "fecha_inicio": "2023-11-20",
+  "fecha_fin": "2023-11-21",
+  "usuario": 12,
+  "cultivo": 45,
+  "insumo": 8,
+  "cantidadUsada": 5
+}
 ```
 
-**Parámetros opcionales:**
-- `?cultivo=45`: Filtra por ID de cultivo
-- `?tipo=3`: Filtra por tipo de actividad
-- `?fecha_desde=2023-11-01`: Actividades después de esta fecha
-- `?fecha_hasta=2023-11-30`: Actividades antes de esta fecha
-
----
-
-### **GET /actividades/{id}**
+### ** GET /actividades/{id}**
 Obtiene una actividad específica por su ID.
 
 **Ejemplo de respuesta (200 OK):**
 ```json
 {
   "id": 1,
-  "tipo_actividad": {"id": 3},
-  "programacion": {"id": 22},
-  "cultivo": {"id": 45},
-  "fecha_inicio": "2023-11-15",
-  "fecha_fin": "2023-11-15",
-  "usuario": {"id": 8},
-  "insumo": {"id": 12},
-  "cantidadUsada": 5,
-  "descripcion": "Aplicación en base al calendario nutricional"
-}
-```
-
----
-
-### ** POST /actividades**
-Registra una nueva actividad agrícola.
-
-**Ejemplo de solicitud:**
-```json
-{
-  "tipo_actividad": 3,
-  "programacion": 22,
-  "cultivo": 45,
+  "tipo_actividad": {
+    "id": 3,
+    "nombre": "Fertilización"
+  },
+  "programacion": {
+    "id": 5,
+    "nombre": "Programación Noviembre"
+  },
+  "descripcion": "Aplicación de fertilizante orgánico",
   "fecha_inicio": "2023-11-20",
-  "fecha_fin": "2023-11-20",
-  "usuario": 8,
-  "insumo": 12,
-  "cantidadUsada": 3,
-  "descripcion": "Aplicación foliar preventiva"
+  "fecha_fin": "2023-11-21",
+  "usuario": {
+    "id": 12,
+    "nombre": "Juan Pérez"
+  },
+  "cultivo": {
+    "id": 45,
+    "nombre": "Lechuga Romana - B2"
+  },
+  "insumo": {
+    "id": 8,
+    "nombre": "Fertilizante Orgánico 5kg"
+  },
+  "cantidadUsada": 5
 }
 ```
-
-**Validaciones:**
-- Campos obligatorios: `tipo_actividad`, `cultivo`, `fecha_inicio`, `usuario`
-- `fecha_fin` no puede ser anterior a `fecha_inicio`
-- `cantidadUsada` debe ser ≥ 0
-
-**Respuesta exitosa (201 Created):**
-```json
-{
-  "id": 2,
-  "message": "Actividad registrada correctamente"
-}
-```
-
----
 
 ### **PUT /actividades/{id}**
 Actualiza una actividad existente.
@@ -95,69 +91,107 @@ Actualiza una actividad existente.
 **Ejemplo de solicitud:**
 ```json
 {
-  "cantidadUsada": 4,
-  "descripcion": "Aplicación foliar corregida por recomendación técnica"
+  "descripcion": "Aplicación de fertilizante orgánico (dosis doble)",
+  "cantidadUsada": 10,
+  "fecha_fin": "2023-11-22"
 }
 ```
-
-**Restricciones:**
-- No se puede modificar el `cultivo` asociado
-- Campos inmutables después de creación: `tipo_actividad`, `programacion`
-
----
-
-### ** DELETE /actividades/{id}**
-Elimina un registro de actividad.
 
 **Respuesta exitosa (200 OK):**
 ```json
 {
-  "message": "Actividad eliminada del historial"
+  "id": 1,
+  "message": "Actividad actualizada correctamente"
 }
 ```
 
-**Error común (404 Not Found):**
+**Restricciones:**
+- No se puede modificar `cultivo` o `tipo_actividad` después de creado
+- `fecha_inicio` solo editable si la actividad no ha comenzado
+
+### **DELETE /actividades/{id}**
+Elimina una actividad.
+
+**Respuesta exitosa (200 OK):**
 ```json
 {
-  "error": "No existe la actividad especificada"
+  "message": "Actividad eliminada correctamente",
+  "id": 1
+}
+```
+
+**Error común (400 Bad Request):**
+```json
+{
+  "error": "No se puede eliminar",
+  "detail": "La actividad ya ha comenzado"
 }
 ```
 
 ---
 
-## **Relaciones Clave**
+## **Validaciones Adicionales**
 
-```mermaid
-graph TD
-    A[TipoActividad] --> B[Actividad]
-    C[Programación] --> B
-    D[Cultivo] --> B
-    E[Usuario] --> B
-    F[Insumo] --> B
+1. **Fechas**:
+   - `fecha_inicio` no puede ser posterior a `fecha_fin`
+   - No puede solaparse con otras actividades en el mismo cultivo
+
+2. **Relaciones**:
+   - `cultivo` debe estar activo
+   - `insumo` debe tener suficiente stock disponible
+
+3. **Cantidad**:
+   - `cantidadUsada` debe ser mayor que 0
+   - No puede superar el stock disponible del insumo
+
+---
+
+## **Ejemplo Completo de Uso**
+
+1. **Crear nueva actividad**:
+```bash
+POST /actividades/
+{
+  "tipo_actividad": 1,
+  "programacion": 2,
+  "descripcion": "Riego por goteo",
+  "fecha_inicio": "2023-11-25",
+  "fecha_fin": "2023-11-25",
+  "usuario": 15,
+  "cultivo": 32,
+  "insumo": null,
+  "cantidadUsada": 0
+}
+```
+
+2. **Filtrar actividades por cultivo**:
+```bash
+GET /actividades/?cultivo=45
+```
+
+3. **Actualizar cantidad de insumo**:
+```bash
+PUT /actividades/8
+{
+  "cantidadUsada": 3,
+  "descripcion": "Ajuste de cantidad según recomendación técnica"
+}
 ```
 
 ---
 
+## **Notas Importantes**
 
+1. Las actividades consumen insumos automáticamente:
+   - Se actualiza el stock al confirmar la actividad
+   - Se revierte el stock si se elimina la actividad
 
-## **Buenas Prácticas**
+2. Las actividades con cultivos inactivos:
+   - Se pueden consultar pero no crear/modificar
 
-1. **Registro inmediato**: Documentar actividades el mismo día de ejecución.
-2. **Detalles específicos**: En `descripcion` incluir:
-   ```markdown
-   - Método de aplicación (ej: "riego por goteo")
-   - Condiciones climáticas (opcional)
-   - Observaciones relevantes
-   ```
-3. **Consistencia en unidades**: Verificar que `cantidadUsada` use la misma unidad de medida que el insumo asociado.
+3. Campos especiales:
+   - `insumo` puede ser null para actividades que no consumen recursos
+   - `cantidadUsada` debe ser 0 cuando no hay insumo
 
----
-
-## **Integraciones Comunes**
-
-▸ **Notificaciones**: Alertas al completar actividades programadas  
-▸ **Inventario**: Descuento automático de insumos utilizados  
-▸ **Reportes**:  
-   - Histórico por cultivo  
-   - Eficiencia en uso de recursos  
-   - Cumplimiento de programación
+4. Seguimiento:
+   - Todas las modificaciones quedan registradas en el historial de cambios

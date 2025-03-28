@@ -19,7 +19,7 @@ Cada bancal tiene la siguiente información:
 
 ## Ejemplo de API para crear un bancal
 ```json
-POST /cultivo/bancales
+POST /cultivo/bancales/
 {
   "nombre": "Bancal 1",
   "TamX": 2.50,

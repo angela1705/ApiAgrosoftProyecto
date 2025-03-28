@@ -43,6 +43,9 @@ export default defineConfig({
             { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
             { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
             { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
+            { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
+            { label: 'tipoplaga', slug: 'modules/trazabilidad/tipoplaga' },
+
 
           ],
         },

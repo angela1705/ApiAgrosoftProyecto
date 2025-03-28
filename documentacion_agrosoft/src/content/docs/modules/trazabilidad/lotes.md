@@ -7,20 +7,6 @@ description: "Cómo administrar lotes en el módulo de trazabilidad de Agrosoft.
 
 Los **lotes** son unidades de cultivo dentro de un terreno agrícola. Cada lote tiene una ubicación, tamaño y estado específico dentro del sistema.
 
-## ¿Cómo registrar un lote?
-Para registrar un nuevo lote en Agrosoft:
-1. Ir a la sección **Cultivo → Lotes**.
-2. Hacer clic en el botón **"Registrar Lote"**.
-3. Completar los siguientes campos:
-   - **Nombre del Lote:** Nombre único del lote.
-   - **Descripción:** Información adicional sobre el lote (opcional).
-   - **Estado:** Indica si el lote está activo o inactivo.
-   - **Dimensiones (X, Y):** Tamaño del lote en metros.
-   - **Ubicación (X, Y):** Posición del lote dentro del terreno.
-4. Guardar los cambios.
-
-## Datos de un Lote
-Cada lote tiene la siguiente información:
 
 | Campo           | Tipo de Dato  | Descripción |
 |---------------|-------------|-------------|
