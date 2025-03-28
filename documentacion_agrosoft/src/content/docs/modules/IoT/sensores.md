@@ -44,7 +44,7 @@ Cada sensor tiene la siguiente información:
 
 ## Ejemplos de API para gestionar sensores
 
-### POST /api/sensors - Crear un sensor
+### POST /iot/sensores/ - Crear un sensor
 ```json
 {
   "nombre": "DHT22_001",
@@ -56,7 +56,7 @@ Cada sensor tiene la siguiente información:
 }
 ```
 
-### GET /api/sensors - Listar sensores
+### GET /iot/sensores/ - Listar sensores
 ```json
 [
   {
@@ -71,7 +71,7 @@ Cada sensor tiene la siguiente información:
 ]
 ```
 
-### GET /api/sensors/1 - Obtener un sensor por ID
+### GET /iot/sensores/1 - Obtener un sensor por ID
 ```json
 {
   "id": 1,
@@ -84,7 +84,7 @@ Cada sensor tiene la siguiente información:
 }
 ```
 
-### PUT /api/sensors/1 - Actualizar un sensor
+### PUT /iot/sensores/1 - Actualizar un sensor
 ```json
 {
   "nombre": "DHT22_001_modificado",
@@ -92,7 +92,7 @@ Cada sensor tiene la siguiente información:
 }
 ```
 
-### DELETE /api/sensors/1 - Eliminar un sensor
+### DELETE /iot/sensores/1 - Eliminar un sensor
 ```json
 {}
 ```

@@ -132,9 +132,10 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'apidiego',
+        'NAME': 'agrosoft',
         'USER': 'postgres',
-        'PASSWORD': '1075',
+        'PASSWORD': 'root',
+
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
@@ -209,7 +210,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:5174",  # Agrega tu puerto aquí
+    "http://localhost:5174", 
     "http://127.0.0.1:5174",
 ]
 

@@ -22,17 +22,15 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'password']
 
     def create(self, validated_data):
-        # Asignar un rol por defecto si no se proporciona
-        if 'rol' not in validated_data or validated_data['rol'] is None:
-            try:
-                default_role = Roles.objects.get(nombre='aprendiz')
-                validated_data['rol'] = default_role
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError("El rol por defecto 'aprendiz' no existe en la base de datos.")
         
-        # Crear el usuario
+        if 'password' not in validated_data:
+            raise serializers.ValidationError({"password": "Este campo es obligatorio."})
+        
         password = validated_data.pop('password')
         usuario = Usuarios(**validated_data)
-        usuario.set_password(password)
+        
+        usuario.set_password(password)  # Encripta la contraseña
+        
+        
         usuario.save()
         return usuario

@@ -7,8 +7,8 @@ export default defineConfig({
       title: 'Agrosis',
       description: "Documentación de la api Agrosis",
       social: {
-				github: 'https://github.com/angela1705/ApiAgrosoftProyecto',
-			},
+        github: 'https://github.com/angela1705/ApiAgrosoftProyecto',
+      },
       logo: {
         src: "/public/logo.png", 
         alt: "Mi Logo",
@@ -29,8 +29,6 @@ export default defineConfig({
             { label: 'Introducción', slug: 'modules/usuarios/index' },
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
             { label: 'permisos', slug: 'modules/usuarios/permisos' },
-
-
           ],
         },
         {
@@ -44,12 +42,22 @@ export default defineConfig({
             { label: 'Cultivo', slug: 'modules/trazabilidad/cultivo' },
             { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
             { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
+            { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
+            { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
+            { label: 'tipoplaga', slug: 'modules/trazabilidad/tipoplaga' },
+
+
           ],
         },
         {
           label: 'Inventario',
           items: [
-            { label: 'Gestión de Inventario', slug: 'modules/inventario/index' },
+            { label: 'Introducción', slug: 'modules/inventario/index' },
+            { label: 'Bodega', slug: 'modules/inventario/bodega' },
+            { label: 'Herramientas', slug: 'modules/inventario/herramientas' },
+            { label: 'Insumos', slug: 'modules/inventario/insumos' },
+            { label: 'Bodega Herramienta', slug: 'modules/inventario/bodega_herramienta' },
+            { label: 'Bodega Insumo', slug: 'modules/inventario/bodega_insumo' },
           ],
         },
         {
