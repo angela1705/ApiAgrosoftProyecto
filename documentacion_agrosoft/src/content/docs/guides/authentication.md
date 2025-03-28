@@ -77,11 +77,19 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 - 6 Haz clic en "Send" para ejecutar la petición con el token en la cabecera de autorización.
 
 **Si la ejecucion fue correcta:**
-- `Respuesta exitosa, devuelve contenido de la consulta`: (200).
+- **Respuesta exitosa, devuelve contenido de la consulta: (200).**
 
 # API para usar el Refresh del token
 # POST /auth/token/refresh/
 { "Content-Type": "application/json" }
+
+- 1 Ir al endpoint "Refresh".
+- 2 Elige el metodo "POST"
+- 3 Pegar el **Token Refresh** en el Body {Json} que generaste anteriormente 
+- descarta el "**Token Access**".
+- 4 En el menú desplegable de "Type", selecciona "Bearer Token".
+- 5 En el campo "Token", pega el token ya generado.
+- 6 Haz clic en "Send" para ejecutar la petición.
 
 **Token generado anteriormente:**
 - **Descarta el access (Importante)**
@@ -95,7 +103,7 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 }
 ```
 
-**Ejemplo de solicitud:**
+**Ejemplo de Consulta:**
 
 ```json
 
