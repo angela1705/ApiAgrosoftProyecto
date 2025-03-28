@@ -132,7 +132,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_api_proyecto',
+        'NAME': 'agrosoft',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost', 

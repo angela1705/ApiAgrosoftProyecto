@@ -7,12 +7,13 @@ import { useBodegaInsumos, useActualizarBodegaInsumo, useEliminarBodegaInsumo } 
 import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useInsumos } from "@/hooks/inventario/useInsumo";
 import ReuModal from "@/components/globales/ReuModal";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input } from "@heroui/react";
 
 const ListaBodegaInsumoPage: React.FC = () => {
   const [selectedBodegaInsumo, setSelectedBodegaInsumo] = useState<BodegaInsumo | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { data: bodegas } = useBodegas();
   const { data: insumos } = useInsumos();
@@ -68,6 +69,16 @@ const ListaBodegaInsumoPage: React.FC = () => {
     navigate("/inventario/bodegainsumo/");
   };
 
+  const filteredBodegaInsumos = (bodegaInsumos ?? []).filter((item: BodegaInsumo) => {
+    const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
+    const insumoNombre = insumos?.find((i: Insumo) => i.id === item.insumo)?.nombre || "Desconocido";
+    return (
+      bodegaNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      insumoNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.cantidad.toString().includes(searchTerm)
+    );
+  });
+
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
@@ -77,6 +88,28 @@ const ListaBodegaInsumoPage: React.FC = () => {
             <p className="text-gray-600">Cargando...</p>
           ) : (
             <>
+              <div className="mb-4 flex items-center">
+                <Input
+                  placeholder="Buscar por bodega, insumo o cantidad"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full"
+                />
+                <svg
+                  className="w-5 h-5 text-gray-500 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
               <Table>
                 <TableHeader>
                   <TableColumn>Bodega</TableColumn>
@@ -85,7 +118,7 @@ const ListaBodegaInsumoPage: React.FC = () => {
                   <TableColumn>Acciones</TableColumn>
                 </TableHeader>
                 <TableBody>
-                  {bodegaInsumos?.map((item: BodegaInsumo) => (
+                  {filteredBodegaInsumos.map((item: BodegaInsumo) => (
                     <TableRow key={item.id}>
                       <TableCell>
                         {bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido"}

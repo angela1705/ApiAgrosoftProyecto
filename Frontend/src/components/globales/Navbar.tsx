@@ -70,7 +70,7 @@ const menuItems = [
       { id: 25, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
       { id: 26, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
       { id: 27, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
-      { id: 28, label: "Insumos", path: "/inventario/insumos/", icon: <FaBox /> },
+      { id: 28, label: "Insumos", path: "/inventario/insumos", icon: <FaBox /> },
     ],
   },
   {
