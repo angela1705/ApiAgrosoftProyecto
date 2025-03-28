@@ -64,6 +64,9 @@ export default defineConfig({
           label: 'Finanzas',
           items: [
             { label: 'Panel de Finanzas', slug: 'modules/finanzas/index' },
+            { label: 'Gestión de Pagos', slug: 'modules/finanzas/pagos' },
+            { label: 'Gestión de Salario', slug: 'modules/finanzas/salarios' },
+            { label: 'Gestión de Ventas', slug: 'modules/finanzas/ventas' },
           ],
         },
         {
