@@ -1,5 +1,6 @@
-# Gestión de Productos de Control
-
+---
+title: "Gestión de productos control"
+---
 ## Estructura de Datos
 
 | Campo               | Tipo                | Descripción |
