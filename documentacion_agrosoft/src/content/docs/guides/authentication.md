@@ -39,10 +39,21 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
     "password": "Segura123!",
 }
 ```
-# API para generar el Token
-# POST /auth/login/
-{ "Content-Type": "application/json" }
+Información de los parametros para generar token:
+| Campo        | Tipo de Dato  | Descripción |
+|-------------|-------------|-------------|
+| **Email**       | `CharField`  | Correo electrónico del usuario. |
+| **Password**   | `CharField`  | Clave de acceso cifrada del usuario. |
 
+# API para generar el Token
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/auth/login</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/auth/token/login/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 **Ejemplo de solicitud:**
 
 ```json
@@ -55,7 +66,9 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 **Validaciones:**
 - `Email` y `Password`: Deben coincidir
 
-**Ejemplo de respuesta exitosa (201):**
+**Ejemplo de respuesta exitosa (201):** <p>  <span class="sl-badge success small astro-avdet4wd">Success</span>  </p>
+
+
 ```json
 {
 
@@ -79,10 +92,19 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 **Si la ejecucion fue correcta:**
 - **Respuesta exitosa, devuelve contenido de la consulta: (200).**
 
-# API para usar el Refresh del token
-# POST /auth/token/refresh/
-{ "Content-Type": "application/json" }
+# API para generar el Refresh del Token
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/auth/token/refresh/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/auth/token/refresh/"><div></div></button></div></figure></div>  </section>
 
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_refresh>`    | Token refresh necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
+**Pasos para usar el Token refresh**
 - 1 Ir al endpoint "Refresh".
 - 2 Elige el metodo "POST"
 - 3 Pegar el **Token Refresh** en el Body {Json} que generaste anteriormente 
@@ -114,7 +136,7 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 **Validaciones:**
 - `Formato de envio`: El refresh debe ser enviado como **JSON body** y no como Bearer Token 
 
-**Ejemplo de respuesta exitosa (201):**
+**Ejemplo de respuesta exitosa (201):**<p>  <span class="sl-badge success small astro-avdet4wd">Success</span>  </p>
 - **Renovacion del Token:**
 
 ```json
