@@ -128,15 +128,6 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 
 
 # Manejo de errores
-**Si el token no fue añadido en el campo Token:**
-- `Unauthorized`: (401).
-```json
-{
-
-    "detail": "Authentication credentials were not provided."
-
-}
-```
 **Si el token añadido esta mal escrito o expiró:**
 - `Unauthorized`: (401).
 ```json
@@ -154,7 +145,7 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 }
 ```
 **Si el token añadido no es el esperado:**
-- ej:
+- **ej:**
 **Usar el token refresh en el endpoint de authorization:**
 
 - `Unauthorized`: (401).
