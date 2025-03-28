@@ -1,7 +1,7 @@
 export interface Cultivo {
   id?: number;
-  fk_especie: number; 
-  fk_bancal: number; 
+  Especie: number; 
+  Bancal: number; 
   nombre: string;
   unidad_de_medida?: string;
   activo: boolean;

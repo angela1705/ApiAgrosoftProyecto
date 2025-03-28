@@ -12,8 +12,8 @@ const CultivoPage: React.FC = () => {
         unidad_de_medida: "",
         activo: false,
         fechaSiembra: "",
-        fk_especie: 0,
-        fk_bancal: 0, 
+        Especie: 0,
+        Bancal: 0, 
     });
 
     const mutation = useRegistrarCultivo();
@@ -73,7 +73,7 @@ const CultivoPage: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mt-4">Especie</label>
                         <select
                             name="Especie"
-                            value={cultivo.fk_especie || ""}
+                            value={cultivo.Especie || ""}
                             onChange={handleChange}
                             className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
                         >
@@ -88,7 +88,7 @@ const CultivoPage: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mt-4">Bancal</label>
                         <select
                             name="Bancal"
-                            value={cultivo.fk_bancal || ""}
+                            value={cultivo.Bancal || ""}
                             onChange={handleChange}
                             className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
                         >
