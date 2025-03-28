@@ -44,6 +44,8 @@ export default defineConfig({
             { label: 'Cultivo', slug: 'modules/trazabilidad/cultivo' },
             { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
             { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
+            { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
+
           ],
         },
         {

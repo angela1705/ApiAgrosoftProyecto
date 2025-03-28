@@ -3,17 +3,6 @@ title: "Gestión de especies"
 ---
 Las **Especies** representan las variedades vegetales o animales específicas que se cultivan o crían en el sistema Agrosoft, asociadas a un tipo de especie general.
 
-## ¿Cómo registrar una Especie?
-Para registrar una nueva especie en Agrosoft:
-1. Ir a la sección **Catálogos → Especies**.
-2. Hacer clic en el botón **"Registrar Especie"**.
-3. Completar los siguientes campos:
-   - **Tipo de Especie:** Seleccionar la categoría general (ej: "Hortalizas", "Frutales").
-   - **Nombre:** Nombre único de la especie (ej: "Manzano Fuji", "Maíz Híbrido 3000").
-   - **Descripción:** Características específicas de la especie.
-   - **Días de Crecimiento:** Tiempo estimado desde siembra hasta cosecha.
-   - **Imagen:** Fotografía representativa (opcional).
-4. Guardar los cambios.
 
 ## Datos de una Especie
 
@@ -26,43 +15,94 @@ Para registrar una nueva especie en Agrosoft:
 | **Días Crecimiento** | `IntegerField`  | Ciclo vegetativo en días |
 | **Imagen**        | `ImageField`       | Foto representativa (en 'especies_images/') |
 
-## Ejemplo de API para crear una Especie
 
+## **Endpoints de la API**
+
+### **GET /cultivo/especies**
+Obtiene todas las especies registradas.
+
+
+**Ejemplo de respuesta (200 OK):**
 ```json
-POST /catalogos/especies
+[
+  {
+    "id": 1,
+  "fk_tipo_especie": 3,
+    "nombre": "Tomate Cherry",
+    "descripcion": "Variedad de tomate pequeño, dulce y productivo",
+    "largoCrecimiento": 75,
+    "imagen_url": "/media/especies_images/tomate_cherry.jpg"
+  }
+]
+```
+
+### **GET /cultivo/especies/{id}**
+Obtiene una especie específica por su ID.
+
+**Ejemplo de respuesta (200 OK):**
+```json
+{
+  "id": 1,
+  "fk_tipo_especie": 3,
+  "nombre": "Tomate Cherry",
+  "descripcion": "Variedad de tomate pequeño, dulce y productivo",
+  "largoCrecimiento": 75,
+  "imagen_url": "/media/especies_images/tomate_cherry.jpg"
+}
+```
+
+### **POST /cultivo/especies/**
+Crea una nueva especie.
+
+**Ejemplo de solicitud:**
+```json
 {
   "fk_tipo_especie": 3,
   "nombre": "Tomate Cherry",
   "descripcion": "Variedad de tomate pequeño, dulce y productivo",
   "largoCrecimiento": 75,
-  "img": "base64_encoded_image_data"
+  "img": "img.jpg"
 }
 ```
 
-## Relaciones y Funcionalidad
+**Validaciones:**
+- `nombre` debe ser único (máx. 30 caracteres)
+- `fk_tipo_especie` debe existir
+- `largoCrecimiento` debe ser ≥ 1
+- `img` opcional (formato base64)
 
- **Jerarquía de Clasificación:**
+### * PUT /cultivo/especies/{id}**
+Actualiza una especie existente.
+
+**Ejemplo de solicitud:**
+```json
+{
+  "descripcion": "Variedad mejorada de tomate cherry",
+  "largoCrecimiento": 70
+}
 ```
-Tipo Especie (ej: Hortalizas)
-  └─ Especie (ej: Tomate Cherry)
-     └─ Variedades (opcional)
+
+**Restricciones:**
+- No se puede cambiar el `tipo_especie` asociado
+- El `nombre` solo puede modificarse si permanece único
+
+### **🔹 DELETE /cultivo/especies/{id}**
+Elimina una especie (solo si no tiene cultivos asociados).
+
+**Respuesta exitosa (200 OK):**
+```json
+{
+  "message": "Especie eliminada correctamente",
+  "id": 1
+}
 ```
 
- **Uso del ciclo de crecimiento:**
-- Programación automática de cosechas
-- Alertas de cuidados en etapas clave
-- Cálculo de rotación de cultivos
+**Error común (409 Conflict):**
+```json
+{
+  "error": "No se puede eliminar",
+  "detail": "Existen cultivos asociados a esta especie"
+}
+```
 
-
-## Buenas Prácticas
-
-1. **Nomenclatura consistente:** Usar nombres científicos o comerciales estándar
-2. **Datos de crecimiento:** Actualizar según experiencias locales
-3. **Documentación completa:** Incluir en descripción:
-   - Requerimientos climáticos
-   - Susceptibilidades
-   - Rendimientos esperados
-4. **Imágenes:** Usar fotos que muestren:
-   - Planta adulta
-   - Fruto/parte útil
-   - Características distintivas
+---
