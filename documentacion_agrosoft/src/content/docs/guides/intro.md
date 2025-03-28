@@ -1,45 +1,42 @@
 ---
 sidebar_position: 1
-title: "Introducción al Tutorial"
+title: "Introducción a Agrosis API"
 ---
 
 
-Descubramos **Django Rest Framework (DRF) en menos de 5 minutos**.
+**Solución integral para la gestión inteligente de operaciones agrícolas**  
+Conecta todos los aspectos de tu operación agropecuaria en un único ecosistema digital.
 
-## Primeros Pasos
+## Módulos Principales
 
-Para comenzar, necesitas tener instalado **Django** y **Django Rest Framework**.
+### Gestión Agronómica
+- Monitoreo de cultivos y ciclos productivos  
+- Manejo integrado de plagas y enfermedades  
+- Planificación de siembras y rotaciones  
 
-### Requisitos Previos
+### Administración Financiera
+- Costos de producción por cultivo/lote  
+- Flujo de caja y rentabilidad agrícola  
+- Integración con sistemas contables  
 
-- [Python](https://www.python.org/downloads/) versión 3.8 o superior.
-- [pip](https://pip.pypa.io/en/stable/installation/) para la gestión de paquetes de Python.
-- Un entorno virtual recomendado (`venv`).
+### Control de Inventarios
+- Insumos agrícolas (semillas, fertilizantes)  
+- Maquinaria y equipos  
+- Almacenes y bodegas  
 
-## Instalación de la API
+### IoT & Agricultura de Precisión
+- Conexión con sensores de campo  
+- Datos climáticos en tiempo real  
+- Alertas automatizadas  
 
-Si ya cuentas con la API, solo necesitas instalar las dependencias necesarias:
+### Gestión de Usuarios
+- Roles y permisos personalizados  
+- Acceso móvil para equipos de campo  
+- Registro de actividades  
 
-```bash
-pip install -r requirements.txt
-```
+## Beneficios Clave
 
-Asegúrate de que el archivo `settings.py` tenga configurado `rest_framework` en `INSTALLED_APPS`.
-
-## Ejecutar el Servidor y Probar la API
-
-Navega al directorio del proyecto y ejecuta el servidor:
-
-```bash
-python manage.py runserver
-```
-
-La API estará disponible en `http://127.0.0.1:8000/api/`. Desde aquí, puedes probar los endpoints utilizando herramientas como Postman o la interfaz web de DRF.
-
-Si necesitas realizar migraciones para asegurarte de que la base de datos esté actualizada, ejecuta:
-
-```bash
-python manage.py migrate
-```
-
-¡Listo! Ahora puedes comenzar a interactuar con la API. 
+**Integración total** - Todos tus módulos conectados  
+**Toma de decisiones basada en datos** - Reportes consolidados  
+**Escalable** - Desde pequeñas fincas a grandes operaciones  
+**Multiplataforma** - Web, móvil y dispositivos IoT  

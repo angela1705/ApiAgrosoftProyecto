@@ -77,7 +77,7 @@ Actualiza un registro existente.
 }
 ```
 
-### **DELETE /cosechas/{id}**
+### **DELETE cultivo/cosechas/{id}**
 Elimina un registro de cosecha.
 
 **Respuesta exitosa (200 OK):**

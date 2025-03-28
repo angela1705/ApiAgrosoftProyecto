@@ -7,7 +7,7 @@ Los **Tipos de Actividad** permiten clasificar las diferentes labores agrícolas
 
 ## **Endpoints de la API**
 
-### **GET /actividades/tipos**
+### **GET /cultivo/tipo_actividad/**
 Obtiene todos los tipos de actividad registrados.
 
 **Ejemplo de respuesta (200 OK):**
@@ -31,7 +31,7 @@ Obtiene todos los tipos de actividad registrados.
 
 ---
 
-### **GET /actividades/tipos/{id}**
+### **GET /cultivo/tipo_actividad/{id}**
 Obtiene un tipo de actividad específico por su ID.
 
 **Ejemplo de respuesta (200 OK):**
@@ -48,7 +48,7 @@ Obtiene un tipo de actividad específico por su ID.
 
 ---
 
-### **POST /actividades/tipos**
+### **POST /cultivo/tipo_actividad/**
 Crea un nuevo tipo de actividad.
 
 **Ejemplo de solicitud:**
@@ -66,9 +66,7 @@ Crea un nuevo tipo de actividad.
 **Ejemplo de respuesta exitosa (201 Created):**
 ```json
 {
-  "id": 3,
-  "nombre": "Poda",
-  "descripcion": "Corte de ramas para mejorar el crecimiento"
+  "message": "tipo de actividad registrado con exito"
 }
 ```
 
@@ -78,7 +76,7 @@ Crea un nuevo tipo de actividad.
 
 ---
 
-### **PUT /actividades/tipos/{id}**
+### **PUT /cultivo/tipo_actividad/{id}**
 Actualiza un tipo de actividad existente.
 
 **Ejemplo de solicitud:**
@@ -92,9 +90,7 @@ Actualiza un tipo de actividad existente.
 **Ejemplo de respuesta (200 OK):**
 ```json
 {
-  "id": 3,
-  "nombre": "Poda de formación",
-  "descripcion": "Poda para guiar la estructura de la planta"
+  "message": "tipo de actividad actualizado con exito"
 }
 ```
 
@@ -124,15 +120,13 @@ Elimina un tipo de actividad (si no está en uso).
 
 ### **Crear y luego actualizar un tipo:**
 ```bash
-# Crear (POST)
-POST /actividades/tipos
+POST /cultivo/tipo_actividad/
 {
   "nombre": "Deshierbe",
   "descripcion": "Eliminación de malezas"
 }
 
-# Actualizar (PUT)
-PUT /actividades/tipos/4
+PUT /cultivo/tipo_actividad/4
 {
   "descripcion": "Eliminación manual o química de malezas"
 }
@@ -140,7 +134,7 @@ PUT /actividades/tipos/4
 
 ### **Listar tipos de actividad:**
 ```bash
-GET /actividades/tipos
+GET /cultivo/tipo_actividad/
 ```
 
 ---
@@ -150,35 +144,11 @@ GET /actividades/tipos
 ### **Ejemplo de error (nombre duplicado):**
 ```json
 {
-  "error": "ValidationError",
-  "detail": {
-    "nombre": ["Ya existe un tipo de actividad con este nombre."]
-  },
-  "status": 400
+   "message": "Ya existe un tipo de actividad con este nombre"
 }
 ```
 
-### **Códigos de estado comunes:**
-| Código | Descripción |
-|--------|-------------|
-| `200` | OK (GET, PUT, DELETE exitoso) |
-| `201` | Created (POST exitoso) |
-| `400` | Bad Request (datos inválidos) |
-| `404` | Not Found (recurso no existe) |
-| `409` | Conflict (restricción de integridad) |
-
----
-
-## **Relaciones en el Sistema**
-Los **Tipos de Actividad** se vinculan con:
-- **Actividades agrícolas** (ejemplo: "Riego" → "Riego por goteo en Bancal 3").
-- **Planificación de labores** (para programar actividades recurrentes).
-
----
-
-
-
 ### **Buenas Prácticas**
-✔️ **Nomenclatura clara**: Usar nombres descriptivos (ej: "Fertilización foliar" en lugar de "Aplicación 1").  
-✔️ **Descripciones útiles**: Incluir detalles como métodos comunes o precauciones.  
-✔️ **Evitar duplicados**: Revisar tipos existentes antes de crear nuevos.
+**Nomenclatura clara**: Usar nombres descriptivos (ej: "Fertilización foliar" en lugar de "Aplicación 1").  
+**Descripciones útiles**: Incluir detalles como métodos comunes o precauciones.  
+**Evitar duplicados**: Revisar tipos existentes antes de crear nuevos.
