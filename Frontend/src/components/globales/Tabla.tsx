@@ -27,12 +27,11 @@ const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const filteredItems = data.filter((item) => {
-    const searchField = item.nombre || item.ubicacion || item.descripcion ||"";  
+    const searchField = item.nombre || item.ubicacion || item.descripcion || "";
     return searchField.toLowerCase().includes(filterValue.toLowerCase());
   });
-  
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
   const items = filteredItems.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   const onSearchChange = (value: string) => {
@@ -51,8 +50,8 @@ const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between gap-3 items-end mb-4">
+    <div className="w-full bg-white p-6 rounded-lg shadow-md mt-4">
+      <div className="flex justify-between gap-3 items-end mb-2">
         <Input
           isClearable
           className="w-full sm:max-w-[44%]"
@@ -89,7 +88,7 @@ const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
           ))}
         </TableBody>
       </Table>
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 px-2 flex justify-between items-center mt-2">
         <Pagination
           isCompact
           showControls
