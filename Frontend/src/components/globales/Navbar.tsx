@@ -83,7 +83,7 @@ const menuItems = [
       { id: 32, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
-  { id: 33, label: "Docs", path: "/docs", icon: <FaUser /> },
+  { id: 33, label: "Docs", path: "/reporte", icon: <FaUser /> },
 ];
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
