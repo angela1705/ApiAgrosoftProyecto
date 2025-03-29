@@ -77,8 +77,8 @@ const ListaTipoEspeciePage: React.FC = () => {
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Tipos de Especies Registradas</h2><br /><br />
       <div className="mb-2 flex justify-start">
         <button
-          className="px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg 
-                     hover:bg-blue-700 transition-all duration-300 ease-in-out 
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                     hover:bg-green-700 transition-all duration-300 ease-in-out 
                      shadow-md hover:shadow-lg transform hover:scale-105"
           onClick={() => navigate('/cultivo/tipoespecie')} 
         >

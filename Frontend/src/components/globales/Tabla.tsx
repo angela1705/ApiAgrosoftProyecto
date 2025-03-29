@@ -93,19 +93,29 @@ const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
           isCompact
           showControls
           showShadow
-          color="primary"
+          color="success"
           page={page}
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button isDisabled={page === 1} size="sm" variant="flat" onPress={() => setPage(page - 1)}>
+      <div className="hidden sm:flex w-[30%] justify-end gap-2">
+          <Button
+            isDisabled={page === 1}
+            size="sm"
+            className="bg-green-600 text-white hover:bg-green-700"
+            onPress={() => setPage(page - 1)}
+          >
             Anterior
           </Button>
-          <Button isDisabled={page === pages} size="sm" variant="flat" onPress={() => setPage(page + 1)}>
+          <Button
+            isDisabled={page === pages}
+            size="sm"
+            className="bg-green-600 text-white hover:bg-green-700"
+            onPress={() => setPage(page + 1)}
+          >
             Siguiente
           </Button>
-        </div>
+      </div>
       </div>
     </div>
   );
