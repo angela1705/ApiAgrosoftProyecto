@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { addToast } from "@heroui/react";
 import { Actividad } from "@/types/cultivo/Actividad";
-
+import { Insumo } from "@/types/inventario/Insumo";
+import { User } from "@/context/AuthContext";
 const API_URL = "http://127.0.0.1:8000/cultivo/actividades/";
 
 const fetchActividades = async (): Promise<Actividad[]> => {
@@ -27,7 +28,7 @@ const fetchActividades = async (): Promise<Actividad[]> => {
     });
   };
 
-const fetchUsuarios = async () => {
+const fetchUsuarios = async (): Promise<User[]> => {
     const token = localStorage.getItem("access_token");
 
     if (!token) {
@@ -49,7 +50,7 @@ export const useUsuarios = () => {
     });
 };
 
-const fetchInsumos = async () => {
+const fetchInsumos = async (): Promise<Insumo[]>=> {
     const token = localStorage.getItem("access_token");
 
     if (!token) {
