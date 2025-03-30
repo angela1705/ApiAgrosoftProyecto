@@ -5,7 +5,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 class Usuarios(AbstractUser): 
-    rol = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
+    rol = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True, default=1)
     nombre = models.CharField(max_length=30)
     apellido = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
