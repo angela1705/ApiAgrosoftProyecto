@@ -121,11 +121,16 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("redis://127.0.0.1:6379/0")],
         },
     },
 }
 
+# Configuración CORS para desarrollo
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Frontend Vite
+    "http://127.0.0.1:5173",
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

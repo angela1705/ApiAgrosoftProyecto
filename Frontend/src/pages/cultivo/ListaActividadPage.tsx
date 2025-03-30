@@ -109,8 +109,6 @@ const ListaActividadPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Actividades</h2>
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
@@ -129,9 +127,6 @@ const ListaActividadPage: React.FC = () => {
               </div>
             </>
           )}
-        </div>
-      </div>
-
       <ReuModal
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
@@ -190,7 +185,7 @@ const ListaActividadPage: React.FC = () => {
         >
           <option value="">Seleccione una programación</option>
           {programaciones?.map((prog) => (
-            <option key={prog.id} value={prog.id}>{prog.nombre}</option>
+            <option key={prog.id} value={prog.id}>{prog.ubicacion}</option>
           ))}
         </select>
         <label className="block text-sm font-medium text-gray-700 mt-4">Usuario</label>

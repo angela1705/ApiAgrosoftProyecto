@@ -83,7 +83,7 @@ const ActividadPage: React.FC = () => {
                     <select name="programacion" value={actividad.programacion || ""} onChange={handleChange}>
                         <option value="">Seleccione una programación</option>
                         {programaciones?.map((programacion) => (
-                            <option key={programacion.id} value={programacion.id}>{programacion.nombre}</option>
+                            <option key={programacion.id} value={programacion.id}>{programacion.ubicacion}</option>
                         ))}
                     </select>
 
@@ -139,7 +139,8 @@ const ActividadPage: React.FC = () => {
             </div>
 
 
-            {user && <ActividadNotifications userId={user.id} />}
+            <ActividadNotifications userId={user.id} />
+
         </DefaultLayout>
     );
 };
