@@ -3,16 +3,18 @@ import { useNavigate } from "react-router-dom";
 
 interface Rol {
   id: number;
-  rol: string;
+  nombre: 'admin' | 'aprendiz';
+  permisos: string[];
 }
 
-interface User {
+export interface User {
   id: number;
   nombre: string;
   apellido: string;
   email: string;
   username?: string;
-  rol: Rol | null;
+  rol: Rol; 
+  esAdmin?: boolean; 
 }
 
 interface AuthContextType {

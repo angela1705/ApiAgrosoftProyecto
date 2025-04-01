@@ -6,10 +6,6 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from apps.Usuarios.usuarios.api.views import (
     RegistroUsuarioView, CurrentUserView, PasswordResetRequestView, PasswordResetConfirmView, ChangePasswordView)
-from apps.Usuarios.permisos.api.routers import PermisosRouter
-from apps.Usuarios.rol_permiso.api.routers import RolPermisoRouter
-from apps.Usuarios.roles_acciones.api.routers import RolesAccionesRouter
-from apps.Usuarios.usuario_rol.api.routers import UsuarioRolRouter
 from apps.Usuarios.usuarios.api.routers import UsuariosRouter
 from apps.Usuarios.roles.api.routers import RolesRouter
 from apps.Usuarios.usuarios.api.views import RegistroUsuarioView, CurrentUserView
@@ -67,11 +63,7 @@ routerInventario = DefaultRouter()
 routerIOT = DefaultRouter()
 
 # Usuarios
-routerUsuarios.registry.extend(PermisosRouter.registry)
-routerUsuarios.registry.extend(RolPermisoRouter.registry)
-routerUsuarios.registry.extend(UsuarioRolRouter.registry)
 routerUsuarios.registry.extend(UsuariosRouter.registry)
-routerUsuarios.registry.extend(RolesAccionesRouter.registry)
 routerUsuarios.registry.extend(RolesRouter.registry)
 
 # Cultivo

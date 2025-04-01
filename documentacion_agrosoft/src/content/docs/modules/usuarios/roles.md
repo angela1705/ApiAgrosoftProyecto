@@ -19,8 +19,16 @@ Cada rol tiene la siguiente información:
 
 
 ## Ejemplo de API para gestionar roles
-## POST /usuarios/roles/
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/roles/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/roles/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 
 - Crea un nuevo rol.
 
@@ -38,6 +46,8 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 - Este campo debe llenarse obligatoriamente con un nombre de unico.
 
 **Ejemplo de respuesta exitosa (201 Created):**
+<span class="sl-badge success small astro-avdet4wd">Success</span>
+
 ```json
 {
 
@@ -53,11 +63,21 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 
 ---
 
-### **GET /usuarios/roles**
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/roles/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/roles/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 - Obtiene todos los usuarios registrados.
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span>
+
 ```json
 [
     {
@@ -73,11 +93,21 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 
 
 ---
-### **GET /usuarios/roles/{id}**
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/roles/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/roles/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 - Obtiene un rol específico por su ID.
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span>
+
 ```json
 [
     {
@@ -92,8 +122,16 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 - `404 Not Found`: Si el ID no existe.
 
 ---
-### **PUT /usuarios/roles/{id}**
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/roles/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/roles/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 - Actualiza un rol existente.
 
 **Ejemplo de solicitud:**
@@ -105,6 +143,8 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span>
+
 ```json
 {
        
@@ -121,10 +161,21 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 - El `nombre`, debe seguir siendo único.
 
 ---
-### **DELETE /usuarios/roles/{id}**
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELTE</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/roles/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/roles/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 Elimina un rol (si no está en uso).
 
 **Ejemplo de respuesta exitosa (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span>
+
 ```json
 {
   "message": "Rol eliminado correctamente"
@@ -141,13 +192,13 @@ Elimina un rol (si no está en uso).
 ### **Crear y luego actualizar un rol:**
 ```bash
 # Crear (POST)
-POST /usuarios/roles/
+Metodo: POST http://127.0.0.1:8000/usuarios/roles/
 {
     "nombre": "Aprendiz",
 }
 
 # Actualizar (PUT)
-PUT /usuarios/roles/1/
+Metodo: PUT http://127.0.0.1:8000/usuarios/roles/1/
 {
   "nombre": "Aprendiz_nuevo"
 }
@@ -156,7 +207,7 @@ PUT /usuarios/roles/1/
 ### **Listar usuarios:**
 ```bash
 # Obtener (GET)
-GET /usuarios/roles/
+Metodo: GET http://127.0.0.1:8000/usuarios/roles/
 {
     "id": 1 ,
     "nombre": "Apremdiz_nuevo",
