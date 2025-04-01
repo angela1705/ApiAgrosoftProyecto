@@ -6,7 +6,7 @@ description: "Registro y visualización de datos meteorológicos en Agrosoft."
 
 # Datos Meteorológicos
 
-Los datos meteorológicos, como temperatura y humedad, son recopilados por los sensores IoT y se integran en Agrosoft para monitorear las condiciones de los cultivos en tiempo real.
+Los datos meteorológicos, como temperatura y humedad, son recopilados por los sensores **IoT** y se integran en **Agrosoft** para monitorear las condiciones de los cultivos en tiempo real.
 
 ## Registro de Datos
 - Los sensores envían datos a través de **WebSocket** para actualizaciones en tiempo real.
@@ -20,5 +20,5 @@ Los datos meteorológicos, como temperatura y humedad, son recopilados por los s
 ## Visualización
 - Accede a **IoT → Sensores y Datos Historicos** para ver gráficos y tablas.
 - Los datos se presentan en:
-  - **Gráficos en tiempo real:** Actualizados vía WebSocket.
+  - **Gráficos en tiempo real:** Actualizados vía **WebSocket**.
   - **Historial:** Filtrable por fecha y sensor.
