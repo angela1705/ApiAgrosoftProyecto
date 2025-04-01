@@ -206,6 +206,4 @@ URL:
 
 **Posibles errores:**  
 - `404 Not Found`: Si el ID no existe.  
-- `409 Conflict`: Si el sensor está asociado a datos o configuraciones pendientes.  
-
 ---
