@@ -60,6 +60,7 @@ import SalarioPage from './pages/finanzas/SalarioPage';
 import VentaPage from './pages/finanzas/VentaPage';
 import ListaVentaPage from './pages/finanzas/ListaVentaPage';
 import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
+import UsuariosSecondPage from './pages/usuarios/RegisterSecondPage';
 import Reportes from './pages/reportes/reportes';
 const queryClient = new QueryClient();
 
@@ -79,6 +80,8 @@ const App: React.FC = () => {
           <Route path="/perfil" element={<PrivateRoute><PerfilPage /></PrivateRoute>} />
           <Route path="/inventario/bodega/" element={<PrivateRoute><BodegaPage /></PrivateRoute>} />
           <Route path="/inventario/listarbodega/" element={<PrivateRoute><ListaBodegaPage /></PrivateRoute>} />
+          <Route path="/usuarios/secondregis/" element={<PrivateRoute><UsuariosSecondPage /></PrivateRoute>} />
+          src\pages\usuarios\RegisterSecondPage.tsx
           <Route
             path="/inventario/bodegaherramienta/"
             element={
