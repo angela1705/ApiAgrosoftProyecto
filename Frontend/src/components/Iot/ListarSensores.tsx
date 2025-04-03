@@ -1,178 +1,184 @@
-import React, { useState, FormEvent } from "react";
+// components/Iot/ListarSensores.tsx
+import { useState, useMemo } from "react";
 import DefaultLayout from "@/layouts/default";
-import { useSensores, useRegistrarSensor } from "@/hooks/iot/useSensore";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input } from "@heroui/react";
+import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
+import { useNavigate } from "react-router-dom";
+import Tabla from "@/components/globales/Tabla";
+import ReuModal from "@/components/globales/ReuModal";
+import { ReuInput } from "@/components/globales/ReuInput";
+import { Sensor } from "@/types/iot/type";
 
-interface Sensor {
-  id?: number;
-  nombre: string;
-  tipo_sensor: string;
-  unidad_medida: string;
-  descripcion: string;
-  medida_minima: number;
-  medida_maxima: number;
-}
+export default function ListarSensores() {
+  const { sensores, isLoading, error, updateSensor, deleteSensor } = useSensoresRegistrados();
+  const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const navigate = useNavigate();
 
-const ListarSensores: React.FC = () => {
-  const { sensores: initialSensores, isLoading, error } = useSensores();
-  const [sensores, setSensores] = useState<Sensor[]>(initialSensores || []);
-  const mutation = useRegistrarSensor();
-  const [newSensor, setNewSensor] = useState<Sensor>({
-    nombre: "",
-    tipo_sensor: "",
-    unidad_medida: "",
-    descripcion: "",
-    medida_minima: 0,
-    medida_maxima: 0,
-  });
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Columnas para la tabla
+  const columns = [
+    { name: "ID", uid: "id" },
+    { name: "Nombre", uid: "nombre" },
+    { name: "Tipo", uid: "tipo_sensor" },
+    { name: "Unidad", uid: "unidad_medida" },
+    { name: "Acciones", uid: "acciones" },
+  ];
 
-  // Sincronizar sensores iniciales cuando cambian
-  React.useEffect(() => {
-    setSensores(initialSensores || []);
-  }, [initialSensores]);
-
-  // Manejo de cambios en el formulario de registro
-  const handleNewSensorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewSensor((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.name === "medida_minima" || e.target.name === "medida_maxima"
-        ? Number(e.target.value)
-        : e.target.value,
+  // Datos formateados para la tabla
+  const formattedData = useMemo(() => {
+    return sensores.map((sensor: Sensor) => ({
+      id: sensor.id,
+      nombre: sensor.nombre,
+      tipo_sensor: sensor.tipo_sensor,
+      unidad_medida: sensor.unidad_medida,
+      acciones: (
+        <>
+          <button
+            className="text-green-500 hover:underline mr-2"
+            onClick={() => handleEdit(sensor)}
+          >
+            Editar
+          </button>
+          <button
+            className="text-red-500 hover:underline"
+            onClick={() => handleDelete(sensor)}
+          >
+            Eliminar
+          </button>
+        </>
+      ),
     }));
+  }, [sensores]);
+
+  // Manejar edición
+  const handleEdit = (sensor: Sensor) => {
+    setSelectedSensor({ ...sensor });
+    setIsEditModalOpen(true);
   };
 
-  // Registro de un nuevo sensor
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log("Registrando sensor:", newSensor);
-    mutation.mutate(newSensor, {
-      onSuccess: (data) => {
-        console.log("Sensor registrado con éxito:", data);
-        setSensores((prev) => [...prev, { ...newSensor, id: data.id }]); // Actualizar lista localmente
-        setNewSensor({
-          nombre: "",
-          tipo_sensor: "",
-          unidad_medida: "",
-          descripcion: "",
-          medida_minima: 0,
-          medida_maxima: 0,
-        });
-        setErrorMessage(null);
-      },
-      onError: (err) => {
-        console.error("Error al registrar:", err);
-        setErrorMessage(`Error al registrar el sensor: ${err.message}`);
-      },
+  // Manejar eliminación
+  const handleDelete = (sensor: Sensor) => {
+    setSelectedSensor(sensor);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Confirmar eliminación
+  const handleConfirmDelete = () => {
+    if (selectedSensor?.id) {
+      deleteSensor.mutate(selectedSensor.id);
+      setIsDeleteModalOpen(false);
+      setSelectedSensor(null);
+    }
+  };
+
+  // Manejar cambios en el formulario de edición
+  const handleChange = (
+    field: keyof Sensor,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const value = e.target.value;
+    setSelectedSensor((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        [field]: field === "medida_minima" || field === "medida_maxima" ? Number(value) : value,
+      };
     });
   };
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6 bg-gray-100">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">Lista de Sensores</h2>
+      <div className="w-full flex flex-col items-center min-h-screen p-6">
+        <div className="w-full max-w-5xl bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Lista de Sensores Registrados</h2>
 
-          {/* Mensaje de error */}
-          {errorMessage && (
-            <p className="text-red-500 text-center mb-4">{errorMessage}</p>
-          )}
-
-          {/* Lista de Sensores */}
           {isLoading ? (
             <p className="text-gray-600 text-center">Cargando sensores...</p>
           ) : error ? (
-            <p className="text-red-500 text-center">Error al cargar sensores: {error.message}</p>
+            <p className="text-red-500 text-center">Error: {error.message}</p>
           ) : sensores.length === 0 ? (
-            <p className="text-gray-600 text-center">No hay sensores registrados.</p>
+            <p className="text-gray-600 text-center">No hay sensores registrados</p>
           ) : (
-            <Table aria-label="Lista de sensores">
-              <TableHeader>
-                <TableColumn>ID</TableColumn>
-                <TableColumn>Nombre</TableColumn>
-                <TableColumn>Tipo</TableColumn>
-                <TableColumn>Unidad</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {sensores.map((sensor) => (
-                  <TableRow key={sensor.id}>
-                    <TableCell>{sensor.id}</TableCell>
-                    <TableCell>{sensor.nombre}</TableCell>
-                    <TableCell>{sensor.tipo_sensor}</TableCell>
-                    <TableCell>{sensor.unidad_medida}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <>
+              <Tabla columns={columns} data={formattedData} />
+              <div className="flex justify-between mt-4">
+                <button
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  onClick={() => navigate("/iot/registrar-sensor")}
+                >
+                  Registrar Sensor
+                </button>
+                <button
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  onClick={() => navigate("/iot/sensores")}
+                >
+                  Volver a Tiempo Real
+                </button>
+              </div>
+            </>
           )}
-
-          {/* Formulario de Registro */}
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Registrar Nuevo Sensor</h3>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md mx-auto">
-              <Input
-                label="Nombre"
-                name="nombre"
-                value={newSensor.nombre}
-                onChange={handleNewSensorChange}
-                fullWidth
-                required
-              />
-              <Input
-                label="Tipo de Sensor"
-                name="tipo_sensor"
-                value={newSensor.tipo_sensor}
-                onChange={handleNewSensorChange}
-                fullWidth
-                required
-              />
-              <Input
-                label="Unidad de Medida"
-                name="unidad_medida"
-                value={newSensor.unidad_medida}
-                onChange={handleNewSensorChange}
-                fullWidth
-                required
-              />
-              <Input
-                label="Descripción"
-                name="descripcion"
-                value={newSensor.descripcion}
-                onChange={handleNewSensorChange}
-                fullWidth
-              />
-              <Input
-                label="Medida Mínima"
-                name="medida_minima"
-                type="number"
-                value={newSensor.medida_minima.toString()}
-                onChange={handleNewSensorChange}
-                fullWidth
-                required
-              />
-              <Input
-                label="Medida Máxima"
-                name="medida_maxima"
-                type="number"
-                value={newSensor.medida_maxima.toString()}
-                onChange={handleNewSensorChange}
-                fullWidth
-                required
-              />
-              <Button
-                type="submit"
-                color="primary"
-                disabled={mutation.isPending}
-                className="w-full"
-              >
-                {mutation.isPending ? "Registrando..." : "Guardar"}
-              </Button>
-            </form>
-          </div>
         </div>
       </div>
+
+      {/* Modal de edición */}
+      <ReuModal
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        title="Editar Sensor"
+        onConfirm={() => {
+          if (selectedSensor?.id) {
+            updateSensor.mutate(selectedSensor);
+            setIsEditModalOpen(false);
+          }
+        }}
+      >
+        <ReuInput
+          label="Nombre"
+          type="text"
+          value={selectedSensor?.nombre || ""}
+          onChange={(e) => handleChange("nombre", e)}
+        />
+        <ReuInput
+          label="Tipo de Sensor"
+          type="text"
+          value={selectedSensor?.tipo_sensor || ""}
+          onChange={(e) => handleChange("tipo_sensor", e)}
+        />
+        <ReuInput
+          label="Unidad de Medida"
+          type="text"
+          value={selectedSensor?.unidad_medida || ""}
+          onChange={(e) => handleChange("unidad_medida", e)}
+        />
+        <ReuInput
+          label="Descripción"
+          type="text"
+          value={selectedSensor?.descripcion || ""}
+          onChange={(e) => handleChange("descripcion", e)}
+        />
+        <ReuInput
+          label="Medida Mínima"
+          type="number"
+          value={selectedSensor?.medida_minima?.toString() || "0"}
+          onChange={(e) => handleChange("medida_minima", e)}
+        />
+        <ReuInput
+          label="Medida Máxima"
+          type="number"
+          value={selectedSensor?.medida_maxima?.toString() || "0"}
+          onChange={(e) => handleChange("medida_maxima", e)}
+        />
+      </ReuModal>
+
+      {/* Modal de eliminación */}
+      <ReuModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title="¿Estás seguro de eliminar este sensor?"
+        onConfirm={handleConfirmDelete}
+      >
+        <p>Esta acción es irreversible.</p>
+      </ReuModal>
     </DefaultLayout>
   );
-};
-
-export default ListarSensores;
+}
