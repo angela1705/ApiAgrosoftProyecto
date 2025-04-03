@@ -6,6 +6,7 @@ import { useRegistrarBodegaInsumo } from "@/hooks/inventario/useBodegaInsumo";
 import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useInsumos } from "@/hooks/inventario/useInsumo";
 import { Insumo } from "@/types/inventario/Insumo";
+import Formulario from "@/components/globales/Formulario";
 
 const BodegaInsumoPage: React.FC = () => {
   const [bodegaInsumo, setBodegaInsumo] = useState<BodegaInsumo>({
@@ -40,61 +41,56 @@ const BodegaInsumoPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Bodega Insumo</h2>
-          <form onSubmit={handleSubmit}>
-            <select
-              name="bodega"
-              value={bodegaInsumo.bodega}
-              onChange={handleChange}
-              className="w-full mb-4 p-2 border rounded"
-            >
-              <option value="0">Seleccione una Bodega</option>
-              {bodegas?.map((bodega: { id: number; nombre: string }) => (
-                <option key={bodega.id} value={bodega.id}>
-                  {bodega.nombre}
-                </option>
-              ))}
-            </select>
-            <select
-              name="insumo"
-              value={bodegaInsumo.insumo}
-              onChange={handleChange}
-              className="w-full mb-4 p-2 border rounded"
-            >
-              <option value="0">Seleccione un Insumo</option>
-              {insumos?.map((insumo: Insumo) => (
-                <option key={insumo.id} value={insumo.id}>
-                  {insumo.nombre}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              name="cantidad"
-              value={bodegaInsumo.cantidad}
-              onChange={handleChange}
-              className="w-full mb-4 p-2 border rounded"
-              placeholder="Cantidad"
-            />
-            <button
-              type="submit"
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? "Registrando..." : "Guardar"}
-            </button>
-            <button
-              type="button"
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
-              onClick={() => navigate("/inventario/listarbodegainsumos/")}
-            >
-              Listar Bodega Insumos
-            </button>
-          </form>
+      <Formulario
+        title="Registro de Bodega Insumo"
+        onSubmit={handleSubmit}
+        buttonText="Guardar"
+        isSubmitting={mutation.isPending}
+      >
+        <select
+          name="bodega"
+          value={bodegaInsumo.bodega}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+        >
+          <option value="0">Seleccione una Bodega</option>
+          {bodegas?.map((bodega: { id: number; nombre: string }) => (
+            <option key={bodega.id} value={bodega.id}>
+              {bodega.nombre}
+            </option>
+          ))}
+        </select>
+        <select
+          name="insumo"
+          value={bodegaInsumo.insumo}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+        >
+          <option value="0">Seleccione un Insumo</option>
+          {insumos?.map((insumo: Insumo) => (
+            <option key={insumo.id} value={insumo.id}>
+              {insumo.nombre}
+            </option>
+          ))}
+        </select>
+        <input
+          type="number"
+          name="cantidad"
+          value={bodegaInsumo.cantidad}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+          placeholder="Cantidad"
+        />
+        <div className="col-span-1 md:col-span-2 flex justify-center">
+          <button
+            type="button"
+            className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
+            onClick={() => navigate("/inventario/listarbodegainsumos/")}
+          >
+            Listar Bodega Insumos
+          </button>
         </div>
-      </div>
+      </Formulario>
     </DefaultLayout>
   );
 };
