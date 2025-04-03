@@ -37,6 +37,7 @@ from apps.Cultivo.tareas.api.router import tareaRouter
 from apps.Finanzas.pagos.api.router import pagoRouter
 from apps.Finanzas.salario.api.router import salarioRouter
 from apps.Finanzas.venta.api.router import ventaRouter
+from apps.Finanzas.precio_producto.api.router import precioProductoRouter
 from apps.Inventario.bodega.api.routers import bodegaRouter
 from apps.Inventario.bodega_herramienta.api.routers import bodegaHerramientaRouter
 from apps.Inventario.bodega_insumo.api.routers import bodegaInsumoRouter
@@ -95,6 +96,7 @@ routerCultivo.registry.extend(tareaRouter.registry)
 routerFinanzas.registry.extend(pagoRouter.registry)
 routerFinanzas.registry.extend(salarioRouter.registry)
 routerFinanzas.registry.extend(ventaRouter.registry)
+routerFinanzas.registry.extend(precioProductoRouter.registry)
 
 # Inventario
 routerInventario.registry.extend(bodegaRouter.registry)

@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'apps.Finanzas.pagos',
     'apps.Finanzas.venta',
     'apps.Finanzas.salario',
+    'apps.Finanzas.precio_producto',
     'apps.Inventario.bodega',
     'apps.Inventario.bodega_insumo',
     'apps.Inventario.bodega_herramienta',
@@ -134,9 +135,9 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_proyecto',
+        'NAME': 'apidiego',
         'USER': 'postgres',
-        'PASSWORD': 'root',
+        'PASSWORD': '1234',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
