@@ -15,6 +15,7 @@ import {
   FaTachometerAlt,
   FaTemperatureHigh,
   FaWarehouse,
+  FaFileAlt
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
 import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
@@ -83,7 +84,7 @@ const menuItems = [
       { id: 32, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
     ],
   },
-  { id: 33, label: "Docs", path: "/reporte", icon: <FaUser /> },
+  { id: 33, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
 ];
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
