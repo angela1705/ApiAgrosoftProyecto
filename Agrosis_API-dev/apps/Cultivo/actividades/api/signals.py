@@ -18,11 +18,12 @@ def notificar_asignacion_actividad(sender, instance, created, **kwargs):
     user_group_name = f"user_{instance.usuario.id}"
     user_message = {
         "type": "send_notification",
-        "message": f"Tienes una nueva actividad: {instance.tipo_actividad.nombre}",
+        "message": f"Tienes una nueva actividad:\n {instance.tipo_actividad.nombre}\n {instance.cultivo.nombre}",
         "timestamp": timestamp,
         "activity_id": instance.id,
         "hash": activity_hash
     }
+
 
     admin_message = {
         "type": "send_notification",

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
 import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Importar useNavigate
 import Tabla from "@/components/globales/Tabla";
 import { useAuth } from "@/context/AuthContext";
 import ReuModal from "@/components/globales/ReuModal";
@@ -10,10 +11,19 @@ import { EditIcon, Trash2 } from "lucide-react";
 
 const UsuariosPage: React.FC = () => {
   const { user } = useAuth();
-  const { data: usuarios = [], isLoading, error, updateUsuario, deleteUsuario, roles } = useUsuarios();
+  const { data: usuarios = [], isLoading, error, updateUsuario, deleteUsuario, registrarUsuario, roles } = useUsuarios();
+  const navigate = useNavigate();
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [newUser, setNewUser] = useState({
+    nombre: "",
+    apellido: "",
+    email: "",
+    username: "",
+    rol_id: 1, // Por defecto "Aprendiz"
+  });
 
   if (!user || user.rol?.rol.toLowerCase() !== "administrador") {
     return <Navigate to="/perfil" replace />;
@@ -45,6 +55,12 @@ const UsuariosPage: React.FC = () => {
     }
   };
 
+  const handleRegister = () => {
+    registrarUsuario(newUser);
+    setIsRegisterModalOpen(false);
+    setNewUser({ nombre: "", apellido: "", email: "", username: "", rol_id: 1 });
+  };
+
   const formattedData = useMemo(() => {
     return usuarios.map((usuario) => ({
       id: usuario.id,
@@ -69,9 +85,12 @@ const UsuariosPage: React.FC = () => {
   return (
     <DefaultLayout>
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Usuarios</h2>
-      
+
       <div className="mb-2 flex justify-start">
-        <button className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate("/usuarios/secondregis/")}
+          >
           + Registrar
         </button>
       </div>
@@ -86,32 +105,25 @@ const UsuariosPage: React.FC = () => {
         <Tabla columns={columns} data={formattedData} />
       )}
 
+      {/* Modal de Edición */}
       <ReuModal
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         title="Editar Usuario"
         onConfirm={() => {
           if (selectedUsuario && selectedUsuario.id !== undefined) {
-            const usuarioActualizado = {
-              id: selectedUsuario.id,
-              nombre: selectedUsuario.nombre,
-              apellido: selectedUsuario.apellido,
-              email: selectedUsuario.email,
-              username: selectedUsuario.username || "",
-              rol_id: selectedUsuario.rol_id ?? null, 
-            };
-            updateUsuario(usuarioActualizado);
+            updateUsuario(selectedUsuario);
             setIsEditModalOpen(false);
           }
         }}
       >
-        <ReuInput label="Nombre" placeholder="Ingrese el nombre" type="text" value={selectedUsuario?.nombre || ''} onChange={(e) => setSelectedUsuario((prev: any) => ({ ...prev, nombre: e.target.value }))} />
-        <ReuInput label="Apellido" placeholder="Ingrese el apellido" type="text" value={selectedUsuario?.apellido || ''} onChange={(e) => setSelectedUsuario((prev: any) => ({ ...prev, apellido: e.target.value }))} />
-        <ReuInput label="Correo Electrónico" placeholder="Ingrese el correo" type="email" value={selectedUsuario?.email || ''} onChange={(e) => setSelectedUsuario((prev: any) => ({ ...prev, email: e.target.value }))} />
-        <ReuInput label="Nombre de Usuario" placeholder="Ingrese el nombre de usuario" type="text" value={selectedUsuario?.username || ''} onChange={(e) => setSelectedUsuario((prev: any) => ({ ...prev, username: e.target.value }))} />
+        <ReuInput label="Nombre" type="text" value={selectedUsuario?.nombre || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, nombre: e.target.value })} />
+        <ReuInput label="Apellido" type="text" value={selectedUsuario?.apellido || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, apellido: e.target.value })} />
+        <ReuInput label="Correo Electrónico" type="email" value={selectedUsuario?.email || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, email: e.target.value })} />
+        <ReuInput label="Nombre de Usuario" type="text" value={selectedUsuario?.username || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, username: e.target.value })} />
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700">Rol</label>
-          <select className="w-full px-4 py-2 border border-gray-300 rounded-lg" value={selectedUsuario?.rol_id || ""} onChange={(e) => setSelectedUsuario((prev: any) => ({ ...prev, rol_id: parseInt(e.target.value) }))}>
+          <select className="w-full px-4 py-2 border border-gray-300 rounded-lg" value={selectedUsuario?.rol_id || ""} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, rol_id: parseInt(e.target.value) })}>
             <option value="">Seleccione un rol</option>
             {roles?.map((rol) => (
               <option key={rol.id} value={rol.id}>{rol.rol}</option>
@@ -120,8 +132,30 @@ const UsuariosPage: React.FC = () => {
         </div>
       </ReuModal>
 
+      {/* Modal de Eliminación */}
       <ReuModal isOpen={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen} title="¿Estás seguro de eliminar este usuario?" onConfirm={handleConfirmDelete}>
         <p>Esta acción es irreversible.</p>
+      </ReuModal>
+
+      {/* Modal de Registro */}
+      <ReuModal
+        isOpen={isRegisterModalOpen}
+        onOpenChange={setIsRegisterModalOpen}
+        title="Registrar Usuario"
+        onConfirm={handleRegister}
+      >
+        <ReuInput label="Nombre" type="text" value={newUser.nombre} onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })} />
+        <ReuInput label="Apellido" type="text" value={newUser.apellido} onChange={(e) => setNewUser({ ...newUser, apellido: e.target.value })} />
+        <ReuInput label="Correo Electrónico" type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+        <ReuInput label="Nombre de Usuario" type="text" value={newUser.username} onChange={(e) => setNewUser({ ...newUser, username: e.target.value })} />
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700">Rol</label>
+          <select className="w-full px-4 py-2 border border-gray-300 rounded-lg" value={newUser.rol_id} onChange={(e) => setNewUser({ ...newUser, rol_id: parseInt(e.target.value) })}>
+            {roles?.map((rol) => (
+              <option key={rol.id} value={rol.id}>{rol.rol}</option>
+            ))}
+          </select>
+        </div>
       </ReuModal>
     </DefaultLayout>
   );

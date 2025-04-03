@@ -11,6 +11,8 @@ import uuid
 
 logger = logging.getLogger(__name__)
 
+LOW_STOCK_THRESHOLD = 5  # Umbral para notificar bajo stock
+
 class BodegaInsumoConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -48,7 +50,7 @@ class BodegaInsumoConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def update_insumo_quantity(self, insumo_id, cantidad_usada):
         try:
-            insumo = BodegaInsumo.objects.get(id=insumo_id)
+            insumo = BodegaInsumo.objects.get(insumo_id=insumo_id)  # Ajustado para usar insumo_id
             if insumo.cantidad >= cantidad_usada:
                 insumo.cantidad -= cantidad_usada
                 insumo.save()
@@ -63,7 +65,7 @@ class BodegaInsumoConsumer(AsyncWebsocketConsumer):
                 logger.error(f"No hay suficiente cantidad en {insumo.insumo.nombre} para usar {cantidad_usada}")
                 return None
         except BodegaInsumo.DoesNotExist:
-            logger.error(f"Insumo con ID {insumo_id} no encontrado")
+            logger.error(f"Insumo con ID {insumo_id} no encontrado en BodegaInsumo")
             return None
 
     async def send_initial_state(self):
@@ -85,25 +87,25 @@ class BodegaInsumoConsumer(AsyncWebsocketConsumer):
 
         updated_insumo = await self.update_insumo_quantity(insumo_id, cantidad_usada)
         if updated_insumo:
-            message = {
-                "message_id": f"usage-{insumo_id}-{uuid.uuid4()}",
-                "id": updated_insumo["id"],
-                "bodega": updated_insumo["bodega"],
-                "insumo": updated_insumo["insumo"],
-                "cantidad": updated_insumo["cantidad"],
-                "cantidad_usada": updated_insumo["cantidad_usada"],
-                "type": "usage",
-                "timestamp": str(uuid.uuid4())
-            }
-            message_json = json.dumps(message)
-            await self.channel_layer.group_send(
-                "bodega_insumo",
-                {
-                    "type": "send_update",
-                    "message": message,
-                    "message_json": message_json
+            if updated_insumo["cantidad"] <= LOW_STOCK_THRESHOLD:
+                message = {
+                    "message_id": f"low_stock-{updated_insumo['id']}-{uuid.uuid4()}",
+                    "id": updated_insumo["id"],
+                    "bodega": updated_insumo["bodega"],
+                    "insumo": updated_insumo["insumo"],
+                    "cantidad": updated_insumo["cantidad"],
+                    "type": "low_stock",
+                    "timestamp": str(uuid.uuid4())
                 }
-            )
+                message_json = json.dumps(message)
+                await self.channel_layer.group_send(
+                    "bodega_insumo",
+                    {
+                        "type": "send_update",
+                        "message": message,
+                        "message_json": message_json
+                    }
+                )
 
     async def send_update(self, event):
         message_json = event.get("message_json", json.dumps(event["message"]))

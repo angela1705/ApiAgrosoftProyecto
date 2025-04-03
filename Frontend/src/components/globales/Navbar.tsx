@@ -55,8 +55,8 @@ const menuItems = [
     label: "Plagas",
     icon: <FaBug />,
     subItems: [
-      { id: 17, label: "Tipo Plaga", path: "/cultivo/tipoplaga/"},
-      { id: 18, label: "Plaga", path: "/cultivo/listartipoplaga/"},
+      { id: 17, label: "Tipo Plaga", path: "/cultivo/listartipoplaga/"},
+      { id: 18, label: "Plaga", path: "/cultivo/listarplaga/"},
       { id: 19, label: "Control", path: "/cultivo/control/" },
       { id: 20, label: "Tipo Control", path: "/cultivo/listartipocontrol/" },
       { id: 21, label: "Afecciones", path: "/cultivo/afecciones/" },

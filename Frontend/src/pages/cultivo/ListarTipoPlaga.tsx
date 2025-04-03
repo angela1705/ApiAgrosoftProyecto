@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '@/layouts/default';
 import { TipoEspecie } from '../../types/cultivo/TipoEspecie';
-import { useTipoEspecies, useActualizarTipoEspecie, useEliminarTipoEspecie } from '../../hooks/cultivo/usetipoEspecie';
+import { useTipoEspecies, useActualizarTipoEspecie, useEliminarTipoEspecie } from '../../hooks/cultivo/usetipoespecie';
 import ReuModal from '../../components/globales/ReuModal';
 import { ReuInput } from '@/components/globales/ReuInput';
 import Tabla from '@/components/globales/Tabla'; 
