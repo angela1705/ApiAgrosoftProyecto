@@ -3,7 +3,6 @@ import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarActividad, useInsumos, useUsuarios } from "@/hooks/cultivo/useActividad";
 import { useTipoActividad } from "@/hooks/cultivo/usetipoactividad";
-import { useProgramaciones } from "@/hooks/cultivo/useProgramacion";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import ActividadNotifications from "@/components/cultivo/ActividadNotifications";
 import { useAuth } from "@/context/AuthContext";
@@ -27,7 +26,6 @@ const ActividadPage: React.FC = () => {
 
     const mutation = useRegistrarActividad();
     const { data: tiposActividad } = useTipoActividad();
-    const { data: programaciones } = useProgramaciones();
     const { data: usuarios } = useUsuarios();
     const { data: cultivos } = useCultivos();
     const { data: insumos } = useInsumos();
@@ -59,14 +57,14 @@ const ActividadPage: React.FC = () => {
 
                     <ReuInput
                         label="Fecha de Inicio"
-                        type="date"
+                        type="datetime-local"
                         value={actividad.fecha_inicio}
                         onChange={(e) => setActividad({ ...actividad, fecha_inicio: e.target.value })}
                     />
 
                     <ReuInput
                         label="Fecha de Fin"
-                        type="date"
+                        type="datetime-local"
                         value={actividad.fecha_fin}
                         onChange={(e) => setActividad({ ...actividad, fecha_fin: e.target.value })}
                     />
@@ -76,14 +74,6 @@ const ActividadPage: React.FC = () => {
                         <option value="">Seleccione un tipo de actividad</option>
                         {tiposActividad?.map((tipo) => (
                             <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
-                        ))}
-                    </select>
-
-                    <label className="block text-sm font-medium text-gray-700 mt-4">Programación</label>
-                    <select name="programacion" value={actividad.programacion || ""} onChange={handleChange}>
-                        <option value="">Seleccione una programación</option>
-                        {programaciones?.map((programacion) => (
-                            <option key={programacion.id} value={programacion.id}>{programacion.ubicacion}</option>
                         ))}
                     </select>
 
