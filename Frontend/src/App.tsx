@@ -60,7 +60,7 @@ import SalarioPage from './pages/finanzas/SalarioPage';
 import VentaPage from './pages/finanzas/VentaPage';
 import ListaVentaPage from './pages/finanzas/ListaVentaPage';
 import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
-import Reportes from './pages/reportes/reportes';
+import Reportes from './pages/reportes/Reportes';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {

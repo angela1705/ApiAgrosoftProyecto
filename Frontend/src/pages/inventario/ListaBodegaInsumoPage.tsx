@@ -7,13 +7,15 @@ import { useBodegaInsumos, useActualizarBodegaInsumo, useEliminarBodegaInsumo } 
 import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useInsumos } from "@/hooks/inventario/useInsumo";
 import ReuModal from "@/components/globales/ReuModal";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input } from "@heroui/react";
+import { ReuInput } from "@/components/globales/ReuInput";
+import Tabla from "@/components/globales/Tabla";
+import { EditIcon, Trash2 } from 'lucide-react';
 
 const ListaBodegaInsumoPage: React.FC = () => {
   const [selectedBodegaInsumo, setSelectedBodegaInsumo] = useState<BodegaInsumo | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm,] = useState("");
 
   const { data: bodegas } = useBodegas();
   const { data: insumos } = useInsumos();
@@ -22,15 +24,12 @@ const ListaBodegaInsumoPage: React.FC = () => {
   const deleteMutation = useEliminarBodegaInsumo();
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    if (selectedBodegaInsumo) {
-      setSelectedBodegaInsumo((prev) => ({
-        ...prev!,
-        [name]: Number(value),
-      }));
-    }
-  };
+  const columns = [
+    { name: "Bodega", uid: "bodega" },
+    { name: "Insumo", uid: "insumo" },
+    { name: "Cantidad", uid: "cantidad" },
+    { name: "Acciones", uid: "acciones" },
+  ];
 
   const handleEdit = (bodegaInsumo: BodegaInsumo) => {
     setSelectedBodegaInsumo({ ...bodegaInsumo });
@@ -47,29 +46,14 @@ const ListaBodegaInsumoPage: React.FC = () => {
       deleteMutation.mutate(selectedBodegaInsumo.id, {
         onSuccess: () => {
           setIsDeleteModalOpen(false);
+          setSelectedBodegaInsumo(null);
           refetch();
         },
       });
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedBodegaInsumo && selectedBodegaInsumo.id !== undefined) {
-      updateMutation.mutate(selectedBodegaInsumo, {
-        onSuccess: () => {
-          setIsEditModalOpen(false);
-          refetch();
-        },
-      });
-    }
-  };
-
-  const handleNavigateToRegister = () => {
-    navigate("/inventario/bodegainsumo/");
-  };
-
-  const filteredBodegaInsumos = (bodegaInsumos ?? []).filter((item: BodegaInsumo) => {
+  const transformedData = (bodegaInsumos ?? []).filter((item: BodegaInsumo) => {
     const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
     const insumoNombre = insumos?.find((i: Insumo) => i.id === item.insumo)?.nombre || "Desconocido";
     return (
@@ -77,100 +61,73 @@ const ListaBodegaInsumoPage: React.FC = () => {
       insumoNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.cantidad.toString().includes(searchTerm)
     );
-  });
+  }).map((item: BodegaInsumo) => ({
+    id: item.id?.toString() || "",
+    bodega: bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido",
+    insumo: insumos?.find((i: Insumo) => i.id === item.insumo)?.nombre || "Desconocido",
+    cantidad: item.cantidad,
+    acciones: (
+      <>
+        <button
+          className="text-green-500 hover:underline mr-2"
+          onClick={() => handleEdit(item)}
+        >
+          <EditIcon size={22} color="black" />
+        </button>
+        <button
+          className="text-red-500 hover:underline"
+          onClick={() => handleDelete(item)}
+        >
+          <Trash2 size={22} color="red" />
+        </button>
+      </>
+    ),
+  }));
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Bodega Insumos</h2>
-          {isLoading ? (
-            <p className="text-gray-600">Cargando...</p>
-          ) : (
-            <>
-              <div className="mb-4 flex items-center">
-                <Input
-                  placeholder="Buscar por bodega, insumo o cantidad"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full"
-                />
-                <svg
-                  className="w-5 h-5 text-gray-500 ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableColumn>Bodega</TableColumn>
-                  <TableColumn>Insumo</TableColumn>
-                  <TableColumn>Cantidad</TableColumn>
-                  <TableColumn>Acciones</TableColumn>
-                </TableHeader>
-                <TableBody>
-                  {filteredBodegaInsumos.map((item: BodegaInsumo) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        {bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido"}
-                      </TableCell>
-                      <TableCell>
-                        {insumos?.find((i: Insumo) => i.id === item.insumo)?.nombre || "Desconocido"}
-                      </TableCell>
-                      <TableCell>{item.cantidad}</TableCell>
-                      <TableCell>
-                        <button
-                          className="text-green-500 hover:underline mr-2"
-                          onClick={() => handleEdit(item)}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          className="text-red-500 hover:underline"
-                          onClick={() => handleDelete(item)}
-                        >
-                          Eliminar
-                        </button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={handleNavigateToRegister}
-                >
-                  Registrar Bodega Insumo
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Bodega Insumos</h2><br /><br />
+      <div className="mb-2 flex justify-start">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                     hover:bg-green-700 transition-all duration-300 ease-in-out 
+                     shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate("/inventario/bodegainsumo/")}
+        >
+          + Registrar
+        </button>
       </div>
+
+      {isLoading ? (
+        <p className="text-gray-600">Cargando...</p>
+      ) : (
+        <Tabla columns={columns} data={transformedData} />
+      )}
 
       <ReuModal
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         title="Editar Bodega Insumo"
+        onConfirm={() => {
+          if (selectedBodegaInsumo && selectedBodegaInsumo.id !== undefined) {
+            updateMutation.mutate(selectedBodegaInsumo, {
+              onSuccess: () => {
+                setIsEditModalOpen(false);
+                refetch();
+              },
+            });
+          }
+        }}
       >
         {selectedBodegaInsumo && (
-          <div className="w-full max-w-xs mx-auto p-4 bg-white rounded-lg shadow-md">
-            <form onSubmit={handleSubmit}>
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Bodega</label>
               <select
                 name="bodega"
                 value={selectedBodegaInsumo.bodega}
-                onChange={handleChange}
-                className="w-full mb-4 p-2 border rounded"
+                onChange={(e) => setSelectedBodegaInsumo({ ...selectedBodegaInsumo, bodega: Number(e.target.value) })}
+                className="w-full p-2 border rounded"
               >
                 <option value="0">Seleccione una Bodega</option>
                 {bodegas?.map((bodega: { id: number; nombre: string }) => (
@@ -179,11 +136,14 @@ const ListaBodegaInsumoPage: React.FC = () => {
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Insumo</label>
               <select
                 name="insumo"
                 value={selectedBodegaInsumo.insumo}
-                onChange={handleChange}
-                className="w-full mb-4 p-2 border rounded"
+                onChange={(e) => setSelectedBodegaInsumo({ ...selectedBodegaInsumo, insumo: Number(e.target.value) })}
+                className="w-full p-2 border rounded"
               >
                 <option value="0">Seleccione un Insumo</option>
                 {insumos?.map((insumo: Insumo) => (
@@ -192,23 +152,15 @@ const ListaBodegaInsumoPage: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <input
-                type="number"
-                name="cantidad"
-                value={selectedBodegaInsumo.cantidad}
-                onChange={handleChange}
-                className="w-full mb-4 p-2 border rounded"
-                placeholder="Cantidad"
-              />
-              <Button
-                className="bg-green-600 text-white w-full"
-                type="submit"
-                disabled={updateMutation.isPending}
-              >
-                {updateMutation.isPending ? "Actualizando..." : "Actualizar"}
-              </Button>
-            </form>
-          </div>
+            </div>
+            <ReuInput
+              label="Cantidad"
+              placeholder="Ingrese la cantidad"
+              type="number"
+              value={selectedBodegaInsumo.cantidad}
+              onChange={(e) => setSelectedBodegaInsumo({ ...selectedBodegaInsumo, cantidad: Number(e.target.value) })}
+            />
+          </>
         )}
       </ReuModal>
 

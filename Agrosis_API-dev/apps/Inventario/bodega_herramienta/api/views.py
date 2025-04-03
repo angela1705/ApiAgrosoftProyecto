@@ -12,7 +12,7 @@ class BodegaHerramientaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        print("🔍 Datos recibidos:", request.data)  # Imprime la solicitud en la consola
+        print(" Datos recibidos:", request.data)  # Imprime la solicitud en la consola
         serializer = self.get_serializer(data=request.data)
         
         if serializer.is_valid():
