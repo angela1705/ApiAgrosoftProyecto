@@ -2,7 +2,6 @@ import { Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
-import DocsPage from './pages/globales/docs'; 
 import PricingPage from './pages/globales/pricing';
 import BlogPage from './pages/globales/blog';
 import AboutPage from './pages/globales/about';
@@ -61,6 +60,7 @@ import SalarioPage from './pages/finanzas/SalarioPage';
 import VentaPage from './pages/finanzas/VentaPage';
 import ListaVentaPage from './pages/finanzas/ListaVentaPage';
 import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
+import Reportes from './pages/reportes/reportes';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -124,7 +124,7 @@ const App: React.FC = () => {
           <Route path="/finanzas/listarventas/" element={<PrivateRoute><ListaVentaPage /></PrivateRoute>} />
           <Route path="/inventario/insumos/" element={<PrivateRoute><InsumoPage /></PrivateRoute>} />
           <Route path="/inventario/listarinsumos/" element={<PrivateRoute><ListaInsumoPage /></PrivateRoute>} />
-          <Route path="/docs" element={<PrivateRoute><DocsPage /></PrivateRoute>} />
+          <Route path="/reportes/" element={<PrivateRoute><Reportes /></PrivateRoute>} />
           <Route path="/cultivo/tipoespecie/" element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>} />
           <Route path="/cultivo/listartipoespecie/" element={<PrivateRoute><ListaTipoEspeciePage /></PrivateRoute>} />
           <Route path="/cultivo/tipo_actividad/" element={<PrivateRoute><TipoActividadPage /></PrivateRoute>} />
