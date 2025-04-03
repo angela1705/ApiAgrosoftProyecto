@@ -6,6 +6,7 @@ import { usePlagas, useActualizarPlaga, useEliminarPlaga } from '../../hooks/cul
 import ReuModal from '../../components/globales/ReuModal';
 import { ReuInput } from '@/components/globales/ReuInput';
 import Tabla from '@/components/globales/Tabla';
+import { EditIcon, Trash2 } from 'lucide-react';
 
 const ListaPlagasPage: React.FC = () => {
   const [selectedPlaga, setSelectedPlaga] = useState<Plaga | null>(null);
@@ -62,43 +63,42 @@ const ListaPlagasPage: React.FC = () => {
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(plaga)}
         >
-          Editar
-        </button>
+           <EditIcon size={22} color='black'/>
+           </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(plaga)}
         >
-          Eliminar
-        </button>
+            <Trash2   size={22} color='red'/>
+            </button>
       </>
     ),
   }));
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Plagas</h2>
+          <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Plagas</h2>
+          <div className="mb-2 flex justify-start">
+                        <button
+                        className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
+                                    shadow-md hover:shadow-lg transform hover:scale-105"
+                        onClick={() => navigate('/cultivo/plaga/')} 
+                        >
+                        + Registrar
+                        </button>
+            </div>
+
 
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
           ) : (
             <>
               <Tabla columns={columns} data={transformedData} />
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
-                             hover:bg-blue-700 transition-all duration-300 ease-in-out 
-                             shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={() => navigate('/cultivo/plaga')} 
-                >
-                  Registrar Plaga
-                </button>
-              </div>
+              
             </>
           )}
-        </div>
-      </div>
+      
 
       <ReuModal
         isOpen={isEditModalOpen}
