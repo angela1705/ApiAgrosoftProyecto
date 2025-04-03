@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useEspecies, useActualizarEspecie, useEliminarEspecie } from "@/hooks/cultivo/useEspecie";
-import { useTipoEspecies } from "@/hooks/cultivo/usetipoEspecie";
+import { useTipoEspecies } from "@/hooks/cultivo/usetipoespecie";
 import ReuModal from "@/components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
 import { useNavigate } from "react-router-dom";
+import { EditIcon, Trash2 } from 'lucide-react';
 
 const ListaEspeciePage: React.FC = () => {
   const [selectedEspecie, setSelectedEspecie] = useState<any>(null);
@@ -61,13 +62,13 @@ const ListaEspeciePage: React.FC = () => {
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(especie)}
         >
-          Editar
+          <EditIcon size={22} color='black'/>
         </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(especie)}
         >
-          Eliminar
+        <Trash2   size={22} color='red'/>
         </button>
       </>
     ),
@@ -75,28 +76,26 @@ const ListaEspeciePage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Especies</h2>
+          <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Especies</h2>
+          <div className="mb-2 flex justify-start">
+                        <button
+                        className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
+                                    shadow-md hover:shadow-lg transform hover:scale-105"
+                        onClick={() => navigate('/cultivo/especies/')} 
+                        >
+                        + Registrar
+                        </button>
+            </div>
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
           ) : (
             <>
               <Tabla columns={columns} data={transformedData} />
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
-                             hover:bg-blue-700 transition-all duration-300 ease-in-out 
-                             shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={() => navigate('/cultivo/especies/')}
-                >
-                  Registrar Especie
-                </button>
-              </div>
+            
             </>
           )}
-        </div>
-      </div>
+      
 
       <ReuModal
         isOpen={isEditModalOpen}

@@ -32,7 +32,7 @@ const menuItems = [
     icon: <FaLeaf />,
     subItems: [
       { id: 6, label: "Cultivo", path: "/cultivo/listarcultivos/" },
-      { id: 7, label: "Especies", path: "/cultivo/especies/" },
+      { id: 7, label: "Especies", path: "/cultivo/listarespecies/" },
       { id: 8, label: "Tipo Especie", path: "/cultivo/listartipoespecie/" },
       { id: 9, label: "Bancal", path: "/cultivo/listarbancal/" },
       { id: 10, label: "Lotes", path: "/cultivo/listarlotes/" },
