@@ -42,7 +42,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 - Crea un nuevo usuario.
 
 **Ejemplo de solicitud:**
@@ -103,7 +103,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 - Obtiene todos los usuarios registrados.
 
 **Ejemplo de respuesta (200 OK):**
@@ -149,7 +149,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 - Obtiene un usuario específico por su ID.
 
 **Ejemplo de respuesta (200 OK):**
@@ -183,7 +183,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 - Actualiza un usuario existente.
 
 **Ejemplo de solicitud:**
@@ -230,7 +230,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 - Elimina un usuario (si no está en uso).
 
 **Ejemplo de respuesta exitosa (200 OK):**
