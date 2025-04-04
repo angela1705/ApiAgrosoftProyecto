@@ -61,7 +61,8 @@ import VentaPage from './pages/finanzas/VentaPage';
 import ListaVentaPage from './pages/finanzas/ListaVentaPage';
 import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
 import UsuariosSecondPage from './pages/usuarios/RegisterSecondPage';
-import Reportes from './pages/reportes/reportes';
+import Reportes from './pages/reportes/Reportes';
+import CosechaGraficasPage from './pages/cultivo/CosechasGraficasPage';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -160,10 +161,11 @@ const App: React.FC = () => {
           <Route path="/iot/datosmetereologicos" element={<PrivateRoute><DatosMeteorologicosPage /></PrivateRoute>} />
           <Route path="/pricing" element={<PrivateRoute><PricingPage /></PrivateRoute>} />
           <Route path="/mapa" element={<PrivateRoute><Mapa /></PrivateRoute>} />
-
+          <Route path="/graficas/" element={<PrivateRoute><CosechaGraficasPage /></PrivateRoute>} />
           <Route path="/blog" element={<PrivateRoute><BlogPage /></PrivateRoute>} />
           <Route path="/about" element={<PrivateRoute><AboutPage /></PrivateRoute>} />
           <Route path="*" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
+
         </Routes>
       </AuthProvider>
     </QueryClientProvider>
