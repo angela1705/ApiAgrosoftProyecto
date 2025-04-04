@@ -9,4 +9,7 @@ export interface Actividad {
     cultivo: number;        
     insumo: number;         
     cantidadUsada: number;
+    estado: string;
+    prioridad: string;
+    instrucciones_adicionales: string;
 }

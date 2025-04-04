@@ -21,6 +21,9 @@ const ActividadPage: React.FC = () => {
         cultivo: 0,
         insumo: 0,
         cantidadUsada: 0,
+        estado: "PENDIENTE", // Nuevo campo con valor por defecto
+        prioridad: "MEDIA",  // Nuevo campo con valor por defecto
+        instrucciones_adicionales: "" // Nuevo campo
     });
 
 
@@ -68,6 +71,36 @@ const ActividadPage: React.FC = () => {
                         value={actividad.fecha_fin}
                         onChange={(e) => setActividad({ ...actividad, fecha_fin: e.target.value })}
                     />
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Estado</label>
+                            <select 
+                                name="estado" 
+                                value={actividad.estado} 
+                                onChange={(e) => setActividad({ ...actividad, estado: e.target.value })}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
+                            >
+                                <option value="PENDIENTE">Pendiente</option>
+                                <option value="EN_PROCESO">En proceso</option>
+                                <option value="COMPLETADA">Completada</option>
+                                <option value="CANCELADA">Cancelada</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Prioridad</label>
+                            <select 
+                                name="prioridad" 
+                                value={actividad.prioridad} 
+                                onChange={handleChange}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
+                            >
+                                <option value="ALTA">Alta</option>
+                                <option value="MEDIA">Media</option>
+                                <option value="BAJA">Baja</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <label className="block text-sm font-medium text-gray-700 mt-4">Tipo de Actividad</label>
                     <select name="tipo_actividad" value={actividad.tipo_actividad || ""} onChange={handleChange}>
@@ -107,6 +140,19 @@ const ActividadPage: React.FC = () => {
                         value={actividad.cantidadUsada}
                         onChange={(e) => setActividad({ ...actividad, cantidadUsada: Number(e.target.value) })}
                     />
+
+                    <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-700">Instrucciones Adicionales</label>
+                        <textarea
+                            name="instrucciones_adicionales"
+                            value={actividad.instrucciones_adicionales}
+                            onChange={(e) => setActividad({ ...actividad, instrucciones_adicionales: e.target.value })}
+                            rows={3}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
+                            placeholder="Ingrese instrucciones adicionales para la actividad"
+                        />
+                    </div>
+
 
                     <button
                         className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
