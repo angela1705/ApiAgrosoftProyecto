@@ -5,20 +5,17 @@ import { Cultivo } from "@/types/cultivo/Cultivo";
 
 const API_URL = "http://127.0.0.1:8000/cultivo/cultivos/";
 
-const fetchCultivos = async (): Promise<Cultivo[]> => {
-    const token = localStorage.getItem("access_token");
+const fetchCultivos = async (mostrarInactivos = false): Promise<Cultivo[]> => {
+  const token = localStorage.getItem("access_token");
+  if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    if (!token) {
-        throw new Error("No se encontró el token de autenticación.");
-    }
-
-    const response = await axios.get(API_URL, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    return response.data;
-};
+  const params = mostrarInactivos ? { activo: "false" } : {};
+  const response = await axios.get(API_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+      params
+  });
+  return response.data;
+}
 
 const registrarCultivo = async (cultivo: Cultivo) => {
     const token = localStorage.getItem("access_token");
@@ -42,11 +39,11 @@ const registrarCultivo = async (cultivo: Cultivo) => {
     }
 };
 
-export const useCultivos = () => {
-    return useQuery<Cultivo[], Error>({
-        queryKey: ["cultivos"],
-        queryFn: fetchCultivos,
-    });
+export const useCultivos = (mostrarInactivos = false) => {
+  return useQuery<Cultivo[], Error>({
+      queryKey: ["cultivos", { mostrarInactivos }],
+      queryFn: () => fetchCultivos(mostrarInactivos),
+  });
 };
 
 export const useRegistrarCultivo = () => {

@@ -16,8 +16,12 @@ from datetime import datetime
 class LoteViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOrRead] 
-    queryset = Lote.objects.filter(activo=True)
     serializer_class = LoteSerializer
+    
+    def get_queryset(self):
+        if self.action == 'reporte_pdf':
+            return Lote.objects.filter(activo=True)
+        return Lote.objects.all()
     
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
@@ -55,15 +59,7 @@ class LoteViewSet(viewsets.ModelViewSet):
         elementos.append(Paragraph(objetivo_texto, styles['Normal']))
         elementos.append(Spacer(1, 15))
 
-        elementos.append(Paragraph("<b>2. Resumen General</b>", styles['Heading2']))
-        resumen_texto = f"""
-        Total de lotes activos: {lotes.count()}<br/>
-        Superficie total disponible: {sum(l.tam_x * l.tam_y for l in lotes):.2f} m²<br/>
-        """
-        elementos.append(Paragraph(resumen_texto, styles['Normal']))
-        elementos.append(Spacer(1, 15))
-
-        elementos.append(Paragraph("<b>3. Detalle de Lotes</b>", styles['Heading2']))
+        elementos.append(Paragraph("<b>2. Detalle de Lotes</b>", styles['Heading2']))
         
         data_lotes = [["Nombre", "Dimensiones (m)", "Ubicación", "Superficie (m²)", "Estado"]]
         for lote in lotes:
@@ -72,7 +68,7 @@ class LoteViewSet(viewsets.ModelViewSet):
                 f"{lote.tam_x} x {lote.tam_y}",
                 f"X: {lote.pos_x}, Y: {lote.pos_y}",
                 f"{(lote.tam_x * lote.tam_y):.2f}",
-                "Activo" if lote.activo else "Inactivo"
+                "Activo" 
             ])
 
         tabla_lotes = Table(data_lotes, colWidths=[80, 80, 100, 80, 60])
@@ -87,9 +83,17 @@ class LoteViewSet(viewsets.ModelViewSet):
         ]))
         elementos.append(tabla_lotes)
         elementos.append(Spacer(1, 20))
+              
+        elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading2']))
+        resumen_texto = f"""
+        Total de lotes activos: {lotes.count()}<br/>
+        Superficie total disponible: {sum(l.tam_x * l.tam_y for l in lotes):.2f} m²<br/>
+        """
+        elementos.append(Paragraph(resumen_texto, styles['Normal']))
+        elementos.append(Spacer(1, 15))
 
         elementos.append(Paragraph("<b>4. Información Adicional por Lote</b>", styles['Heading2']))
-        
+
         for lote in lotes:
             elementos.append(Paragraph(f"<b>Lote: {lote.nombre}</b>", styles['Heading3']))
             
