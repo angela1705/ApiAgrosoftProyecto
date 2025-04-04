@@ -16,10 +16,16 @@ from datetime import datetime
 class CultivoViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOrRead] 
-    queryset = Cultivo.objects.filter(activo=True)
     serializer_class = CultivoSerializer
     
-    
+    def get_queryset(self):
+        queryset = Cultivo.objects.all()
+        
+        mostrar_inactivos = self.request.query_params.get('activo', '').lower() == 'false'
+        
+        if not mostrar_inactivos:
+            queryset = queryset.filter(activo=True)
+        return queryset
     
     @action(detail=False, methods=['get'])
     def reporte_cultivos_activos(self, request):

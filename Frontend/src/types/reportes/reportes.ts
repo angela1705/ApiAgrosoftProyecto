@@ -9,6 +9,8 @@ export const opcionesModulos = [
 export const reportesPorModulo: Record<string, { nombre: string; reporte: string }[]> = {
     cultivo: [
         { nombre: "Reporte de Cosechas", reporte: "cosechas" },
+        { nombre: "Reporte de lotes", reporte: "lote" },
+
     ],
     inventario: [
         { nombre: "Reporte de Herramientas", reporte: "herramientas" },
