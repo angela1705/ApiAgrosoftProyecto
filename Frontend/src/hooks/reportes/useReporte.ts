@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000"; 
 
 export const useReporte = (modulo: string, reporte: string, params: { fecha_inicio: string; fecha_fin: string }) => {
     return useQuery({
@@ -11,7 +10,7 @@ export const useReporte = (modulo: string, reporte: string, params: { fecha_inic
                 return null;
             }
 
-            const response = await axios.get(`${API_URL}/${modulo}/${reporte}/reporte_pdf/`, {
+            const response = await axios.get(`http://127.0.0.1:8000/cultivo/actividades/reporte_pdf/`, {
                 params,
                 responseType: "blob", 
                 headers: {
