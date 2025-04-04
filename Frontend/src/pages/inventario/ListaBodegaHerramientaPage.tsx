@@ -9,12 +9,14 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
+import BodegaHerramientaNotifications from "@/components/inventario/BodegaHerramientaNotifications";
+import { useAuth } from "@/context/AuthContext";
 
 const ListaBodegaHerramientaPage: React.FC = () => {
+  const { user } = useAuth();
   const [selectedBodegaHerramienta, setSelectedBodegaHerramienta] = useState<BodegaHerramienta | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [searchTerm] = useState("");
 
   const { data: bodegas } = useBodegas();
   const { data: herramientas } = useHerramientas();
@@ -52,36 +54,34 @@ const ListaBodegaHerramientaPage: React.FC = () => {
     }
   };
 
-  const transformedData = (bodegaHerramientas ?? []).filter((item: BodegaHerramienta) => {
+
+  const transformedData = (bodegaHerramientas ?? []).map((item: BodegaHerramienta) => {
     const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
     const herramientaNombre = herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido";
-    return (
-      bodegaNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      herramientaNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.cantidad.toString().includes(searchTerm)
-    );
-  }).map((item: BodegaHerramienta) => ({
-    id: item.id?.toString() || "",
-    bodega: bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido",
-    herramienta: herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido",
-    cantidad: item.cantidad,
-    acciones: (
-      <>
-        <button
-          className="text-green-500 hover:underline mr-2"
-          onClick={() => handleEdit(item)}
-        >
-          <EditIcon size={22} color="black" />
-        </button>
-        <button
-          className="text-red-500 hover:underline"
-          onClick={() => handleDelete(item)}
-        >
-          <Trash2 size={22} color="red" />
-        </button>
-      </>
-    ),
-  }));
+    return {
+      id: item.id?.toString() || "",
+      bodega: bodegaNombre,
+      herramienta: herramientaNombre,
+      cantidad: item.cantidad,
+      nombre: `${bodegaNombre} ${herramientaNombre} ${item.cantidad}`,
+      acciones: (
+        <>
+          <button
+            className="text-green-500 hover:underline mr-2"
+            onClick={() => handleEdit(item)}
+          >
+            <EditIcon size={22} color="black" />
+          </button>
+          <button
+            className="text-red-500 hover:underline"
+            onClick={() => handleDelete(item)}
+          >
+            <Trash2 size={22} color="red" />
+          </button>
+        </>
+      ),
+    };
+  });
 
   return (
     <DefaultLayout>
@@ -104,6 +104,7 @@ const ListaBodegaHerramientaPage: React.FC = () => {
       ) : (
         <Tabla columns={columns} data={transformedData} />
       )}
+      <BodegaHerramientaNotifications userId3={user.id} />
 
       <ReuModal
         isOpen={isEditModalOpen}

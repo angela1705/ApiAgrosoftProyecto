@@ -7,8 +7,11 @@ import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useInsumos } from "@/hooks/inventario/useInsumo";
 import { Insumo } from "@/types/inventario/Insumo";
 import Formulario from "@/components/globales/Formulario";
+import BodegaInsumoNotifications from "@/components/inventario/BodegaInsumoNotifications";
+import { useAuth } from "@/context/AuthContext";
 
 const BodegaInsumoPage: React.FC = () => {
+  const { user } = useAuth();
   const [bodegaInsumo, setBodegaInsumo] = useState<BodegaInsumo>({
     id: 0,
     bodega: 0,
@@ -91,6 +94,7 @@ const BodegaInsumoPage: React.FC = () => {
           </button>
         </div>
       </Formulario>
+      <BodegaInsumoNotifications userId1={user.id} />
     </DefaultLayout>
   );
 };

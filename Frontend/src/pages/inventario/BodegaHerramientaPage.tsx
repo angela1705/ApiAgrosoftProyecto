@@ -6,8 +6,11 @@ import { useRegistrarBodegaHerramienta } from "@/hooks/inventario/useBodegaHerra
 import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useHerramientas } from "@/hooks/inventario/useHerramientas";
 import Formulario from "@/components/globales/Formulario";
+import BodegaHerramientaNotifications from "@/components/inventario/BodegaHerramientaNotifications";
+import { useAuth } from "@/context/AuthContext";
 
 const BodegaHerramientaPage: React.FC = () => {
+  const { user } = useAuth();
   const [bodegaHerramienta, setBodegaHerramienta] = useState<BodegaHerramienta>({
     id: 0,
     bodega: 0,
@@ -94,6 +97,7 @@ const BodegaHerramientaPage: React.FC = () => {
           </button>
         </div>
       </Formulario>
+      <BodegaHerramientaNotifications userId3={user.id} />
     </DefaultLayout>
   );
 };

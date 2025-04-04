@@ -11,7 +11,7 @@ import uuid
 
 logger = logging.getLogger(__name__)
 
-LOW_STOCK_THRESHOLD = 5  # Umbral para notificar bajo stock
+LOW_STOCK_THRESHOLD = 5
 
 class BodegaInsumoConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class BodegaInsumoConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def update_insumo_quantity(self, insumo_id, cantidad_usada):
         try:
-            insumo = BodegaInsumo.objects.get(insumo_id=insumo_id)  # Ajustado para usar insumo_id
+            insumo = BodegaInsumo.objects.get(insumo_id=insumo_id) 
             if insumo.cantidad >= cantidad_usada:
                 insumo.cantidad -= cantidad_usada
                 insumo.save()

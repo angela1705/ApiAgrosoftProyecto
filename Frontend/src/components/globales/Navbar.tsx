@@ -67,11 +67,11 @@ const menuItems = [
     label: "Inventario",
     icon: <FaBox />,
     subItems: [
-      { id: 24, label: "Bodega", path: "/inventario/bodega", icon: <FaWarehouse /> },
-      { id: 25, label: "Bodega Herramienta", path: "/inventario/bodegaherramienta", icon: <FaBox /> },
-      { id: 26, label: "Herramientas", path: "/inventario/herramientas", icon: <FaBox /> },
-      { id: 27, label: "Bodega Insumo", path: "/inventario/bodegainsumo", icon: <FaBox /> },
-      { id: 28, label: "Insumos", path: "/inventario/insumos", icon: <FaBox /> },
+      { id: 24, label: "Bodega", path: "/inventario/listarbodega", icon: <FaWarehouse /> },
+      { id: 25, label: "Bodega Herramienta", path: "/inventario/listarbodegaherramienta", icon: <FaBox /> },
+      { id: 26, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaBox /> },
+      { id: 27, label: "Bodega Insumo", path: "/inventario/listarbodegainsumos", icon: <FaBox /> },
+      { id: 28, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaBox /> },
     ],
   },
   {

@@ -10,12 +10,14 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
+import BodegaInsumoNotifications from "@/components/inventario/BodegaInsumoNotifications";
+import { useAuth } from "@/context/AuthContext";
 
 const ListaBodegaInsumoPage: React.FC = () => {
+  const { user } = useAuth();
   const [selectedBodegaInsumo, setSelectedBodegaInsumo] = useState<BodegaInsumo | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [searchTerm,] = useState("");
 
   const { data: bodegas } = useBodegas();
   const { data: insumos } = useInsumos();
@@ -53,36 +55,35 @@ const ListaBodegaInsumoPage: React.FC = () => {
     }
   };
 
-  const transformedData = (bodegaInsumos ?? []).filter((item: BodegaInsumo) => {
+  
+  const transformedData = (bodegaInsumos ?? []).map((item: BodegaInsumo) => {
     const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
     const insumoNombre = insumos?.find((i: Insumo) => i.id === item.insumo)?.nombre || "Desconocido";
-    return (
-      bodegaNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      insumoNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.cantidad.toString().includes(searchTerm)
-    );
-  }).map((item: BodegaInsumo) => ({
-    id: item.id?.toString() || "",
-    bodega: bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido",
-    insumo: insumos?.find((i: Insumo) => i.id === item.insumo)?.nombre || "Desconocido",
-    cantidad: item.cantidad,
-    acciones: (
-      <>
-        <button
-          className="text-green-500 hover:underline mr-2"
-          onClick={() => handleEdit(item)}
-        >
-          <EditIcon size={22} color="black" />
-        </button>
-        <button
-          className="text-red-500 hover:underline"
-          onClick={() => handleDelete(item)}
-        >
-          <Trash2 size={22} color="red" />
-        </button>
-      </>
-    ),
-  }));
+    return {
+      id: item.id?.toString() || "",
+      bodega: bodegaNombre,
+      insumo: insumoNombre,
+      cantidad: item.cantidad,
+      
+      nombre: `${bodegaNombre} ${insumoNombre} ${item.cantidad}`, 
+      acciones: (
+        <>
+          <button
+            className="text-green-500 hover:underline mr-2"
+            onClick={() => handleEdit(item)}
+          >
+            <EditIcon size={22} color="black" />
+          </button>
+          <button
+            className="text-red-500 hover:underline"
+            onClick={() => handleDelete(item)}
+          >
+            <Trash2 size={22} color="red" />
+          </button>
+        </>
+      ),
+    };
+  });
 
   return (
     <DefaultLayout>
@@ -103,6 +104,7 @@ const ListaBodegaInsumoPage: React.FC = () => {
       ) : (
         <Tabla columns={columns} data={transformedData} />
       )}
+      <BodegaInsumoNotifications userId1={user.id} />
 
       <ReuModal
         isOpen={isEditModalOpen}

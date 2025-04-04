@@ -5,24 +5,28 @@ import { useAuth } from "@/context/AuthContext";
 
 interface Notification {
   message: string;
-  type: "info" | "warning" | "success" | "error" | "usage";
+  type: "info" | "warning" | "success" | "error" | "low_stock";
   timestamp: number;
   insumoId?: number;
   uniqueId?: string;
-  cantidadUsada?: number; // Nueva propiedad para el uso de insumos
 }
 
-const BodegaInsumoNotifications: React.FC = () => {
+interface BodegaInsumoNotificationsProps {
+  userId1: number;
+}
+
+const BodegaInsumoNotifications: React.FC<BodegaInsumoNotificationsProps> = ({ userId1 }) => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const socketRef = useRef<WebSocket | null>(null);
   const receivedIds = useRef<Set<string>>(new Set());
   const reconnectTimer = useRef<NodeJS.Timeout | null>(null);
   const SOCKET_URL = `ws://${window.location.hostname}:8000/ws/inventario/bodega_insumo/`;
 
   const connectWebSocket = () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !userId1) return;
 
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -48,7 +52,7 @@ const BodegaInsumoNotifications: React.FC = () => {
         const data = JSON.parse(event.data);
         console.log("📩 Nuevo mensaje recibido:", data);
 
-        const messageId = data.message_id || (data.id ? `${data.type || data.action || data.accion}-${data.id}` : `${data.type || data.action || data.accion}-${Date.now()}`);
+        const messageId = data.message_id || (data.id ? `${data.type}-${data.id}` : `${data.type}-${Date.now()}`);
         if (receivedIds.current.has(messageId)) {
           console.log("⚠️ Notificación duplicada ignorada:", messageId);
           return;
@@ -61,7 +65,6 @@ const BodegaInsumoNotifications: React.FC = () => {
           timestamp: data.timestamp ? parseInt(data.timestamp) : Date.now(),
           insumoId: data.id,
           uniqueId: messageId,
-          cantidadUsada: data.cantidad_usada,
         };
 
         const now = Date.now();
@@ -86,12 +89,10 @@ const BodegaInsumoNotifications: React.FC = () => {
         } else if (data.type === "delete") {
           newNotification.message = `Registro ID ${data.id || "Desconocido"} eliminado`;
           newNotification.type = "error";
-        } else if (data.type === "usage") {
-          newNotification.message = `${data.bodega || "Desconocido"} - ${data.insumo || "Desconocido"}: Usado ${data.cantidad_usada || 0} unidades, quedan ${data.cantidad || 0}`;
-          newNotification.type = "usage";
-          newNotification.cantidadUsada = data.cantidad_usada;
+        } else if (data.type === "low_stock") {
+          newNotification.message = `${data.bodega || "Desconocido"} - ${data.insumo || "Desconocido"}: Quedan ${data.cantidad || 0} unidades (bajo stock)`;
+          newNotification.type = "low_stock";
         } else {
-          console.log("⚠️ Acción desconocida:", data.type || data.action || data.accion || "No especificada");
           return;
         }
 
@@ -102,20 +103,20 @@ const BodegaInsumoNotifications: React.FC = () => {
           return isDuplicate ? prev : [newNotification, ...prev.slice(0, 19)];
         });
 
-        addToast({
-          title:
-            data.type === "initial_state"
-              ? "Estado de Bodega"
-              : data.type === "create"
-              ? "Insumo Creado"
-              : data.type === "update"
-              ? "Insumo Actualizado"
-              : data.type === "delete"
-              ? "Insumo Eliminado"
-              : "Uso de Insumo",
-          description: newNotification.message,
-          timeout: 5000,
-        });
+        if (data.type !== "initial_state") {
+          addToast({
+            title:
+              data.type === "create"
+                ? "Insumo Creado"
+                : data.type === "update"
+                ? "Insumo Actualizado"
+                : data.type === "delete"
+                ? "Insumo Eliminado"
+                : "Alerta de Bajo Stock",
+            description: newNotification.message,
+            timeout: 5000,
+          });
+        }
       } catch (error) {
         console.error("Error procesando mensaje:", error);
       }
@@ -137,7 +138,7 @@ const BodegaInsumoNotifications: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !userId1) {
       if (socketRef.current) {
         socketRef.current.close();
         socketRef.current = null;
@@ -156,39 +157,50 @@ const BodegaInsumoNotifications: React.FC = () => {
         clearTimeout(reconnectTimer.current);
       }
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, userId1]);
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || !userId1) return null;
 
   return (
-    <div className="fixed top-4 right-4 w-80 bg-white p-4 rounded-lg shadow-lg border border-gray-200 z-50">
-      <h2 className="text-lg font-semibold mb-2">Notificaciones de Bodega</h2>
-      <div className="max-h-60 overflow-y-auto">
-        {notifications.length === 0 ? (
-          <p className="text-gray-500 text-sm">No hay notificaciones recientes</p>
-        ) : (
-          notifications.map((notif) => (
-            <div key={notif.uniqueId} className="mb-2 pb-2 border-b border-gray-100">
-              <p
-                className={`text-sm ${
-                  notif.type === "error"
-                    ? "text-red-600"
-                    : notif.type === "warning"
-                    ? "text-yellow-600"
-                    : notif.type === "success"
-                    ? "text-green-600"
-                    : notif.type === "usage"
-                    ? "text-blue-600"
-                    : ""
-                }`}
-              >
-                {notif.message}
-              </p>
-              <p className="text-xs text-gray-400">{new Date(notif.timestamp).toLocaleTimeString()}</p>
-            </div>
-          ))
-        )}
+    <div className="mt-4 w-72 bg-white p-3 rounded-lg shadow-lg border border-gray-200 transition-all duration-300 ml-auto">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-md font-semibold">Notificaciones de Bodega Insumos</h2>
+        <button
+          className="text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          aria-label={isCollapsed ? "Expandir notificaciones" : "Colapsar notificaciones"}
+        >
+          {isCollapsed ? "▲" : "▼"}
+        </button>
       </div>
+      {!isCollapsed && (
+        <div className="max-h-56 overflow-y-auto">
+          {notifications.length === 0 ? (
+            <p className="text-gray-500 text-xs">No hay notificaciones recientes</p>
+          ) : (
+            notifications.map((notif) => (
+              <div key={notif.uniqueId} className="mb-2 pb-2 border-b border-gray-200">
+                <p
+                  className={`text-xs ${
+                    notif.type === "error"
+                      ? "text-red-600"
+                      : notif.type === "warning"
+                      ? "text-yellow-600"
+                      : notif.type === "success"
+                      ? "text-green-600"
+                      : notif.type === "low_stock"
+                      ? "text-orange-600"
+                      : ""
+                  }`}
+                >
+                  {notif.message}
+                </p>
+                <p className="text-[10px] text-gray-400">{new Date(notif.timestamp).toLocaleTimeString()}</p>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };
