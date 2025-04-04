@@ -1,7 +1,23 @@
 ---
-title: "Gestión de actividades"
+title: Gestion de actividades
 ---
-## Estructura de Datos
+
+
+Las **Actividades** son tareas programadas relacionadas con el manejo de cultivos, que involucran recursos, personal y planificación.
+
+## ¿Cómo registrar una actividad?
+Para registrar una nueva actividad en Agrosoft:
+1. Navega al módulo de Actividades
+2. Haz clic en el botón **"Nueva Actividad"**
+3. Completa los siguientes campos obligatorios:
+   - **Tipo de actividad**: Selecciona de la lista disponible
+   - **Programación**: Asocia a una programación existente
+   - **Fechas**: Define inicio y fin de la actividad
+   - **Usuario responsable**: Asigna un usuario
+   - **Cultivo**: Selecciona el cultivo afectado
+
+## Datos de una actividad
+Cada actividad tiene la siguiente información:
 
 | Campo               | Tipo                | Descripción |  
 |---------------------|---------------------|-------------|  
@@ -16,26 +32,42 @@ title: "Gestión de actividades"
 | **insumo**          | `ForeignKey`        | Insumo utilizado |  
 | **cantidadUsada**   | `IntegerField`      | Cantidad de insumo utilizada |  
 
----
+## Ejemplo de API para gestionar actividades
 
-## Ejemplo de API  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/"><div></div></button></div></figure></div>  </section>
 
-```json  
-POST /actividades/  
-{  
-  "tipo_actividad": 3,  
-  "programacion": 5,  
-  "descripcion": "Aplicación de fertilizante orgánico",  
-  "fecha_inicio": "2023-11-20",  
-  "fecha_fin": "2023-11-21",  
-  "usuario": 12,  
-  "cultivo": 45,  
-  "insumo": 8,  
-  "cantidadUsada": 5  
-}  
-```  
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 
-**Ejemplo de respuesta (201 Created):**
+**Ejemplo de solicitud:**
+```json
+{
+  "tipo_actividad": 3,
+  "programacion": 5,
+  "descripcion": "Aplicación de fertilizante orgánico",
+  "fecha_inicio": "2023-11-20",
+  "fecha_fin": "2023-11-21",
+  "usuario": 12,
+  "cultivo": 45,
+  "insumo": 8,
+  "cantidadUsada": 5
+}
+```
+
+**Validaciones:**
+- `fecha_inicio` no puede ser posterior a `fecha_fin`
+- `cultivo` debe estar activo
+- `insumo` debe tener suficiente stock disponible
+- `cantidadUsada` debe ser mayor que 0
+
+**Ejemplo de respuesta exitosa (201 Created):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
 ```json
 {
   "id": 1,
@@ -51,10 +83,72 @@ POST /actividades/
 }
 ```
 
-### ** GET /actividades/{id}**
-Obtiene una actividad específica por su ID.
+**Posibles errores:**
+- `400 Bad Request`: Si faltan campos obligatorios
+- `409 Conflict`: Si hay solapamiento de fechas con otras actividades
+
+---
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+```json
+[
+  {
+    "id": 1,
+    "tipo_actividad": {
+      "id": 3,
+      "nombre": "Fertilización"
+    },
+    "programacion": {
+      "id": 5,
+      "nombre": "Programación Noviembre"
+    },
+    "descripcion": "Aplicación de fertilizante orgánico",
+    "fecha_inicio": "2023-11-20",
+    "fecha_fin": "2023-11-21",
+    "usuario": {
+      "id": 12,
+      "nombre": "Juan Pérez"
+    },
+    "cultivo": {
+      "id": 45,
+      "nombre": "Lechuga Romana - B2"
+    },
+    "insumo": {
+      "id": 8,
+      "nombre": "Fertilizante Orgánico 5kg"
+    },
+    "cantidadUsada": 5
+  }
+]
+```
+
+---
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
+**Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
 ```json
 {
   "id": 1,
@@ -85,8 +179,21 @@ Obtiene una actividad específica por su ID.
 }
 ```
 
-### **PUT /actividades/{id}**
-Actualiza una actividad existente.
+**Posibles errores:**
+- `404 Not Found`: Si el ID no existe
+
+---
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 
 **Ejemplo de solicitud:**
 ```json
@@ -97,7 +204,12 @@ Actualiza una actividad existente.
 }
 ```
 
-**Respuesta exitosa (200 OK):**
+**Restricciones:**
+- No se puede modificar `cultivo` o `tipo_actividad` después de creado
+- `fecha_inicio` solo editable si la actividad no ha comenzado
+
+**Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
 ```json
 {
   "id": 1,
@@ -105,14 +217,21 @@ Actualiza una actividad existente.
 }
 ```
 
-**Restricciones:**
-- No se puede modificar `cultivo` o `tipo_actividad` después de creado
-- `fecha_inicio` solo editable si la actividad no ha comenzado
+---
 
-### **DELETE /actividades/{id}**
-Elimina una actividad.
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/{id}/"><div></div></button></div></figure></div>  </section>
 
-**Respuesta exitosa (200 OK):**
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
+**Ejemplo de respuesta exitosa (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
 ```json
 {
   "message": "Actividad eliminada correctamente",
@@ -130,26 +249,11 @@ Elimina una actividad.
 
 ---
 
-## **Validaciones Adicionales**
+## **Ejemplos de Uso**
 
-1. **Fechas**:
-   - `fecha_inicio` no puede ser posterior a `fecha_fin`
-   - No puede solaparse con otras actividades en el mismo cultivo
-
-2. **Relaciones**:
-   - `cultivo` debe estar activo
-   - `insumo` debe tener suficiente stock disponible
-
-3. **Cantidad**:
-   - `cantidadUsada` debe ser mayor que 0
-   - No puede superar el stock disponible del insumo
-
----
-
-## **Ejemplo Completo de Uso**
-
-1. **Crear nueva actividad**:
+### **Crear y luego actualizar una actividad:**
 ```bash
+# Crear (POST)
 POST /actividades/
 {
   "tipo_actividad": 1,
@@ -162,15 +266,8 @@ POST /actividades/
   "insumo": null,
   "cantidadUsada": 0
 }
-```
 
-2. **Filtrar actividades por cultivo**:
-```bash
-GET /actividades/?cultivo=45
-```
-
-3. **Actualizar cantidad de insumo**:
-```bash
+# Actualizar (PUT)
 PUT /actividades/8
 {
   "cantidadUsada": 3,
@@ -178,20 +275,28 @@ PUT /actividades/8
 }
 ```
 
+### **Filtrar actividades:**
+```bash
+# Por cultivo
+GET /actividades/?cultivo=45
+
+# Por rango de fechas
+GET /actividades/?fecha_inicio=2023-11-01&fecha_fin=2023-11-30
+```
+
 ---
 
-## **Notas Importantes**
+## **Relaciones en el Sistema**
+Las **Actividades** se vinculan con:
+- **Usuarios** (responsables de ejecución)
+- **Cultivos** (afectados por la actividad)
+- **Insumos** (recursos utilizados)
+- **Programaciones** (calendario de trabajo)
 
-1. Las actividades consumen insumos automáticamente:
-   - Se actualiza el stock al confirmar la actividad
-   - Se revierte el stock si se elimina la actividad
+---
 
-2. Las actividades con cultivos inactivos:
-   - Se pueden consultar pero no crear/modificar
-
-3. Campos especiales:
-   - `insumo` puede ser null para actividades que no consumen recursos
-   - `cantidadUsada` debe ser 0 cuando no hay insumo
-
-4. Seguimiento:
-   - Todas las modificaciones quedan registradas en el historial de cambios
+## **Buenas Prácticas**
+ **Planificación anticipada**: Programar actividades con al menos 3 días de anticipación  
+ **Verificación de stock**: Confirmar disponibilidad de insumos antes de crear actividades  
+ **Actualización oportuna**: Registrar cambios en fechas o cantidades tan pronto ocurran  
+ **Documentación detallada**: Usar el campo descripción para notas relevantes
