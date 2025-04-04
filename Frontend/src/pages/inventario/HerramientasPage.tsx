@@ -11,6 +11,7 @@ interface Herramienta {
   descripcion: string;
   cantidad: number;
   estado: string;
+  fecha_registro: string;
   activo: boolean;
 }
 
@@ -21,6 +22,7 @@ const HerramientaPage: React.FC = () => {
     descripcion: "",
     cantidad: 0,
     estado: "Disponible",
+    fecha_registro: new Date().toISOString(),
     activo: true,
   });
 
@@ -37,6 +39,7 @@ const HerramientaPage: React.FC = () => {
           descripcion: "",
           cantidad: 0,
           estado: "Disponible",
+          fecha_registro: new Date().toISOString(),
           activo: true,
         });
       },
@@ -88,6 +91,15 @@ const HerramientaPage: React.FC = () => {
           value={herramienta.estado}
           onChange={(e) =>
             setHerramienta({ ...herramienta, estado: e.target.value })
+          }
+        />
+        <ReuInput
+          label="Fecha de Registro"
+          placeholder="Fecha de registro"
+          type="datetime-local"
+          value={herramienta.fecha_registro.slice(0, 16)}
+          onChange={(e) =>
+            setHerramienta({ ...herramienta, fecha_registro: e.target.value })
           }
         />
         <div className="flex items-center">

@@ -5,4 +5,5 @@ export interface Herramienta {
     cantidad: number;
     estado: string;
     activo: boolean;
+    fecha_registro: string;
 }
