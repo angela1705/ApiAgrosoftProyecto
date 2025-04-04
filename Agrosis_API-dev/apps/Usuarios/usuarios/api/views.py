@@ -15,6 +15,15 @@ from datetime import datetime
 from reportlab.platypus import SimpleDocTemplate
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib import colors
+from django.utils.timezone import make_aware
+from django.utils import timezone
+
+
+hoy = datetime.today()
+
+inicio_año = datetime(hoy.year, 1, 1)
+
+
 class UsuariosViewSet(ModelViewSet):
     serializer_class = UsuariosSerializer
     queryset = Usuarios.objects.all()
@@ -28,16 +37,15 @@ class UsuariosViewSet(ModelViewSet):
          if not fecha_inicio or not fecha_fin:
              return HttpResponse("Error: Debes proporcionar 'fecha_inicio' y 'fecha_fin'", status=400)
  
-         fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-         fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
+         fecha_inicio = make_aware(inicio_año)
+         fecha_fin = make_aware(hoy)
  
         #  usuarios = Usuarios.objects.filter(fecha__range=[fecha_inicio, fecha_fin])
          usuarios = Usuarios.objects.filter(date_joined__range=[fecha_inicio, fecha_fin])  # ✅ Usa 'date_joined'
 
 
          total_usuarios = usuarios.count()
-         cantidad_total = sum(c.cantidad for c in usuarios)
-         promedio_usuarios = cantidad_total / total_usuarios if total_usuarios > 0 else 0
+         promedio_usuarios = total_usuarios  # Solo tiene sentido contar, no sumar
          response = HttpResponse(content_type='application/pdf')
 
          response['Content-Disposition'] = 'attachment; filename="reporte_de_usuarios.pdf"'
@@ -53,7 +61,7 @@ class UsuariosViewSet(ModelViewSet):
  
          encabezado_data = [
              [logo, Paragraph("<b>Centro de gestión y desarrollo sostenible surcolombiano<br/>SENA - YAMBORÓ</b>", styles['Normal']), ""],
-             ["", Paragraph("<b>Informe de Usuarios registrados</b>", styles['Heading2']), Paragraph(f"{datetime.today().strftime('%Y-%m-%d')}", styles['Normal'])],
+             ["", Paragraph("<b>Informe de Usuarios activos</b>", styles['Heading2']), Paragraph(f"{datetime.today().strftime('%Y-%m-%d')}", styles['Normal'])],
              ["", "", Paragraph("Página 1 de 1", styles['Normal'])],
          ]
 
@@ -71,20 +79,21 @@ class UsuariosViewSet(ModelViewSet):
  
  
  
-         subtitulo = Paragraph("Informe de Usuarios registrados", styles['Heading2'])
+         subtitulo = Paragraph("Informe de Usuarios Activos", styles['Heading2'])
          elementos.append(subtitulo)
          elementos.append(Spacer(1, 10))
  
-         objetivo_texto = "Este documento presenta un resumen detallado de los Usuarios registrados registradas en el sistema, incluyendo información sobre usuarios, información basica de los mismos. El objetivo es proporcionar una visión general de los usuarios presentes en el sistema."
+         objetivo_texto = "Este documento presenta un resumen detallado de los Usuarios activos hasta la fecha en el sistema,incluyendo información de los mismos. El objetivo es proporcionar una visión general de los usuarios presentes en el sistema y control sobre sus roles."
          objetivo = Paragraph("<b>1. Objetivo</b><br/>" + objetivo_texto, styles['Normal'])
          elementos.append(objetivo)
          elementos.append(Spacer(1, 15))
  
-         elementos.append(Paragraph("<b>2. Detalle de Usuarios registrados</b>", styles['Heading3']))
+         elementos.append(Paragraph("<b>2. Detalle de Usuarios activos</b>", styles['Heading3']))
          elementos.append(Spacer(1, 5))
  
          data_usuarios = [["nombre", "email", "rol","fecha de registro"]]
          for usuario in usuarios:
+             print("Total de usuarios encontrados:", usuarios.count())
              data_usuarios.append([
                  usuario.nombre,
                  usuario.email,
@@ -94,8 +103,8 @@ class UsuariosViewSet(ModelViewSet):
              ])
 
 
-         tabla_usuarios_registrados = Table(data_usuarios)
-         tabla_usuarios_registrados.setStyle(TableStyle([
+         tabla_usuarios_activos = Table(data_usuarios)
+         tabla_usuarios_activos.setStyle(TableStyle([
              ('BACKGROUND', (0, 0), (-1, 0), colors.black),
              ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
              ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -103,13 +112,12 @@ class UsuariosViewSet(ModelViewSet):
              ('GRID', (0, 0), (-1, -1), 1, colors.black),
          ]))
 
-         elementos.append(tabla_usuarios_registrados)
+         elementos.append(tabla_usuarios_activos)
          elementos.append(Spacer(1, 15))
 
          elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading3']))
          resumen_texto = f"""
-         Durante el período del {fecha_inicio} al {fecha_fin}, se registraron {total_usuarios} usuarios. 
-         La cantidad total usuarios registrados fue de {cantidad_total} usuarios, con un promedio de {promedio_usuarios:.2f} usarios por mes.
+         Durante el período del {fecha_inicio} al {fecha_fin}, se obtuvieron {total_usuarios} usuarios activos en el sistema. 
          """
          elementos.append(Paragraph(resumen_texto, styles['Normal']))
  
