@@ -13,6 +13,8 @@ from datetime import datetime
 from apps.Cultivo.cosechas.models import Cosecha
 from apps.Cultivo.cosechas.api.serializers import CosechaSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth, TruncWeek, ExtractWeekDay
 
 class CosechaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -109,3 +111,68 @@ class CosechaViewSet(ModelViewSet):
         doc.build(elementos)
 
         return response
+    
+    
+    @action(detail=False, methods=['get'])
+    def datos_graficas(self, request):
+        fecha_inicio = request.GET.get('fecha_inicio')
+        fecha_fin = request.GET.get('fecha_fin')
+
+        if not fecha_inicio or not fecha_fin:
+            return Response({"error": "Debes proporcionar 'fecha_inicio' y 'fecha_fin'"}, status=400)
+
+        cosechas_por_mes = (
+            Cosecha.objects
+            .filter(fecha__range=[fecha_inicio, fecha_fin])
+            .annotate(mes=TruncMonth('fecha'))
+            .values('mes')
+            .annotate(total=Sum('cantidad'))
+            .order_by('mes')
+        )
+
+        cosechas_por_cultivo = (
+            Cosecha.objects
+            .filter(fecha__range=[fecha_inicio, fecha_fin])
+            .values('id_cultivo__nombre')
+            .annotate(total=Sum('cantidad'))
+            .order_by('-total')
+        )
+
+        cosechas_por_dia_semana = (
+            Cosecha.objects
+            .filter(fecha__range=[fecha_inicio, fecha_fin])
+            .annotate(dia_semana=ExtractWeekDay('fecha'))
+            .values('dia_semana')
+            .annotate(total=Sum('cantidad'))
+            .order_by('dia_semana')
+        )
+
+        dias_nombres = {
+            1: 'Lunes',
+            2: 'Martes',
+            3: 'Miércoles',
+            4: 'Jueves',
+            5: 'Viernes',
+            6: 'Sábado',
+            7: 'Domingo'
+        }
+
+        data = {
+            'por_mes': {
+                'meses': [c['mes'].strftime("%Y-%m") for c in cosechas_por_mes],
+                'cantidades': [float(c['total']) for c in cosechas_por_mes],
+            },
+            'por_cultivo': {
+                'cultivos': [c['id_cultivo__nombre'] for c in cosechas_por_cultivo],
+                'cantidades': [float(c['total']) for c in cosechas_por_cultivo],
+            },
+            'por_dia_semana': {
+                'dias': [dias_nombres.get(c['dia_semana'], 'Desconocido') for c in cosechas_por_dia_semana],
+                'cantidades': [float(c['total']) for c in cosechas_por_dia_semana],
+            }
+        }
+
+        return Response(data)
+    
+    
+    
