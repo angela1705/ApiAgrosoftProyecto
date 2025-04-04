@@ -49,8 +49,6 @@ import ListaInsumoPage from './pages/inventario/ListaInsumoPage';
 import PerfilPage from './pages/usuarios/PerfilPage';
 import SensoresPage from './pages/iot/SensoresPage';
 import DatosMeteorologicosPage from './pages/iot/DatosMeteorologicosPage';  
-import BodegaInsumoNotifications from './components/inventario/BodegaInsumoNotifications';
-import BodegaHerramientaNotifications from './components/inventario/BodegaHerramientaNotifications';
 import ForgotPasswordPage from './pages/usuarios/ForgotPasswordPage';  
 import ResetPasswordPage from './pages/usuarios/ResetPasswordPage';  
 import RegistrarSensorPage from './pages/iot/RegistrarSensorPage'
@@ -63,6 +61,7 @@ import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
 import UsuariosSecondPage from './pages/usuarios/RegisterSecondPage';
 import Reportes from './pages/reportes/Reportes';
 import CosechaGraficasPage from './pages/cultivo/CosechasGraficasPage';
+
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -88,7 +87,6 @@ const App: React.FC = () => {
             element={
               <PrivateRoute>
                 <BodegaHerramientaPage />
-                <BodegaHerramientaNotifications />
               </PrivateRoute>
             }
           />
@@ -97,7 +95,6 @@ const App: React.FC = () => {
             element={
               <PrivateRoute>
                 <ListaBodegaHerramientaPage />
-                <BodegaHerramientaNotifications />
               </PrivateRoute>
             } 
           />
@@ -108,7 +105,6 @@ const App: React.FC = () => {
             element={
               <PrivateRoute>
                 <BodegaInsumoPage />
-                <BodegaInsumoNotifications />
               </PrivateRoute>
             }
           />
@@ -117,7 +113,6 @@ const App: React.FC = () => {
             element={
               <PrivateRoute>
                 <ListaBodegaInsumoPage />
-                <BodegaInsumoNotifications />
               </PrivateRoute>
             } 
           />

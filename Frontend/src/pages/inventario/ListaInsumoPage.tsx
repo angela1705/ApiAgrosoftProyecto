@@ -14,6 +14,10 @@ interface Insumo {
   cantidad: number;
   unidad_medida: string;
   activo: boolean;
+  tipo_empacado: string | null;
+  fecha_registro: string;
+  fecha_caducidad: string | null;
+  fecha_actualizacion: string;
 }
 
 const ListaInsumoPage: React.FC = () => {
@@ -32,6 +36,10 @@ const ListaInsumoPage: React.FC = () => {
     { name: "Cantidad", uid: "cantidad" },
     { name: "Unidad de Medida", uid: "unidad_medida" },
     { name: "Activo", uid: "activo" },
+    { name: "Tipo de Empacado", uid: "tipo_empacado" },
+    { name: "Fecha de Registro", uid: "fecha_registro" },
+    { name: "Fecha de Caducidad", uid: "fecha_caducidad" },
+    { name: "Fecha de Actualización", uid: "fecha_actualizacion" },
     { name: "Acciones", uid: "acciones" },
   ];
 
@@ -64,6 +72,10 @@ const ListaInsumoPage: React.FC = () => {
     cantidad: insumo.cantidad,
     unidad_medida: insumo.unidad_medida,
     activo: insumo.activo ? "Sí" : "No",
+    tipo_empacado: insumo.tipo_empacado || "No especificado",
+    fecha_registro: insumo.fecha_registro,
+    fecha_caducidad: insumo.fecha_caducidad || "No especificada",
+    fecha_actualizacion: insumo.fecha_actualizacion,
     acciones: (
       <>
         <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(insumo)}>
@@ -121,6 +133,10 @@ const ListaInsumoPage: React.FC = () => {
               <input type="checkbox" checked={selectedInsumo.activo} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, activo: e.target.checked })} className="mr-2 leading-tight" />
               <label className="text-gray-700 text-sm font-bold">Activo</label>
             </div>
+            <ReuInput label="Tipo de Empacado" placeholder="Ingrese el tipo de empacado" type="text" value={selectedInsumo.tipo_empacado || ""} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, tipo_empacado: e.target.value || null })} />
+            <ReuInput label="Fecha de Registro" type="datetime-local" value={selectedInsumo.fecha_registro.slice(0, 16)} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, fecha_registro: new Date(e.target.value).toISOString() })} />
+            <ReuInput label="Fecha de Caducidad" type="date" value={selectedInsumo.fecha_caducidad || ""} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, fecha_caducidad: e.target.value || null })} />
+            <ReuInput label="Fecha de Actualización" type="datetime-local" value={selectedInsumo.fecha_actualizacion.slice(0, 16)} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, fecha_actualizacion: new Date(e.target.value).toISOString() })} />
           </>
         )}
       </ReuModal>

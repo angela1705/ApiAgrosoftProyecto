@@ -13,6 +13,10 @@ Los **registros de Herramientas** documentan las herramientas disponibles en el 
 ## **Endpoints de la API**
 
 ### **GET /inventario/herramientas/**
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section><pre data-language="http" tabindex="0"><code>http://127.0.0.1:8000/inventario/herramientas/</code></pre></section>
+
 Obtiene todas las herramientas registradas.
 
 **Ejemplo de respuesta (200 OK):**
@@ -29,13 +33,16 @@ Obtiene todas las herramientas registradas.
 ]
 ```
 **Parámetros opcionales:**
-
 - `?nombre=Martillo`: Filtra por nombre de herramienta
 - `?activo=true`: Filtra por herramientas activas
 
 ---
 
 ### **GET /inventario/herramientas/{id}/**
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section><pre data-language="http" tabindex="0"><code>http://127.0.0.1:8000/inventario/herramientas/{id}/</code></pre></section>
+
 Obtiene una herramienta específica por su ID.
 
 **Ejemplo de respuesta (200 OK):**
@@ -53,6 +60,10 @@ Obtiene una herramienta específica por su ID.
 ---
 
 ### **POST /inventario/herramientas/**
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section><pre data-language="http" tabindex="0"><code>http://127.0.0.1:8000/inventario/herramientas/</code></pre></section>
+
 Registra una nueva herramienta en el inventario.
 
 **Ejemplo de solicitud:**
@@ -86,6 +97,10 @@ Registra una nueva herramienta en el inventario.
 ---
 
 ### **PUT /inventario/herramientas/{id}/**
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
+URL:
+<section><pre data-language="http" tabindex="0"><code>http://127.0.0.1:8000/inventario/herramientas/{id}/</code></pre></section>
+
 Actualiza una herramienta existente.
 
 **Ejemplo de solicitud:**
@@ -102,6 +117,10 @@ Actualiza una herramienta existente.
 ---
 
 ### **DELETE /inventario/herramientas/{id}/**
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
+URL:
+<section><pre data-language="http" tabindex="0"><code>http://127.0.0.1:8000/inventario/herramientas/{id}/</code></pre></section>
+
 Elimina una herramienta del inventario.
 
 **Respuesta exitosa (204 No Content):**
@@ -118,7 +137,7 @@ Elimina una herramienta del inventario.
 
 ---
 
-### **Códigos de estado comunes:**
+## **Códigos de estado comunes:**
 | Código | Descripción |
 |--------|-------------|
 | `200` | OK (GET, PUT, DELETE exitoso) |
@@ -150,3 +169,4 @@ graph TD
 ▸ **Reportes:**  
   - Estado general de herramientas  
   - Histórico de uso y modificaciones  
+

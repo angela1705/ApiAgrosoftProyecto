@@ -123,6 +123,7 @@ CHANNEL_LAYERS = {
     },
 }
 
+
 # Configuración CORS para desarrollo
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Frontend Vite
