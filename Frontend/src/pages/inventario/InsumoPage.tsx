@@ -12,6 +12,10 @@ interface Insumo {
   cantidad: number;
   unidad_medida: string;
   activo: boolean;
+  tipo_empacado: string | null;
+  fecha_registro: string;
+  fecha_caducidad: string | null;
+  fecha_actualizacion: string;
 }
 
 const InsumoPage: React.FC = () => {
@@ -22,6 +26,10 @@ const InsumoPage: React.FC = () => {
     cantidad: 0,
     unidad_medida: "",
     activo: true,
+    tipo_empacado: null,
+    fecha_registro: new Date().toISOString(),
+    fecha_caducidad: null,
+    fecha_actualizacion: new Date().toISOString(),
   });
 
   const mutation = useRegistrarInsumo();
@@ -38,6 +46,10 @@ const InsumoPage: React.FC = () => {
           cantidad: 0,
           unidad_medida: "",
           activo: true,
+          tipo_empacado: null,
+          fecha_registro: new Date().toISOString(),
+          fecha_caducidad: null,
+          fecha_actualizacion: new Date().toISOString(),
         });
       },
     });
@@ -80,6 +92,31 @@ const InsumoPage: React.FC = () => {
           type="text"
           value={insumo.unidad_medida}
           onChange={(e) => setInsumo({ ...insumo, unidad_medida: e.target.value })}
+        />
+        <ReuInput
+          label="Tipo de Empacado"
+          placeholder="Ingrese el tipo de empacado"
+          type="text"
+          value={insumo.tipo_empacado || ""}
+          onChange={(e) => setInsumo({ ...insumo, tipo_empacado: e.target.value || null })}
+        />
+        <ReuInput
+          label="Fecha de Registro"
+          type="datetime-local"
+          value={insumo.fecha_registro.slice(0, 16)}
+          onChange={(e) => setInsumo({ ...insumo, fecha_registro: new Date(e.target.value).toISOString() })}
+        />
+        <ReuInput
+          label="Fecha de Caducidad"
+          type="date"
+          value={insumo.fecha_caducidad || ""}
+          onChange={(e) => setInsumo({ ...insumo, fecha_caducidad: e.target.value || null })}
+        />
+        <ReuInput
+          label="Fecha de Actualización"
+          type="datetime-local"
+          value={insumo.fecha_actualizacion.slice(0, 16)}
+          onChange={(e) => setInsumo({ ...insumo, fecha_actualizacion: new Date(e.target.value).toISOString() })}
         />
         <div className="flex items-center">
           <input

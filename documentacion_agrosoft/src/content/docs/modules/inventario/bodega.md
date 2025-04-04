@@ -8,12 +8,18 @@ description: "Documentación de la API para la gestión de bodegas en Agrosoft."
 
 El módulo **Bodega** permite administrar el almacenamiento de herramientas e insumos dentro de la finca. Esta documentación cubre los endpoints RESTful para su gestión.
 
----
-
 ## **Endpoints de la API**
 
-### **GET /bodega**
-Obtiene todas las bodegas registradas con filtros opcionales.
+### **Obtener todas las bodegas**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/bodega/</div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/bodega/"><div></div></button></div></figure></div>  </section>
+
+**Parámetros opcionales:**
+- `?ubicacion=Sector A`: Filtra por ubicación.
+- `?capacidad_min=100`: Filtra bodegas con capacidad mayor o igual.
+- `?capacidad_max=1000`: Filtra bodegas con capacidad menor o igual.
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -28,15 +34,13 @@ Obtiene todas las bodegas registradas con filtros opcionales.
 ]
 ```
 
-**Parámetros opcionales:**
-- `?ubicacion=Sector A`: Filtra por ubicación.
-- `?capacidad_min=100`: Filtra bodegas con capacidad mayor o igual.
-- `?capacidad_max=1000`: Filtra bodegas con capacidad menor o igual.
-
 ---
 
-### **GET /bodega/{id}**
-Obtiene una bodega específica por su ID.
+### **Obtener una bodega por ID**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/bodega/{id}/</div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/bodega/{id}/"><div></div></button></div></figure></div>  </section>
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -49,13 +53,13 @@ Obtiene una bodega específica por su ID.
 }
 ```
 
-**Errores comunes:**
-- `404 Not Found`: Si la bodega no existe.
-
 ---
 
-### **POST /bodega**
-Registra una nueva bodega.
+### **Registrar una nueva bodega**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/bodega/</div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/bodega/"><div></div></button></div></figure></div>  </section>
 
 **Ejemplo de solicitud:**
 ```json
@@ -67,11 +71,7 @@ Registra una nueva bodega.
 }
 ```
 
-**Validaciones:**
-- `nombre`, `ubicacion` y `capacidad` son obligatorios.
-- `capacidad` debe ser un número positivo.
-
-**Ejemplo de respuesta exitosa (201 Created):**
+**Ejemplo de respuesta (201 Created):**
 ```json
 {
   "id": 2,
@@ -79,13 +79,13 @@ Registra una nueva bodega.
 }
 ```
 
-**Errores comunes:**
-- `400 Bad Request`: Datos inválidos o faltantes.
-
 ---
 
-### **PUT /bodega/{id}**
-Actualiza una bodega existente.
+### **Actualizar una bodega**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/bodega/{id}/</div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/bodega/{id}/"><div></div></button></div></figure></div>  </section>
 
 **Ejemplo de solicitud:**
 ```json
@@ -94,9 +94,6 @@ Actualiza una bodega existente.
   "capacidad": 600
 }
 ```
-
-**Restricciones:**
-- No se puede modificar la `ubicacion` después de creada.
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -108,8 +105,11 @@ Actualiza una bodega existente.
 
 ---
 
-### **DELETE /bodega/{id}**
-Elimina una bodega del inventario.
+### **Eliminar una bodega**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/bodega/{id}/</div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/bodega/{id}/"><div></div></button></div></figure></div>  </section>
 
 **Ejemplo de respuesta exitosa (200 OK):**
 ```json
@@ -117,10 +117,6 @@ Elimina una bodega del inventario.
   "message": "Bodega eliminada correctamente"
 }
 ```
-
-**Errores comunes:**
-- `404 Not Found`: Si la bodega no existe.
-- `409 Conflict`: Si la bodega tiene herramientas o insumos asociados.
 
 ---
 
@@ -134,41 +130,12 @@ Elimina una bodega del inventario.
 }
 ```
 
-### **Códigos de estado comunes:**
-| Código | Descripción |
-|--------|-------------|
-| `200` | OK (GET, PUT, DELETE exitoso) |
-| `201` | Created (POST exitoso) |
-| `400` | Bad Request (datos inválidos) |
-| `404` | Not Found (bodega no encontrada) |
-| `409` | Conflict (restricción de integridad) |
-
----
-
-## **Relaciones en el Sistema**
-
-Los registros de **Bodegas** están vinculados con:
-- **Responsables** (cada bodega tiene un encargado asignado).
-- **Herramientas e Insumos** (almacenados y gestionados dentro de cada bodega).
-
-```mermaid
-graph TD
-    A[Responsable] --> B[Bodega]
-    B --> C[Herramientas]
-    B --> D[Insumos]
-```
-
 ---
 
 ## **Buenas Prácticas**
-✔️ **Registro actualizado**: Mantener la información de las bodegas actualizada en cuanto a capacidad y ubicación.  
-✔️ **Verificación de capacidad**: Asegurar que el almacenamiento no exceda la capacidad registrada.  
-✔️ **Asignación de responsables**: Cada bodega debe tener un responsable asignado para su gestión y control.  
+✔️ **Registro actualizado**: Mantener la información de las bodegas actualizada.  
+✔️ **Verificación de capacidad**: No exceder la capacidad registrada.  
+✔️ **Asignación de responsables**: Cada bodega debe tener un responsable asignado.  
 
 ---
 
-## **Integraciones Comunes**
-
-▸ **Inventario de Herramientas**: Registro automático de herramientas almacenadas en cada bodega.  
-▸ **Control de Insumos**: Seguimiento de entradas y salidas de insumos.  
-▸ **Reportes**: Generación de informes sobre capacidad utilizada y disponibilidad.  

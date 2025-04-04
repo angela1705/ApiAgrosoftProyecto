@@ -1,3 +1,4 @@
+
 ---
 title: "Gestión de Insumos"
 slug: modules/inventario/insumos
@@ -12,8 +13,23 @@ Los **registros de Insumos** documentan los insumos disponibles en el inventario
 
 ## **Endpoints de la API**
 
-### **GET /inventario/insumo/**
-Obtiene todos los insumos registrados.
+### **Obtener todos los insumos**
+
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span></p>
+
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/insumo/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/insumo/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
+
+**Parámetros opcionales:**
+- `?nombre=Fertilizante`: Filtra por nombre de insumo.
+- `?activo=true`: Filtra por insumos activos.
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -29,14 +45,21 @@ Obtiene todos los insumos registrados.
 ]
 ```
 
-**Parámetros opcionales:**
-- `?nombre=Fertilizante`: Filtra por nombre de insumo
-- `?activo=true`: Filtra por insumos activos
-
 ---
 
-### **GET /inventario/insumo/{id}/**
-Obtiene un insumo específico por su ID.
+### **Obtener un insumo por ID**
+
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span></p>
+
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/insumo/{id}/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/insumo/{id}/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -52,8 +75,19 @@ Obtiene un insumo específico por su ID.
 
 ---
 
-### **POST /inventario/insumo/**
-Registra un nuevo insumo en el inventario.
+### **Registrar un nuevo insumo**
+
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span></p>
+
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/insumo/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/insumo/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Ejemplo de solicitud:**
 ```json
@@ -71,7 +105,7 @@ Registra un nuevo insumo en el inventario.
 - `cantidad` debe ser un entero
 - `activo` es opcional (por defecto `true`)
 
-**Respuesta exitosa (201 Created):**
+**Ejemplo de respuesta (201 Created):**
 ```json
 {
   "id": 2,
@@ -85,8 +119,19 @@ Registra un nuevo insumo en el inventario.
 
 ---
 
-### **PUT /inventario/insumo/{id}/**
-Actualiza un insumo existente.
+### **Actualizar un insumo**
+
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span></p>
+
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/insumo/{id}/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/insumo/{id}/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Ejemplo de solicitud:**
 ```json
@@ -99,33 +144,75 @@ Actualiza un insumo existente.
 **Restricciones:**
 - Todos los campos son modificables
 
+**Ejemplo de respuesta (200 OK):**
+```json
+{
+  "id": 1,
+  "nombre": "Fertilizante NPK",
+  "descripcion": "Fertilizante balanceado para cultivos",
+  "cantidad": 15,
+  "unidad_medida": "kg",
+  "activo": false
+}
+```
+
 ---
 
-### **DELETE /inventario/insumo/{id}/**
-Elimina un insumo del inventario.
+### **Eliminar un insumo**
 
-**Respuesta exitosa (204 No Content):**
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span></p>
+
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/insumo/{id}/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/insumo/{id}/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
+
+**Ejemplo de respuesta exitosa (204 No Content):**
 ```json
 {}
 ```
 
-**Error común (404 Not Found):**
+---
+
+## **Manejo de Errores**
+
+### **Ejemplo de error (404 Not Found):**
 ```json
 {
   "detail": "No encontrado."
 }
 ```
 
+### **Ejemplo de error (400 Bad Request):**
+```json
+{
+  "error": "Bad Request",
+  "detail": "El campo 'cantidad' debe ser un entero."
+}
+```
+
 ---
 
-## **Códigos de estado comunes:**
-| Código | Descripción |
-|--------|-------------|
-| `200` | OK (GET, PUT, DELETE exitoso) |
-| `201` | Created (POST exitoso) |
-| `204` | No Content (DELETE exitoso) |
-| `400` | Bad Request (datos inválidos) |
-| `404` | Not Found (insumo no encontrado) |
+## **Buenas Prácticas**
+
+✔️ **Registro inmediato:** Actualizar la cantidad tras cada uso o reabastecimiento.  
+✔️ **Detalles específicos:** Incluir en `descripcion` el tipo o propósito del insumo.  
+✔️ **Consistencia:** Asegurar que `unidad_medida` sea coherente con la cantidad registrada.
+
+---
+
+## **Integraciones Comunes**
+
+▸ **Notificaciones:** Alertas cuando la cantidad de insumos cae por debajo de un umbral.  
+▸ **Inventario:** Sincronización con `BodegaInsumo` para reflejar disponibilidad por bodega.  
+▸ **Reportes:**  
+    • Stock por unidad de medida  
+    • Histórico de uso y reabastecimiento  
 
 ---
 
@@ -134,20 +221,3 @@ Elimina un insumo del inventario.
 graph TD
     A[Insumo] --> B[BodegaInsumo]
 ```
-
----
-
-## **Buenas Prácticas**
-✔️ **Registro inmediato:** Actualizar la cantidad tras cada uso o reabastecimiento.  
-✔️ **Detalles específicos:** Incluir en `descripcion` el tipo o propósito del insumo.  
-✔️ **Consistencia:** Asegurar que `unidad_medida` sea coherente con la cantidad registrada.  
-
----
-
-## **Integraciones Comunes**
-▸ **Notificaciones:** Alertas cuando la cantidad de insumos cae por debajo de un umbral.  
-▸ **Inventario:** Sincronización con `BodegaInsumo` para reflejar disponibilidad por bodega.  
-▸ **Reportes:**  
-  - Stock por unidad de medida  
-  - Histórico de uso y reabastecimiento  
-

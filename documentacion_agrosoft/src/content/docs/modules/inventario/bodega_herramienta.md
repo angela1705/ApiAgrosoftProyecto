@@ -8,12 +8,19 @@ description: "Documentación de la API para la gestión de bodega herramienta en
 
 Los **registros de Bodega Herramienta** documentan la relación entre herramientas y bodegas, incluyendo la cantidad disponible de cada herramienta en una bodega específica. Esta documentación cubre los endpoints RESTful y las conexiones WebSocket para su gestión.
 
----
-
 ## **Endpoints de la API**
 
-### **GET /inventario/bodega_herramienta/**
-Obtiene todas las relaciones entre bodegas y herramientas registradas.
+### **Obtener todas las relaciones entre bodegas y herramientas**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+```http
+http://127.0.0.1:8000/inventario/bodega_herramienta/
+```
+
+**Parámetros opcionales:**
+- `?bodega=1`: Filtra por ID de bodega.
+- `?herramienta=2`: Filtra por ID de herramienta.
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -27,14 +34,15 @@ Obtiene todas las relaciones entre bodegas y herramientas registradas.
 ]
 ```
 
-**Parámetros opcionales:**
-- `?bodega=1`: Filtra por ID de bodega
-- `?herramienta=2`: Filtra por ID de herramienta
-
 ---
 
-### **GET /inventario/bodega_herramienta/{id}/**
-Obtiene una relación específica entre bodega y herramienta por su ID.
+### **Obtener una relación específica por ID**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+```http
+http://127.0.0.1:8000/inventario/bodega_herramienta/{id}/
+```
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -48,8 +56,13 @@ Obtiene una relación específica entre bodega y herramienta por su ID.
 
 ---
 
-### **POST /inventario/bodega_herramienta/**
-Registra una nueva relación entre una bodega y una herramienta.
+### **Registrar una nueva relación entre bodega y herramienta**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+```http
+http://127.0.0.1:8000/inventario/bodega_herramienta/
+```
 
 **Ejemplo de solicitud:**
 ```json
@@ -64,7 +77,7 @@ Registra una nueva relación entre una bodega y una herramienta.
 - Campos obligatorios: `bodega`, `herramienta`
 - `cantidad` debe ser un entero positivo (≥ 1)
 
-**Respuesta exitosa (201 Created):**
+**Ejemplo de respuesta (201 Created):**
 ```json
 {
   "id": 2,
@@ -76,8 +89,13 @@ Registra una nueva relación entre una bodega y una herramienta.
 
 ---
 
-### **PUT /inventario/bodega_herramienta/{id}/**
-Actualiza una relación existente entre bodega y herramienta.
+### **Actualizar una relación entre bodega y herramienta**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
+URL:
+```http
+http://127.0.0.1:8000/inventario/bodega_herramienta/{id}/
+```
 
 **Ejemplo de solicitud:**
 ```json
@@ -89,28 +107,39 @@ Actualiza una relación existente entre bodega y herramienta.
 **Restricciones:**
 - Solo se puede modificar `cantidad`
 
----
-
-### **DELETE /inventario/bodega_herramienta/{id}/**
-Elimina una relación entre bodega y herramienta.
-
-**Respuesta exitosa (204 No Content):**
-```json
-{}
-```
-
-**Error común (404 Not Found):**
+**Ejemplo de respuesta (200 OK):**
 ```json
 {
-  "detail": "No encontrado."
+  "id": 1,
+  "bodega": 1,
+  "herramienta": 2,
+  "cantidad": 4
 }
+```
+
+---
+
+### **Eliminar una relación entre bodega y herramienta**
+
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
+URL:
+```http
+http://127.0.0.1:8000/inventario/bodega_herramienta/{id}/
+```
+
+**Ejemplo de respuesta exitosa (204 No Content):**
+```json
+{}
 ```
 
 ---
 
 ## **WebSocket**
 
-**Conexión:** `ws/inventario/bodega_herramienta/`
+**Conexión:**
+```http
+ws://127.0.0.1:8000/inventario/bodega_herramienta/
+```
 
 Permite actualizaciones en tiempo real de las relaciones entre bodegas y herramientas.
 
@@ -153,39 +182,45 @@ Permite actualizaciones en tiempo real de las relaciones entre bodegas y herrami
 
 ---
 
-## **Relaciones en el Sistema**
+## **Manejo de Errores**
 
+### **Ejemplo de error (404 Not Found):**
+```json
+{
+  "detail": "No encontrado."
+}
+```
+
+### **Ejemplo de error (400 Bad Request):**
+```json
+{
+  "error": "Bad Request",
+  "detail": "El campo 'cantidad' debe ser un entero positivo."
+}
+```
+
+---
+
+## **Buenas Prácticas**
+✔️ **Registro inmediato:** Actualizar la cantidad tras cada movimiento de herramientas.  
+✔️ **Detalles específicos:** Verificar que la cantidad coincida con el inventario físico.  
+✔️ **Sincronización:** Usar WebSocket para reflejar cambios en tiempo real en el frontend.  
+
+---
+
+## **Integraciones Comunes**
+▸ **Notificaciones:** Alertas cuando la cantidad de herramientas cae por debajo de un umbral.  
+▸ **Inventario:** Actualización automática del stock en `Herramienta` al modificar `BodegaHerramienta`.  
+▸ **Reportes:**  
+  - Disponibilidad por bodega  
+  - Histórico de movimientos de herramientas  
+
+---
+
+## **Relaciones en el Sistema**
 ```mermaid
 graph TD
     A[Bodega] --> B[BodegaHerramienta]
     C[Herramienta] --> B
 ```
-
----
-
-## **Códigos de estado comunes:**
-
-| Código | Descripción |
-|--------|-------------|
-| `200` | OK (GET, PUT, DELETE exitoso) |
-| `201` | Created (POST exitoso) |
-| `400` | Bad Request (datos inválidos) |
-| `404` | Not Found (relación no encontrada) |
-| `409` | Conflict (restricción de integridad) |
-
----
-
-## **Buenas Prácticas**
-- **Registro inmediato:** Actualizar la cantidad tras cada movimiento de herramientas.
-- **Detalles específicos:** Verificar que la cantidad coincida con el inventario físico.
-- **Sincronización:** Usar WebSocket para reflejar cambios en tiempo real en el frontend.
-
----
-
-## **Integraciones Comunes**
-- **Notificaciones:** Alertas cuando la cantidad de herramientas cae por debajo de un umbral.
-- **Inventario:** Actualización automática del stock en `Herramienta` al modificar `BodegaHerramienta`.
-- **Reportes:**
-  - Disponibilidad por bodega
-  - Histórico de movimientos de herramientas
 

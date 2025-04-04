@@ -8,12 +8,20 @@ description: "Documentación de la API para la gestión de bodegas e insumos en 
 
 Los **registros de Bodega Insumo** documentan la relación entre insumos y bodegas, incluyendo la cantidad disponible de cada insumo en una bodega específica. Esta documentación cubre los endpoints RESTful y las conexiones WebSocket para su gestión.
 
----
-
 ## **Endpoints de la API**
 
-### **GET /inventario/bodega_insumo/**
-Obtiene todas las relaciones entre bodegas e insumos registradas.
+### **Obtener todas las relaciones entre bodegas e insumos**
+
+**Método:** `GET`
+
+**URL:**
+```
+http://127.0.0.1:8000/inventario/bodega_insumo/
+```
+
+**Parámetros opcionales:**
+- `?bodega=1`: Filtra por ID de bodega.
+- `?insumo=2`: Filtra por ID de insumo.
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -26,14 +34,17 @@ Obtiene todas las relaciones entre bodegas e insumos registradas.
   }
 ]
 ```
-**Parámetros opcionales:**
-- `?bodega=1`: Filtra por ID de bodega
-- `?insumo=2`: Filtra por ID de insumo
 
 ---
 
-### **GET /inventario/bodega_insumo/{id}/**
-Obtiene una relación específica entre bodega e insumo por su ID.
+### **Obtener una relación específica por ID**
+
+**Método:** `GET`
+
+**URL:**
+```
+http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
+```
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -47,8 +58,14 @@ Obtiene una relación específica entre bodega e insumo por su ID.
 
 ---
 
-### **POST /inventario/bodega_insumo/**
-Registra una nueva relación entre una bodega y un insumo.
+### **Registrar una nueva relación entre bodega e insumo**
+
+**Método:** `POST`
+
+**URL:**
+```
+http://127.0.0.1:8000/inventario/bodega_insumo/
+```
 
 **Ejemplo de solicitud:**
 ```json
@@ -63,7 +80,7 @@ Registra una nueva relación entre una bodega y un insumo.
 - Campos obligatorios: `bodega`, `insumo`
 - `cantidad` debe ser un entero
 
-**Respuesta exitosa (201 Created):**
+**Ejemplo de respuesta (201 Created):**
 ```json
 {
   "id": 2,
@@ -75,8 +92,14 @@ Registra una nueva relación entre una bodega y un insumo.
 
 ---
 
-### **PUT /inventario/bodega_insumo/{id}/**
-Actualiza una relación existente entre bodega e insumo.
+### **Actualizar una relación entre bodega e insumo**
+
+**Método:** `PUT`
+
+**URL:**
+```
+http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
+```
 
 **Ejemplo de solicitud:**
 ```json
@@ -88,28 +111,40 @@ Actualiza una relación existente entre bodega e insumo.
 **Restricciones:**
 - Solo se puede modificar `cantidad`
 
----
-
-### **DELETE /inventario/bodega_insumo/{id}/**
-Elimina una relación entre bodega e insumo.
-
-**Respuesta exitosa (204 No Content):**
-```json
-{}
-```
-
-**Error común (404 Not Found):**
+**Ejemplo de respuesta (200 OK):**
 ```json
 {
-  "detail": "No encontrado."
+  "id": 1,
+  "bodega": 1,
+  "insumo": 2,
+  "cantidad": 12
 }
+```
+
+---
+
+### **Eliminar una relación entre bodega e insumo**
+
+**Método:** `DELETE`
+
+**URL:**
+```
+http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
+```
+
+**Ejemplo de respuesta exitosa (204 No Content):**
+```json
+{}
 ```
 
 ---
 
 ## **WebSocket**
 
-**Conexión:** `ws/inventario/bodega_insumo/`
+**Conexión:**
+```
+ws://127.0.0.1:8000/inventario/bodega_insumo/
+```
 
 Permite actualizaciones en tiempo real de las relaciones entre bodegas e insumos.
 
@@ -138,7 +173,7 @@ Permite actualizaciones en tiempo real de las relaciones entre bodegas e insumos
   "bodega": "Bodega Central",
   "insumo": "Fertilizante",
   "cantidad": 10,
-  "accion": "create" 
+  "accion": "create"
 }
 ```
 
@@ -153,37 +188,45 @@ Permite actualizaciones en tiempo real de las relaciones entre bodegas e insumos
 
 ---
 
+## **Manejo de Errores**
+
+### **Ejemplo de error (404 Not Found):**
+```json
+{
+  "detail": "No encontrado."
+}
+```
+
+### **Ejemplo de error (400 Bad Request):**
+```json
+{
+  "error": "Bad Request",
+  "detail": "El campo 'cantidad' debe ser un entero."
+}
+```
+
+---
+
+## **Buenas Prácticas**
+✔️ **Registro inmediato:** Actualizar la cantidad tras cada movimiento de insumos.  
+✔️ **Detalles específicos:** Verificar que la cantidad coincida con el inventario físico.  
+✔️ **Sincronización:** Usar WebSocket para reflejar cambios en tiempo real en el frontend.  
+
+---
+
+## **Integraciones Comunes**
+▸ **Notificaciones:** Alertas cuando la cantidad de insumos cae por debajo de un umbral.  
+▸ **Inventario:** Actualización automática del stock en `Insumo` al modificar `BodegaInsumo`.  
+▸ **Reportes:**  
+  - Disponibilidad por bodega  
+  - Histórico de movimientos de insumos  
+
+---
+
 ## **Relaciones Clave**
 ```mermaid
 graph TD
     A[Bodega] --> B[BodegaInsumo]
     C[Insumo] --> B
 ```
-
----
-
-## **Buenas Prácticas**
-- **Registro inmediato:** Actualizar la cantidad tras cada movimiento de insumos.
-- **Detalles específicos:** Verificar que la cantidad coincida con el inventario físico.
-- **Sincronización:** Usar WebSocket para reflejar cambios en tiempo real en el frontend.
-
----
-
-## **Integraciones Comunes**
-- **Notificaciones:** Alertas cuando la cantidad de insumos cae por debajo de un umbral.
-- **Inventario:** Actualización automática del stock en `Insumo` al modificar `BodegaInsumo`.
-- **Reportes:**
-  - Disponibilidad por bodega
-  - Histórico de movimientos de insumos
-
----
-
-### **Códigos de estado comunes:**
-| Código | Descripción |
-|--------|-------------|
-| `200` | OK (GET, PUT, DELETE exitoso) |
-| `201` | Created (POST exitoso) |
-| `400` | Bad Request (datos inválidos) |
-| `404` | Not Found (bodega insumo no encontrada) |
-| `409` | Conflict (restricción de integridad) |
 
