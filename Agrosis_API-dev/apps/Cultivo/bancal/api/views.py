@@ -85,7 +85,6 @@ class BancalViewSet(viewsets.ModelViewSet):
               
         elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading2']))
         
-        # Cálculo seguro de superficie total
         superficie_total = sum(
             float(bancal.TamX) * float(bancal.TamY) 
             for bancal in bancales 
@@ -104,7 +103,6 @@ class BancalViewSet(viewsets.ModelViewSet):
         for bancal in bancales:
             elementos.append(Paragraph(f"<b>Era/Bancal: {bancal.nombre}</b>", styles['Heading3']))
             
-            # Cálculo seguro de superficie individual
             superficie = "No definida"
             if bancal.TamX is not None and bancal.TamY is not None:
                 superficie = f"{(float(bancal.TamX) * float(bancal.TamY)):.2f} m²"

@@ -15,8 +15,6 @@ const BancalPage: React.FC = () => {
     fk_lote: 0,
   });
 
-
-
   const mutation = useRegistrarBancal();
   const navigate = useNavigate()
   const {data : lotes} = useLotes()
@@ -30,9 +28,6 @@ const BancalPage: React.FC = () => {
       [name]: name === "nombre" ? value : Number(value),
     }));
   };
-
-
-
 
 
 
@@ -91,7 +86,7 @@ const BancalPage: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700">Lote</label>
             <select
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              name="fk_lote"
+              name="lote"
               value={bancal.fk_lote}
               onChange={handleChange}
             >
