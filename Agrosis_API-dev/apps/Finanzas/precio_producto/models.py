@@ -9,9 +9,6 @@ class PrecioProducto(models.Model):
     
     # Campo fecha como DateField
     fecha = models.DateField()
-    
-    # Campo nombre como CharField con un máximo de 100 caracteres
-    nombre = models.CharField(max_length=100)
 
     def __str__(self):
         # Devuelve una representación legible del objeto, incluyendo el nombre y el precio
