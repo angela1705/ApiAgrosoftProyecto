@@ -3,7 +3,6 @@ import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useActividades, useInsumos, useUsuarios, useActualizarActividad, useEliminarActividad } from "@/hooks/cultivo/useActividad";
 import { useTipoActividad } from "@/hooks/cultivo/usetipoactividad";
-import { useProgramaciones } from "@/hooks/cultivo/useProgramacion";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import ReuModal from "@/components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
@@ -38,7 +37,6 @@ const ListaActividadPage: React.FC = () => {
     const eliminarMutation = useEliminarActividad();
     const { data: actividades, isLoading, refetch } = useActividades();
     const { data: tiposActividad } = useTipoActividad();
-    const { data: programaciones } = useProgramaciones();
     const { data: usuarios } = useUsuarios();
     const { data: cultivos } = useCultivos();
     const { data: insumos } = useInsumos();
