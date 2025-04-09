@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'apps.Cultivo.fase_lunar',
     'apps.Cultivo.tipo_control',
     'apps.Cultivo.semillero',
-    'apps.Cultivo.semillero_herramienta',
-    'apps.Cultivo.semillero_insumo',
     'apps.Cultivo.tareas',
     'apps.Cultivo.afecciones',
     'apps.Cultivo.controles',
@@ -63,9 +61,6 @@ INSTALLED_APPS = [
     'apps.Finanzas.venta',
     'apps.Finanzas.salario',
     'apps.Finanzas.precio_producto',
-    'apps.Inventario.bodega',
-    'apps.Inventario.bodega_insumo',
-    'apps.Inventario.bodega_herramienta',
     'apps.Inventario.herramientas',
     'apps.Inventario.insumos',
     'rest_framework',
@@ -136,7 +131,7 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_proyecto',
+        'NAME': 'agrosoft',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost', 

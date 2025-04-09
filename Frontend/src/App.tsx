@@ -36,14 +36,8 @@ import ListaTipoControlPage from './pages/cultivo/ListaTipoControlPage';
 import ProductosControlPage from './pages/cultivo/ProductosControlPage';
 import ListaProductoControlPage from './pages/cultivo/ListaProductosControlPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
-import BodegaPage from './pages/inventario/BodegaPage';
-import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
-import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
-import ListaBodegaHerramientaPage from './pages/inventario/ListaBodegaHerramientaPage';
 import HerramientasPage from './pages/inventario/HerramientasPage';
 import ListaHerramientaPage from './pages/inventario/ListaHerramientaPage'; 
-import BodegaInsumoPage from './pages/inventario/BodegaInsumoPage';
-import ListaBodegaInsumoPage from './pages/inventario/ListaBodegaInsumoPage';
 import InsumoPage from './pages/inventario/InsumoPage';
 import ListaInsumoPage from './pages/inventario/ListaInsumoPage';
 import PerfilPage from './pages/usuarios/PerfilPage';
@@ -78,45 +72,11 @@ const App: React.FC = () => {
           <Route element={<RegisterPage />} path="/register" />
           <Route path="/" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
           <Route path="/perfil" element={<PrivateRoute><PerfilPage /></PrivateRoute>} />
-          <Route path="/inventario/bodega/" element={<PrivateRoute><BodegaPage /></PrivateRoute>} />
-          <Route path="/inventario/listarbodega/" element={<PrivateRoute><ListaBodegaPage /></PrivateRoute>} />
           <Route path="/usuarios/secondregis/" element={<PrivateRoute><UsuariosSecondPage /></PrivateRoute>} />
           src\pages\usuarios\RegisterSecondPage.tsx
-          <Route
-            path="/inventario/bodegaherramienta/"
-            element={
-              <PrivateRoute>
-                <BodegaHerramientaPage />
-              </PrivateRoute>
-            }
-          />
-          <Route 
-            path="/inventario/listarbodegaherramienta/" 
-            element={
-              <PrivateRoute>
-                <ListaBodegaHerramientaPage />
-              </PrivateRoute>
-            } 
-          />
           <Route path="/inventario/herramientas/" element={<PrivateRoute><HerramientasPage /></PrivateRoute>} />
           <Route path="/inventario/listarherramientas/" element={<PrivateRoute><ListaHerramientaPage /></PrivateRoute>} />
-          <Route
-            path="/inventario/bodegainsumo/"
-            element={
-              <PrivateRoute>
-                <BodegaInsumoPage />
-              </PrivateRoute>
-            }
-          />
-          <Route 
-            path="/inventario/listarbodegainsumos/" 
-            element={
-              <PrivateRoute>
-                <ListaBodegaInsumoPage />
-              </PrivateRoute>
-            } 
-          />
-          
+      
           <Route path="/finanzas/salario/" element={<PrivateRoute><SalarioPage /></PrivateRoute>} />
           <Route path="/finanzas/listarsalarios/" element={<PrivateRoute><ListaSalarioPage /></PrivateRoute>} /> {/* Nueva ruta */}
           <Route path="/finanzas/ventas/" element={<PrivateRoute><VentaPage /></PrivateRoute>} />
