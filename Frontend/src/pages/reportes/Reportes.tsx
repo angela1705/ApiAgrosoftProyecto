@@ -15,17 +15,19 @@ export default function Reportes() {
     });
 
     const descargarPDF = () => {
-        if (pdf) {
-            const url = window.URL.createObjectURL(pdf);
+        if (pdf instanceof Blob) {
+            const url = URL.createObjectURL(pdf);
             const a = document.createElement("a");
             a.href = url;
             a.download = `reporte_${modulo}_${reporte}.pdf`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } else {
+            console.error("El objeto pdf no es un Blob:", pdf);
         }
     };
-
     return (
         <DefaultLayout>
             <div className="w-full flex flex-col items-center min-h-screen p-fF">
