@@ -2,6 +2,9 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+  server: {
+    port: 4322
+  },
   integrations: [
     starlight({
       title: 'Agrosis',
@@ -20,15 +23,14 @@ export default defineConfig({
           items: [
             { label: 'introduccion', slug: 'guides/intro' },
             { label: 'Instalación', slug: 'guides/install' },
-            { label: 'Autenticación', slug: 'guides/authentication' },
           ],
         },
         {
           label: 'Usuarios',
           items: [
             { label: 'Introducción', slug: 'modules/usuarios/index' },
+            { label: 'Log-in', slug: 'modules/usuarios/Log-in' },
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
-            { label: 'roles', slug: 'modules/usuarios/roles' },
           ],
         },
         {
