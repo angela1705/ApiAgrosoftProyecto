@@ -16,7 +16,6 @@ const Precio_ProductoPage: React.FC = () => {
         precio: 0,
         fecha_registro: new Date().toISOString().slice(0, 10),
         stock: 0,
-        stock_disponible: 0,
         fecha_caducidad: null,
     });
 
@@ -39,7 +38,6 @@ const Precio_ProductoPage: React.FC = () => {
                     precio: 0,
                     fecha_registro: new Date().toISOString().slice(0, 10),
                     stock: 0,
-                    stock_disponible: 0,
                     fecha_caducidad: null,
                 });
             },
