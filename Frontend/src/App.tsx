@@ -40,6 +40,8 @@ import HerramientasPage from './pages/inventario/HerramientasPage';
 import ListaHerramientaPage from './pages/inventario/ListaHerramientaPage'; 
 import InsumoPage from './pages/inventario/InsumoPage';
 import ListaInsumoPage from './pages/inventario/ListaInsumoPage';
+import Precio_ProductoPage from './pages/inventario/Precio_ProductoPage';
+import ListaPrecio_ProductoPage from './pages/inventario/ListaPrecio_ProductoPage';
 import PerfilPage from './pages/usuarios/PerfilPage';
 import SensoresPage from './pages/iot/SensoresPage';
 import DatosMeteorologicosPage from './pages/iot/DatosMeteorologicosPage';  
@@ -82,6 +84,8 @@ const App: React.FC = () => {
           <Route path="/finanzas/ventas/" element={<PrivateRoute><VentaPage /></PrivateRoute>} />
           <Route path="/finanzas/listarventas/" element={<PrivateRoute><ListaVentaPage /></PrivateRoute>} />
           <Route path="/inventario/insumos/" element={<PrivateRoute><InsumoPage /></PrivateRoute>} />
+          <Route path="/inventario/preciosproductos/" element={<PrivateRoute><Precio_ProductoPage /></PrivateRoute>} />
+          <Route path="/inventario/listarpreciosproductos/" element={<PrivateRoute><ListaPrecio_ProductoPage /></PrivateRoute>} />
           <Route path="/inventario/listarinsumos/" element={<PrivateRoute><ListaInsumoPage /></PrivateRoute>} />
           <Route path="/reportes/" element={<PrivateRoute><Reportes /></PrivateRoute>} />
           <Route path="/cultivo/tipoespecie/" element={<PrivateRoute><TipoEspeciePage /></PrivateRoute>} />

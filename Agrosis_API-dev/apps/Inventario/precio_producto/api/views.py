@@ -60,14 +60,15 @@ class PrecioProductoViewSet(ModelViewSet):
         total_precios = precios.count()
         suma_precios = sum(precio.precio for precio in precios)
 
+        
         data_precios = [
-            ["ID", "Producto", "Unidad (g)", "Precio", "Fecha Registro"]
+            ["ID", "Cultivo", "Unidad (g)", "Precio", "Fecha Registro"]
         ]
         for precio in precios:
             fecha_registro = precio.fecha_registro.strftime('%Y-%m-%d')
             data_precios.append([
                 str(precio.id),
-                str(precio.producto),
+                str(precio.cultivo), 
                 str(precio.unidad_medida_gramos),
                 str(precio.precio),
                 fecha_registro

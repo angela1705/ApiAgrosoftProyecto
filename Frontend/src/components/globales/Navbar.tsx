@@ -69,6 +69,7 @@ const menuItems = [
     subItems: [
       { id: 26, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaWarehouse  /> },
       { id: 28, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaWarehouse  /> },
+      { id: 24, label: "Producto", path: "/inventario/listarpreciosproductos", icon: <FaWarehouse  /> },
     ],
   },
   {
