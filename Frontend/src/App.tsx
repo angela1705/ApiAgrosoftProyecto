@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import PricingPage from './pages/globales/pricing';
 import BlogPage from './pages/globales/blog';
+import Calendar from './pages/globales/Calendar';
 import AboutPage from './pages/globales/about';
 import LoginPage from './pages/usuarios/LoginPage';
 import RegisterPage from './pages/usuarios/RegisterPage';
@@ -118,6 +119,7 @@ const App: React.FC = () => {
           <Route path="/mapa" element={<PrivateRoute><Mapa /></PrivateRoute>} />
           <Route path="/graficas/" element={<PrivateRoute><CosechaGraficasPage /></PrivateRoute>} />
           <Route path="/blog" element={<PrivateRoute><BlogPage /></PrivateRoute>} />
+          <Route path="/calendario" element={<PrivateRoute><Calendar /></PrivateRoute>} />
           <Route path="/about" element={<PrivateRoute><AboutPage /></PrivateRoute>} />
           <Route path="*" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
 
