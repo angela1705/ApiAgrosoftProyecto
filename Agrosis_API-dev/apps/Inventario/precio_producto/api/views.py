@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -18,6 +19,26 @@ class PrecioProductoViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = PrecioProducto.objects.all()
     serializer_class = PrecioProductoSerializer
+
+    @action(detail=True, methods=['post'])
+    def registrar_venta(self, request, pk=None):
+        """Registra una venta y actualiza el stock disponible."""
+        producto = self.get_object()
+        cantidad_vendida = request.data.get('cantidad', 0)
+        
+        try:
+            cantidad_vendida = int(cantidad_vendida)
+            if cantidad_vendida <= 0:
+                return Response({"error": "La cantidad debe ser mayor a 0."}, status=status.HTTP_400_BAD_REQUEST)
+            if cantidad_vendida > producto.stock_disponible:
+                return Response({"error": "No hay suficiente stock disponible."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # esto sirve para mirar que stock esta disponible L 
+            producto.stock_disponible -= cantidad_vendida
+            producto.save()
+            return Response({"mensaje": f"Venta registrada. Stock disponible actual: {producto.stock_disponible}"}, status=status.HTTP_200_OK)
+        except ValueError:
+            return Response({"error": "Cantidad inválida."}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
@@ -43,12 +64,11 @@ class PrecioProductoViewSet(ModelViewSet):
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ]))
         elementos.append(tabla_encabezado)
-
         elementos.append(Spacer(1, 10))
 
         elementos.append(Paragraph("<b>1. Objetivo</b>", styles['Heading2']))
         elementos.append(Paragraph(
-            "Este documento detalla los precios de productos registrados en el sistema, facilitando su gestión y control.",
+            "Este documento detalla los precios, stock y fechas de caducidad de productos registrados en el sistema.",
             styles['Normal'])
         )
         elementos.append(Spacer(1, 15))
@@ -60,21 +80,24 @@ class PrecioProductoViewSet(ModelViewSet):
         total_precios = precios.count()
         suma_precios = sum(precio.precio for precio in precios)
 
-        
         data_precios = [
-            ["ID", "Cultivo", "Unidad (g)", "Precio", "Fecha Registro"]
+            ["ID", "Cultivo", "Unidad (g)", "Precio", "Fecha Registro", "Stock", "Stock Disponible", "Fecha Caducidad"]
         ]
         for precio in precios:
             fecha_registro = precio.fecha_registro.strftime('%Y-%m-%d')
+            fecha_caducidad = precio.fecha_caducidad.strftime('%Y-%m-%d') if precio.fecha_caducidad else "N/A"
             data_precios.append([
                 str(precio.id),
-                str(precio.cultivo), 
+                str(precio.Producto),
                 str(precio.unidad_medida_gramos),
                 str(precio.precio),
-                fecha_registro
+                fecha_registro,
+                str(precio.stock),
+                str(precio.stock_disponible),
+                fecha_caducidad
             ])
 
-        tabla_precios = Table(data_precios, colWidths=[30, 200, 60, 60, 80])
+        tabla_precios = Table(data_precios, colWidths=[30, 130, 50, 50, 70, 50, 50, 70])
         tabla_precios.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
