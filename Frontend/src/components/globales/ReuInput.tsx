@@ -7,6 +7,7 @@ interface ReusableInputProps {
   type: string;
   radius?: "full" | "lg" | "md" | "sm" | "none";
   value: string | number;
+  step?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
@@ -18,6 +19,7 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
   type,
   radius = "md",
   value,
+  step,
   onChange,
 }) => {
   return (
@@ -30,6 +32,7 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
         radius={radius}
         value={value.toString()}
         onChange={onChange}
+        step={step}
       />
     </div>
   );

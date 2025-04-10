@@ -9,4 +9,5 @@ export interface Insumo {
     fecha_registro: string;
     fecha_caducidad: string | null;
     fecha_actualizacion: string;
+    precio_insumo: number;
 }
