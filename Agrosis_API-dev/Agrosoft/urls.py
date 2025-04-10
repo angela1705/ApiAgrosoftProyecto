@@ -31,16 +31,11 @@ from apps.Cultivo.tipo_control.api.router import tipoControlRouter
 from apps.Cultivo.tipo_especies.api.router import tipoEspecieRouter 
 from apps.Cultivo.tipo_plaga.api.router import tipoPlagaRouter 
 from apps.Cultivo.tipos_residuos.api.router import tipoResiduoRouter 
-from apps.Cultivo.semillero_herramienta.api.router import semilleroHRouter
-from apps.Cultivo.semillero_insumo.api.router import semilleroInsumoRouter
 from apps.Cultivo.tareas.api.router import tareaRouter
 from apps.Finanzas.pagos.api.router import pagoRouter
 from apps.Finanzas.salario.api.router import salarioRouter
 from apps.Finanzas.venta.api.router import ventaRouter
 from apps.Finanzas.precio_producto.api.router import precioProductoRouter
-from apps.Inventario.bodega.api.routers import bodegaRouter
-from apps.Inventario.bodega_herramienta.api.routers import bodegaHerramientaRouter
-from apps.Inventario.bodega_insumo.api.routers import bodegaInsumoRouter
 from apps.Inventario.herramientas.api.routers import herramientaRouter
 from apps.Inventario.insumos.api.routers import insumoRouter
 from apps.Iot.datos_meteorologicos.api.routers import Datos_metereologicosRouter
@@ -88,8 +83,6 @@ routerCultivo.registry.extend(tipoControlRouter.registry)
 routerCultivo.registry.extend(tipoEspecieRouter.registry)
 routerCultivo.registry.extend(tipoPlagaRouter.registry)
 routerCultivo.registry.extend(tipoResiduoRouter.registry)
-routerCultivo.registry.extend(semilleroHRouter.registry)
-routerCultivo.registry.extend(semilleroInsumoRouter.registry)
 routerCultivo.registry.extend(tareaRouter.registry)
 
 # Finanzas
@@ -99,9 +92,6 @@ routerFinanzas.registry.extend(ventaRouter.registry)
 routerFinanzas.registry.extend(precioProductoRouter.registry)
 
 # Inventario
-routerInventario.registry.extend(bodegaRouter.registry)
-routerInventario.registry.extend(bodegaHerramientaRouter.registry)
-routerInventario.registry.extend(bodegaInsumoRouter.registry)
 routerInventario.registry.extend(herramientaRouter.registry)
 routerInventario.registry.extend(insumoRouter.registry)
 

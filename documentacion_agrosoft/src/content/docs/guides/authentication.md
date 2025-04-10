@@ -53,7 +53,7 @@ URL:
 **Encabezados de la solicitud**
 | Encabezado     | Valor                         | Descripción                                               |
 |----------------|-------------------------------|-----------------------------------------------------------|
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+| **Content-type**       | `application/json`            | Indica que los datos se envian en formato JSON.       |
 **Ejemplo de solicitud:**
 
 ```json
@@ -102,7 +102,6 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_refresh>`    | Token refresh necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
 
 **Pasos para usar el Token refresh**
 - 1 Ir al endpoint "Refresh".

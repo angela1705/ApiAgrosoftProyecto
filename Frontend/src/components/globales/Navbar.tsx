@@ -10,7 +10,6 @@ import {
   FaLeaf,
   FaDollarSign,
   FaBug,
-  FaBox,
   FaCloudRain,
   FaTachometerAlt,
   FaTemperatureHigh,
@@ -68,13 +67,10 @@ const menuItems = [
   {
     id: 23,
     label: "Inventario",
-    icon: <FaBox />,
+    icon: <FaWarehouse  />,
     subItems: [
-      { id: 24, label: "Bodega", path: "/inventario/listarbodega", icon: <FaWarehouse /> },
-      { id: 25, label: "Bodega Herramienta", path: "/inventario/listarbodegaherramienta", icon: <FaBox /> },
-      { id: 26, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaBox /> },
-      { id: 27, label: "Bodega Insumo", path: "/inventario/listarbodegainsumos", icon: <FaBox /> },
-      { id: 28, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaBox /> },
+      { id: 26, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaWarehouse  /> },
+      { id: 28, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaWarehouse  /> },
     ],
   },
   {
