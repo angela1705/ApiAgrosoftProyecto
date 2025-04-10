@@ -15,16 +15,15 @@ const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
 
     return response.data.map((item: any) => ({
         id: item.id,
-        cultivo: item.Producto, 
-        unidad_medida_gramos: item.unidad_medida_gramos,
-        precio: item.precio,
+        cultivo: item.Producto,
+        unidad_medida_gramos: Number(item.unidad_medida_gramos),
+        precio: Number(item.precio),
         fecha_registro: item.fecha_registro,
-        stock: item.stock,
-        stock_disponible: item.stock_disponible,
-        fecha_caducidad: item.fecha_caducidad,
+        stock: Number(item.stock),
+        stock_disponible: Number(item.stock_disponible),
+        fecha_caducidad: item.fecha_caducidad || null,
     }));
 };
-
 export const usePreciosProductos = () => {
     return useQuery<PrecioProducto[], Error>({
         queryKey: ["preciosProductos"],
@@ -82,7 +81,6 @@ const actualizarPrecioProducto = async (precioProducto: PrecioProducto) => {
         precio: precioProducto.precio,
         fecha_registro: precioProducto.fecha_registro,
         stock: precioProducto.stock,
-        stock_disponible: precioProducto.stock_disponible,
         fecha_caducidad: precioProducto.fecha_caducidad,
     };
 

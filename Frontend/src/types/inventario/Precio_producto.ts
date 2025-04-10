@@ -5,6 +5,5 @@ export interface PrecioProducto {
     precio: number;
     fecha_registro: string;
     stock: number;
-    stock_disponible: number; 
     fecha_caducidad: string | null; 
 }
