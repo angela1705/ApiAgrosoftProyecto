@@ -16,7 +16,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 
 Resultado: Obtiene todos los tipos de actividad registrados.
 
@@ -52,7 +52,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 
 Resultado: Obtiene un tipo de actividad específico por su ID.
 
@@ -81,7 +81,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 
 Resultado: Crea un nuevo tipo de actividad.
 
@@ -121,7 +121,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 
 Resultado: Actualiza un tipo de actividad existente.
 
@@ -156,7 +156,7 @@ URL:
 |----------------|-------------------------------|-----------------------------------------------------------|
 | **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
 | **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+
 
 Resultado: Elimina un tipo de actividad (si no está en uso).
 
