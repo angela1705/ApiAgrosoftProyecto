@@ -29,7 +29,6 @@ const ListaPrecio_ProductoPage: React.FC = () => {
         { name: "Precio", uid: "precio" },
         { name: "Fecha Registro", uid: "fecha_registro" },
         { name: "Stock", uid: "stock" },
-        { name: "Stock Disponible", uid: "stock_disponible" },
         { name: "Fecha Caducidad", uid: "fecha_caducidad" },
         { name: "Acciones", uid: "acciones" },
     ];
@@ -84,29 +83,28 @@ const ListaPrecio_ProductoPage: React.FC = () => {
     const transformedData = (preciosProductos ?? []).map((precioProducto) => {
         const cosecha = cosechas?.find((c) => c.id === precioProducto.cultivo);
         return {
-            id: precioProducto.id.toString(),
-            nombre: cosecha ? `Cultivo ${cosecha.id_cultivo} - ${cosecha.fecha}` : precioProducto.cultivo, // Renombramos "cultivo" a "nombre"
-            unidad_medida_gramos: precioProducto.unidad_medida_gramos,
-            precio: precioProducto.precio,
-            fecha_registro: precioProducto.fecha_registro,
-            stock: precioProducto.stock,
-            stock_disponible: precioProducto.stock_disponible,
-            fecha_caducidad: precioProducto.fecha_caducidad || "N/A",
-            acciones: (
-                <>
-                    <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(precioProducto)}>
-                        <EditIcon size={22} color="black" />
-                    </button>
-                    <button className="text-red-500 hover:underline mr-2" onClick={() => handleDelete(precioProducto)}>
-                        <Trash2 size={22} color="red" />
-                    </button>
-                    <button className="text-blue-500 hover:underline" onClick={() => handleVenta(precioProducto)}>
-                        Vender
-                    </button>
-                </>
-            ),
+          id: precioProducto.id.toString(),
+          nombre: String(cosecha ? `Cultivo ${cosecha.id_cultivo} - ${cosecha.fecha}` : precioProducto.cultivo),
+          unidad_medida_gramos: String(precioProducto.unidad_medida_gramos),
+          precio: String(precioProducto.precio.toFixed(2)),
+          fecha_registro: String(precioProducto.fecha_registro),
+          stock: String(precioProducto.stock), // Asegurar que sea string
+          fecha_caducidad: String(precioProducto.fecha_caducidad || "N/A"),
+          acciones: (
+            <>
+              <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(precioProducto)}>
+                <EditIcon size={22} color="black" />
+              </button>
+              <button className="text-red-500 hover:underline mr-2" onClick={() => handleDelete(precioProducto)}>
+                <Trash2 size={22} color="red" />
+              </button>
+              <button className="text-blue-500 hover:underline" onClick={() => handleVenta(precioProducto)}>
+                Vender
+              </button>
+            </>
+          ),
         };
-    });
+      });
 
     return (
         <DefaultLayout>
@@ -213,18 +211,7 @@ const ListaPrecio_ProductoPage: React.FC = () => {
                                         })
                                     }
                                 />
-                                <ReuInput
-                                    label="Stock Disponible"
-                                    placeholder="Stock disponible"
-                                    type="number"
-                                    value={selectedPrecioProducto.stock_disponible.toString()}
-                                    onChange={(e) =>
-                                        setSelectedPrecioProducto({
-                                            ...selectedPrecioProducto,
-                                            stock_disponible: Number(e.target.value),
-                                        })
-                                    }
-                                />
+                            
                                 <ReuInput
                                     label="Fecha de Caducidad"
                                     type="date"
