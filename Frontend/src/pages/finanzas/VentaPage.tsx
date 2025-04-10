@@ -23,7 +23,7 @@ const VentaPage: React.FC = () => {
   const { registrarVenta, isRegistrando } = useVenta();
   const { data: precio_producto, isLoading: precioProductoLoading } = usePreciosProductos();
   const navigate = useNavigate();
-
+  
   const handleChange = (field: keyof Venta) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { value } = e.target;
     setVenta((prev) => ({
