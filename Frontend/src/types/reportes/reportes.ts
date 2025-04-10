@@ -14,16 +14,15 @@ export const reportesPorModulo: Record<string, { nombre: string; reporte: string
         { nombre: "Reporte de actividades", reporte: "Bancal"},
     ],
     inventario: [
-        { nombre: "Reporte de Bodega Herramientas", reporte: "bodega_herramienta" },
-        { nombre: "Reporte de Bodega Insumos", reporte: "bodega_insumo" },
         { nombre: "Insumos", reporte: "insumo" },
         { nombre: "Herramientas", reporte: "herramientas" },
+        { nombre: "Productos", reporte: "precio-producto" },
     ],
     usuarios: [
         { nombre: "Reporte de Usuarios Activos", reporte: "usuarios" },
     ],
     iot: [
-        { nombre: "Reporte de Sensores", reporte: "sensores" },
+        { nombre: "Reporte de Sensores", reporte: "datosmetereologicos" },
     ],
     finanzas: [
         { nombre: "Reporte de Ingresos", reporte: "ingresos" },

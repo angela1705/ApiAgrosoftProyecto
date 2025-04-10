@@ -1,4 +1,3 @@
-// components/Iot/RegistrarSensorPage.tsx
 import { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
@@ -17,7 +16,6 @@ const RegistrarSensorPage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Manejar cambios en los inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setSensor((prev) => ({
@@ -26,7 +24,6 @@ const RegistrarSensorPage: React.FC = () => {
     }));
   };
 
-  // Manejar registro del sensor
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("access_token") || "";
@@ -40,7 +37,7 @@ const RegistrarSensorPage: React.FC = () => {
         body: JSON.stringify(sensor),
       });
       if (!response.ok) throw new Error("Error al registrar el sensor");
-      navigate("/iot/listar-sensores"); // Redirige a la lista tras éxito
+      navigate("/iot/listar-sensores");
     } catch (error) {
       console.error("Error:", error);
     }

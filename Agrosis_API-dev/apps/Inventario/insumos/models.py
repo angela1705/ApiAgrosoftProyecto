@@ -12,6 +12,7 @@ class Insumo(models.Model):
     fecha_registro = models.DateTimeField(default=timezone.now) 
     fecha_caducidad = models.DateField(blank=True, null=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
+    precio_insumo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.nombre
