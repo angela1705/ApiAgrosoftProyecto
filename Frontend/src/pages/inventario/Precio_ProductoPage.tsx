@@ -4,9 +4,9 @@ import DefaultLayout from "@/layouts/default";
 import { useRegistrarPrecioProducto } from "@/hooks/inventario/usePrecio_Producto";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Formulario from "@/components/globales/Formulario";
-import { useCultivos } from "@/hooks/cultivo/useCultivo";
+import { useCosechas } from "@/hooks/cultivo/usecosecha";
 import { addToast } from "@heroui/react";
-import { PrecioProducto } from "@/types/inventario/precio_producto";
+import { PrecioProducto } from "@/types/inventario/Precio_producto";
 
 const Precio_ProductoPage: React.FC = () => {
     const [precioProducto, setPrecioProducto] = useState<PrecioProducto>({
@@ -15,16 +15,19 @@ const Precio_ProductoPage: React.FC = () => {
         unidad_medida_gramos: 0,
         precio: 0,
         fecha_registro: new Date().toISOString().slice(0, 10),
+        stock: 0,
+        stock_disponible: 0,
+        fecha_caducidad: null,
     });
 
     const mutation = useRegistrarPrecioProducto();
     const navigate = useNavigate();
-    const { data: cultivos } = useCultivos();
+    const { data: cosechas } = useCosechas();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!precioProducto.cultivo) {
-            addToast({ title: "Error", description: "Seleccione un cultivo válido" });
+            addToast({ title: "Error", description: "Seleccione un producto válido" });
             return;
         }
         mutation.mutate(precioProducto, {
@@ -35,6 +38,9 @@ const Precio_ProductoPage: React.FC = () => {
                     unidad_medida_gramos: 0,
                     precio: 0,
                     fecha_registro: new Date().toISOString().slice(0, 10),
+                    stock: 0,
+                    stock_disponible: 0,
+                    fecha_caducidad: null,
                 });
             },
         });
@@ -48,20 +54,22 @@ const Precio_ProductoPage: React.FC = () => {
                 buttonText="Guardar"
                 isSubmitting={mutation.isPending}
             >
-                <label className="block text-sm font-medium text-gray-700">Cultivo</label>
-                <select
-                    name="cultivo"
-                    value={precioProducto.cultivo || ""}
-                    onChange={(e) => setPrecioProducto({ ...precioProducto, cultivo: Number(e.target.value) })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
-                >
-                    <option value="">Seleccione un cultivo</option>
-                    {cultivos?.map((cultivo) => (
-                        <option key={cultivo.id} value={cultivo.id}>
-                            {cultivo.nombre}
-                        </option>
-                    ))}
-                </select>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Producto</label>
+                    <select
+                        name="cultivo"
+                        value={precioProducto.cultivo || ""}
+                        onChange={(e) => setPrecioProducto({ ...precioProducto, cultivo: Number(e.target.value) })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
+                    >
+                        <option value="">Seleccione un producto</option>
+                        {cosechas?.map((cosecha) => (
+                            <option key={cosecha.id} value={cosecha.id}>
+                                {`Cultivo ${cosecha.id_cultivo} - ${cosecha.fecha}`}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
                 <ReuInput
                     label="Unidad de Medida (gramos)"
@@ -82,6 +90,19 @@ const Precio_ProductoPage: React.FC = () => {
                     type="date"
                     value={precioProducto.fecha_registro}
                     onChange={(e) => setPrecioProducto({ ...precioProducto, fecha_registro: e.target.value })}
+                />
+                <ReuInput
+                    label="Stock"
+                    placeholder="Ingrese el stock inicial"
+                    type="number"
+                    value={precioProducto.stock.toString()}
+                    onChange={(e) => setPrecioProducto({ ...precioProducto, stock: Number(e.target.value) })}
+                />
+                <ReuInput
+                    label="Fecha de Caducidad"
+                    type="date"
+                    value={precioProducto.fecha_caducidad || ""}
+                    onChange={(e) => setPrecioProducto({ ...precioProducto, fecha_caducidad: e.target.value || null })}
                 />
                 <div className="col-span-1 md:col-span-2 flex justify-center">
                     <button

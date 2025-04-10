@@ -1,30 +1,36 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { usePreciosProductos, useActualizarPrecioProducto, useEliminarPrecioProducto } from "@/hooks/inventario/usePrecio_Producto";
+import { usePreciosProductos, useActualizarPrecioProducto, useEliminarPrecioProducto, useRegistrarVenta } from "@/hooks/inventario/usePrecio_Producto";
+import { useCosechas } from "@/hooks/cultivo/usecosecha";
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
-import { useCultivos } from "@/hooks/cultivo/useCultivo";
-import { PrecioProducto } from "@/types/inventario/precio_producto";
+import { PrecioProducto } from "@/types/inventario/Precio_producto";
 
 const ListaPrecio_ProductoPage: React.FC = () => {
     const [selectedPrecioProducto, setSelectedPrecioProducto] = useState<PrecioProducto | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isVentaModalOpen, setIsVentaModalOpen] = useState(false);
+    const [cantidadVenta, setCantidadVenta] = useState<number>(0);
 
     const { data: preciosProductos, isLoading, refetch } = usePreciosProductos();
-    const { data: cultivos } = useCultivos();
+    const { data: cosechas } = useCosechas();
     const actualizarMutation = useActualizarPrecioProducto();
     const eliminarMutation = useEliminarPrecioProducto();
+    const registrarVentaMutation = useRegistrarVenta();
     const navigate = useNavigate();
 
     const columns = [
-        { name: "Cultivo", uid: "cultivo" },
+        { name: "Producto", uid: "nombre" },
         { name: "Unidad (gramos)", uid: "unidad_medida_gramos" },
         { name: "Precio", uid: "precio" },
-        { name: "Fecha de Registro", uid: "fecha_registro" },
+        { name: "Fecha Registro", uid: "fecha_registro" },
+        { name: "Stock", uid: "stock" },
+        { name: "Stock Disponible", uid: "stock_disponible" },
+        { name: "Fecha Caducidad", uid: "fecha_caducidad" },
         { name: "Acciones", uid: "acciones" },
     ];
 
@@ -36,6 +42,12 @@ const ListaPrecio_ProductoPage: React.FC = () => {
     const handleDelete = (precioProducto: PrecioProducto) => {
         setSelectedPrecioProducto(precioProducto);
         setIsDeleteModalOpen(true);
+    };
+
+    const handleVenta = (precioProducto: PrecioProducto) => {
+        setSelectedPrecioProducto(precioProducto);
+        setCantidadVenta(0);
+        setIsVentaModalOpen(true);
     };
 
     const handleConfirmDelete = () => {
@@ -54,21 +66,42 @@ const ListaPrecio_ProductoPage: React.FC = () => {
         }
     };
 
+    const handleConfirmVenta = () => {
+        if (selectedPrecioProducto && selectedPrecioProducto.id !== undefined) {
+            registrarVentaMutation.mutate(
+                { id: selectedPrecioProducto.id, cantidad: cantidadVenta },
+                {
+                    onSuccess: () => {
+                        setIsVentaModalOpen(false);
+                        setSelectedPrecioProducto(null);
+                        refetch();
+                    },
+                }
+            );
+        }
+    };
+
     const transformedData = (preciosProductos ?? []).map((precioProducto) => {
-        const cultivo = cultivos?.find((c) => c.id === precioProducto.cultivo);
+        const cosecha = cosechas?.find((c) => c.id === precioProducto.cultivo);
         return {
             id: precioProducto.id.toString(),
-            cultivo: cultivo ? cultivo.nombre : precioProducto.cultivo,
+            nombre: cosecha ? `Cultivo ${cosecha.id_cultivo} - ${cosecha.fecha}` : precioProducto.cultivo, // Renombramos "cultivo" a "nombre"
             unidad_medida_gramos: precioProducto.unidad_medida_gramos,
             precio: precioProducto.precio,
             fecha_registro: precioProducto.fecha_registro,
+            stock: precioProducto.stock,
+            stock_disponible: precioProducto.stock_disponible,
+            fecha_caducidad: precioProducto.fecha_caducidad || "N/A",
             acciones: (
                 <>
                     <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(precioProducto)}>
                         <EditIcon size={22} color="black" />
                     </button>
-                    <button className="text-red-500 hover:underline" onClick={() => handleDelete(precioProducto)}>
+                    <button className="text-red-500 hover:underline mr-2" onClick={() => handleDelete(precioProducto)}>
                         <Trash2 size={22} color="red" />
+                    </button>
+                    <button className="text-blue-500 hover:underline" onClick={() => handleVenta(precioProducto)}>
+                        Vender
                     </button>
                 </>
             ),
@@ -112,25 +145,27 @@ const ListaPrecio_ProductoPage: React.FC = () => {
                     >
                         {selectedPrecioProducto && (
                             <>
-                                <label className="block text-sm font-medium text-gray-700">Cultivo</label>
-                                <select
-                                    name="cultivo"
-                                    value={selectedPrecioProducto.cultivo || ""}
-                                    onChange={(e) =>
-                                        setSelectedPrecioProducto({
-                                            ...selectedPrecioProducto,
-                                            cultivo: Number(e.target.value),
-                                        })
-                                    }
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
-                                >
-                                    <option value="">Seleccione un cultivo</option>
-                                    {cultivos?.map((cultivo) => (
-                                        <option key={cultivo.id} value={cultivo.id}>
-                                            {cultivo.nombre}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="flex items-center space-x-2">
+                                    <label className="text-sm font-medium text-gray-700 w-32">Producto</label>
+                                    <select
+                                        name="cultivo"
+                                        value={selectedPrecioProducto.cultivo || ""}
+                                        onChange={(e) =>
+                                            setSelectedPrecioProducto({
+                                                ...selectedPrecioProducto,
+                                                cultivo: Number(e.target.value),
+                                            })
+                                        }
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
+                                    >
+                                        <option value="">Seleccione un producto</option>
+                                        {cosechas?.map((cosecha) => (
+                                            <option key={cosecha.id} value={cosecha.id}>
+                                                {`Cultivo ${cosecha.id_cultivo} - ${cosecha.fecha}`}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 <ReuInput
                                     label="Unidad (gramos)"
                                     placeholder="Ingrese la unidad en gramos"
@@ -166,6 +201,41 @@ const ListaPrecio_ProductoPage: React.FC = () => {
                                         })
                                     }
                                 />
+                                <ReuInput
+                                    label="Stock"
+                                    placeholder="Ingrese el stock"
+                                    type="number"
+                                    value={selectedPrecioProducto.stock.toString()}
+                                    onChange={(e) =>
+                                        setSelectedPrecioProducto({
+                                            ...selectedPrecioProducto,
+                                            stock: Number(e.target.value),
+                                        })
+                                    }
+                                />
+                                <ReuInput
+                                    label="Stock Disponible"
+                                    placeholder="Stock disponible"
+                                    type="number"
+                                    value={selectedPrecioProducto.stock_disponible.toString()}
+                                    onChange={(e) =>
+                                        setSelectedPrecioProducto({
+                                            ...selectedPrecioProducto,
+                                            stock_disponible: Number(e.target.value),
+                                        })
+                                    }
+                                />
+                                <ReuInput
+                                    label="Fecha de Caducidad"
+                                    type="date"
+                                    value={selectedPrecioProducto.fecha_caducidad || ""}
+                                    onChange={(e) =>
+                                        setSelectedPrecioProducto({
+                                            ...selectedPrecioProducto,
+                                            fecha_caducidad: e.target.value || null,
+                                        })
+                                    }
+                                />
                             </>
                         )}
                     </ReuModal>
@@ -177,6 +247,21 @@ const ListaPrecio_ProductoPage: React.FC = () => {
                         onConfirm={handleConfirmDelete}
                     >
                         <p>Esta acción es irreversible.</p>
+                    </ReuModal>
+
+                    <ReuModal
+                        isOpen={isVentaModalOpen}
+                        onOpenChange={setIsVentaModalOpen}
+                        title="Registrar Venta"
+                        onConfirm={handleConfirmVenta}
+                    >
+                        <ReuInput
+                            label="Cantidad a vender"
+                            placeholder="Ingrese la cantidad"
+                            type="number"
+                            value={cantidadVenta.toString()}
+                            onChange={(e) => setCantidadVenta(Number(e.target.value))}
+                        />
                     </ReuModal>
                 </div>
             </div>

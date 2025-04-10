@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
 import { useInsumos, useActualizarInsumo, useEliminarInsumo } from "@/hooks/inventario/useInsumo";
 import ReuModal from "@/components/globales/ReuModal";
@@ -18,6 +18,7 @@ interface Insumo {
   fecha_registro: string;
   fecha_caducidad: string | null;
   fecha_actualizacion: string;
+  precio_insumo: number | null;
 }
 
 const ListaInsumoPage: React.FC = () => {
@@ -25,10 +26,19 @@ const ListaInsumoPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { data: insumos, isLoading, refetch } = useInsumos();
+  const { data: insumos, isLoading, error, refetch } = useInsumos();
   const actualizarMutation = useActualizarInsumo();
   const eliminarMutation = useEliminarInsumo();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log("Componente montado en:", location.pathname);
+    console.log("isLoading:", isLoading);
+    console.log("insumos:", insumos);
+    console.log("error:", error);
+    return () => console.log("Componente desmontado desde:", location.pathname);
+  }, [location.pathname, isLoading, insumos, error]);
 
   const columns = [
     { name: "Nombre", uid: "nombre" },
@@ -40,30 +50,9 @@ const ListaInsumoPage: React.FC = () => {
     { name: "Fecha de Registro", uid: "fecha_registro" },
     { name: "Fecha de Caducidad", uid: "fecha_caducidad" },
     { name: "Fecha de Actualización", uid: "fecha_actualizacion" },
+    { name: "Precio del Insumo", uid: "precio_insumo" },
     { name: "Acciones", uid: "acciones" },
   ];
-
-  const handleEdit = (insumo: Insumo) => {
-    setSelectedInsumo({ ...insumo });
-    setIsEditModalOpen(true);
-  };
-
-  const handleDelete = (insumo: Insumo) => {
-    setSelectedInsumo(insumo);
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (selectedInsumo && selectedInsumo.id !== undefined) {
-      eliminarMutation.mutate(selectedInsumo.id, {
-        onSuccess: () => {
-          setIsDeleteModalOpen(false);
-          setSelectedInsumo(null);
-          refetch();
-        },
-      });
-    }
-  };
 
   const transformedData = (insumos ?? []).map((insumo) => ({
     id: insumo.id?.toString() || "",
@@ -76,27 +65,36 @@ const ListaInsumoPage: React.FC = () => {
     fecha_registro: insumo.fecha_registro,
     fecha_caducidad: insumo.fecha_caducidad || "No especificada",
     fecha_actualizacion: insumo.fecha_actualizacion,
+    precio_insumo: insumo.precio_insumo !== null && insumo.precio_insumo !== undefined 
+      ? Number(insumo.precio_insumo).toFixed(2) 
+      : "0.00",
     acciones: (
       <>
-        <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(insumo)}>
+        <button className="text-green-500 hover:underline mr-2" onClick={() => { setSelectedInsumo({ ...insumo }); setIsEditModalOpen(true); }}>
           <EditIcon size={22} color="black" />
         </button>
-        <button className="text-red-500 hover:underline" onClick={() => handleDelete(insumo)}>
+        <button className="text-red-500 hover:underline" onClick={() => { setSelectedInsumo(insumo); setIsDeleteModalOpen(true); }}>
           <Trash2 size={22} color="red" />
         </button>
       </>
     ),
   }));
 
+  console.log("transformedData:", transformedData);
+
   return (
     <DefaultLayout>
-      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Insumos Registrados</h2><br /><br />
+      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Insumos Registrados</h2>
+      <br /><br />
       <div className="mb-2 flex justify-start">
         <button
           className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
                      hover:bg-green-700 transition-all duration-300 ease-in-out 
                      shadow-md hover:shadow-lg transform hover:scale-105"
-          onClick={() => navigate("/inventario/insumos/")}
+          onClick={() => {
+            console.log("Navegando a /inventario/insumos/");
+            navigate("/inventario/insumos/");
+          }}
         >
           + Registrar
         </button>
@@ -104,6 +102,10 @@ const ListaInsumoPage: React.FC = () => {
 
       {isLoading ? (
         <p className="text-gray-600">Cargando...</p>
+      ) : error ? (
+        <p className="text-red-600">Error al cargar los insumos: {error.message}</p>
+      ) : transformedData.length === 0 ? (
+        <p className="text-gray-600">No hay insumos registrados.</p>
       ) : (
         <Tabla columns={columns} data={transformedData} />
       )}
@@ -114,7 +116,7 @@ const ListaInsumoPage: React.FC = () => {
         title="Editar Insumo"
         onConfirm={() => {
           if (selectedInsumo && selectedInsumo.id !== undefined) {
-            actualizarMutation.mutate(selectedInsumo, {
+            actualizarMutation.mutate({ ...selectedInsumo, precio_insumo: selectedInsumo.precio_insumo ?? 0 }, {
               onSuccess: () => {
                 setIsEditModalOpen(false);
                 refetch();
@@ -137,6 +139,14 @@ const ListaInsumoPage: React.FC = () => {
             <ReuInput label="Fecha de Registro" type="datetime-local" value={selectedInsumo.fecha_registro.slice(0, 16)} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, fecha_registro: new Date(e.target.value).toISOString() })} />
             <ReuInput label="Fecha de Caducidad" type="date" value={selectedInsumo.fecha_caducidad || ""} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, fecha_caducidad: e.target.value || null })} />
             <ReuInput label="Fecha de Actualización" type="datetime-local" value={selectedInsumo.fecha_actualizacion.slice(0, 16)} onChange={(e) => setSelectedInsumo({ ...selectedInsumo, fecha_actualizacion: new Date(e.target.value).toISOString() })} />
+            <ReuInput 
+              label="Precio del Insumo" 
+              placeholder="Ingrese el precio del insumo" 
+              type="number" 
+              step="0.01" 
+              value={selectedInsumo.precio_insumo !== null && selectedInsumo.precio_insumo !== undefined ? selectedInsumo.precio_insumo.toString() : ""} 
+              onChange={(e) => setSelectedInsumo({ ...selectedInsumo, precio_insumo: e.target.value ? Number(e.target.value) : null })} 
+            />
           </>
         )}
       </ReuModal>
@@ -145,7 +155,17 @@ const ListaInsumoPage: React.FC = () => {
         isOpen={isDeleteModalOpen}
         onOpenChange={setIsDeleteModalOpen}
         title="¿Estás seguro de eliminar este insumo?"
-        onConfirm={handleConfirmDelete}
+        onConfirm={() => {
+          if (selectedInsumo && selectedInsumo.id !== undefined) {
+            eliminarMutation.mutate(selectedInsumo.id, {
+              onSuccess: () => {
+                setIsDeleteModalOpen(false);
+                setSelectedInsumo(null);
+                refetch();
+              },
+            });
+          }
+        }}
       >
         <p>Esta acción es irreversible.</p>
       </ReuModal>
