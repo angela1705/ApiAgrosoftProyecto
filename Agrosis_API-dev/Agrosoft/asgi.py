@@ -17,8 +17,9 @@ django.setup()
 
 from apps.Iot.datos_meteorologicos.api.routers import websocket_urlpatterns as meteo_ws
 from apps.Cultivo.actividades.api.routing import websocket_urlpatterns as actividad_ws
+from apps.Inventario.insumos.api.routing import websocket_urlpatterns as insumo_ws  
 
-websocket_urlpatterns = meteo_ws + actividad_ws
+websocket_urlpatterns = meteo_ws + actividad_ws + insumo_ws  
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),

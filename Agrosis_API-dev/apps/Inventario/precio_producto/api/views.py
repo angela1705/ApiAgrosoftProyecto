@@ -22,7 +22,6 @@ class PrecioProductoViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def registrar_venta(self, request, pk=None):
-        """Registra una venta y actualiza el stock disponible."""
         producto = self.get_object()
         cantidad_vendida = request.data.get('cantidad', 0)
         
@@ -33,7 +32,6 @@ class PrecioProductoViewSet(ModelViewSet):
             if cantidad_vendida > producto.stock_disponible:
                 return Response({"error": "No hay suficiente stock disponible."}, status=status.HTTP_400_BAD_REQUEST)
             
-            # esto sirve para mirar que stock esta disponible L 
             producto.stock_disponible -= cantidad_vendida
             producto.save()
             return Response({"mensaje": f"Venta registrada. Stock disponible actual: {producto.stock_disponible}"}, status=status.HTTP_200_OK)

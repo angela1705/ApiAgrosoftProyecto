@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -11,6 +12,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.units import inch
 from datetime import datetime
 from ..models import Insumo
+from apps.Cultivo.actividades.models import Actividad
 from .serializers import InsumoSerializer
 
 class InsumoViewSet(ModelViewSet):
@@ -18,6 +20,42 @@ class InsumoViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Insumo.objects.all()
     serializer_class = InsumoSerializer
+
+    @action(detail=True, methods=['post'])
+    def usar_en_actividad(self, request, pk=None):
+        insumo = self.get_object()
+        cantidad_usada = request.data.get('cantidad_usada', 0)
+        actividad_id = request.data.get('actividad_id', None)
+        
+        try:
+            cantidad_usada = int(cantidad_usada)
+            if cantidad_usada <= 0:
+                return Response({"error": "La cantidad usada debe ser mayor a 0."}, status=status.HTTP_400_BAD_REQUEST)
+            if cantidad_usada > insumo.cantidad:
+                return Response({"error": f"No hay suficiente stock del insumo {insumo.nombre}. Disponible: {insumo.cantidad}"}, 
+                              status=status.HTTP_400_BAD_REQUEST)
+            
+            insumo.cantidad -= cantidad_usada
+            insumo.save()
+
+            if actividad_id:
+                try:
+                    actividad = Actividad.objects.get(id=actividad_id)
+                    if actividad.insumo != insumo:
+                        return Response({"error": f"El insumo {insumo.nombre} no coincide con el insumo de la actividad {actividad_id}."}, 
+                                      status=status.HTTP_400_BAD_REQUEST)
+                    actividad.cantidadUsada += cantidad_usada 
+                    actividad.save()
+                    mensaje = f"Insumo {insumo.nombre} descontado ({cantidad_usada} unidades) y vinculado a la actividad {actividad.id}."
+                except Actividad.DoesNotExist:
+                    return Response({"error": f"La actividad {actividad_id} no existe."}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                mensaje = f"Insumo {insumo.nombre} descontado ({cantidad_usada} unidades) sin vinculación a una actividad específica."
+
+            return Response({"mensaje": mensaje, "cantidad_restante": insumo.cantidad}, status=status.HTTP_200_OK)
+        
+        except ValueError:
+            return Response({"error": "Cantidad inválida."}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
