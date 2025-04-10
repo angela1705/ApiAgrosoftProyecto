@@ -34,6 +34,13 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Navegación',
+          items: [
+            { label: 'Navegacion', slug: 'modules/navegacion/index' },
+           
+          ],
+        },
+        {
           label: 'Trazabilidad del Cultivo',
           items: [
             { label: 'Introducción', slug: 'modules/trazabilidad/index' },

@@ -52,3 +52,20 @@ eso incluye registrar otros usuarios y definir sus permisos en el sistema.
 
 4.	Resultado esperado: Una vez el usuario haya iniciado sesión correctamente, será redirigido a la pantalla de inicio del sistema, donde podrá acceder a todas las funcionalidades disponibles
  ## fotos
+
+ ## Consideraciones Legales sobre Datos Personales
+El sistema implementado maneja información personal sensible como nombres, correos electrónicos, documentos de identidad, teléfonos de contacto y otros datos de identificación de los usuarios. Por tal motivo, se debe cumplir con la **Ley 1581 de 2012**, también conocida como la Ley de Protección de Datos Personales en Colombia.
+
+Esta ley establece que:
+
+- Toda recolección y tratamiento de datos personales requiere la autorización expresa del titular.
+
+- La información recolectada debe tener una finalidad clara y legítima.
+
+- El sistema debe garantizar los principios de seguridad, confidencialidad y acceso restringido a la información.
+
+- Los usuarios deben tener la posibilidad de consultar, actualizar o eliminar su información cuando así lo deseen.
+
+- Se recomienda contar con una Política de Tratamiento de Datos visible en la plataforma.
+
+Además, si el sistema está en producción y es operado por una entidad legal, se debe registrar la base de datos en el Registro Nacional de Bases de Datos (RNBD) ante la Superintendencia de Industria y Comercio (SIC).
