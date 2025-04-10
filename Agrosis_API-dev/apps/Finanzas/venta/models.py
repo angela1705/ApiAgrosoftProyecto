@@ -1,17 +1,23 @@
 from django.db import models
 
 class Venta(models.Model):
-    producto = models.ForeignKey('cultivos.Cultivo', on_delete=models.CASCADE)
+    producto = models.ForeignKey('precio_producto.PrecioProducto', on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
 
     def save(self, *args, **kwargs):
-        self.total = self.precio * self.cantidad
+        if not self.pk: 
+            if self.cantidad <= 0:
+                raise ValueError("La cantidad debe ser mayor a cero.")
+            if self.cantidad > self.producto.stock:
+                raise ValueError(f"Stock insuficiente. Disponible: {self.producto.stock}")
+            
+            self.total = self.producto.precio * self.cantidad
+            self.producto.stock -= self.cantidad  
+            self.producto.save()
+        
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Venta de {self.producto.nombre} ({self.cantidad} unidades)"
-
-# Create your models here.
+        return f"Venta de {self.producto.Producto} - {self.cantidad} unidades (Total: ${self.total})"
