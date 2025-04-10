@@ -29,8 +29,8 @@ export default defineConfig({
           label: 'Usuarios',
           items: [
             { label: 'Introducción', slug: 'modules/usuarios/index' },
-            { label: 'Log-in', slug: 'modules/usuarios/Log-in' },
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
+            { label: 'Log-in', slug: 'modules/usuarios/Log-in' },
           ],
         },
         {

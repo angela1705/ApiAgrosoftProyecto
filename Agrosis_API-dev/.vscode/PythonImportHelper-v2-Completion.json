@@ -7938,7 +7938,7 @@
         "kind": 5,
         "importPath": "Agrosoft.settings",
         "description": "Agrosoft.settings",
-        "peekOfCode": "CORS_ALLOWED_ORIGINS = [\n    \"http://localhost:5173\",  # Frontend Vite\n    \"http://127.0.0.1:5173\",\n]\n# Database\n# https://docs.djangoproject.com/en/5.1/ref/settings/#databases\nDATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft_proyecto',",
+        "peekOfCode": "CORS_ALLOWED_ORIGINS = [\n    \"http://localhost:5173\",  # Frontend Vite\n    \"http://127.0.0.1:5173\",\n]\n# Database\n# https://docs.djangoproject.com/en/5.1/ref/settings/#databases\nDATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft',",
         "detail": "Agrosoft.settings",
         "documentation": {}
     },
@@ -7947,7 +7947,7 @@
         "kind": 5,
         "importPath": "Agrosoft.settings",
         "description": "Agrosoft.settings",
-        "peekOfCode": "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft_proyecto',\n        'USER': 'postgres',\n        'PASSWORD': 'root',\n        'HOST': 'localhost', \n        'PORT': '5432',\n        'OPTIONS': {\n            'client_encoding': 'UTF8',",
+        "peekOfCode": "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft',\n        'USER': 'postgres',\n        'PASSWORD': 'hate',\n        'HOST': 'localhost', \n        'PORT': '5432',\n        'OPTIONS': {\n            'client_encoding': 'UTF8',",
         "detail": "Agrosoft.settings",
         "documentation": {}
     },
