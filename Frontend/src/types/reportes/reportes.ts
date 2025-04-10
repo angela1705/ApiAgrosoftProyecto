@@ -22,7 +22,7 @@ export const reportesPorModulo: Record<string, { nombre: string; reporte: string
         { nombre: "Reporte de Usuarios Activos", reporte: "usuarios" },
     ],
     iot: [
-        { nombre: "Reporte de Sensores", reporte: "sensores" },
+        { nombre: "Reporte de Sensores", reporte: "datosmetereologicos" },
     ],
     finanzas: [
         { nombre: "Reporte de Ingresos", reporte: "ingresos" },

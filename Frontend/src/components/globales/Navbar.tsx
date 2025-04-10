@@ -15,7 +15,7 @@ import {
   FaTemperatureHigh,
   FaWarehouse,
   FaFileAlt,
-  FaChartBar 
+  FaChartBar,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
 import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
@@ -40,29 +40,31 @@ const menuItems = [
       { id: 12, label: "Actividades", path: "/cultivo/listaractividad/" },
       { id: 13, label: "Programación", path: "/cultivo/listarprogramaciones/" },
       { id: 14, label: "Cosecha", path: "/cultivo/listarcosechas/" },
-
     ],
   },
-  { id: 15, 
+  {
+    id: 15,
     label: "Finanzas",
-     icon: <FaDollarSign />,
-    subItems:[
+    icon: <FaDollarSign />,
+    subItems: [
       { id: 34, label: "Salario", path: "/finanzas/salario/" },
       { id: 35, label: "Ventas", path: "/finanzas/ventas/" },
-    ] },
+    ],
+  },
   {
     id: 16,
     label: "Plagas",
     icon: <FaBug />,
     subItems: [
-      { id: 17, label: "Tipo Plaga", path: "/cultivo/listartipoplaga/"},
-      { id: 18, label: "Plaga", path: "/cultivo/listarplaga/"},
+      { id: 17, label: "Tipo Plaga", path: "/cultivo/listartipoplaga/" },
+      { id: 18, label: "Plaga", path: "/cultivo/listarplaga/" },
       { id: 19, label: "Control", path: "/cultivo/control/" },
       { id: 20, label: "Tipo Control", path: "/cultivo/listartipocontrol/" },
       { id: 21, label: "Afecciones", path: "/cultivo/afecciones/" },
       { id: 22, label: "Productos Control", path: "/cultivo/listarproductoscontrol/" },
     ],
-  },  {
+  },
+  {
     id: 23,
     label: "Inventario",
     icon: <FaWarehouse  />,
@@ -89,28 +91,30 @@ const menuItems = [
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   return (
     <aside
-      className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 bottom-0 z-50
-      ${isOpen ? "w-64 p-4" : "w-20 p-2"} rounded-r-2xl`}
+      className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50 ${
+        isOpen ? "w-64 p-4" : "w-20 p-2"
+      } rounded-r-2xl`}
     >
-      <div className="flex justify-between items-center">
+      {/* Header con logos y barra vertical */}
+      <div className="flex flex-col items-center gap-4">
         <Button isIconOnly variant="light" className="mb-4" onClick={toggleSidebar}>
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </Button>
+        <div className={`flex items-center justify-center gap-4 ${!isOpen ? "hidden" : ""}`}>
+          <img src={LogoSena} alt="Logo Agrosis" className="w-28" />
+          <span className="text-gray-400 text-2xl font-light">|</span>
+          <img src={Sena} alt="Logo Sena" className="w-12" />
+        </div>
       </div>
 
-      <div className={`flex items-center justify-center transition-all ${!isOpen ? "hidden" : ""}`}>
-        <img src={LogoSena} alt="Logo Agrosis" className="w-40 transition-all" />
-      </div>
-
-      <nav className="flex flex-col mt-6 gap-4 overflow-y-auto scrollbar-hidden flex-1">
-        {menuItems.map((item) => (
-          <SidebarItem key={item.id} item={item} isOpen={isOpen} />
-        ))}
+      {/* Menú */}
+      <nav className="flex-1 mt-6 overflow-y-auto scrollbar-hidden">
+        <div className="flex flex-col gap-6"> {/* Aumenté el gap a 6 como en el Dashboard */}
+          {menuItems.map((item) => (
+            <SidebarItem key={item.id} item={item} isOpen={isOpen} />
+          ))}
+        </div>
       </nav>
-
-      <div className={`mt-6 flex items-center justify-center transition-all ${!isOpen ? "hidden" : ""}`}>
-        <img src={Sena} alt="Logo Sena" className="w-20 transition-all" />
-      </div>
     </aside>
   );
 }
@@ -140,9 +144,9 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
       {isOpen && isExpanded && item.subItems && (
         <div className="flex flex-col gap-2 mt-2 ml-8">
           {item.subItems.map((subItem: any) => (
-            <Link 
-              key={subItem.id} 
-              to={subItem.path} 
+            <Link
+              key={subItem.id}
+              to={subItem.path}
               className="flex items-center gap-2 p-2 pl-6 rounded-full transition-all font-medium cursor-pointer 
               bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto
               relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
