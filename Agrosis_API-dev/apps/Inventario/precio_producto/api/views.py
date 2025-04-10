@@ -10,28 +10,28 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime
-from ..models import Insumo
-from .serializers import InsumoSerializer
+from ..models import PrecioProducto
+from .serializers import PrecioProductoSerializer
 
-class InsumoViewSet(ModelViewSet):
+class PrecioProductoViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    queryset = Insumo.objects.all()
-    serializer_class = InsumoSerializer
+    queryset = PrecioProducto.objects.all()
+    serializer_class = PrecioProductoSerializer
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="reporte_insumos.pdf"'
+        response['Content-Disposition'] = 'attachment; filename="reporte_precios_productos.pdf"'
 
         doc = SimpleDocTemplate(response, pagesize=letter)
         elementos = []
         styles = getSampleStyleSheet()
 
-        logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"  
+        logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
         logo = Image(logo_path, width=50, height=35)
         encabezado_data = [
-            [logo, Paragraph("<b>Empresa XYZ</b><br/>Reporte de Insumos", styles['Normal']), ""],
+            [logo, Paragraph("<b>Empresa XYZ</b><br/>Reporte de Precios de Productos", styles['Normal']), ""],
             ["", Paragraph(f"Fecha: {datetime.today().strftime('%Y-%m-%d')}", styles['Normal']), "Página 1"],
         ]
 
@@ -48,41 +48,33 @@ class InsumoViewSet(ModelViewSet):
 
         elementos.append(Paragraph("<b>1. Objetivo</b>", styles['Heading2']))
         elementos.append(Paragraph(
-            "Este documento detalla los insumos registrados en el sistema, facilitando su gestión y permitiendo un control eficiente sobre los recursos disponibles.",
+            "Este documento detalla los precios de productos registrados en el sistema, facilitando su gestión y control.",
             styles['Normal'])
         )
         elementos.append(Spacer(1, 15))
 
-        elementos.append(Paragraph("<b>2. Inventario de Insumos</b>", styles['Heading2']))
+        elementos.append(Paragraph("<b>2. Registro de Precios de Productos</b>", styles['Heading2']))
         elementos.append(Spacer(1, 5))
 
-        insumos = Insumo.objects.all()
-        total_insumos = insumos.count()
-        cantidad_total = sum(insumo.cantidad for insumo in insumos)
+        precios = PrecioProducto.objects.all()
+        total_precios = precios.count()
+        suma_precios = sum(precio.precio for precio in precios)
 
-        data_insumos = [
-            ["ID", "Nombre", "Descripción", "Cantidad", "U de Medida", "T Empacado", "F Registro", "F Caducidad", "F Actualización", "Activo", "Precio"]
+        data_precios = [
+            ["ID", "Producto", "Unidad (g)", "Precio", "Fecha Registro"]
         ]
-        for insumo in insumos:
-            fecha_registro = insumo.fecha_registro.strftime('%Y-%m-%d %H:%M') if insumo.fecha_registro else "N/A"
-            fecha_caducidad = insumo.fecha_caducidad.strftime('%Y-%m-%d') if insumo.fecha_caducidad else "N/A"
-            fecha_actualizacion = insumo.fecha_actualizacion.strftime('%Y-%m-%d %H:%M') if insumo.fecha_actualizacion else "N/A"
-            data_insumos.append([
-                str(insumo.id),
-                insumo.nombre,
-                insumo.descripcion,
-                str(insumo.cantidad),
-                insumo.unidad_medida,
-                insumo.tipo_empacado if insumo.tipo_empacado else "N/A",
-                fecha_registro,
-                fecha_caducidad,
-                fecha_actualizacion,
-                "Sí" if insumo.activo else "No",
-                str(insumo.precio_insumo)
+        for precio in precios:
+            fecha_registro = precio.fecha_registro.strftime('%Y-%m-%d')
+            data_precios.append([
+                str(precio.id),
+                str(precio.producto),
+                str(precio.unidad_medida_gramos),
+                str(precio.precio),
+                fecha_registro
             ])
 
-        tabla_insumos = Table(data_insumos, colWidths=[30, 60, 90, 40, 50, 50, 70, 50, 70, 30, 50])
-        tabla_insumos.setStyle(TableStyle([
+        tabla_precios = Table(data_precios, colWidths=[30, 200, 60, 60, 80])
+        tabla_precios.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -90,17 +82,15 @@ class InsumoViewSet(ModelViewSet):
             ('FONTSIZE', (0, 0), (-1, -1), 7),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
             ('VALIGN', (0, 1), (-1, -1), 'MIDDLE'),
-            ('ROTATE', (0, 0), (-1, 0), 90),
-            ('VALIGN', (0, 0), (-1, 0), 'BOTTOM'),
             ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),
         ]))
-        elementos.append(tabla_insumos)
+        elementos.append(tabla_precios)
         elementos.append(Spacer(1, 15))
 
         elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading2']))
         resumen_texto = f"""
-        Se registraron {total_insumos} insumos en el sistema,
-        con un total acumulado de {cantidad_total} unidades.
+        Se registraron {total_precios} precios de productos en el sistema,
+        con un total acumulado de {suma_precios} en precios.
         """
         elementos.append(Paragraph(resumen_texto, styles['Normal']))
 
