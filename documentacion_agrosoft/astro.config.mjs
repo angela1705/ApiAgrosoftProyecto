@@ -80,6 +80,20 @@ export default defineConfig({
             { label: 'Configuración', slug: 'modules/IoT/configuracion' }, 
           ],
         },
+        {
+          label: 'Segunda Documentación',
+          items: [
+            { label: 'Intro 2', slug: 'second/second_guides/intro' },
+            { label: 'Instalación 2', slug: 'second/second_guides/install' },
+          ],
+        },
+        {
+          label: 'Módulos 2',
+          items: [
+            { label: 'Módulo X', slug: 'second/second_modules/modulo-x' },
+            { label: 'Módulo Y', slug: 'second/second_modules/modulo-y' },
+          ],
+        },
       ],
     }),
   ],

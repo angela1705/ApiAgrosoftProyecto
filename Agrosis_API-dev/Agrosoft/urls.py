@@ -8,9 +8,6 @@ from apps.Usuarios.usuarios.api.views import (
     RegistroUsuarioView, CurrentUserView, PasswordResetRequestView, PasswordResetConfirmView, ChangePasswordView)
 from apps.Usuarios.usuarios.api.routers import UsuariosRouter
 from apps.Usuarios.roles.api.routers import RolesRouter
-from apps.Usuarios.usuarios.api.views import RegistroUsuarioView, CurrentUserView
-
-# Router Cultivo, Finanzas, Inventario, IOT
 from apps.Cultivo.actividades.api.router import actividadRouter 
 from apps.Cultivo.afecciones.api.router import afeccionRouter 
 from apps.Cultivo.bancal.api.router import bancalRouter 
@@ -35,11 +32,12 @@ from apps.Cultivo.tareas.api.router import tareaRouter
 from apps.Finanzas.pagos.api.router import pagoRouter
 from apps.Finanzas.salario.api.router import salarioRouter
 from apps.Finanzas.venta.api.router import ventaRouter
-from apps.Finanzas.precio_producto.api.router import precioProductoRouter
 from apps.Inventario.herramientas.api.routers import herramientaRouter
 from apps.Inventario.insumos.api.routers import insumoRouter
+from apps.Inventario.precio_producto.api.routers import precioProductoRouter
 from apps.Iot.datos_meteorologicos.api.routers import Datos_metereologicosRouter
 from apps.Iot.sensores.api.routers import SensoresRouter
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Documentación API",
@@ -51,6 +49,7 @@ schema_view = get_schema_view(
     ),
     public=True,
 )
+
 router = DefaultRouter()
 routerUsuarios = DefaultRouter()
 routerCultivo = DefaultRouter()
@@ -89,29 +88,16 @@ routerCultivo.registry.extend(tareaRouter.registry)
 routerFinanzas.registry.extend(pagoRouter.registry)
 routerFinanzas.registry.extend(salarioRouter.registry)
 routerFinanzas.registry.extend(ventaRouter.registry)
-routerFinanzas.registry.extend(precioProductoRouter.registry)
 
 # Inventario
 routerInventario.registry.extend(herramientaRouter.registry)
 routerInventario.registry.extend(insumoRouter.registry)
+routerInventario.registry.extend(precioProductoRouter.registry)
 
+# IOT
 routerIOT.registry.extend(Datos_metereologicosRouter.registry)
 routerIOT.registry.extend(SensoresRouter.registry)
 
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-
-schema_view = get_schema_view(
-   openapi.Info(
-      title="documentacion API",
-      default_version='v0.1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

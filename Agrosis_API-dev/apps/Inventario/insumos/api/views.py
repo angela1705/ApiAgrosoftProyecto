@@ -61,7 +61,7 @@ class InsumoViewSet(ModelViewSet):
         cantidad_total = sum(insumo.cantidad for insumo in insumos)
 
         data_insumos = [
-            ["ID", "Nombre", "Descripción", "Cantidad", "U de Medida", "T Empacado", "F Registro", "F Caducidad", "F Actualización", "Activo"]
+            ["ID", "Nombre", "Descripción", "Cantidad", "U de Medida", "T Empacado", "F Registro", "F Caducidad", "F Actualización", "Activo", "Precio"]
         ]
         for insumo in insumos:
             fecha_registro = insumo.fecha_registro.strftime('%Y-%m-%d %H:%M') if insumo.fecha_registro else "N/A"
@@ -77,10 +77,11 @@ class InsumoViewSet(ModelViewSet):
                 fecha_registro,
                 fecha_caducidad,
                 fecha_actualizacion,
-                "Sí" if insumo.activo else "No"
+                "Sí" if insumo.activo else "No",
+                str(insumo.precio_insumo)
             ])
 
-        tabla_insumos = Table(data_insumos, colWidths=[30, 60, 100, 40, 50, 50, 70, 50, 70, 30])
+        tabla_insumos = Table(data_insumos, colWidths=[30, 60, 90, 40, 50, 50, 70, 50, 70, 30, 50])
         tabla_insumos.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
