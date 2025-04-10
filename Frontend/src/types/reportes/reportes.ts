@@ -14,8 +14,6 @@ export const reportesPorModulo: Record<string, { nombre: string; reporte: string
         { nombre: "Reporte de actividades", reporte: "Bancal"},
     ],
     inventario: [
-        { nombre: "Reporte de Bodega Herramientas", reporte: "bodega_herramienta" },
-        { nombre: "Reporte de Bodega Insumos", reporte: "bodega_insumo" },
         { nombre: "Insumos", reporte: "insumo" },
         { nombre: "Herramientas", reporte: "herramientas" },
     ],
