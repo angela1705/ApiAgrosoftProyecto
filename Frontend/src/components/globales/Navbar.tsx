@@ -49,6 +49,7 @@ const menuItems = [
     subItems: [
       { id: 34, label: "Salario", path: "/finanzas/salario/" },
       { id: 35, label: "Ventas", path: "/finanzas/ventas/" },
+      { id: 36, label: "Pagos", path: "/finanzas/pago/" },
     ],
   },
   {
