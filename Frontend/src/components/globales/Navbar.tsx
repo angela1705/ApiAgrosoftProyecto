@@ -85,8 +85,15 @@ const menuItems = [
     ],
   },
   { id: 33, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
-  { id: 34, label: "Graficas", path: "/graficas/", icon: <FaChartBar /> },
-];
+  {
+    id: 29,
+    label: "Graficas",
+    icon: <FaChartBar />,
+    subItems: [
+      { id: 30, label: "Ingresos", path: "/graficas/ingresos" },
+      { id: 31, label: "Cosechas", path: "/graficas/cosechas" },
+    ],
+  },];
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   return (

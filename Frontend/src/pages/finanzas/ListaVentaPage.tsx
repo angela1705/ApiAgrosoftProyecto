@@ -20,13 +20,13 @@ const ListaVentaPage: React.FC = () => {
   const columns = [
     { name: "Producto", uid: "producto" },
     { name: "Cantidad", uid: "cantidad" },
-    { name: "Precio Unitario", uid: "precio" },
     { name: "Total", uid: "total" },
     { name: "Fecha", uid: "fecha" },
     { name: "Acciones", uid: "acciones" },
   ];
 
   const handleEdit = (venta: Venta) => {
+    console.log("Editando venta:", venta); // 👈 Esto te ayudará a verificar
     setSelectedVenta(venta);
     setIsEditModalOpen(true);
   };
@@ -133,41 +133,44 @@ const ListaVentaPage: React.FC = () => {
                 ))}
               </select>
               <ReuInput
-                label="Cantidad"
-                placeholder="Ingrese la cantidad"
-                type="number"
-                value={selectedVenta.cantidad.toString()}
-                onChange={(e) =>
-                  setSelectedVenta((prev) => ({
-                    ...prev!,
-                    cantidad: Number(e.target.value),
-                  }))
-                }
-              />
-              <ReuInput
-                label="Precio Unitario"
-                placeholder="Ingrese el precio unitario"
-                type="number"
-                value={selectedVenta.precio.toString()}
-                onChange={(e) =>
-                  setSelectedVenta((prev) => ({
-                    ...prev!,
-                    precio: Number(e.target.value),
-                  }))
-                }
-              />
-              <ReuInput
-                label="Fecha"
-                placeholder="Seleccione la fecha"
-                type="date"
-                value={selectedVenta.fecha}
-                onChange={(e) =>
-                  setSelectedVenta((prev) => ({
-                    ...prev!,
-                    fecha: e.target.value,
-                  }))
-                }
-              />
+  label="Cantidad"
+  placeholder="Ingrese la cantidad"
+  type="number"
+  value={(selectedVenta.cantidad ?? "").toString()}
+  onChange={(e) =>
+    setSelectedVenta((prev) => ({
+      ...prev!,
+      cantidad: Number(e.target.value),
+    }))
+  }
+/>
+
+<ReuInput
+  label="Precio Unitario"
+  placeholder="Ingrese el precio unitario"
+  type="number"
+  value={(selectedVenta.precio ?? "").toString()}
+  onChange={(e) =>
+    setSelectedVenta((prev) => ({
+      ...prev!,
+      precio: Number(e.target.value),
+    }))
+  }
+/>
+
+<ReuInput
+  label="Fecha"
+  placeholder="Seleccione la fecha"
+  type="date"
+  value={selectedVenta.fecha ?? ""}
+  onChange={(e) =>
+    setSelectedVenta((prev) => ({
+      ...prev!,
+      fecha: e.target.value,
+    }))
+  }
+/>
+
               {isActualizando && <p className="text-gray-600 mt-2">Actualizando...</p>}
             </>
           )}

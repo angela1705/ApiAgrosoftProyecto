@@ -4,7 +4,7 @@ class Venta(models.Model):
     producto = models.ForeignKey('precio_producto.PrecioProducto', on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
-    fecha = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         if not self.pk: 

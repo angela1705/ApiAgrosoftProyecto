@@ -131,7 +131,7 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_new',
+        'NAME': 'db_agrosoft',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost', 
@@ -236,3 +236,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'steventu06@gmail.com'
 EMAIL_HOST_PASSWORD = 'ytjb ipyp odsw ryqr' 
 DEFAULT_FROM_EMAIL = 'steventu06@gmail.com'
+
+USE_TZ = True
+TIME_ZONE = 'America/Bogota'

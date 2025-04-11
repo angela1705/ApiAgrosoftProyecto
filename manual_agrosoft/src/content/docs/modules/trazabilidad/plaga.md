@@ -8,7 +8,7 @@ Las **plagas** son organismos que causan daño a los cultivos, incluyendo insect
 
 ## ¿Cómo registrar una plaga?  
 Para documentar una nueva plaga en el sistema:  
-1. Navega a Cultivos > Protección > Plagas  
+1. Navega en los modulos y busca > Plagas  
 2. Selecciona **"Registrar Plaga"**  
 3. Completa los campos obligatorios:  
    - **Tipo de plaga**: Clasificación principal  
