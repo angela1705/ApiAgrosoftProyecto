@@ -59,6 +59,8 @@ import UsuariosSecondPage from './pages/usuarios/RegisterSecondPage';
 import Reportes from './pages/reportes/Reportes';
 import CosechaGraficasPage from './pages/cultivo/CosechasGraficasPage';
 import GraficaIngreso from './pages/reportes/GraficaIngreso';
+import ListaPagoPage from './pages/finanzas/ListaPagoPage';
+import PagoPage from './pages/finanzas/PagoPage';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -84,6 +86,9 @@ const App: React.FC = () => {
           <Route path="/finanzas/listarsalarios/" element={<PrivateRoute><ListaSalarioPage /></PrivateRoute>} /> {/* Nueva ruta */}
           <Route path="/finanzas/ventas/" element={<PrivateRoute><VentaPage /></PrivateRoute>} />
           <Route path="/finanzas/listarventas/" element={<PrivateRoute><ListaVentaPage /></PrivateRoute>} />
+          <Route path="/finanzas/listarpagos/" element={<PrivateRoute><ListaPagoPage /></PrivateRoute>} />
+          <Route path="/finanzas/pago/" element={<PrivateRoute><PagoPage /></PrivateRoute>} />
+
           <Route path="/inventario/insumos/" element={<PrivateRoute><InsumoPage /></PrivateRoute>} />
           <Route path="/inventario/preciosproductos/" element={<PrivateRoute><Precio_ProductoPage /></PrivateRoute>} />
           <Route path="/inventario/listarpreciosproductos/" element={<PrivateRoute><ListaPrecio_ProductoPage /></PrivateRoute>} />
