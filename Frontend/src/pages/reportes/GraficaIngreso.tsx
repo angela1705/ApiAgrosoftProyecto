@@ -30,13 +30,12 @@ const GraficaIngreso: React.FC = () => {
     });
   };
 
-  // Orden correcto de días para la gráfica
   const ordenDiasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
   return (
     <DefaultLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Gráficas de Ventas</h1>
+        <h1 className="text-2xl font-bold mb-6">Gráficas de Ingresos</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <ReuInput
