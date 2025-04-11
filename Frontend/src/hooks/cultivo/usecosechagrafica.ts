@@ -20,18 +20,16 @@ export const useCosechaGraficas = (fechaInicio: string, fechaFin: string) => {
     return useQuery<CosechaGraficaData, Error>({
       queryKey: ["cosechaGraficas", fechaInicio, fechaFin],
       queryFn: () => fetchCosechaGraficas(fechaInicio, fechaFin),
-      // Configuración correcta para manejo de errores:
       meta: {
         errorMessage: "Error al cargar los datos para las gráficas"
       },
-      // Alternativa moderna:
       throwOnError: (error) => {
         addToast({ 
           title: "Error", 
           description: error.message || "Error al cargar los datos", 
           timeout: 3000 
         });
-        return false; // Evita que React Query maneje el error automáticamente
+        return false; 
       }
     });
   };
