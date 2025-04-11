@@ -14,7 +14,7 @@ const VentaPage: React.FC = () => {
     cantidad: 0,
     precio: 0,
     total: 0,
-    fecha: new Date().toISOString().split("T")[0],
+    fecha: '',
   });
 
   const [productosAgregados, setProductosAgregados] = useState<Venta[]>([]);

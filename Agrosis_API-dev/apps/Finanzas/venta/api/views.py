@@ -9,13 +9,13 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils import timezone
 from apps.Finanzas.venta.models import Venta
 from apps.Finanzas.venta.api.serializers import VentaSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, ExtractWeekDay
-
 class VentaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOrRead]
@@ -119,9 +119,16 @@ class VentaViewSet(ModelViewSet):
         if not fecha_inicio or not fecha_fin:
             return Response({"error": "Debes proporcionar 'fecha_inicio' y 'fecha_fin'"}, status=400)
 
+        try:
+            fecha_inicio_dt = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'))
+            fecha_fin_dt = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d') + timedelta(days=1))
+        except ValueError:
+            return Response({"error": "Formato de fecha inválido. Use YYYY-MM-DD"}, status=400)
+
+        ventas = Venta.objects.filter(fecha__range=[fecha_inicio_dt, fecha_fin_dt])
+
         ventas_por_mes = (
-            Venta.objects
-            .filter(fecha__range=[fecha_inicio, fecha_fin])
+            ventas
             .annotate(mes=TruncMonth('fecha'))
             .values('mes')
             .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
@@ -129,16 +136,14 @@ class VentaViewSet(ModelViewSet):
         )
 
         ventas_por_producto = (
-            Venta.objects
-            .filter(fecha__range=[fecha_inicio, fecha_fin])
+            ventas
             .values('producto__Producto')
             .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
             .order_by('-total')
         )
 
         ventas_por_dia_semana = (
-            Venta.objects
-            .filter(fecha__range=[fecha_inicio, fecha_fin])
+            ventas
             .annotate(dia_semana=ExtractWeekDay('fecha'))
             .values('dia_semana')
             .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
@@ -146,16 +151,34 @@ class VentaViewSet(ModelViewSet):
         )
 
         dias_nombres = {
-            1: 'Lunes',
-            2: 'Martes',
-            3: 'Miércoles',
-            4: 'Jueves',
-            5: 'Viernes',
-            6: 'Sábado',
-            7: 'Domingo'
+            1: 'Domingo',
+            2: 'Lunes',
+            3: 'Martes',
+            4: 'Miércoles',
+            5: 'Jueves',
+            6: 'Viernes',
+            7: 'Sábado'
+        }
+
+        dias_completos = []
+        for dia_num in range(1, 8):
+            dia_data = next((item for item in ventas_por_dia_semana if item['dia_semana'] == dia_num), None)
+            dias_completos.append({
+                'dia_semana': dia_num,
+                'total': dia_data['total'] if dia_data else 0,
+                'cantidad': dia_data['cantidad'] if dia_data else 0
+            })
+
+        resumen = {
+            'fecha_inicio': fecha_inicio,
+            'fecha_fin': fecha_fin,
+            'total_ingresos': ventas.aggregate(Sum('total'))['total__sum'] or 0,
+            'total_cantidad': ventas.aggregate(Sum('cantidad'))['cantidad__sum'] or 0,
+            'total_transacciones': ventas.count()
         }
 
         data = {
+            'resumen': resumen,
             'por_mes': {
                 'meses': [v['mes'].strftime("%Y-%m") for v in ventas_por_mes],
                 'ingresos': [float(v['total']) for v in ventas_por_mes],
@@ -167,9 +190,9 @@ class VentaViewSet(ModelViewSet):
                 'cantidades': [float(v['cantidad']) for v in ventas_por_producto],
             },
             'por_dia_semana': {
-                'dias': [dias_nombres.get(v['dia_semana'], 'Desconocido') for v in ventas_por_dia_semana],
-                'ingresos': [float(v['total']) for v in ventas_por_dia_semana],
-                'cantidades': [float(v['cantidad']) for v in ventas_por_dia_semana],
+                'dias': [dias_nombres[dia['dia_semana']] for dia in dias_completos],
+                'ingresos': [float(dia['total']) for dia in dias_completos],
+                'cantidades': [float(dia['cantidad']) for dia in dias_completos],
             }
         }
 
