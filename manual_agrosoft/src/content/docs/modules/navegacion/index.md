@@ -6,16 +6,13 @@ description: "Guía básica para entender cómo navegar por las principales secc
 
 # Navegación del Sistema
 
-Este sistema ha sido diseñado para facilitar el acceso a la información agrícola y la gestión de procesos en entornos productivos. La interfaz es intuitiva y está organizada en módulos según la funcionalidad.
 
-## Características principales
+El sistema de gestión ofrece un formulario de inicio de sesión, donde los usuarios deben ingresar su correo y contraseña para acceder. Una vez autenticados, los usuarios son dirigidos a la interfaz principal, que incluye un menú de navegación ubicado en la barra lateral izquierda. Este menú contiene opciones como Inicio, Cultivos, finanzas, plagas, inventario, IoT y Reportes
 
-- Acceso por **rol de usuario**, mostrando solo los módulos permitidos.
-- Menú lateral con navegación rápida entre secciones.
-- Modales para registrar y editar información sin salir del contexto.
-- Vistas resumidas con filtros y buscadores integrados.
+<img src="/public/sidebar.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
-## Estructura de navegación
+
+## Por  que importan tus credenciales en la navegacion? navegación
 
 1. **Panel Principal**  
    Al iniciar sesión, los usuarios son dirigidos al panel principal, donde se presentan accesos rápidos a módulos frecuentes y un resumen de actividades recientes.

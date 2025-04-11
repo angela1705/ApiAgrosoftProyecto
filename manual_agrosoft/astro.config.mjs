@@ -31,6 +31,8 @@ export default defineConfig({
             { label: 'Introducción', slug: 'modules/usuarios/index' },
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
             { label: 'Log-in', slug: 'modules/usuarios/Log-in' },
+            { label: 'Administrar perfil', slug: 'modules/usuarios/adminstrarPerfil' },
+
           ],
         },
         {
@@ -52,8 +54,8 @@ export default defineConfig({
             { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
             { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
             { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
-            { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
             { label: 'Tipo de plaga', slug: 'modules/trazabilidad/tipoplaga' },
+            { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
             { label: 'Control de Productos', slug: 'modules/trazabilidad/productoscontrol' },
 
 
@@ -87,20 +89,6 @@ export default defineConfig({
             { label: 'Gestión de Sensores', slug: 'modules/IoT/sensores' },
             { label: 'Datos Meteorológicos', slug: 'modules/IoT/datos-meteorologicos' },
             { label: 'Configuración', slug: 'modules/IoT/configuracion' }, 
-          ],
-        },
-        {
-          label: 'Segunda Documentación',
-          items: [
-            { label: 'Intro 2', slug: 'second/second_guides/intro' },
-            { label: 'Instalación 2', slug: 'second/second_guides/install' },
-          ],
-        },
-        {
-          label: 'Módulos 2',
-          items: [
-            { label: 'Módulo X', slug: 'second/second_modules/modulo-x' },
-            { label: 'Módulo Y', slug: 'second/second_modules/modulo-y' },
           ],
         },
       ],
