@@ -236,3 +236,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'steventu06@gmail.com'
 EMAIL_HOST_PASSWORD = 'ytjb ipyp odsw ryqr' 
 DEFAULT_FROM_EMAIL = 'steventu06@gmail.com'
+
+USE_TZ = True
+TIME_ZONE = 'America/Bogota'

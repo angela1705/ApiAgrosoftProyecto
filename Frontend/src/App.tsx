@@ -58,7 +58,7 @@ import ListaSalarioPage from './pages/finanzas/ListaSalarioPage';
 import UsuariosSecondPage from './pages/usuarios/RegisterSecondPage';
 import Reportes from './pages/reportes/Reportes';
 import CosechaGraficasPage from './pages/cultivo/CosechasGraficasPage';
-
+import GraficaIngreso from './pages/reportes/GraficaIngreso';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -121,7 +121,8 @@ const App: React.FC = () => {
           <Route path="/iot/datosmetereologicos" element={<PrivateRoute><DatosMeteorologicosPage /></PrivateRoute>} />
           <Route path="/pricing" element={<PrivateRoute><PricingPage /></PrivateRoute>} />
           <Route path="/mapa" element={<PrivateRoute><Mapa /></PrivateRoute>} />
-          <Route path="/graficas/" element={<PrivateRoute><CosechaGraficasPage /></PrivateRoute>} />
+          <Route path="/graficas/cosechas" element={<PrivateRoute><CosechaGraficasPage /></PrivateRoute>} />
+          <Route path="/graficas/ingresos" element={<PrivateRoute><GraficaIngreso /></PrivateRoute>} />
           <Route path="/blog" element={<PrivateRoute><BlogPage /></PrivateRoute>} />
           <Route path="/calendario" element={<PrivateRoute><Calendar /></PrivateRoute>} />
           <Route path="/about" element={<PrivateRoute><AboutPage /></PrivateRoute>} />

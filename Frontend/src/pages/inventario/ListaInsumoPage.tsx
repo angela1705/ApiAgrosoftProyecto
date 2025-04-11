@@ -6,6 +6,8 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
+import InsumoNotifications from "@/components/inventario/InsumoNotifications";
+import { useAuth } from "@/context/AuthContext";
 
 interface Insumo {
   id: number;
@@ -22,6 +24,7 @@ interface Insumo {
 }
 
 const ListaInsumoPage: React.FC = () => {
+  const { user } = useAuth();
   const [selectedInsumo, setSelectedInsumo] = useState<Insumo | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -169,6 +172,8 @@ const ListaInsumoPage: React.FC = () => {
       >
         <p>Esta acción es irreversible.</p>
       </ReuModal>
+
+      {user && <InsumoNotifications userId1={user.id} />}
     </DefaultLayout>
   );
 };
