@@ -7,6 +7,11 @@ description: "Como administrar usuarios en el modulo de usuarios en Agrosoft."
 - **Definicion de usuario**:
 Los Usuarios son indivduos que interactúa con el sistema y tienen un rol asignado, lo que define qué permisos y acciones puede realizar. 
 
+**Definición de rol**
+Un rol es una categoría o perfil asignado a un usuario dentro de un sistema, que define qué acciones puede realizar y a qué información puede acceder.
+
+Los roles permiten aplicar control de acceso, asegurando que cada usuario interactúe solo con las funciones y datos que le corresponden según sus responsabilidades.
+
 ##  Tipos de Usuarios en el sistema
 **Roles del sistema**:
 
@@ -18,7 +23,8 @@ Los Usuarios son indivduos que interactúa con el sistema y tienen un rol asigna
 
 - Puede gestionar usuarios, roles, y acceder a todos los módulos.
 
-- El sistema incluye un administrador por defecto con el correo admin@gmail.com.
+- El sistema incluye un administrador por defecto,
+ con el correo admin@gmail.com y contraseña **admin**.
 
 **Instructor**
 

@@ -31,6 +31,8 @@ export default defineConfig({
             { label: 'Introducción', slug: 'modules/usuarios/index' },
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
             { label: 'Log-in', slug: 'modules/usuarios/Log-in' },
+            { label: 'Administrar perfil', slug: 'modules/usuarios/adminstrarPerfil' },
+
           ],
         },
         {
@@ -43,18 +45,18 @@ export default defineConfig({
         {
           label: 'Trazabilidad del Cultivo',
           items: [
-            { label: 'Introducción', slug: 'modules/trazabilidad/index' },
-            { label: 'Lotes', slug: 'modules/trazabilidad/lotes' },
-            { label: 'Bancales', slug: 'modules/trazabilidad/bancal' },
-            { label: 'Tipo de Especie', slug: 'modules/trazabilidad/tipoespecie' },
-            { label: 'Especie', slug: 'modules/trazabilidad/especie' },
-            { label: 'Cultivo', slug: 'modules/trazabilidad/cultivo' },
-            { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
-            { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
-            { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
-            { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
+            // { label: 'Introducción', slug: 'modules/trazabilidad/index' },
+            // { label: 'Lotes', slug: 'modules/trazabilidad/lotes' },
+            // { label: 'Bancales', slug: 'modules/trazabilidad/bancal' },
+            // { label: 'Tipo de Especie', slug: 'modules/trazabilidad/tipoespecie' },
+            // { label: 'Especie', slug: 'modules/trazabilidad/especie' },
+            // { label: 'Cultivo', slug: 'modules/trazabilidad/cultivo' },
+            // { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
+            // { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
+            // { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
             { label: 'Tipo de plaga', slug: 'modules/trazabilidad/tipoplaga' },
-            { label: 'Control de Productos', slug: 'modules/trazabilidad/productoscontrol' },
+            // { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
+            // { label: 'Control de Productos', slug: 'modules/trazabilidad/productoscontrol' },
 
 
 
@@ -63,44 +65,30 @@ export default defineConfig({
         {
           label: 'Inventario',
           items: [
-            { label: 'Introducción', slug: 'modules/inventario/index' },
-            { label: 'Bodega', slug: 'modules/inventario/bodega' },
-            { label: 'Herramientas', slug: 'modules/inventario/herramientas' },
-            { label: 'Insumos', slug: 'modules/inventario/insumos' },
-            { label: 'Bodega Herramienta', slug: 'modules/inventario/bodega_herramienta' },
-            { label: 'Bodega Insumo', slug: 'modules/inventario/bodega_insumo' },
+            // { label: 'Introducción', slug: 'modules/inventario/index' },
+            // { label: 'Bodega', slug: 'modules/inventario/bodega' },
+            // { label: 'Herramientas', slug: 'modules/inventario/herramientas' },
+            // { label: 'Insumos', slug: 'modules/inventario/insumos' },
+            // { label: 'Bodega Herramienta', slug: 'modules/inventario/bodega_herramienta' },
+            // { label: 'Bodega Insumo', slug: 'modules/inventario/bodega_insumo' },
           ],
         },
         {
           label: 'Finanzas',
           items: [
-            { label: 'Panel de Finanzas', slug: 'modules/finanzas/index' },
-            { label: 'Gestión de Pagos', slug: 'modules/finanzas/pagos' },
-            { label: 'Gestión de Salario', slug: 'modules/finanzas/salarios' },
-            { label: 'Gestión de Ventas', slug: 'modules/finanzas/ventas' },
+            // { label: 'Panel de Finanzas', slug: 'modules/finanzas/index' },
+            // { label: 'Gestión de Pagos', slug: 'modules/finanzas/pagos' },
+            // { label: 'Gestión de Salario', slug: 'modules/finanzas/salarios' },
+            // { label: 'Gestión de Ventas', slug: 'modules/finanzas/ventas' },
           ],
         },
         {
           label: 'IoT (Sensores)',
           items: [
-            { label: 'Introducción', slug: 'modules/IoT/index' },
-            { label: 'Gestión de Sensores', slug: 'modules/IoT/sensores' },
-            { label: 'Datos Meteorológicos', slug: 'modules/IoT/datos-meteorologicos' },
-            { label: 'Configuración', slug: 'modules/IoT/configuracion' }, 
-          ],
-        },
-        {
-          label: 'Segunda Documentación',
-          items: [
-            { label: 'Intro 2', slug: 'second/second_guides/intro' },
-            { label: 'Instalación 2', slug: 'second/second_guides/install' },
-          ],
-        },
-        {
-          label: 'Módulos 2',
-          items: [
-            { label: 'Módulo X', slug: 'second/second_modules/modulo-x' },
-            { label: 'Módulo Y', slug: 'second/second_modules/modulo-y' },
+            // { label: 'Introducción', slug: 'modules/IoT/index' },
+            // { label: 'Gestión de Sensores', slug: 'modules/IoT/sensores' },
+            // { label: 'Datos Meteorológicos', slug: 'modules/IoT/datos-meteorologicos' },
+            // { label: 'Configuración', slug: 'modules/IoT/configuracion' }, 
           ],
         },
       ],

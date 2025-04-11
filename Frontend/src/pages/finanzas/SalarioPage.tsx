@@ -7,8 +7,12 @@ import { Salario } from "@/types/finanzas/Salario";
 
 const SalarioPage: React.FC = () => {
   const [salario, setSalario] = useState<Salario>({
-    salario_base: 0,
-    valor_por_hora: 0,
+    fecha_de_implementacion: "",
+    fecha_de_vencimiento: "",
+    salario_minimo: 0,
+    auxilio_transporte: 0,
+    horas_laborales_mes: 0,
+    valor_hora_ordinaria: 0,
   });
 
   const { registrarSalario, isRegistrando } = useSalario();
@@ -20,7 +24,7 @@ const SalarioPage: React.FC = () => {
     const { value } = e.target;
     setSalario((prev) => ({
       ...prev,
-      [field]: Number(value),
+      [field]: field.includes("fecha") ? value : Number(value),
     }));
   };
 
@@ -31,18 +35,49 @@ const SalarioPage: React.FC = () => {
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Salario</h2>
 
           <ReuInput
-            label="Salario Base"
-            placeholder="Ingrese el salario base"
-            type="number"
-            value={salario.salario_base}
-            onChange={handleChange("salario_base")}
+            label="Fecha de Implementación"
+            type="date"
+            value={salario.fecha_de_implementacion}
+            onChange={handleChange("fecha_de_implementacion")}
           />
+          
           <ReuInput
-            label="Valor por Hora"
-            placeholder="Ingrese el valor por hora"
+            label="Fecha de Vencimiento"
+            type="date"
+            value={salario.fecha_de_vencimiento}
+            onChange={handleChange("fecha_de_vencimiento")}
+          />
+
+          <ReuInput
+            label="Salario Mínimo"
+            placeholder="Ingrese el salario mínimo"
             type="number"
-            value={salario.valor_por_hora}
-            onChange={handleChange("valor_por_hora")}
+            value={salario.salario_minimo}
+            onChange={handleChange("salario_minimo")}
+          />
+
+          <ReuInput
+            label="Auxilio de Transporte"
+            placeholder="Ingrese el auxilio de transporte"
+            type="number"
+            value={salario.auxilio_transporte}
+            onChange={handleChange("auxilio_transporte")}
+          />
+
+          <ReuInput
+            label="Horas Laborales por Mes"
+            placeholder="Ingrese las horas laborales por mes"
+            type="number"
+            value={salario.horas_laborales_mes}
+            onChange={handleChange("horas_laborales_mes")}
+          />
+
+          <ReuInput
+            label="Valor Hora Ordinaria"
+            placeholder="Ingrese el valor por hora ordinaria"
+            type="number"
+            value={salario.valor_hora_ordinaria}
+            onChange={handleChange("valor_hora_ordinaria")}
           />
 
           <button
@@ -54,8 +89,12 @@ const SalarioPage: React.FC = () => {
               registrarSalario(salario, {
                 onSuccess: () => {
                   setSalario({
-                    salario_base: 0,
-                    valor_por_hora: 0,
+                    fecha_de_implementacion: "",
+                    fecha_de_vencimiento: "",
+                    salario_minimo: 0,
+                    auxilio_transporte: 0,
+                    horas_laborales_mes: 0,
+                    valor_hora_ordinaria: 0,
                   });
                 },
               });

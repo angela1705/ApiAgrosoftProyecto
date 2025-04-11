@@ -2,192 +2,53 @@
 title: "Gestión de tipos de plaga"
 ---
 
-## Estructura de Datos
-
-| Campo           | Tipo            | Descripción |
-|-----------------|-----------------|-------------|
-| **id**          | `AutoField`     | Identificador único |
-| **nombre**      | `CharField(30)` | Nombre del tipo de plaga (único) |
-| **descripcion** | `TextField`     | Descripción detallada |
-| **img**         | `ImageField`    | Imagen representativa (opcional) |
+## ¿Cómo registrar una plaga?  
+Para documentar una nueva plaga en el sistema:  
+1. Navega en los modulos y busca > Plagas, encontrarás un Sub-Item llamado Tipo Plaga:
+<img src="/public/plagaSide.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
-## Ejemplo de API
+Entra a **"Tipo plagas"**, encontraras un listado aún sin registros:
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipos-plaga/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipos-plaga/"><div></div></button></div></figure></div>  </section>
+<img src="/public/tipoPlaga1.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+- Ve al boton superior derecho que dice **+ Registrar**
+- Encontrarás este formulario:
+<img src="/public/tipoPlaga2.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-Resultado: Crea un nuevo tipo de plaga
+- ⚠️ Los campos nombre y descripción son obligatorios
+- La selección de archivo de imagen es Opcional
 
-**Solicitud:**
-```json
-{
-  "nombre": "Hongos",
-  "descripcion": "Organismos patógenos que afectan cultivos",
-  "img": null
-}
-```
+- ⚠️ **Importante**:EL campo de selección de archivo te permite navegar en tu equipo y escoger una imagen de referencia de la plaga, de esta forma:
+<img src="/public/tipoPlaga3.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-**Respuesta exitosa (201 Created):**
-```json
-{
-  "id": 1,
-  "nombre": "Hongos",
-  "descripcion": "Organismos patógenos que afectan cultivos",
-  "url_imagen": null
-}
-```
+- Ejemplo de uso:
+<img src="/public/tipoPlaga4.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipos-plaga/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipos-plaga/"><div></div></button></div></figure></div>  </section>
+- con el formulario diligenciado por completo, elije la opción **"Guardar"**
+- Podras ver un mensaje de registro exitoso como este:
+<img src="/public/exitoTipoplaga.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-
-Resultado: Obtiene los tipos de plaga existente 
-
-**Respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-
-```json
-{
-  "id": 1,
-  "nombre": "Hongos",
-  "descripcion": "Organismos patógenos que afectan cultivos",
-  "url_imagen": "/media/tipos_plaga_images/hongos.jpg"
-}
-```
+- Ve a **"Listar tipo plaga"** para confirmar que se realizo tu registro:
+<img src="/public/tipoPlaga5.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipos-plaga/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipos-plaga/{id}/"><div></div></button></div></figure></div>  </section>
+- A tu Derecha encontrarás las opciones de Actualizar y Eliminar, respectivamente
+<img src="/public/editelim.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+- **Actualizar**
+- Aparece un formulario con los datos que ya ingresaste, podras ingresar la nueva información que deseas para el tipo de plaga:
+<img src="/public/tipoPlaga6.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+- Podras ver un mensaje de Actualizado exitoso como este:
 
-Resultado: Obtiene un tipo de plaga específico
+<img src="/public/exitoTipoplaga2.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-**Respuesta (200 OK):**
-```json
-{
-  "id": 1,
-  "nombre": "Hongos",
-  "descripcion": "Organismos patógenos que afectan cultivos",
-  "url_imagen": "/media/tipos_plaga_images/hongos.jpg"
-}
-```
+- **Eliminar**
+- Aparece un mensaje de advertencia, ya que esta en una acción irreversible .
+-tienes a tu disposicion Confirmar la acción o descartarla:
+⚠️ Consideralo muy bien antes de Eliminar un registro.
+<img src="/public/tipoPlaga7.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+- Podras ver un mensaje de Eliminado exitoso como este:
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipos-plaga/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipos-plaga/{id}/"><div></div></button></div></figure></div>  </section>
-
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-Resultado: Actualiza un tipo de plaga existente
-
-**Solicitud:**
-```json
-{
-  "descripcion": "Organismos patógenos que afectan cultivos. Se propagan en condiciones de humedad.",
-  "img": "nueva_imagen.jpg"
-}
-```
-
-**Respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-
-```json
-{
-  "id": 1,
-  "message": "Tipo de plaga actualizado correctamente",
-  "url_imagen": "/media/tipos_plaga_images/nueva_imagen.jpg"
-}
-```
-
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipos-plaga/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipos-plaga/{id}/"><div></div></button></div></figure></div>  </section>
-
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-Resultado: Elimina un tipo de plaga
-
-**Respuesta exitosa (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-
-```json
-{
-  "message": "Tipo de plaga eliminado correctamente",
-  "id": 1
-}
-```
-
-**Error (409 Conflict) - Cuando hay plagas asociadas:**
-```json
-{
-  "error": "No se puede eliminar",
-  "detail": "Existen plagas asociadas a este tipo"
-}
-```
-
----
-
-
----
-
-## ** Ejemplos de Uso**
-
-### **Crear y luego actualizar un tipo de plaga:**
-```bash
-Metodo: POST 
-URL:http://127.0.0.1:8000/cultivo/tipos-plaga/
-{
-  "nombre": "Hongos",
-  "descripcion": "Organismos patógenos que afectan cultivos",
-  "url_imagen": "/media/tipos_plaga_images/hongos.jpg"
-}
-
-Metodo: PUT 
-URL:http://127.0.0.1:8000/cultivo/tipos-plaga/4
-{
-  "nombre": "Maleza",
-}
-```
-
-### **Listar tipos de plaga:**
-```bash
-Metodo: GET 
-URL:http://127.0.0.1:8000/cultivo/tipos-plaga/
-```
-
----
-
-
-## Notas Importantes
-
-1. **Manejo de imágenes:**
-   - Se almacenan en `/media/tipos_plaga_images/`
-   - Al actualizar, la imagen anterior se elimina automáticamente
-   - Proporciona URL completa en las respuestas
+<img src="/public/exitoTipoplaga3.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />

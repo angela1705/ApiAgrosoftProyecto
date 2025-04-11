@@ -5,8 +5,11 @@ import { useRegistrarInsumo } from "@/hooks/inventario/useInsumo";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Formulario from "@/components/globales/Formulario";
 import { Insumo } from "@/types/inventario/Insumo";
+import InsumoNotifications from "@/components/inventario/InsumoNotifications";
+import { useAuth } from "@/context/AuthContext";
 
 const InsumoPage: React.FC = () => {
+    const { user } = useAuth();
     const [insumo, setInsumo] = useState<Insumo>({
         id: 0,
         nombre: "",
@@ -23,7 +26,6 @@ const InsumoPage: React.FC = () => {
 
     const mutation = useRegistrarInsumo();
     const navigate = useNavigate();
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         mutation.mutate(insumo, {
@@ -133,6 +135,7 @@ const InsumoPage: React.FC = () => {
                     </button>
                 </div>
             </Formulario>
+            {user && <InsumoNotifications userId1={user.id} />}
         </DefaultLayout>
     );
 };
