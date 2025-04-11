@@ -34,9 +34,3 @@ Siglas:
 - **CRUD**: Crear, Leer, Actualizar y Eliminar.
 
 
-## Secciones del módulo
-1. **[Usuarios](./usuarios)** - Gestión de individuos registrados.
-2. **[Roles](./roles)** -Conjunto definido de permisos para determinados usuarios.
-
-
- **Sigue con la documentación de [Usuarios](./usuarios) para aprender más.**
