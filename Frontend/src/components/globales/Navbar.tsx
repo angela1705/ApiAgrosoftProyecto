@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/button";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
@@ -18,6 +18,7 @@ import {
   FaChartBar,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
+import { useNavbar } from "../../context/NavbarContext";  
 import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
 import Sena from "../../assets/logo sena.png";
 
@@ -68,11 +69,11 @@ const menuItems = [
   {
     id: 23,
     label: "Inventario",
-    icon: <FaWarehouse  />,
+    icon: <FaWarehouse />,
     subItems: [
-      { id: 26, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaWarehouse  /> },
-      { id: 28, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaWarehouse  /> },
-      { id: 24, label: "Producto", path: "/inventario/listarpreciosproductos", icon: <FaWarehouse  /> },
+      { id: 26, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaWarehouse /> },
+      { id: 28, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaWarehouse /> },
+      { id: 24, label: "Producto", path: "/inventario/listarpreciosproductos", icon: <FaWarehouse /> },
     ],
   },
   {
@@ -87,16 +88,54 @@ const menuItems = [
   },
   { id: 33, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
   {
-    id: 29,
+    id: 34,
     label: "Graficas",
     icon: <FaChartBar />,
     subItems: [
-      { id: 30, label: "Ingresos", path: "/graficas/ingresos" },
-      { id: 31, label: "Cosechas", path: "/graficas/cosechas" },
+      { id: 35, label: "Ingresos", path: "/graficas/ingresos" },
+      { id: 36, label: "Cosechas", path: "/graficas/cosechas" },
     ],
-  },];
+  },
+];
 
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
+  const { expandedItems, setExpandedItems, navScrollPosition, setNavScrollPosition } = useNavbar();
+  const navRef = useRef<HTMLElement>(null);
+
+  // Restaurar posición del scroll
+  useEffect(() => {
+    if (navRef.current) {
+      navRef.current.scrollTop = navScrollPosition;
+    }
+  }, [navScrollPosition]);
+
+  // Actualizar posición del scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (navRef.current) {
+        setNavScrollPosition(navRef.current.scrollTop);
+      }
+    };
+
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (navElement) {
+        navElement.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  const toggleExpanded = (itemId: number) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId],
+    }));
+  };
+
   return (
     <aside
       className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50 ${
@@ -116,10 +155,16 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
       </div>
 
       {/* Menú */}
-      <nav className="flex-1 mt-6 overflow-y-auto scrollbar-hidden">
-        <div className="flex flex-col gap-6"> {/* Aumenté el gap a 6 como en el Dashboard */}
+      <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col gap-6">
           {menuItems.map((item) => (
-            <SidebarItem key={item.id} item={item} isOpen={isOpen} />
+            <SidebarItem
+              key={item.id}
+              item={item}
+              isOpen={isOpen}
+              isExpanded={!!expandedItems[item.id]}
+              toggleExpanded={() => toggleExpanded(item.id)}
+            />
           ))}
         </div>
       </nav>
@@ -127,9 +172,17 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
   );
 }
 
-function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+function SidebarItem({
+  item,
+  isOpen,
+  isExpanded,
+  toggleExpanded,
+}: {
+  item: any;
+  isOpen: boolean;
+  isExpanded: boolean;
+  toggleExpanded: () => void;
+}) {
   return (
     <div>
       <Link
@@ -140,7 +193,7 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
         onClick={(e) => {
           if (item.subItems) {
             e.preventDefault();
-            setIsExpanded(!isExpanded);
+            toggleExpanded();
           }
         }}
       >
@@ -167,18 +220,4 @@ function SidebarItem({ item, isOpen }: { item: any; isOpen: boolean }) {
       )}
     </div>
   );
-}
-
-const styles = `
-  .scrollbar-hidden::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hidden {
-    -ms-overflow-style: none; /* IE y Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-`;
-
-export function GlobalStyles() {
-  return <style>{styles}</style>;
 }
