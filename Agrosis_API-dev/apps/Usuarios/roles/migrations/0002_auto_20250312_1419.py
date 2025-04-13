@@ -4,7 +4,7 @@ def create_initial_roles(apps, schema_editor):
     Roles = apps.get_model('roles', 'Roles')
 
     # Crear roles
-    roles = ['aprendiz', 'pasante', 'instructor', 'administrador']
+    roles = ['Invitado', 'Pasante', 'Instructor', 'Administrador']
     for rol in roles:
         Roles.objects.get_or_create(nombre=rol)
 
