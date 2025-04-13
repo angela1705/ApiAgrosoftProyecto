@@ -7,17 +7,17 @@ def create_admin_user(apps, schema_editor):
     admin_role = Roles.objects.get(id=4)
 
     # Obtener el rol de administrador
-    admin_role = Roles.objects.filter(nombre='administrador').first()
+    admin_role = Roles.objects.filter(nombre='Administrador').first()
     if not admin_role:
         return  # Si no existe el rol, salir
     
     # Crear el usuario administrador si no existe
     Usuarios.objects.get_or_create(
-        email='admin@gmail.com',
+        email='admin01@gmail.com',
         defaults={
-            'username': 'admin',
-            'nombre': 'Admin',
-            'apellido': 'User',
+            'username': '@admin#',
+            'nombre': 'Administer',
+            'apellido': 'Userauth',
             'password': make_password('admin'),  
             'rol': admin_role,
             'is_staff': True,

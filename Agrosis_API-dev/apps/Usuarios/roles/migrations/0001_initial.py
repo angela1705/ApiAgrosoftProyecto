@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='Roles',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(choices=[('aprendiz', 'Aprendiz'), ('pasante', 'Pasante'), ('instructor', 'Instructor'), ('administrador', 'Administrador')], max_length=20, unique=True)),
+                ('nombre', models.CharField(choices=[('invitado', 'Invitado'), ('pasante', 'Pasante'), ('instructor', 'Instructor'), ('administrador', 'Administrador')], max_length=20, unique=True)),
                 ('fecha_creacion', models.DateTimeField(auto_now_add=True)),
                 ('fecha_actualizacion', models.DateTimeField(auto_now=True)),
             ],
