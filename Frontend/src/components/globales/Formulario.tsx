@@ -24,7 +24,7 @@ const Formulario: React.FC<FormContainerProps> = ({
 
   return (
     <div
-      className={`flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 sm:px-6 md:px-8 lg:px-10 ${className}`}
+      className={`flex justify-center items-center min-h-screen bg-gradient-to-br px-4 sm:px-6 md:px-8 lg:px-10 ${className}`}
     >
       <div className="w-full max-w-[90%] sm:max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 lg:p-10 transform transition-all duration-500 hover:shadow-2xl border border-gray-200">
         <h1
