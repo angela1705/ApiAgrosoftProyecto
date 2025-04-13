@@ -133,7 +133,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'agrosoft',
         'USER': 'postgres',
-        'PASSWORD': 'adso2024',
+        'PASSWORD': 'adso',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
@@ -233,9 +233,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'steventu06@gmail.com'
-EMAIL_HOST_PASSWORD = 'ytjb ipyp odsw ryqr' 
-DEFAULT_FROM_EMAIL = 'steventu06@gmail.com'
+EMAIL_HOST_USER = 'agrosoftadso2024@gmail.com'
+EMAIL_HOST_PASSWORD = 'kbup uwpx qxyb lywp' 
+DEFAULT_FROM_EMAIL = 'agrosoftadso2024@gmail.com'
 
 USE_TZ = True
 TIME_ZONE = 'America/Bogota'
