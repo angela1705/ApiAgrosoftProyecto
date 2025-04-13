@@ -157,7 +157,7 @@ class PasswordResetRequestView(APIView):
             send_mail(
                 'Restablecer Contraseña',
                 f'Haz clic aquí para restablecer tu contraseña: {reset_link}',
-                'steventu06@gmail.com',
+                'agrosoftadso2024@gmail.com',
                 [email],
                 fail_silently=False,
             )
