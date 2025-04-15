@@ -24,7 +24,7 @@ class PermisoPorRol(BasePermission):
         user = request.user
 
         rol = getattr(user, 'rol_id', None)
-        print(f"🧪 Evaluando permiso para: {user} (rol={rol}, staff={user.is_staff})")
+        print(f"Evaluando permiso para: {user} (rol={rol}, staff={user.is_staff})")
 
         if not user.is_authenticated:
             return False
