@@ -35,6 +35,9 @@ from apps.Finanzas.venta.api.router import ventaRouter
 from apps.Inventario.herramientas.api.routers import herramientaRouter
 from apps.Inventario.insumos.api.routers import insumoRouter
 from apps.Inventario.precio_producto.api.routers import precioProductoRouter
+from apps.Inventario.bodega.api.routers import bodegaRouter
+from apps.Inventario.bodega_insumo.api.routers import bodegaInsumoRouter
+from apps.Inventario.bodega_herramienta.api.routers import bodegaHerramientaRouter
 from apps.Iot.datos_meteorologicos.api.routers import Datos_metereologicosRouter
 from apps.Iot.sensores.api.routers import SensoresRouter
 
@@ -93,6 +96,9 @@ routerFinanzas.registry.extend(ventaRouter.registry)
 routerInventario.registry.extend(herramientaRouter.registry)
 routerInventario.registry.extend(insumoRouter.registry)
 routerInventario.registry.extend(precioProductoRouter.registry)
+routerInventario.registry.extend(bodegaRouter.registry)
+routerInventario.registry.extend(bodegaInsumoRouter.registry)
+routerInventario.registry.extend(bodegaHerramientaRouter.registry)
 
 # IOT
 routerIOT.registry.extend(Datos_metereologicosRouter.registry)

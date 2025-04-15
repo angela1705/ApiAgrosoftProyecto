@@ -47,6 +47,12 @@ import InsumoPage from "./pages/inventario/InsumoPage";
 import ListaInsumoPage from "./pages/inventario/ListaInsumoPage";
 import Precio_ProductoPage from "./pages/inventario/Precio_ProductoPage";
 import ListaPrecio_ProductoPage from "./pages/inventario/ListaPrecio_ProductoPage";
+import BodegaInsumoPage from './pages/inventario/BodegaInsumoPage';
+import ListaBodegaInsumoPage from './pages/inventario/ListaBodegaInsumoPage';
+import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
+import ListaBodegaHerramientaPage from './pages/inventario/ListaBodegaHerramientaPage';
+import BodegaPage from './pages/inventario/BodegaPage';
+import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
 import PerfilPage from "./pages/usuarios/PerfilPage";
 import SensoresPage from "./pages/iot/SensoresPage";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
@@ -119,6 +125,12 @@ const App: React.FC = () => {
               <Route path="/inventario/preciosproductos/" element={<Precio_ProductoPage />} />
               <Route path="/inventario/listarpreciosproductos/" element={<ListaPrecio_ProductoPage />} />
               <Route path="/inventario/listarinsumos/" element={<ListaInsumoPage />} />
+              <Route path="/inventario/bodegaherramienta/"element={<BodegaHerramientaPage/>} />
+              <Route path="/inventario/listarbodegaherramienta/" element={<ListaBodegaHerramientaPage/>} />
+              <Route path="/inventario/bodegainsumo/"element={<BodegaInsumoPage/>} />
+              <Route path="/inventario/listarbodegainsumos/" element={<ListaBodegaInsumoPage/>} />
+              <Route path="/inventario/bodega/" element={<BodegaPage/>} />
+              <Route path="/inventario/listarbodega/" element={<ListaBodegaPage/>} />
               <Route path="/reportes/" element={<Reportes />} />
               <Route path="/cultivo/tipoespecie/" element={<TipoEspeciePage />} />
               <Route path="/cultivo/listartipoespecie/" element={<ListaTipoEspeciePage />} />
