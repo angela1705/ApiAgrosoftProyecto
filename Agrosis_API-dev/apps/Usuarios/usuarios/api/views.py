@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from .permissions import PermisoPorRol
 from apps.Usuarios.usuarios.models import Usuarios, PasswordResetToken
 from apps.Usuarios.usuarios.api.serializer import UsuariosSerializer, RegistroUsuarioSerializer
 from django.core.mail import send_mail
@@ -17,7 +18,6 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib import colors
 from django.utils.timezone import make_aware
 from django.utils import timezone
-
 
 hoy = datetime.today()
 

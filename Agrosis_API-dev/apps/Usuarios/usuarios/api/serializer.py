@@ -46,6 +46,10 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
         if usuario.rol and usuario.rol.id == 4:
             usuario.is_superuser = True
             usuario.is_staff = True
+            print("SERIALIZER🔴")
+        else:
+            usuario.is_superuser = False
+            usuario.is_staff = False    
 
         usuario.set_password(password)  # Encripta la contraseña
         usuario.save()

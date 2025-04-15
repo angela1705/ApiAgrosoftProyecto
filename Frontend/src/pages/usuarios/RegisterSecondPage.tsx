@@ -58,8 +58,8 @@ const UsuariosSecondPage: React.FC = () => {
           onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
         />
         <ReuInput
-          label="Nombre de Usuario"
-          placeholder="Ingrese el nombre de usuario"
+          label="Username"
+          placeholder="Ingrese el username"
           type="text"
           value={usuario.username}
           onChange={(e) => setUsuario({ ...usuario, username: e.target.value })}
