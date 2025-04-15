@@ -11,9 +11,9 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime
-from ..models import Insumo
+from ..models import Insumo, UnidadMedida
 from apps.Cultivo.actividades.models import Actividad
-from .serializers import InsumoSerializer
+from .serializers import InsumoSerializer, UnidadMedidaSerializer
 
 class InsumoViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -99,27 +99,26 @@ class InsumoViewSet(ModelViewSet):
         cantidad_total = sum(insumo.cantidad for insumo in insumos)
 
         data_insumos = [
-            ["ID", "Nombre", "Descripción", "Cantidad", "U de Medida", "T Empacado", "F Registro", "F Caducidad", "F Actualización", "Activo", "Precio"]
+            ["ID", "Nombre", "Descripción", "Cantidad", "U de Medida", "T Empacado", "F Registro", "F Caducidad", "Activo", "Precio"]
         ]
         for insumo in insumos:
             fecha_registro = insumo.fecha_registro.strftime('%Y-%m-%d %H:%M') if insumo.fecha_registro else "N/A"
             fecha_caducidad = insumo.fecha_caducidad.strftime('%Y-%m-%d') if insumo.fecha_caducidad else "N/A"
-            fecha_actualizacion = insumo.fecha_actualizacion.strftime('%Y-%m-%d %H:%M') if insumo.fecha_actualizacion else "N/A"
+            unidad_medida = insumo.unidad_medida.nombre if insumo.unidad_medida else "Sin asignar"
             data_insumos.append([
                 str(insumo.id),
                 insumo.nombre,
                 insumo.descripcion,
                 str(insumo.cantidad),
-                insumo.unidad_medida,
+                unidad_medida,
                 insumo.tipo_empacado if insumo.tipo_empacado else "N/A",
                 fecha_registro,
                 fecha_caducidad,
-                fecha_actualizacion,
                 "Sí" if insumo.activo else "No",
                 str(insumo.precio_insumo)
             ])
 
-        tabla_insumos = Table(data_insumos, colWidths=[30, 60, 90, 40, 50, 50, 70, 50, 70, 30, 50])
+        tabla_insumos = Table(data_insumos, colWidths=[30, 70, 100, 40, 50, 50, 80, 50, 30, 50])
         tabla_insumos.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -128,8 +127,6 @@ class InsumoViewSet(ModelViewSet):
             ('FONTSIZE', (0, 0), (-1, -1), 7),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
             ('VALIGN', (0, 1), (-1, -1), 'MIDDLE'),
-            ('ROTATE', (0, 0), (-1, 0), 90),
-            ('VALIGN', (0, 0), (-1, 0), 'BOTTOM'),
             ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),
         ]))
         elementos.append(tabla_insumos)
@@ -144,3 +141,17 @@ class InsumoViewSet(ModelViewSet):
 
         doc.build(elementos)
         return response
+
+    @action(detail=False, methods=['get'])
+    def unidades_medida(self, request):
+        unidades = UnidadMedida.objects.all()
+        serializer = UnidadMedidaSerializer(unidades, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'])
+    def crear_unidad_medida(self, request):
+        serializer = UnidadMedidaSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(creada_por_usuario=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

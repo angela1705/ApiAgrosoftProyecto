@@ -74,6 +74,9 @@ const menuItems = [
       { id: 26, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaWarehouse /> },
       { id: 28, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaWarehouse /> },
       { id: 24, label: "Producto", path: "/inventario/listarpreciosproductos", icon: <FaWarehouse /> },
+      { id: 37, label: "Bodega", path: "/inventario/listarbodega", icon: <FaWarehouse /> },
+      { id: 25, label: "Bodega Herramienta", path: "/inventario/listarbodegaherramienta", icon: <FaWarehouse/> },
+      { id: 27, label: "Bodega Insumo", path: "/inventario/listarbodegainsumos", icon: <FaWarehouse /> },
     ],
   },
   {

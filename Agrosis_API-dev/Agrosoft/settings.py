@@ -63,6 +63,10 @@ INSTALLED_APPS = [
     'apps.Inventario.herramientas',
     'apps.Inventario.insumos',
     'apps.Inventario.precio_producto',
+    'apps.Inventario.bodega',
+    'apps.Inventario.bodega_insumo',
+    'apps.Inventario.bodega_herramienta',
+    'apps.Inventario.bodega_precio_producto',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
@@ -131,9 +135,9 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft',
+        'NAME': 'agrosoft_leo',
         'USER': 'postgres',
-        'PASSWORD': 'adso',
+        'PASSWORD': 'root',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
