@@ -79,7 +79,7 @@ const actualizarInsumo = async (id: number, insumo: Insumo & { unidad_medida_id?
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const { unidad_medida, ...rest } = insumo; // Excluimos unidad_medida
+        const { unidad_medida, ...rest } = insumo;
         const data = {
             ...rest,
             unidad_medida_id: insumo.unidad_medida?.id || insumo.unidad_medida_id || null,
