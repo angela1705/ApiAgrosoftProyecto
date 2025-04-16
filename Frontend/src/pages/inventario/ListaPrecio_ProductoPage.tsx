@@ -1,31 +1,39 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { usePreciosProductos, useActualizarPrecioProducto, useEliminarPrecioProducto, useRegistrarVenta } from "@/hooks/inventario/usePrecio_Producto";
+import {usePreciosProductos,useActualizarPrecioProducto,useEliminarPrecioProducto,useUnidadesMedida,useCrearUnidadMedida,} from "@/hooks/inventario/usePrecio_Producto";
 import { useCosechas } from "@/hooks/cultivo/usecosecha";
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
-import { EditIcon, Trash2 } from 'lucide-react';
-import { PrecioProducto } from "@/types/inventario/Precio_producto";
+import { EditIcon, Trash2 } from "lucide-react";
+import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 
-const ListaPrecio_ProductoPage: React.FC = () => {
-    const [selectedPrecioProducto, setSelectedPrecioProducto] = useState<PrecioProducto | null>(null);
+const ListaPrecioProductoPage: React.FC = () => {
+    const [selectedPrecioProducto, setSelectedPrecioProducto] =
+        useState<PrecioProducto | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [isVentaModalOpen, setIsVentaModalOpen] = useState(false);
-    const [cantidadVenta, setCantidadVenta] = useState<number>(0);
+    const [isUnidadModalOpen, setIsUnidadModalOpen] = useState(false);
+    const [nuevaUnidad, setNuevaUnidad] = useState<
+        Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">
+    >({
+        nombre: "",
+        descripcion: "",
+    });
 
     const { data: preciosProductos, isLoading, refetch } = usePreciosProductos();
     const { data: cosechas } = useCosechas();
+    const { data: unidadesMedida, isLoading: isLoadingUnidades } =
+        useUnidadesMedida();
     const actualizarMutation = useActualizarPrecioProducto();
     const eliminarMutation = useEliminarPrecioProducto();
-    const registrarVentaMutation = useRegistrarVenta();
+    const crearUnidadMedida = useCrearUnidadMedida();
     const navigate = useNavigate();
 
     const columns = [
-        { name: "Producto", uid: "nombre" },
-        { name: "Unidad (gramos)", uid: "unidad_medida_gramos" },
+        { name: "Cosecha", uid: "cosecha" },
+        { name: "Unidad de Medida", uid: "unidad_medida" },
         { name: "Precio", uid: "precio" },
         { name: "Fecha Registro", uid: "fecha_registro" },
         { name: "Stock", uid: "stock" },
@@ -33,227 +41,303 @@ const ListaPrecio_ProductoPage: React.FC = () => {
         { name: "Acciones", uid: "acciones" },
     ];
 
-    const handleEdit = (precioProducto: PrecioProducto) => {
-        setSelectedPrecioProducto({ ...precioProducto });
-        setIsEditModalOpen(true);
-    };
-
-    const handleDelete = (precioProducto: PrecioProducto) => {
-        setSelectedPrecioProducto(precioProducto);
-        setIsDeleteModalOpen(true);
-    };
-
-    const handleVenta = (precioProducto: PrecioProducto) => {
-        setSelectedPrecioProducto(precioProducto);
-        setCantidadVenta(0);
-        setIsVentaModalOpen(true);
-    };
-
-    const handleConfirmDelete = () => {
-        if (selectedPrecioProducto && selectedPrecioProducto.id !== undefined) {
-            eliminarMutation.mutate(selectedPrecioProducto.id, {
-                onSuccess: () => {
-                    setIsDeleteModalOpen(false);
-                    setSelectedPrecioProducto(null);
-                    refetch();
-                },
-                onError: (error: any) => {
-                    console.error("Error en eliminación:", error);
-                    setIsDeleteModalOpen(false);
-                },
-            });
-        }
-    };
-
-    const handleConfirmVenta = () => {
-        if (selectedPrecioProducto && selectedPrecioProducto.id !== undefined) {
-            registrarVentaMutation.mutate(
-                { id: selectedPrecioProducto.id, cantidad: cantidadVenta },
-                {
-                    onSuccess: () => {
-                        setIsVentaModalOpen(false);
-                        setSelectedPrecioProducto(null);
-                        refetch();
-                    },
-                }
-            );
-        }
-    };
-
     const transformedData = (preciosProductos ?? []).map((precioProducto) => {
-        const cosecha = cosechas?.find((c) => c.id === precioProducto.cultivo);
+        const cosecha = precioProducto.cosecha
+            ? cosechas?.find((c) => c.id === precioProducto.cosecha)
+            : null;
         return {
-          id: precioProducto.id.toString(),
-          nombre: String(cosecha ? `Cultivo ${cosecha.id_cultivo} - ${cosecha.fecha}` : precioProducto.cultivo),
-          unidad_medida_gramos: String(precioProducto.unidad_medida_gramos),
-          precio: String(precioProducto.precio.toFixed(2)),
-          fecha_registro: String(precioProducto.fecha_registro),
-          stock: String(precioProducto.stock), // Asegurar que sea string
-          fecha_caducidad: String(precioProducto.fecha_caducidad || "N/A"),
-          acciones: (
-            <>
-              <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(precioProducto)}>
-                <EditIcon size={22} color="black" />
-              </button>
-              <button className="text-red-500 hover:underline mr-2" onClick={() => handleDelete(precioProducto)}>
-                <Trash2 size={22} color="red" />
-              </button>
-              <button className="text-blue-500 hover:underline" onClick={() => handleVenta(precioProducto)}>
-                Vender
-              </button>
-            </>
-          ),
+            id: precioProducto.id.toString(),
+            cosecha: cosecha
+                ? `Cosecha ${cosecha.id_cultivo} - ${cosecha.fecha}`
+                : "Sin cosecha",
+            unidad_medida: precioProducto.unidad_medida
+                ? precioProducto.unidad_medida.nombre
+                : "Sin asignar",
+            precio: precioProducto.precio.toFixed(2),
+            fecha_registro: precioProducto.fecha_registro,
+            stock: precioProducto.stock.toString(),
+            fecha_caducidad: precioProducto.fecha_caducidad || "No especificada",
+            acciones: (
+                <>
+                    <button
+                        className="text-green-500 hover:underline mr-2"
+                        onClick={() => {
+                            setSelectedPrecioProducto({ ...precioProducto });
+                            setIsEditModalOpen(true);
+                        }}
+                    >
+                        <EditIcon size={22} color="black" />
+                    </button>
+                    <button
+                        className="text-red-500 hover:underline mr-2"
+                        onClick={() => {
+                            setSelectedPrecioProducto(precioProducto);
+                            setIsDeleteModalOpen(true);
+                        }}
+                    >
+                        <Trash2 size={22} color="red" />
+                    </button>
+                </>
+            ),
         };
-      });
+    });
+
+    const handleSubmitUnidadMedida = () => {
+        crearUnidadMedida.mutate(nuevaUnidad, {
+            onSuccess: () => {
+                setIsUnidadModalOpen(false);
+                setNuevaUnidad({ nombre: "", descripcion: "" });
+            },
+        });
+    };
+
+    const formatDate = (date: string | null) => {
+        return date || "";
+    };
 
     return (
         <DefaultLayout>
-            <div className="w-full flex flex-col items-center min-h-screen p-6">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Lista de Precios de Productos Registrados</h2>
-                <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-                    <div className="mb-4 flex justify-start">
-                        <button
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                            onClick={() => navigate("/inventario/preciosproductos/")}
-                        >
-                            + Registrar
-                        </button>
-                    </div>
-
-                    {isLoading ? (
-                        <p className="text-gray-600">Cargando...</p>
-                    ) : (
-                        <Tabla columns={columns} data={transformedData} />
-                    )}
-
-                    <ReuModal
-                        isOpen={isEditModalOpen}
-                        onOpenChange={setIsEditModalOpen}
-                        title="Editar Precio de Producto"
-                        onConfirm={() => {
-                            if (selectedPrecioProducto && selectedPrecioProducto.id !== undefined) {
-                                actualizarMutation.mutate(selectedPrecioProducto, {
-                                    onSuccess: () => {
-                                        setIsEditModalOpen(false);
-                                        refetch();
-                                    },
-                                });
-                            }
-                        }}
-                    >
-                        {selectedPrecioProducto && (
-                            <>
-                                <div className="flex items-center space-x-2">
-                                    <label className="text-sm font-medium text-gray-700 w-32">Producto</label>
-                                    <select
-                                        name="cultivo"
-                                        value={selectedPrecioProducto.cultivo || ""}
-                                        onChange={(e) =>
-                                            setSelectedPrecioProducto({
-                                                ...selectedPrecioProducto,
-                                                cultivo: Number(e.target.value),
-                                            })
-                                        }
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
-                                    >
-                                        <option value="">Seleccione un producto</option>
-                                        {cosechas?.map((cosecha) => (
-                                            <option key={cosecha.id} value={cosecha.id}>
-                                                {`Cultivo ${cosecha.id_cultivo} - ${cosecha.fecha}`}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <ReuInput
-                                    label="Unidad (gramos)"
-                                    placeholder="Ingrese la unidad en gramos"
-                                    type="number"
-                                    value={selectedPrecioProducto.unidad_medida_gramos.toString()}
-                                    onChange={(e) =>
-                                        setSelectedPrecioProducto({
-                                            ...selectedPrecioProducto,
-                                            unidad_medida_gramos: Number(e.target.value),
-                                        })
-                                    }
-                                />
-                                <ReuInput
-                                    label="Precio"
-                                    placeholder="Ingrese el precio"
-                                    type="number"
-                                    value={selectedPrecioProducto.precio.toString()}
-                                    onChange={(e) =>
-                                        setSelectedPrecioProducto({
-                                            ...selectedPrecioProducto,
-                                            precio: Number(e.target.value),
-                                        })
-                                    }
-                                />
-                                <ReuInput
-                                    label="Fecha de Registro"
-                                    type="date"
-                                    value={selectedPrecioProducto.fecha_registro}
-                                    onChange={(e) =>
-                                        setSelectedPrecioProducto({
-                                            ...selectedPrecioProducto,
-                                            fecha_registro: e.target.value,
-                                        })
-                                    }
-                                />
-                                <ReuInput
-                                    label="Stock"
-                                    placeholder="Ingrese el stock"
-                                    type="number"
-                                    value={selectedPrecioProducto.stock.toString()}
-                                    onChange={(e) =>
-                                        setSelectedPrecioProducto({
-                                            ...selectedPrecioProducto,
-                                            stock: Number(e.target.value),
-                                        })
-                                    }
-                                />
-                            
-                                <ReuInput
-                                    label="Fecha de Caducidad"
-                                    type="date"
-                                    value={selectedPrecioProducto.fecha_caducidad || ""}
-                                    onChange={(e) =>
-                                        setSelectedPrecioProducto({
-                                            ...selectedPrecioProducto,
-                                            fecha_caducidad: e.target.value || null,
-                                        })
-                                    }
-                                />
-                            </>
-                        )}
-                    </ReuModal>
-
-                    <ReuModal
-                        isOpen={isDeleteModalOpen}
-                        onOpenChange={setIsDeleteModalOpen}
-                        title="¿Estás seguro de eliminar este precio de producto?"
-                        onConfirm={handleConfirmDelete}
-                    >
-                        <p>Esta acción es irreversible.</p>
-                    </ReuModal>
-
-                    <ReuModal
-                        isOpen={isVentaModalOpen}
-                        onOpenChange={setIsVentaModalOpen}
-                        title="Registrar Venta"
-                        onConfirm={handleConfirmVenta}
-                    >
-                        <ReuInput
-                            label="Cantidad a vender"
-                            placeholder="Ingrese la cantidad"
-                            type="number"
-                            value={cantidadVenta.toString()}
-                            onChange={(e) => setCantidadVenta(Number(e.target.value))}
-                        />
-                    </ReuModal>
-                </div>
+            <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">
+                Lista de Precios de Productos Registrados
+            </h2>
+            <br />
+            <br />
+            <div className="mb-2 flex justify-start gap-4">
+                <button
+                    className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-md hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                    onClick={() => navigate("/inventario/preciosproductos/")}
+                >
+                    + Registrar
+                </button>
             </div>
+
+            {isLoading ? (
+                <p className="text-gray-600">Cargando...</p>
+            ) : transformedData.length === 0 ? (
+                <p className="text-gray-600">
+                    No hay precios de productos registrados.
+                </p>
+            ) : (
+                <Tabla columns={columns} data={transformedData} />
+            )}
+
+            <ReuModal
+                isOpen={isEditModalOpen}
+                onOpenChange={setIsEditModalOpen}
+                title="Editar Precio de Producto"
+                onConfirm={() => {
+                    if (
+                        selectedPrecioProducto &&
+                        selectedPrecioProducto.id !== undefined
+                    ) {
+                        actualizarMutation.mutate(
+                            {
+                                id: selectedPrecioProducto.id,
+                                precioProducto: selectedPrecioProducto,
+                            },
+                            {
+                                onSuccess: () => {
+                                    setIsEditModalOpen(false);
+                                    refetch();
+                                },
+                            }
+                        );
+                    }
+                }}
+            >
+                {selectedPrecioProducto && (
+                    <>
+                        <div className="flex items-end gap-2">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Cosecha
+                                </label>
+                                <select
+                                    value={selectedPrecioProducto.cosecha ?? ""}
+                                    onChange={(e) =>
+                                        setSelectedPrecioProducto({
+                                            ...selectedPrecioProducto,
+                                            cosecha: e.target.value
+                                                ? Number(e.target.value)
+                                                : null,
+                                        })
+                                    }
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="">Seleccione una cosecha</option>
+                                    {cosechas?.map((cosecha) => (
+                                        <option
+                                            key={cosecha.id}
+                                            value={cosecha.id}
+                                        >
+                                            {`Cosecha ${cosecha.id_cultivo} - ${cosecha.fecha}`}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex items-end gap-2">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Unidad de Medida
+                                </label>
+                                <select
+                                    value={
+                                        selectedPrecioProducto.unidad_medida
+                                            ?.id ?? ""
+                                    }
+                                    onChange={(e) =>
+                                        setSelectedPrecioProducto({
+                                            ...selectedPrecioProducto,
+                                            unidad_medida:
+                                                unidadesMedida?.find(
+                                                    (u) =>
+                                                        u.id ===
+                                                        Number(e.target.value)
+                                                ) || null,
+                                        })
+                                    }
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                    disabled={isLoadingUnidades}
+                                >
+                                    <option value="">
+                                        Seleccione una unidad
+                                    </option>
+                                    {unidadesMedida?.map((unidad) => (
+                                        <option
+                                            key={unidad.id}
+                                            value={unidad.id}
+                                        >
+                                            {unidad.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsUnidadModalOpen(true)}
+                                className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            >
+                                Nueva Unidad
+                            </button>
+                        </div>
+                        <ReuInput
+                            label="Precio"
+                            placeholder="Ingrese el precio"
+                            type="number"
+                            variant="bordered"
+                            radius="md"
+                            step="0.01"
+                            value={selectedPrecioProducto.precio.toString()}
+                            onChange={(e) =>
+                                setSelectedPrecioProducto({
+                                    ...selectedPrecioProducto,
+                                    precio: Number(e.target.value),
+                                })
+                            }
+                        />
+                        <ReuInput
+                            label="Fecha de Registro"
+                            type="date"
+                            variant="bordered"
+                            radius="md"
+                            value={selectedPrecioProducto.fecha_registro}
+                            onChange={(e) =>
+                                setSelectedPrecioProducto({
+                                    ...selectedPrecioProducto,
+                                    fecha_registro: e.target.value,
+                                })
+                            }
+                        />
+                        <ReuInput
+                            label="Stock"
+                            placeholder="Ingrese el stock"
+                            type="number"
+                            variant="bordered"
+                            radius="md"
+                            value={selectedPrecioProducto.stock.toString()}
+                            onChange={(e) =>
+                                setSelectedPrecioProducto({
+                                    ...selectedPrecioProducto,
+                                    stock: Number(e.target.value),
+                                })
+                            }
+                        />
+                        <ReuInput
+                            label="Fecha de Caducidad"
+                            type="date"
+                            variant="bordered"
+                            radius="md"
+                            value={formatDate(
+                                selectedPrecioProducto.fecha_caducidad
+                            )}
+                            onChange={(e) =>
+                                setSelectedPrecioProducto({
+                                    ...selectedPrecioProducto,
+                                    fecha_caducidad: e.target.value || null,
+                                })
+                            }
+                        />
+                    </>
+                )}
+            </ReuModal>
+
+            <ReuModal
+                isOpen={isUnidadModalOpen}
+                onOpenChange={setIsUnidadModalOpen}
+                title="Crear Nueva Unidad de Medida"
+                onConfirm={handleSubmitUnidadMedida}
+            >
+                <ReuInput
+                    label="Nombre"
+                    placeholder="Ej. kg, L"
+                    type="text"
+                    variant="bordered"
+                    radius="md"
+                    value={nuevaUnidad.nombre}
+                    onChange={(e) =>
+                        setNuevaUnidad({ ...nuevaUnidad, nombre: e.target.value })
+                    }
+                />
+                <ReuInput
+                    label="Descripción"
+                    placeholder="Descripción de la unidad"
+                    type="text"
+                    variant="bordered"
+                    radius="md"
+                    value={nuevaUnidad.descripcion ?? ""}
+                    onChange={(e) =>
+                        setNuevaUnidad({
+                            ...nuevaUnidad,
+                            descripcion: e.target.value,
+                        })
+                    }
+                />
+            </ReuModal>
+
+            <ReuModal
+                isOpen={isDeleteModalOpen}
+                onOpenChange={setIsDeleteModalOpen}
+                title="¿Estás seguro de eliminar este precio de producto?"
+                onConfirm={() => {
+                    if (
+                        selectedPrecioProducto &&
+                        selectedPrecioProducto.id !== undefined
+                    ) {
+                        eliminarMutation.mutate(selectedPrecioProducto.id, {
+                            onSuccess: () => {
+                                setIsDeleteModalOpen(false);
+                                setSelectedPrecioProducto(null);
+                                refetch();
+                            },
+                        });
+                    }
+                }}
+            >
+                <p>Esta acción es irreversible.</p>
+            </ReuModal>
         </DefaultLayout>
     );
 };
 
-export default ListaPrecio_ProductoPage;
+export default ListaPrecioProductoPage;
