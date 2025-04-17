@@ -1,13 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import {usePreciosProductos,useActualizarPrecioProducto,useEliminarPrecioProducto,useUnidadesMedida,useCrearUnidadMedida,} from "@/hooks/inventario/usePrecio_Producto";
+import { usePreciosProductos, useActualizarPrecioProducto, useEliminarPrecioProducto, useUnidadesMedida, useCrearUnidadMedida } from "@/hooks/inventario/usePrecio_Producto";
 import { useCosechas } from "@/hooks/cultivo/usecosecha";
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from "lucide-react";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
+
+
+const formatCOPNumber = (value: number | string): string => {
+    const num = typeof value === 'string' ? parseFloat(value.replace(/\./g, '')) : value;
+    if (isNaN(num)) return '';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
+
+const parseCOPNumber = (value: string): number => {
+    return parseFloat(value.replace(/\./g, '')) || 0;
+};
 
 const ListaPrecioProductoPage: React.FC = () => {
     const [selectedPrecioProducto, setSelectedPrecioProducto] =
@@ -53,9 +65,9 @@ const ListaPrecioProductoPage: React.FC = () => {
             unidad_medida: precioProducto.unidad_medida
                 ? precioProducto.unidad_medida.nombre
                 : "Sin asignar",
-            precio: precioProducto.precio.toFixed(2),
+            precio: formatCOPNumber(precioProducto.precio),
             fecha_registro: precioProducto.fecha_registro,
-            stock: precioProducto.stock.toString(),
+            stock: formatCOPNumber(precioProducto.stock),
             fecha_caducidad: precioProducto.fecha_caducidad || "No especificada",
             acciones: (
                 <>
@@ -224,15 +236,14 @@ const ListaPrecioProductoPage: React.FC = () => {
                         <ReuInput
                             label="Precio"
                             placeholder="Ingrese el precio"
-                            type="number"
+                            type="text"
                             variant="bordered"
                             radius="md"
-                            step="0.01"
-                            value={selectedPrecioProducto.precio.toString()}
+                            value={formatCOPNumber(selectedPrecioProducto.precio)}
                             onChange={(e) =>
                                 setSelectedPrecioProducto({
                                     ...selectedPrecioProducto,
-                                    precio: Number(e.target.value),
+                                    precio: parseCOPNumber(e.target.value),
                                 })
                             }
                         />
@@ -252,14 +263,14 @@ const ListaPrecioProductoPage: React.FC = () => {
                         <ReuInput
                             label="Stock"
                             placeholder="Ingrese el stock"
-                            type="number"
+                            type="text"
                             variant="bordered"
                             radius="md"
-                            value={selectedPrecioProducto.stock.toString()}
+                            value={formatCOPNumber(selectedPrecioProducto.stock)}
                             onChange={(e) =>
                                 setSelectedPrecioProducto({
                                     ...selectedPrecioProducto,
-                                    stock: Number(e.target.value),
+                                    stock: parseCOPNumber(e.target.value),
                                 })
                             }
                         />
