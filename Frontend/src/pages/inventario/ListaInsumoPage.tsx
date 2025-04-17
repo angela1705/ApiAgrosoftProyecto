@@ -186,10 +186,10 @@ const ListaInsumoPage: React.FC = () => {
                 onConfirm={async () => {
                     if (selectedInsumo && selectedInsumo.id !== undefined) {
                         if (selectedInsumo.es_compuesto && selectedInsumo.componentes) {
-                            // Calcular la diferencia de cantidad
+                            
                             const cantidadDiferencia = selectedInsumo.cantidad - originalCantidad;
                             if (cantidadDiferencia !== 0) {
-                                // Validar stock de componentes
+                                
                                 for (const componente of selectedInsumo.componentes) {
                                     const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
                                     if (!insumoComponente) {
@@ -209,7 +209,7 @@ const ListaInsumoPage: React.FC = () => {
                                     }
                                 }
 
-                                // Actualizar cantidades de componentes
+                                
                                 for (const componente of selectedInsumo.componentes) {
                                     const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
                                     if (insumoComponente && insumoComponente.id !== undefined) {
@@ -229,7 +229,7 @@ const ListaInsumoPage: React.FC = () => {
                             }
                         }
 
-                        // Actualizar el insumo
+                        
                         actualizarMutation.mutate({ 
                             id: selectedInsumo.id, 
                             insumo: {

@@ -54,7 +54,6 @@ const InsumoPage: React.FC = () => {
         e.preventDefault();
 
         if (insumo.es_compuesto && insumo.componentes_data && insumo.cantidad > 0) {
-            // Validar y descontar stock de componentes
             for (const componente of insumo.componentes_data) {
                 const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
                 if (!insumoComponente) {
@@ -74,7 +73,7 @@ const InsumoPage: React.FC = () => {
                 }
             }
 
-            // Descontar cantidades de componentes
+            
             for (const componente of insumo.componentes_data) {
                 const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
                 if (insumoComponente && insumoComponente.id !== undefined) {
@@ -93,7 +92,7 @@ const InsumoPage: React.FC = () => {
             }
         }
 
-        // Registrar el insumo
+        
         registrarInsumo.mutate(insumo, {
             onSuccess: () => {
                 setInsumo({
