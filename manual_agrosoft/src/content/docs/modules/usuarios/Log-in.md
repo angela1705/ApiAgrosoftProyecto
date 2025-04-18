@@ -36,16 +36,19 @@ eso incluye registrar otros usuarios y definir sus permisos en el sistema.
 - Si el formulario fue diligenciado de una forma correcta, podra ver este mensaje:
 
 - **"Usuario registrado correctamente"**
+<img src="/public/registro3.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
 ⚠️ cada ususario tiene datos unicos, no puedes usar credenciales(nombres, correos) ya registradas,
 teniendo en cuenta eso **NO** puedes usar el correo admin@gmail.com o nombre **admin** en ningún registro ya que existe un  usuario por defecto con estas credenciales 
-<img src="/public/registro3.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 
   Para crear una cuenta, los datos deben cumplir estos requisitos:
 - **Nombre**: Unicamente ingresa texto, sin números o caracteres especiales 
-- ⚠️evita ingresar esto:(1-2-3/+#&%)
+- ⚠️Solo ingresa texto, evita ingresar numeros:(1-2-3)
+- ⚠️Solo ingresa texto, evita ingresar Caracteres especiales:(+#&%)
 - **Apellido**: Unicamente ingresa texto, sin números o caracteres especiales 
-- ⚠️evita ingresar esto:(1-2-3/+#&%)
+- ⚠️Solo ingresa texto, evita ingresar numeros:(1-2-3)
+- ⚠️Solo ingresa texto, evita ingresar Caracteres especiales:(+#&%)
 - **Contraseña**: usa una contraseña segura con caracteres variados que te sea faclíl de recordar.
 - **Username**: Nombre de usuario el cual puedes personalizar libremente.
 - **Email**: Dirección de correo electronico

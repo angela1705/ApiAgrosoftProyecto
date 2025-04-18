@@ -16,9 +16,9 @@ export const useRegistrarUsuario = () => {
   const queryClient = useQueryClient();
 
   const registrarUsuario = async (usuario: NuevoUsuario) => {
-    const response = await axios.post(`${API_URL}registro/`, { 
-      ...usuario, 
-      rol_id: 1  // Se asigna automáticamente el rol "Aprendiz"
+    const response = await axios.post(`${API_URL}registro/`, {
+      ...usuario,
+      rol_id: 1, // siempre aprendiz
     });
     return response.data;
   };
@@ -27,10 +27,48 @@ export const useRegistrarUsuario = () => {
     mutationFn: registrarUsuario,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
-      addToast({ title: "Éxito", description: "Usuario registrado con éxito", timeout: 3000 });
+      addToast({
+        title: "Éxito",
+        description: "Usuario registrado con éxito.",
+        timeout: 3000,
+      });
     },
-    onError: (error) => {
-      addToast({ title: "Error", description: error.message || "Error al registrar el usuario", timeout: 3000 });
+    onError: (error: any) => {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const data = error.response.data;
+
+        // Mostrar errores específicos
+        if (data.username) {
+          addToast({
+            title: "Nombre de usuario inválido",
+            description: data.username[0],
+            timeout: 4000,
+          });
+        }
+
+        if (data.email) {
+          addToast({
+            title: "Correo electrónico inválido",
+            description: data.email[0],
+            timeout: 4000,
+          });
+        }
+
+        // Otros errores generales
+        if (!data.username && !data.email) {
+          addToast({
+            title: "Error",
+            description: "Error al registrar el usuario.",
+            timeout: 3000,
+          });
+        }
+      } else {
+        addToast({
+          title: "Error",
+          description: error.message || "Error inesperado.",
+          timeout: 3000,
+        });
+      }
     },
   });
 

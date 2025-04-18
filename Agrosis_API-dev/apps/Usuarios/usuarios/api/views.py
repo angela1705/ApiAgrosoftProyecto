@@ -131,6 +131,7 @@ class RegistroUsuarioView(APIView):
 
         serializer = RegistroUsuarioSerializer(data=request.data)
         if serializer.is_valid():
+            
             usuario = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
