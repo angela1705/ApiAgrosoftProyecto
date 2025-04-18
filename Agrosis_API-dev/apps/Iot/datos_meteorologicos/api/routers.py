@@ -1,13 +1,6 @@
-from .views import Datos_metereologicosViewset
 from rest_framework.routers import DefaultRouter
-from django.urls import re_path
-from apps.Iot.datos_meteorologicos.api.consumer import DatosMeteorologicosConsumer , RealtimeDataConsumer
+from apps.Iot.datos_meteorologicos.api.views import DatosMeteorologicosViewSet, EvapotranspiracionViewSet
+
 Datos_metereologicosRouter = DefaultRouter()
-
-Datos_metereologicosRouter.register(prefix='datosmetereologicos',viewset=Datos_metereologicosViewset,basename='datosmetereologicos')
-
-
-websocket_urlpatterns = [
-    re_path(r"ws/meteo/$", DatosMeteorologicosConsumer.as_asgi()),
-    re_path(r"ws/realtime/$", RealtimeDataConsumer.as_asgi()),
-]
+Datos_metereologicosRouter.register(r'datosmetereologicos', DatosMeteorologicosViewSet, basename='datosmetereologicos')
+Datos_metereologicosRouter.register(r'evapotranspiracion', EvapotranspiracionViewSet, basename='evapotranspiracion')
