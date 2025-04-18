@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { useInsumos, useActualizarInsumo, useEliminarInsumo, useUnidadesMedida, useCrearUnidadMedida } from "@/hooks/inventario/useInsumo";
+import { useInsumos, useActualizarInsumo, useEliminarInsumo, useUnidadesMedida, useCrearUnidadMedida, useTiposInsumo, useCrearTipoInsumo } from "@/hooks/inventario/useInsumo";
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
 import InsumoNotifications from "@/components/inventario/InsumoNotifications";
 import { useAuth } from "@/context/AuthContext";
-import { Insumo, UnidadMedida } from "@/types/inventario/Insumo";
+import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
+import { addToast } from "@heroui/react";
+
+const formatCOPNumber = (value: number | string): string => {
+    const num = typeof value === 'string' ? parseFloat(value.replace(/\./g, '')) : value;
+    if (isNaN(num)) return '';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
+const parseCOPNumber = (value: string): number => {
+    return parseFloat(value.replace(/\./g, '')) || 0;
+};
 
 const ListaInsumoPage: React.FC = () => {
     const { user } = useAuth();
@@ -16,16 +27,24 @@ const ListaInsumoPage: React.FC = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isUnidadModalOpen, setIsUnidadModalOpen] = useState(false);
+    const [isTipoModalOpen, setIsTipoModalOpen] = useState(false);
     const [nuevaUnidad, setNuevaUnidad] = useState<Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">>({
         nombre: "",
         descripcion: "",
     });
+    const [nuevoTipo, setNuevoTipo] = useState<Omit<TipoInsumo, "id" | "fecha_creacion" | "creada_por_usuario">>({
+        nombre: "",
+        descripcion: "",
+    });
+    const [originalCantidad, setOriginalCantidad] = useState<number>(0);
 
     const { data: insumos, isLoading, error, refetch } = useInsumos();
     const { data: unidadesMedida, isLoading: isLoadingUnidades } = useUnidadesMedida();
+    const { data: tiposInsumo, isLoading: isLoadingTipos } = useTiposInsumo();
     const actualizarMutation = useActualizarInsumo();
     const eliminarMutation = useEliminarInsumo();
     const crearUnidadMedida = useCrearUnidadMedida();
+    const crearTipoInsumo = useCrearTipoInsumo();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -42,7 +61,10 @@ const ListaInsumoPage: React.FC = () => {
         { name: "Descripción", uid: "descripcion" },
         { name: "Cantidad", uid: "cantidad" },
         { name: "Unidad de Medida", uid: "unidad_medida" },
+        { name: "Tipo de Insumo", uid: "tipo_insumo" },
         { name: "Activo", uid: "activo" },
+        { name: "Es Compuesto", uid: "es_compuesto" },
+        { name: "Componentes", uid: "componentes" },
         { name: "Tipo de Empacado", uid: "tipo_empacado" },
         { name: "Fecha de Registro", uid: "fecha_registro" },
         { name: "Fecha de Caducidad", uid: "fecha_caducidad" },
@@ -56,39 +78,79 @@ const ListaInsumoPage: React.FC = () => {
         descripcion: insumo.descripcion,
         cantidad: insumo.cantidad,
         unidad_medida: insumo.unidad_medida ? insumo.unidad_medida.nombre : "Sin asignar",
+        tipo_insumo: insumo.tipo_insumo ? insumo.tipo_insumo.nombre : "Sin asignar",
         activo: insumo.activo ? "Sí" : "No",
+        es_compuesto: insumo.es_compuesto ? "Sí" : "No",
+        componentes: insumo.componentes.length > 0
+            ? insumo.componentes
+                  .map((c) => {
+                      const insumoComponente = insumos?.find((i) => i.id === c.insumo_componente);
+                      return insumoComponente ? `${insumoComponente.nombre} (${c.cantidad})` : `ID: ${c.insumo_componente} (${c.cantidad})`;
+                  })
+                  .join("; ")
+            : "N/A",
         tipo_empacado: insumo.tipo_empacado || "No especificado",
         fecha_registro: insumo.fecha_registro,
         fecha_caducidad: insumo.fecha_caducidad || "No especificada",
         precio_insumo: insumo.precio_insumo !== null && insumo.precio_insumo !== undefined 
-            ? Number(insumo.precio_insumo).toFixed(2) 
+            ? formatCOPNumber(insumo.precio_insumo)
             : "0.00",
         acciones: (
             <>
-                <button className="text-green-500 hover:underline mr-2" onClick={() => { setSelectedInsumo({ ...insumo }); setIsEditModalOpen(true); }}>
+                <button className="text-green-500 hover:underline mr-2" onClick={() => { 
+                    setSelectedInsumo({ ...insumo }); 
+                    setOriginalCantidad(insumo.cantidad); 
+                    setIsEditModalOpen(true); 
+                }}>
                     <EditIcon size={22} color="black" />
                 </button>
-                <button className="text-red-500 hover:underline" onClick={() => { setSelectedInsumo(insumo); setIsDeleteModalOpen(true); }}>
+                <button className="text-red-500 hover:underline mr-2" onClick={() => { setSelectedInsumo(insumo); setIsDeleteModalOpen(true); }}>
                     <Trash2 size={22} color="red" />
                 </button>
             </>
         ),
     }));
 
-    console.log("transformedData:", transformedData);
-
     const handleSubmitUnidadMedida = () => {
         crearUnidadMedida.mutate(nuevaUnidad, {
             onSuccess: () => {
                 setIsUnidadModalOpen(false);
                 setNuevaUnidad({ nombre: "", descripcion: "" });
+                addToast({ 
+                    title: "Éxito",
+                    description: "Unidad de medida creada exitosamente"
+                });
+            },
+            onError: () => {
+                addToast({ 
+                    title: "Error",
+                    description: "Error al crear la unidad de medida"
+                });
             },
         });
     };
 
-    // Formatear fechas para inputs
+    const handleSubmitTipoInsumo = () => {
+        crearTipoInsumo.mutate(nuevoTipo, {
+            onSuccess: () => {
+                setIsTipoModalOpen(false);
+                setNuevoTipo({ nombre: "", descripcion: "" });
+                addToast({ 
+                    title: "Éxito",
+                    description: "Tipo de insumo creado exitosamente"
+                });
+            },
+            onError: () => {
+                addToast({ 
+                    title: "Error",
+                    description: "Error al crear el tipo de insumo"
+                });
+            },
+        });
+    };
+
     const formatDateTimeLocal = (isoString: string) => {
-        return isoString.slice(0, 16); // YYYY-MM-DDTHH:mm
+        return isoString.slice(0, 16);
     };
 
     const formatDate = (date: string | null) => {
@@ -98,16 +160,10 @@ const ListaInsumoPage: React.FC = () => {
     return (
         <DefaultLayout>
             <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Insumos Registrados</h2>
-            <br /><br />
             <div className="mb-2 flex justify-start">
                 <button
-                    className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-md 
-                            hover:bg-green-700 transition-all duration-300 ease-in-out 
-                            shadow-md hover:shadow-lg transform hover:scale-105"
-                    onClick={() => {
-                        console.log("Navegando a /inventario/insumos/");
-                        navigate("/inventario/insumos/");
-                    }}
+                    className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-md hover:bg-green-700"
+                    onClick={() => navigate("/inventario/insumos/")}
                 >
                     + Registrar
                 </button>
@@ -127,12 +183,75 @@ const ListaInsumoPage: React.FC = () => {
                 isOpen={isEditModalOpen}
                 onOpenChange={setIsEditModalOpen}
                 title="Editar Insumo"
-                onConfirm={() => {
+                onConfirm={async () => {
                     if (selectedInsumo && selectedInsumo.id !== undefined) {
-                        actualizarMutation.mutate({ id: selectedInsumo.id, insumo: selectedInsumo }, {
+                        if (selectedInsumo.es_compuesto && selectedInsumo.componentes) {
+                            
+                            const cantidadDiferencia = selectedInsumo.cantidad - originalCantidad;
+                            if (cantidadDiferencia !== 0) {
+                                
+                                for (const componente of selectedInsumo.componentes) {
+                                    const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
+                                    if (!insumoComponente) {
+                                        addToast({ 
+                                            title: "Error en componentes",
+                                            description: `Componente con ID ${componente.insumo_componente} no encontrado`
+                                        });
+                                        return;
+                                    }
+                                    const cantidadRequerida = componente.cantidad * cantidadDiferencia;
+                                    if (cantidadDiferencia > 0 && insumoComponente.cantidad < cantidadRequerida) {
+                                        addToast({ 
+                                            title: "Stock insuficiente",
+                                            description: `Stock insuficiente para ${insumoComponente.nombre}. Disponible: ${insumoComponente.cantidad}, Requerido: ${cantidadRequerida}`
+                                        });
+                                        return;
+                                    }
+                                }
+
+                                
+                                for (const componente of selectedInsumo.componentes) {
+                                    const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
+                                    if (insumoComponente && insumoComponente.id !== undefined) {
+                                        const cantidadRequerida = componente.cantidad * cantidadDiferencia;
+                                        await actualizarMutation.mutateAsync({
+                                            id: insumoComponente.id,
+                                            insumo: {
+                                                ...insumoComponente,
+                                                cantidad: insumoComponente.cantidad - cantidadRequerida,
+                                                unidad_medida_id: insumoComponente.unidad_medida?.id,
+                                                tipo_insumo_id: insumoComponente.tipo_insumo?.id,
+                                                componentes_data: insumoComponente.componentes,
+                                            },
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
+                        
+                        actualizarMutation.mutate({ 
+                            id: selectedInsumo.id, 
+                            insumo: {
+                                ...selectedInsumo,
+                                unidad_medida_id: selectedInsumo.unidad_medida?.id || undefined,
+                                tipo_insumo_id: selectedInsumo.tipo_insumo?.id || undefined,
+                                componentes_data: selectedInsumo.componentes,
+                            }
+                        }, {
                             onSuccess: () => {
                                 setIsEditModalOpen(false);
                                 refetch();
+                                addToast({ 
+                                    title: "Éxito",
+                                    description: "Insumo actualizado exitosamente"
+                                });
+                            },
+                            onError: () => {
+                                addToast({ 
+                                    title: "Error",
+                                    description: "Error al actualizar el insumo"
+                                });
                             },
                         });
                     }
@@ -195,6 +314,34 @@ const ListaInsumoPage: React.FC = () => {
                                 Nueva Unidad
                             </button>
                         </div>
+                        <div className="flex items-end gap-2">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Insumo</label>
+                                <select
+                                    value={selectedInsumo.tipo_insumo?.id || ""}
+                                    onChange={(e) => setSelectedInsumo({
+                                        ...selectedInsumo,
+                                        tipo_insumo: tiposInsumo?.find(t => t.id === Number(e.target.value)) || null
+                                    })}
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                    disabled={isLoadingTipos}
+                                >
+                                    <option value="">Seleccione un tipo</option>
+                                    {tiposInsumo?.map((tipo) => (
+                                        <option key={tipo.id} value={tipo.id}>
+                                            {tipo.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsTipoModalOpen(true)}
+                                className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            >
+                                Nuevo Tipo
+                            </button>
+                        </div>
                         <div className="flex items-center">
                             <input
                                 type="checkbox"
@@ -204,6 +351,37 @@ const ListaInsumoPage: React.FC = () => {
                             />
                             <label className="ml-2 text-sm font-medium text-gray-700">Activo</label>
                         </div>
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                checked={selectedInsumo.es_compuesto}
+                                onChange={(e) => setSelectedInsumo({ ...selectedInsumo, es_compuesto: e.target.checked })}
+                                className="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <label className="ml-2 text-sm font-medium text-gray-700">Es Compuesto</label>
+                        </div>
+                        {selectedInsumo.es_compuesto && (
+                            <div className="border p-4 rounded-md">
+                                <h3 className="text-sm font-medium text-gray-700 mb-2">Componentes</h3>
+                                {selectedInsumo.componentes.map((comp, index) => (
+                                    <div key={index} className="flex justify-between items-center mb-1">
+                                        <span className="text-gray-700">
+                                            {insumos?.find(i => i.id === comp.insumo_componente)?.nombre || `ID: ${comp.insumo_componente}`} ({comp.cantidad})
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedInsumo({
+                                                ...selectedInsumo,
+                                                componentes: selectedInsumo.componentes.filter((_, i) => i !== index)
+                                            })}
+                                            className="px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         <ReuInput
                             label="Tipo de Empacado"
                             placeholder="Ingrese el tipo de empacado"
@@ -232,12 +410,16 @@ const ListaInsumoPage: React.FC = () => {
                         <ReuInput
                             label="Precio del Insumo"
                             placeholder="Ingrese el precio del insumo"
-                            type="number"
+                            type="text"
                             variant="bordered"
                             radius="md"
-                            step="0.01"
-                            value={selectedInsumo.precio_insumo !== null && selectedInsumo.precio_insumo !== undefined ? selectedInsumo.precio_insumo : 0}
-                            onChange={(e) => setSelectedInsumo({ ...selectedInsumo, precio_insumo: Number(e.target.value) || 0 })}
+                            value={selectedInsumo.precio_insumo !== null && selectedInsumo.precio_insumo !== undefined 
+                                ? formatCOPNumber(selectedInsumo.precio_insumo) 
+                                : ""}
+                            onChange={(e) => setSelectedInsumo({ 
+                                ...selectedInsumo, 
+                                precio_insumo: parseCOPNumber(e.target.value) 
+                            })}
                         />
                     </>
                 )}
@@ -270,6 +452,32 @@ const ListaInsumoPage: React.FC = () => {
             </ReuModal>
 
             <ReuModal
+                isOpen={isTipoModalOpen}
+                onOpenChange={setIsTipoModalOpen}
+                title="Crear Nuevo Tipo de Insumo"
+                onConfirm={handleSubmitTipoInsumo}
+            >
+                <ReuInput
+                    label="Nombre"
+                    placeholder="Ej. Fertilizante"
+                    type="text"
+                    variant="bordered"
+                    radius="md"
+                    value={nuevoTipo.nombre}
+                    onChange={(e) => setNuevoTipo({ ...nuevoTipo, nombre: e.target.value })}
+                />
+                <ReuInput
+                    label="Descripción"
+                    placeholder="Descripción del tipo"
+                    type="text"
+                    variant="bordered"
+                    radius="md"
+                    value={nuevoTipo.descripcion ?? ""}
+                    onChange={(e) => setNuevoTipo({ ...nuevoTipo, descripcion: e.target.value })}
+                />
+            </ReuModal>
+
+            <ReuModal
                 isOpen={isDeleteModalOpen}
                 onOpenChange={setIsDeleteModalOpen}
                 title="¿Estás seguro de eliminar este insumo?"
@@ -280,6 +488,16 @@ const ListaInsumoPage: React.FC = () => {
                                 setIsDeleteModalOpen(false);
                                 setSelectedInsumo(null);
                                 refetch();
+                                addToast({ 
+                                    title: "Éxito",
+                                    description: "Insumo eliminado exitosamente"
+                                });
+                            },
+                            onError: () => {
+                                addToast({ 
+                                    title: "Error",
+                                    description: "Error al eliminar el insumo"
+                                });
                             },
                         });
                     }

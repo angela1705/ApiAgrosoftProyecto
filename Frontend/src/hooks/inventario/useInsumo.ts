@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { addToast } from "@heroui/react";
-import { Insumo, UnidadMedida } from "@/types/inventario/Insumo";
+import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 
 const API_URL = "http://127.0.0.1:8000/inventario/insumo/";
 
@@ -41,7 +41,25 @@ export const useUnidadesMedida = () => {
     });
 };
 
-const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida"> & { unidad_medida_id?: number }) => {
+const fetchTiposInsumo = async (): Promise<TipoInsumo[]> => {
+    const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+
+    const response = await axios.get(`${API_URL}tipos_insumo/`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+};
+
+export const useTiposInsumo = () => {
+    return useQuery({
+        queryKey: ["tiposInsumo"],
+        queryFn: fetchTiposInsumo,
+        staleTime: 1000 * 60,
+    });
+};
+
+const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo" | "componentes"> & { unidad_medida_id?: number; tipo_insumo_id?: number; componentes_data?: { insumo_componente: number; cantidad: number }[] }) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
@@ -59,7 +77,7 @@ const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida"> & { 
 export const useRegistrarInsumo = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (insumo: Omit<Insumo, "id" | "unidad_medida"> & { unidad_medida_id?: number }) => registrarInsumo(insumo),
+        mutationFn: (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo" | "componentes"> & { unidad_medida_id?: number; tipo_insumo_id?: number; componentes_data?: { insumo_componente: number; cantidad: number }[] }) => registrarInsumo(insumo),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["insumos"] });
             addToast({ title: "Éxito", description: "Insumo registrado con éxito", timeout: 3000 });
@@ -74,18 +92,21 @@ export const useRegistrarInsumo = () => {
     });
 };
 
-const actualizarInsumo = async (id: number, insumo: Insumo & { unidad_medida_id?: number }) => {
+interface ActualizarInsumoParams {
+    id: number;
+    insumo: Omit<Insumo, "unidad_medida" | "tipo_insumo" | "componentes"> & {
+        unidad_medida_id?: number;
+        tipo_insumo_id?: number;
+        componentes_data?: { insumo_componente: number; cantidad: number }[];
+    };
+}
+
+const actualizarInsumo = async (id: number, insumo: ActualizarInsumoParams["insumo"]) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const { unidad_medida, ...rest } = insumo; // Excluimos unidad_medida
-        const data = {
-            ...rest,
-            unidad_medida_id: insumo.unidad_medida?.id || insumo.unidad_medida_id || null,
-        };
-
-        const response = await axios.put(`${API_URL}${id}/`, data, {
+        const response = await axios.put(`${API_URL}${id}/`, insumo, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -98,7 +119,7 @@ const actualizarInsumo = async (id: number, insumo: Insumo & { unidad_medida_id?
 export const useActualizarInsumo = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, insumo }: { id: number; insumo: Insumo & { unidad_medida_id?: number } }) => actualizarInsumo(id, insumo),
+        mutationFn: ({ id, insumo }: ActualizarInsumoParams) => actualizarInsumo(id, insumo),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["insumos"] });
             addToast({ title: "Éxito", description: "Insumo actualizado con éxito", timeout: 3000 });
@@ -173,6 +194,111 @@ export const useCrearUnidadMedida = () => {
             addToast({
                 title: "Error",
                 description: error.response?.data?.message || "Error al crear la unidad de medida",
+                timeout: 3000,
+            });
+        },
+    });
+};
+
+const crearTipoInsumo = async (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | "creada_por_usuario">) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+
+    try {
+        const response = await axios.post(`${API_URL}crear_tipo_insumo/`, tipo, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error en la API:", error.response?.data);
+        throw error;
+    }
+};
+
+export const useCrearTipoInsumo = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | "creada_por_usuario">) => crearTipoInsumo(tipo),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tiposInsumo"] });
+            addToast({ title: "Éxito", description: "Tipo de insumo creado con éxito", timeout: 3000 });
+        },
+        onError: (error: any) => {
+            addToast({
+                title: "Error",
+                description: error.response?.data?.message || "Error al crear el tipo de insumo",
+                timeout: 3000,
+            });
+        },
+    });
+};
+
+const usarEnActividad = async (id: number, data: { cantidad_usada: number; actividad_id?: number }) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+
+    try {
+        const response = await axios.post(`${API_URL}${id}/usar_en_actividad/`, data, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error en la API:", error.response?.data);
+        throw error;
+    }
+};
+
+export const useUsarEnActividad = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }: { id: number; data: { cantidad_usada: number; actividad_id?: number } }) => usarEnActividad(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["insumos"] });
+            addToast({ title: "Éxito", description: "Insumo usado en actividad con éxito", timeout: 3000 });
+        },
+        onError: (error: any) => {
+            addToast({
+                title: "Error",
+                description: error.response?.data?.error || "Error al usar el insumo en la actividad",
+                timeout: 3000,
+            });
+        },
+    });
+};
+
+const descargarReportePDF = async () => {
+    const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+
+    try {
+        const response = await axios.get(`${API_URL}reporte_pdf/`, {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: 'blob',
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error en la API:", error.response?.data);
+        throw error;
+    }
+};
+
+export const useReportePDF = () => {
+    return useMutation({
+        mutationFn: descargarReportePDF,
+        onSuccess: (data) => {
+            const url = window.URL.createObjectURL(new Blob([data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'reporte_insumos.pdf');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            addToast({ title: "Éxito", description: "Reporte PDF descargado con éxito", timeout: 3000 });
+        },
+        onError: (error: any) => {
+            addToast({
+                title: "Error",
+                description: error.response?.data?.message || "Error al descargar el reporte PDF",
                 timeout: 3000,
             });
         },

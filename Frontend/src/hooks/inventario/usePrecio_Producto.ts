@@ -1,110 +1,160 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { addToast } from "@heroui/react";
-import { PrecioProducto } from "@/types/inventario/Precio_producto";
+import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 
 const API_URL = "http://127.0.0.1:8000/inventario/precio-producto/";
 
 const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-
     const response = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
-
+    console.log("Datos de la API (preciosProductos):", response.data); 
     return response.data.map((item: any) => ({
         id: item.id,
-        cultivo: item.Producto,
-        unidad_medida_gramos: Number(item.unidad_medida_gramos),
+        cosecha: item.Producto_id || null,
+        unidad_medida: item.unidad_medida || null,
         precio: Number(item.precio),
         fecha_registro: item.fecha_registro,
         stock: Number(item.stock),
-        stock_disponible: Number(item.stock_disponible),
         fecha_caducidad: item.fecha_caducidad || null,
     }));
 };
+
 export const usePreciosProductos = () => {
-    return useQuery<PrecioProducto[], Error>({
+    return useQuery({
         queryKey: ["preciosProductos"],
         queryFn: fetchPreciosProductos,
         staleTime: 1000 * 60,
     });
 };
 
-const registrarPrecioProducto = async (precioProducto: Omit<PrecioProducto, "id">) => {
+const fetchUnidadesMedida = async (): Promise<UnidadMedida[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-
-    const payload = {
-        Producto: precioProducto.cultivo,
-        unidad_medida_gramos: precioProducto.unidad_medida_gramos,
-        precio: precioProducto.precio,
-        fecha_registro: precioProducto.fecha_registro,
-        stock: precioProducto.stock,
-        stock_disponible: precioProducto.stock, 
-        fecha_caducidad: precioProducto.fecha_caducidad,
-    };
-
-    const response = await axios.post(API_URL, payload, {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
+    const response = await axios.get(`${API_URL}unidades_medida/`, {
+        headers: { Authorization: `Bearer ${token}` },
     });
-
     return response.data;
+};
+
+export const useUnidadesMedida = () => {
+    return useQuery({
+        queryKey: ["unidadesMedida"],
+        queryFn: fetchUnidadesMedida,
+        staleTime: 1000 * 60,
+    });
+};
+
+const registrarPrecioProducto = async (
+    precioProducto: Omit<PrecioProducto, "id" | "unidad_medida"> & {
+        unidad_medida_id?: number;
+    }
+) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
+    try {
+        const payload = {
+            Producto_id: precioProducto.cosecha || null,
+            unidad_medida_id: precioProducto.unidad_medida_id || null,
+            precio: precioProducto.precio,
+            fecha_registro: precioProducto.fecha_registro,
+            stock: precioProducto.stock,
+            fecha_caducidad: precioProducto.fecha_caducidad,
+        };
+        console.log("Payload enviado (registrar):", payload);
+        const response = await axios.post(API_URL, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error en la API:", error.response?.data);
+        throw error;
+    }
 };
 
 export const useRegistrarPrecioProducto = () => {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: registrarPrecioProducto,
         onSuccess: () => {
-            addToast({ title: "Éxito", description: "Precio de producto registrado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["preciosProductos"] });
+            addToast({
+                title: "Éxito",
+                description: "Precio de producto registrado con éxito",
+                timeout: 3000,
+            });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al registrar el precio de producto" });
+        onError: (error: any) => {
+            console.error("Error completo:", error.response?.data);
+            addToast({
+                title: "Error",
+                description:
+                    error.response?.data?.detail ||
+                    error.response?.data?.message ||
+                    "Error al registrar el precio de producto",
+                timeout: 3000,
+            });
         },
     });
 };
 
-const actualizarPrecioProducto = async (precioProducto: PrecioProducto) => {
+const actualizarPrecioProducto = async (
+    id: number,
+    precioProducto: PrecioProducto
+) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-
-    const payload = {
-        Producto: precioProducto.cultivo,
-        unidad_medida_gramos: precioProducto.unidad_medida_gramos,
-        precio: precioProducto.precio,
-        fecha_registro: precioProducto.fecha_registro,
-        stock: precioProducto.stock,
-        fecha_caducidad: precioProducto.fecha_caducidad,
-    };
-
-    const response = await axios.put(`${API_URL}${precioProducto.id}/`, payload, {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    return response.data;
+    try {
+        const data = {
+            Producto_id: precioProducto.cosecha || null,
+            unidad_medida_id: precioProducto.unidad_medida?.id || null,
+            precio: precioProducto.precio,
+            fecha_registro: precioProducto.fecha_registro,
+            stock: precioProducto.stock,
+            fecha_caducidad: precioProducto.fecha_caducidad,
+        };
+        console.log("Payload enviado (actualizar):", data);
+        const response = await axios.put(`${API_URL}${id}/`, data, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error en la API:", error.response?.data);
+        throw error;
+    }
 };
 
 export const useActualizarPrecioProducto = () => {
     const queryClient = useQueryClient();
-
     return useMutation({
-        mutationFn: actualizarPrecioProducto,
+        mutationFn: ({
+            id,
+            precioProducto,
+        }: {
+            id: number;
+            precioProducto: PrecioProducto;
+        }) => actualizarPrecioProducto(id, precioProducto),
         onSuccess: () => {
-            addToast({ title: "Éxito", description: "Precio de producto actualizado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["preciosProductos"] });
+            addToast({
+                title: "Éxito",
+                description: "Precio de producto actualizado con éxito",
+                timeout: 3000,
+            });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al actualizar el precio de producto" });
+        onError: (error: any) => {
+            console.error("Error completo:", error.response?.data);
+            addToast({
+                title: "Error",
+                description:
+                    error.response?.data?.detail ||
+                    error.response?.data?.message ||
+                    "Error al actualizar el precio de producto",
+                timeout: 3000,
+            });
         },
     });
 };
@@ -112,56 +162,85 @@ export const useActualizarPrecioProducto = () => {
 const eliminarPrecioProducto = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-
-    const response = await axios.delete(`${API_URL}${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
+    try {
+        const response = await axios.delete(`${API_URL}${id}/`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error en la API:", error.response?.data);
+        throw error;
+    }
 };
 
 export const useEliminarPrecioProducto = () => {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: eliminarPrecioProducto,
         onSuccess: () => {
-            addToast({ title: "Éxito", description: "Precio de producto eliminado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["preciosProductos"] });
+            addToast({
+                title: "Éxito",
+                description: "Precio de producto eliminado con éxito",
+                timeout: 3000,
+            });
         },
         onError: (error: any) => {
-            const message = error.response?.data?.detail || "No se pudo eliminar el precio de producto";
-            addToast({ title: "Error", description: message });
-            console.error("Error al eliminar:", error);
+            console.error("Error completo:", error.response?.data);
+            addToast({
+                title: "Error",
+                description:
+                    error.response?.data?.detail ||
+                    error.response?.data?.message ||
+                    "No se pudo eliminar el precio de producto",
+                timeout: 3000,
+            });
         },
     });
 };
 
-const registrarVenta = async ({ id, cantidad }: { id: number; cantidad: number }) => {
+const crearUnidadMedida = async (
+    unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">
+) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-
-    const response = await axios.post(`${API_URL}${id}/registrar_venta/`, { cantidad }, {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    return response.data;
+    try {
+        const response = await axios.post(
+            `${API_URL}crear_unidad_medida/`,
+            unidad,
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error("Error en la API:", error.response?.data);
+        throw error;
+    }
 };
 
-export const useRegistrarVenta = () => {
+export const useCrearUnidadMedida = () => {
     const queryClient = useQueryClient();
-
     return useMutation({
-        mutationFn: registrarVenta,
-        onSuccess: (data) => {
-            addToast({ title: "Éxito", description: data.mensaje });
-            queryClient.invalidateQueries({ queryKey: ["preciosProductos"] });
+        mutationFn: crearUnidadMedida,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["unidadesMedida"] });
+            addToast({
+                title: "Éxito",
+                description: "Unidad de medida creada con éxito",
+                timeout: 3000,
+            });
         },
         onError: (error: any) => {
-            const message = error.response?.data?.error || "Error al registrar la venta";
-            addToast({ title: "Error", description: message });
+            console.error("Error completo:", error.response?.data);
+            addToast({
+                title: "Error",
+                description:
+                    error.response?.data?.detail ||
+                    error.response?.data?.message ||
+                    "Error al crear la unidad de medida",
+                timeout: 3000,
+            });
         },
     });
 };

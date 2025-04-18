@@ -11,32 +11,47 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime
+from apps.Inventario.insumos.models import UnidadMedida
 from ..models import PrecioProducto
-from .serializers import PrecioProductoSerializer
+from .serializers import PrecioProductoSerializer, UnidadMedidaSerializer
 
 class PrecioProductoViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    queryset = PrecioProducto.objects.all()
+    queryset = PrecioProducto.objects.all().select_related('unidad_medida', 'Producto')
     serializer_class = PrecioProductoSerializer
 
     @action(detail=True, methods=['post'])
     def registrar_venta(self, request, pk=None):
         producto = self.get_object()
         cantidad_vendida = request.data.get('cantidad', 0)
-        
+
         try:
             cantidad_vendida = int(cantidad_vendida)
             if cantidad_vendida <= 0:
                 return Response({"error": "La cantidad debe ser mayor a 0."}, status=status.HTTP_400_BAD_REQUEST)
-            if cantidad_vendida > producto.stock_disponible:
+            if cantidad_vendida > producto.stock:
                 return Response({"error": "No hay suficiente stock disponible."}, status=status.HTTP_400_BAD_REQUEST)
-            
-            producto.stock_disponible -= cantidad_vendida
+
+            producto.stock -= cantidad_vendida
             producto.save()
-            return Response({"mensaje": f"Venta registrada. Stock disponible actual: {producto.stock_disponible}"}, status=status.HTTP_200_OK)
+            return Response({"mensaje": f"Venta registrada. Stock actual: {producto.stock}"}, status=status.HTTP_200_OK)
         except ValueError:
             return Response({"error": "Cantidad inválida."}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'])
+    def unidades_medida(self, request):
+        unidades = UnidadMedida.objects.all()
+        serializer = UnidadMedidaSerializer(unidades, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'])
+    def crear_unidad_medida(self, request):
+        serializer = UnidadMedidaSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(creada_por_usuario=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
@@ -74,28 +89,28 @@ class PrecioProductoViewSet(ModelViewSet):
         elementos.append(Paragraph("<b>2. Registro de Precios de Productos</b>", styles['Heading2']))
         elementos.append(Spacer(1, 5))
 
-        precios = PrecioProducto.objects.all()
+        precios = self.get_queryset()
         total_precios = precios.count()
-        suma_precios = sum(precio.precio for precio in precios)
+        suma_precios = sum(float(precio.precio) for precio in precios)
 
         data_precios = [
-            ["ID", "Cultivo", "Unidad (g)", "Precio", "Fecha Registro", "Stock", "Stock Disponible", "Fecha Caducidad"]
+            ["ID", "Producto", "Unidad de Medida", "Precio", "Fecha Registro", "Stock", "Fecha Caducidad"]
         ]
         for precio in precios:
             fecha_registro = precio.fecha_registro.strftime('%Y-%m-%d')
             fecha_caducidad = precio.fecha_caducidad.strftime('%Y-%m-%d') if precio.fecha_caducidad else "N/A"
+            unidad_medida = precio.unidad_medida.nombre if precio.unidad_medida else "Sin asignar"
             data_precios.append([
                 str(precio.id),
-                str(precio.Producto),
-                str(precio.unidad_medida_gramos),
-                str(precio.precio),
+                str(precio.Producto) if precio.Producto else "Sin producto",
+                unidad_medida,
+                f"{precio.precio:.2f}",
                 fecha_registro,
                 str(precio.stock),
-                str(precio.stock_disponible),
                 fecha_caducidad
             ])
 
-        tabla_precios = Table(data_precios, colWidths=[30, 130, 50, 50, 70, 50, 50, 70])
+        tabla_precios = Table(data_precios, colWidths=[30, 150, 70, 50, 70, 50, 70])
         tabla_precios.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -112,7 +127,7 @@ class PrecioProductoViewSet(ModelViewSet):
         elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading2']))
         resumen_texto = f"""
         Se registraron {total_precios} precios de productos en el sistema,
-        con un total acumulado de {suma_precios} en precios.
+        con un total acumulado de {suma_precios:.2f} en precios.
         """
         elementos.append(Paragraph(resumen_texto, styles['Normal']))
 

@@ -92,8 +92,23 @@ export const useEliminarTipoPlaga = () => {
       queryClient.invalidateQueries({ queryKey: ["tipoPlagas"] });
       addToast({ title: "Éxito", description: "Tipo de plaga eliminado con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar el tipo de plaga", timeout: 3000 });
+    
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar la plaga",
+          timeout: 3000,
+        });
+      }
     },
+    
   });
+  
 };
