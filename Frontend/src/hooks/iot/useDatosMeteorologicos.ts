@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { SensorData } from "../../types/iot/type";
 
 export const useDatosMeteorologicos = () => {
-  const [latestData, setLatestData] = useState<SensorData[]>([]); 
-  const [chartData, setChartData] = useState<SensorData[]>([]);    
+  const [latestData, setLatestData] = useState<SensorData[]>([]);
+  const [chartData, setChartData] = useState<SensorData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -21,7 +21,6 @@ export const useDatosMeteorologicos = () => {
       const message = JSON.parse(event.data) as { type: string; data: SensorData };
       console.log("Mensaje parseado:", message);
       if (message.type === "realtime_data") {
-        // Actualizar solo el dato más reciente por sensor
         setLatestData((prev) => {
           const newData = [
             ...prev.filter((d) => d.fk_sensor !== message.data.fk_sensor),
@@ -29,7 +28,6 @@ export const useDatosMeteorologicos = () => {
           ];
           return newData;
         });
-        // Acumular datos para la gráfica (límite de 10 puntos)
         setChartData((prev) => {
           const newChartData = [message.data, ...prev].slice(0, 10);
           return newChartData;
