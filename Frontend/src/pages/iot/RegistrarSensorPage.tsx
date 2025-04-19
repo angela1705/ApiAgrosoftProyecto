@@ -4,6 +4,17 @@ import { ReuInput } from "@/components/globales/ReuInput";
 import { useNavigate } from "react-router-dom";
 import { Sensor } from "@/types/iot/type";
 
+const sensorTypes = [
+  { value: "temperatura", label: "Temperatura (°C)" },
+  { value: "ambient_humidity", label: "Humedad Ambiente (%)" },
+  { value: "soil_humidity", label: "Humedad Suelo (%)" },
+  { value: "luminosidad", label: "Luminosidad (lux)" },
+  { value: "lluvia", label: "Lluvia (mm/h)" },
+  { value: "velocidad_viento", label: "Velocidad Viento (m/s)" },
+  { value: "direccion_viento", label: "Dirección Viento (grados)" },
+  { value: "ph_suelo", label: "pH Suelo (pH)" },
+];
+
 const RegistrarSensorPage: React.FC = () => {
   const [sensor, setSensor] = useState<Partial<Sensor>>({
     nombre: "",
@@ -52,23 +63,32 @@ const RegistrarSensorPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <ReuInput
               label="Nombre"
-              placeholder="Ingrese el nombre"
+              placeholder="Ingrese el nombre del sensor"
               type="text"
               value={sensor.nombre || ""}
               onChange={(e) => setSensor({ ...sensor, nombre: e.target.value })}
             />
 
-            <ReuInput
-              label="Tipo de Sensor"
-              placeholder="Ej: Temperatura, Humedad"
-              type="text"
-              value={sensor.tipo_sensor || ""}
-              onChange={(e) => setSensor({ ...sensor, tipo_sensor: e.target.value })}
-            />
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700">Tipo de Sensor</label>
+              <select
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                name="tipo_sensor"
+                value={sensor.tipo_sensor || ""}
+                onChange={handleChange}
+              >
+                <option value="">Seleccione un tipo de sensor</option>
+                {sensorTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <ReuInput
               label="Unidad de Medida"
-              placeholder="Ej: °C, %"
+              placeholder="Ej: °C, %, lux"
               type="text"
               value={sensor.unidad_medida || ""}
               onChange={(e) => setSensor({ ...sensor, unidad_medida: e.target.value })}
@@ -82,30 +102,32 @@ const RegistrarSensorPage: React.FC = () => {
               onChange={(e) => setSensor({ ...sensor, descripcion: e.target.value })}
             />
 
-            <ReuInput
-              label="Medida Mínima"
-              placeholder="Valor mínimo"
-              type="number"
-              value={sensor.medida_minima?.toString() || "0"}
-              onChange={(e) => setSensor({ ...sensor, medida_minima: Number(e.target.value) })}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <ReuInput
+                label="Medida Mínima"
+                placeholder="Valor mínimo"
+                type="number"
+                value={sensor.medida_minima?.toString() || "0"}
+                onChange={(e) => setSensor({ ...sensor, medida_minima: Number(e.target.value) })}
+              />
 
-            <ReuInput
-              label="Medida Máxima"
-              placeholder="Valor máximo"
-              type="number"
-              value={sensor.medida_maxima?.toString() || "0"}
-              onChange={(e) => setSensor({ ...sensor, medida_maxima: Number(e.target.value) })}
-            />
+              <ReuInput
+                label="Medida Máxima"
+                placeholder="Valor máximo"
+                type="number"
+                value={sensor.medida_maxima?.toString() || "0"}
+                onChange={(e) => setSensor({ ...sensor, medida_maxima: Number(e.target.value) })}
+              />
+            </div>
 
             <button
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
               type="submit"
             >
               Guardar
             </button>
             <button
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
               type="button"
               onClick={() => navigate("/iot/listar-sensores")}
             >

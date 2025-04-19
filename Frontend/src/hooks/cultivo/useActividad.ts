@@ -73,24 +73,30 @@ export const useInsumos = () => {
 };
 
 const registrarActividad = async (actividad: Actividad) => {
-    const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("access_token");
 
-    if (!token) {
-        throw new Error("No se encontró el token de autenticación.");
-    }
+  if (!token) {
+      throw new Error("No se encontró el token de autenticación.");
+  }
 
-    try {
-        const response = await axios.post(API_URL, actividad, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
-        throw error;
-    }
+  try {
+      // Asegúrate de enviar los arrays correctamente
+      const response = await axios.post(API_URL, {
+          ...actividad,
+          usuarios: actividad.usuarios, 
+          insumos: actividad.insumos, 
+          herramientas: actividad.herramientas, 
+      }, {
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+          },
+      });
+      return response.data;
+  } catch (error: any) {
+      console.error("Error en la API:", error.response?.data);
+      throw error;
+  }
 };
 const eliminarActividad = async (id: number) => {
     const token = localStorage.getItem("access_token");
@@ -103,36 +109,40 @@ const eliminarActividad = async (id: number) => {
   const actualizarActividad = async (id: number, actividad: Actividad) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-
-    try {
-        const response = await axios.put(`${API_URL}${id}/`, actividad, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return response.data;
-    } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
-        throw error;
-    }
-};
   
-
+    if (actividad.estado === 'COMPLETADA') {
+      throw new Error("Use el método específico para finalizar actividades");
+    }
+  
+    try {
+      const response = await axios.put(`${API_URL}${id}/`, actividad, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error("Error en la API:", error.response?.data);
+      throw error;
+    }
+  };
+  
 export const useRegistrarActividad = () => {
     return useMutation({
         mutationFn: (actividad: Actividad) => registrarActividad(actividad),
         onSuccess: () => {
             addToast({
-              title: "Éxito",
-              description: "Actividad registrada con éxito",
+                title: "Éxito",
+                description: "Actividad registrada con éxito",
             });
-          },
-          onError: () => {
+        },
+        onError: () => {
             addToast({
-              title: "Error",
-              description: "Error al registrar la actividad",
+                title: "Error",
+                description: "Error al registrar la actividad",
             });
-          },
+        },
     });
 };
+
 
 export const useActualizarActividad = () => {
     const queryClient = useQueryClient();
@@ -164,4 +174,70 @@ export const useActualizarActividad = () => {
       },
     });
   };
+
+
+  const finalizarActividad = async (id: number, finalizacionData: {
+    fecha_fin: string;
+    herramientas: Array<{
+      id: number;
+      devuelta: boolean;
+      fecha_devolucion?: string;
+    }>;
+    insumos: Array<{
+      id: number;
+      cantidad_devuelta: number;
+    }>;
+  }) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No se encontró el token de autenticación.");
   
+    try {
+      const response = await axios.post(`${API_URL}${id}/finalizar/`, finalizacionData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error("Error en la API:", error.response?.data);
+      throw error;
+    }
+  };
+
+
+  export const useFinalizarActividad = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+      mutationFn: ({ id, finalizacionData }: { 
+        id: number; 
+        finalizacionData: {
+          fecha_fin: string;
+          herramientas: Array<{
+            id: number;
+            devuelta: boolean;
+            fecha_devolucion?: string;
+          }>;
+          insumos: Array<{
+            id: number;
+            cantidad_devuelta: number;
+          }>;
+        }
+      }) => finalizarActividad(id, finalizacionData),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["actividades"] });
+        addToast({ 
+          title: "Éxito", 
+          description: "Actividad finalizada con éxito", 
+          timeout: 3000 
+        });
+      },
+      onError: (error: any) => {
+        addToast({ 
+          title: "Error", 
+          description: error.response?.data?.message || "Error al finalizar la actividad", 
+          timeout: 3000 
+        });
+      },
+    });
+  };

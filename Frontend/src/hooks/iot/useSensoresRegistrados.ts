@@ -1,4 +1,3 @@
-// hooks/iot/useSensoresRegistrados.ts
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Sensor } from "@/types/iot/type";
@@ -10,7 +9,6 @@ export function useSensoresRegistrados() {
   const token = localStorage.getItem("access_token") || "";
   const queryClient = useQueryClient();
 
-  // Obtener sensores
   useEffect(() => {
     const fetchSensores = async () => {
       try {
@@ -35,7 +33,6 @@ export function useSensoresRegistrados() {
     else setError(new Error("No autenticado"));
   }, [token]);
 
-  // Actualizar sensor
   const updateSensor = useMutation({
     mutationFn: async (sensor: Sensor) => {
       const response = await fetch(`http://127.0.0.1:8000/iot/sensores/${sensor.id}/`, {
@@ -56,7 +53,6 @@ export function useSensoresRegistrados() {
     onError: (err: Error) => setError(err),
   });
 
-  // Eliminar sensor
   const deleteSensor = useMutation({
     mutationFn: async (id: number) => {
       const response = await fetch(`http://127.0.0.1:8000/iot/sensores/${id}/`, {

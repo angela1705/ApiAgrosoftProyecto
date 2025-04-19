@@ -1,86 +1,75 @@
 import json
+import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async
-from ..models import Datos_metereologicos
-import asyncio
-from django.utils import timezone
+from channels.db import database_sync_to_async
+from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
+from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
+from django.core.exceptions import ObjectDoesNotExist
 
- 
-class RealtimeDataConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.group_name = "realtime_group"
-        await self.channel_layer.group_add(self.group_name, self.channel_name)
-        await self.accept()
+# Configurar el logger
+logger = logging.getLogger(__name__)
 
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
-
-    async def receive(self, text_data):
-        data = json.loads(text_data)
-        if data.get("type") == "realtime_data":
-            await self.channel_layer.group_send(
-                self.group_name,
-                {"type": "send_realtime_data", "data": data["data"]}
-            )
-
-    async def send_realtime_data(self, event):
-        await self.send(text_data=json.dumps({"type": "realtime_data", "data": event["data"]}))
-
-# Consumidor para datos guardados (modificado)
 class DatosMeteorologicosConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.group_name = "meteo_group"
-        await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
-        # Enviar datos iniciales sin filtro
-        sensor_data = await self.get_sensor_data()
-        await self.send(text_data=json.dumps({"type": "sensor_data", "data": sensor_data}))
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        pass
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        if data.get("type") == "filter_data":
-            sensor_id = data.get("sensor_id")
-            date = data.get("date")
-            filtered_data = await self.get_sensor_data(sensor_id, date)
-            await self.send(text_data=json.dumps({"type": "sensor_data", "data": filtered_data}))
+        try:
+            data = json.loads(text_data)
+            serializer = Datos_metereologicosSerializer(data=data)
+            # Envolver la validación del serializer con database_sync_to_async
+            is_valid = await database_sync_to_async(serializer.is_valid)()
+            if is_valid:
+                validated_data = await database_sync_to_async(lambda: serializer.validated_data)()
+                await self.save_data(validated_data)
+                await self.send(text_data=json.dumps({"status": "Datos recibidos"}))
+                # Limpiar datos para el grupo: eliminar campos vacíos
+                cleaned_data = {k: v for k, v in validated_data.items() if v is not None}
+                try:
+                    await self.channel_layer.group_send(
+                        "weather_group",
+                        {
+                            "type": "weather_data",
+                            "data": cleaned_data
+                        }
+                    )
+                except Exception as e:
+                    logger.error(f"Error al enviar al grupo: {str(e)}")
+                    await self.send(text_data=json.dumps({"warning": f"Error al enviar al grupo: {str(e)}"}))
+            else:
+                errors = await database_sync_to_async(lambda: serializer.errors)()
+                logger.error(f"Error de validación: {errors}")
+                await self.send(text_data=json.dumps({"error": errors}))
+        except json.JSONDecodeError as e:
+            logger.error(f"Datos JSON inválidos: {str(e)}")
+            await self.send(text_data=json.dumps({"error": "Datos JSON inválidos"}))
+        except Exception as e:
+            logger.error(f"Error inesperado en receive: {str(e)}", exc_info=True)
+            await self.send(text_data=json.dumps({"error": f"Error inesperado: {str(e)}"}))
 
-    async def send_sensor_data(self, event):
-        data = event["data"]
-        await self.send(text_data=json.dumps({"type": "sensor_data", "data": data}))
+    @database_sync_to_async
+    def save_data(self, validated_data):
+        try:
+            Datos_metereologicos.objects.create(**validated_data)
+        except ObjectDoesNotExist as e:
+            raise ValueError(f"Error de integridad: {str(e)}")
+        except Exception as e:
+            raise ValueError(f"Error al guardar datos: {str(e)}")
 
-    @sync_to_async
-    def get_sensor_data(self, sensor_id=None, date=None):
-        queryset = Datos_metereologicos.objects.all().order_by('-fecha_medicion')
-        if sensor_id:
-            queryset = queryset.filter(fk_sensor=sensor_id)
-        if date:
-            queryset = queryset.filter(fecha_medicion__date=date)
-        datos = queryset[:50]  # Límite de 50 para no sobrecargar me paso que puse limite cuidado congela la app y la pc y todo 
-        return [
-            {
-                "id": d.id,
-                "fk_sensor": d.fk_sensor,
-                "temperature": float(d.temperature) if d.temperature is not None else None,
-                "humidity": float(d.humidity) if d.humidity is not None else None,
-                "fecha_medicion": d.fecha_medicion.isoformat()
-            } for d in datos
-        ]
+class RealtimeDataConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.channel_layer.group_add("weather_group", self.channel_name)
+        await self.accept()
 
-async def broadcast_sensor_data():
-    from channels.layers import get_channel_layer
-    channel_layer = get_channel_layer()
-    if channel_layer:
-        sensor_data = await DatosMeteorologicosConsumer().get_sensor_data()
-        await channel_layer.group_send("meteo_group", {"type": "send_sensor_data", "data": sensor_data})
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard("weather_group", self.channel_name)
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-@receiver(post_save, sender=Datos_metereologicos)
-def on_datos_metereologicos_save(sender, instance, created, **kwargs):
-    if created:
-        print(f"Nuevo dato creado: {instance.id}")
-        asyncio.create_task(broadcast_sensor_data())
+    async def weather_data(self, event):
+        data = event['data']
+        await self.send(text_data=json.dumps({
+            'type': 'weather_data',
+            'data': data
+        }))

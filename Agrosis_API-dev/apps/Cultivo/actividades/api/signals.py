@@ -1,107 +1,47 @@
-from django.db.models.signals import pre_save, post_save, post_delete
+from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from apps.Cultivo.actividades.models import Actividad
-from apps.Inventario.insumos.models import Insumo
 import time
 import hashlib
+from apps.Cultivo.actividades.models import Actividad
 
+@receiver(m2m_changed, sender=Actividad.usuarios.through)
+def notificar_usuarios_asignados(sender, instance, action, pk_set, **kwargs):
+    if action == "post_add":
+        channel_layer = get_channel_layer()
+        timestamp = str(int(time.time() * 1000))
+        activity_hash = hashlib.md5(f"{instance.id}{timestamp}".encode()).hexdigest()
 
-@receiver(pre_save, sender=Actividad)
-def guardar_estado_anterior(sender, instance, **kwargs):
-    try:
-        
-        actividad_anterior = Actividad.objects.get(id=instance.id)
-        instance._cantidad_anterior = actividad_anterior.cantidadUsada
-        instance._insumo_anterior = actividad_anterior.insumo
-    except Actividad.DoesNotExist:
-        
-        instance._cantidad_anterior = 0
-        instance._insumo_anterior = None
+        for user_id in pk_set:
+            user_group = f"user_{user_id}"
+            user = instance.usuarios.get(pk=user_id)
+            message = {
+                "type": "send_notification",
+                "message": f"Tienes una nueva actividad:\n {instance.tipo_actividad.nombre}\n {instance.cultivo.nombre}",
+                "timestamp": timestamp,
+                "activity_id": instance.id,
+                "hash": activity_hash
+            }
+            async_to_sync(channel_layer.group_send)(user_group, message)
 
-@receiver(post_save, sender=Actividad)
-def notificar_y_descontar_insumo(sender, instance, created, **kwargs):
-    channel_layer = get_channel_layer()
-    timestamp = str(int(time.time() * 1000))
-    activity_hash = hashlib.md5(f"{instance.id}{timestamp}".encode()).hexdigest()
-
-    
-    user_group_name = f"user_{instance.usuario.id}"
-    user_message = {
-        "type": "send_notification",
-        "message": f"Tienes una nueva actividad:\n {instance.tipo_actividad.nombre}\n {instance.cultivo.nombre}",
-        "timestamp": timestamp,
-        "activity_id": instance.id,
-        "hash": activity_hash
-    }
-
-    
-    admin_message = {
-        "type": "send_notification",
-        "message": f"Nueva actividad asignada: {instance.tipo_actividad.nombre} para {instance.usuario.get_full_name()}",
-        "timestamp": timestamp,
-        "activity_id": instance.id,
-        "hash": activity_hash
-    }
-
-    
-    if created:
-        async_to_sync(channel_layer.group_send)(user_group_name, user_message)
+        usuario_principal = instance.usuarios.first()
+        admin_message = {
+            "type": "send_notification",
+            "message": f"Nueva actividad asignada: {instance.tipo_actividad.nombre} para {usuario_principal.get_full_name() if usuario_principal else 'sin usuario asignado'}",
+            "timestamp": timestamp,
+            "activity_id": instance.id,
+            "hash": activity_hash
+        }
         async_to_sync(channel_layer.group_send)("admin_group", admin_message)
 
-    
-    if instance.insumo and instance.cantidadUsada > 0:
-        insumo = instance.insumo
-        if instance.cantidadUsada > insumo.cantidad:
-            raise ValueError(f"No hay suficiente stock del insumo {insumo.nombre}. Disponible: {insumo.cantidad}")
 
-        if created:
-            
-            insumo.cantidad -= instance.cantidadUsada
-        else:
-            
-            diferencia = instance.cantidadUsada - instance._cantidad_anterior
-            if instance._insumo_anterior and instance._insumo_anterior != insumo:
-                
-                instance._insumo_anterior.cantidad += instance._cantidad_anterior
-                instance._insumo_anterior.save()
-                insumo.cantidad -= instance.cantidadUsada
-            elif diferencia != 0:
-                
-                insumo.cantidad -= diferencia
-
-        insumo.save()
-
-@receiver(post_delete, sender=Actividad)
-def notificar_eliminacion_y_revertir_insumo(sender, instance, **kwargs):
-    channel_layer = get_channel_layer()
-    timestamp = str(int(time.time() * 1000))
-    activity_hash = hashlib.md5(f"del{instance.id}{timestamp}".encode()).hexdigest()
-
-    
-    user_group_name = f"user_{instance.usuario.id}"
-    user_message = {
-        "type": "send_notification",
-        "message": f"Actividad eliminada: {instance.tipo_actividad.nombre}",
-        "timestamp": timestamp,
-        "hash": activity_hash
-    }
-
-    
-    admin_message = {
-        "type": "send_notification",
-        "message": f"Actividad eliminada: {instance.tipo_actividad.nombre} (era de {instance.usuario.get_full_name()})",
-        "timestamp": timestamp,
-        "hash": activity_hash
-    }
-
-    
-    async_to_sync(channel_layer.group_send)(user_group_name, user_message)
-    async_to_sync(channel_layer.group_send)("admin_group", admin_message)
-
-    
-    if instance.insumo and instance.cantidadUsada > 0:
-        insumo = instance.insumo
-        insumo.cantidad += instance.cantidadUsada
-        insumo.save()
+@receiver(post_save, sender=Actividad)
+def descontar_insumos(sender, instance, created, **kwargs):
+    if created:
+        for prestamo_insumo in instance.prestamos_insumos.all():
+            insumo = prestamo_insumo.insumo
+            if prestamo_insumo.cantidad_usada > insumo.cantidad:
+                raise ValueError(f"No hay suficiente stock del insumo {insumo.nombre}. Disponible: {insumo.cantidad}")
+            insumo.cantidad -= prestamo_insumo.cantidad_usada
+            insumo.save()
