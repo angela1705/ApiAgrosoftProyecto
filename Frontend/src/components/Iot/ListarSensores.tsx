@@ -8,6 +8,17 @@ import { ReuInput } from "@/components/globales/ReuInput";
 import { Sensor } from "@/types/iot/type";
 import { EditIcon, Trash2 } from "lucide-react";
 
+const sensorTypes = [
+  { value: "temperatura", label: "Temperatura (°C)" },
+  { value: "ambient_humidity", label: "Humedad Ambiente (%)" },
+  { value: "soil_humidity", label: "Humedad Suelo (%)" },
+  { value: "luminosidad", label: "Luminosidad (lux)" },
+  { value: "lluvia", label: "Lluvia (mm/h)" },
+  { value: "velocidad_viento", label: "Velocidad Viento (m/s)" },
+  { value: "direccion_viento", label: "Dirección Viento (grados)" },
+  { value: "ph_suelo", label: "pH Suelo (pH)" },
+];
+
 export default function ListarSensores() {
   const { sensores, isLoading, error, updateSensor, deleteSensor } = useSensoresRegistrados();
   const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
@@ -15,7 +26,6 @@ export default function ListarSensores() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Columnas para la tabla
   const columns = [
     { name: "ID", uid: "id" },
     { name: "Nombre", uid: "nombre" },
@@ -24,12 +34,11 @@ export default function ListarSensores() {
     { name: "Acciones", uid: "acciones" },
   ];
 
-  // Datos formateados para la tabla
   const formattedData = useMemo(() => {
     return sensores.map((sensor: Sensor) => ({
       id: sensor.id,
       nombre: sensor.nombre,
-      tipo_sensor: sensor.tipo_sensor,
+      tipo_sensor: sensorTypes.find((type) => type.value === sensor.tipo_sensor)?.label || sensor.tipo_sensor,
       unidad_medida: sensor.unidad_medida,
       acciones: (
         <>
@@ -44,19 +53,16 @@ export default function ListarSensores() {
     }));
   }, [sensores]);
 
-  // Manejar edición
   const handleEdit = (sensor: Sensor) => {
     setSelectedSensor({ ...sensor });
     setIsEditModalOpen(true);
   };
 
-  // Manejar eliminación
   const handleDelete = (sensor: Sensor) => {
     setSelectedSensor(sensor);
     setIsDeleteModalOpen(true);
   };
 
-  // Confirmar eliminación
   const handleConfirmDelete = () => {
     if (selectedSensor?.id) {
       deleteSensor.mutate(selectedSensor.id);
@@ -65,7 +71,6 @@ export default function ListarSensores() {
     }
   };
 
-  // Manejar cambios en el formulario de edición
   const handleChange = (
     field: keyof Sensor,
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -86,7 +91,7 @@ export default function ListarSensores() {
         <div className="w-full max-w-5xl">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Lista de Sensores Registrados</h2>
 
-          <div className="mb-2 flex justify-start">
+          <div className="mb-2 flex justify-start gap-2">
             <button
               className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
               onClick={() => navigate("/iot/registrar-sensor")}
@@ -94,7 +99,7 @@ export default function ListarSensores() {
               + Registrar Sensor
             </button>
             <button
-              className="ml-2 px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+              className="px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
               onClick={() => navigate("/iot/sensores")}
             >
               Volver a Tiempo Real
@@ -113,14 +118,12 @@ export default function ListarSensores() {
         </div>
       </div>
 
-      {/* Modal de edición */}
       <ReuModal
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         title="Editar Sensor"
         onConfirm={() => {
           if (selectedSensor?.id) {
-            console.log("Datos a enviar:", selectedSensor); // Para depurar
             updateSensor.mutate(selectedSensor);
             setIsEditModalOpen(false);
           }
@@ -132,12 +135,21 @@ export default function ListarSensores() {
           value={selectedSensor?.nombre || ""}
           onChange={(e) => handleChange("nombre", e)}
         />
-        <ReuInput
-          label="Tipo de Sensor"
-          type="text"
-          value={selectedSensor?.tipo_sensor || ""}
-          onChange={(e) => handleChange("tipo_sensor", e)}
-        />
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700">Tipo de Sensor</label>
+          <select
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedSensor?.tipo_sensor || ""}
+            onChange={(e) => handleChange("tipo_sensor", e)}
+          >
+            <option value="">Seleccione un tipo de sensor</option>
+            {sensorTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <ReuInput
           label="Unidad de Medida"
           type="text"
@@ -150,21 +162,22 @@ export default function ListarSensores() {
           value={selectedSensor?.descripcion || ""}
           onChange={(e) => handleChange("descripcion", e)}
         />
-        <ReuInput
-          label="Medida Mínima"
-          type="number"
-          value={selectedSensor?.medida_minima?.toString() || "0"}
-          onChange={(e) => handleChange("medida_minima", e)}
-        />
-        <ReuInput
-          label="Medida Máxima"
-          type="number"
-          value={selectedSensor?.medida_maxima?.toString() || "0"}
-          onChange={(e) => handleChange("medida_maxima", e)}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <ReuInput
+            label="Medida Mínima"
+            type="number"
+            value={selectedSensor?.medida_minima?.toString() || "0"}
+            onChange={(e) => handleChange("medida_minima", e)}
+          />
+          <ReuInput
+            label="Medida Máxima"
+            type="number"
+            value={selectedSensor?.medida_maxima?.toString() || "0"}
+            onChange={(e) => handleChange("medida_maxima", e)}
+          />
+        </div>
       </ReuModal>
 
-      {/* Modal de eliminación */}
       <ReuModal
         isOpen={isDeleteModalOpen}
         onOpenChange={setIsDeleteModalOpen}
