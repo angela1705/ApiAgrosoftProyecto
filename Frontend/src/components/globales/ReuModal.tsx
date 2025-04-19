@@ -16,6 +16,8 @@ interface ReusableModalProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
   confirmText?: string;
   cancelText?: string;
+  isConfirming?: boolean;
+
 }
 
 export default function ReuModal({

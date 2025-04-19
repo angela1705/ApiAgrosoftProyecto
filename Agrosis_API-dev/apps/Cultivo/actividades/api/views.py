@@ -14,11 +14,48 @@ from reportlab.lib.units import inch
 from datetime import datetime
 import os
 from django.conf import settings
+from apps.Cultivo.actividades.models import Actividad, PrestamoHerramienta, PrestamoInsumo
+from rest_framework.response import Response
+from rest_framework import status  
+from apps.Cultivo.actividades.api.serializers import FinalizarActividadSerializer
+from django.db.models import F
 
 class ActividadViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOrRead] 
     serializer_class = ActividadSerializer
+    
+    @action(detail=True, methods=['post'])
+    def finalizar(self, request, pk=None):
+        actividad = self.get_object()
+        
+        if actividad.estado == 'COMPLETADA':
+            return Response(
+                {"error": "Esta actividad ya está completada"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        serializer = FinalizarActividadSerializer(actividad, data=request.data)
+        if serializer.is_valid():
+            actividad = serializer.save()
+            
+            actividad.prestamos_insumos.all().update(
+                cantidad_devuelta=F('cantidad_usada'),
+                fecha_devolucion=actividad.fecha_fin
+            )
+            
+            actividad.prestamos_herramientas.all().update(
+                devuelta=True,
+                fecha_devolucion=actividad.fecha_fin
+            )
+            
+            return Response({
+                "message": "Actividad finalizada correctamente",
+                "insumos_devueltos": actividad.prestamos_insumos.count(),
+                "herramientas_devueltas": actividad.prestamos_herramientas.count()
+            }, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get_queryset(self):
         if self.action == 'reporte_pdf':

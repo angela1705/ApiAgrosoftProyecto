@@ -9,6 +9,8 @@ interface ReusableInputProps {
   radius?: "full" | "lg" | "md" | "sm" | "none";
   value: string | number;
   step?: string;
+  min?: number;  // Aquí se agrega la propiedad `min` como opcional
+  max?:number;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
