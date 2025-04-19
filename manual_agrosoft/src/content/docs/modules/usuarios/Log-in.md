@@ -4,17 +4,22 @@ slug: modules/usuarios/Log-in
 description: "Como administrar roles de un usuario en el modulo de usuarios en Agrosoft."
 ---
 
-#  Ingreso al sistema
+#  Ingreso al sistema 
+**A continuación se presentan las principales funcionalidades relacionadas con el acceso al sistema:**
+# Inicio de sesión:
+Una vez realizada la configuración y el despliegue del sistema, el usuario podrá acceder al sistema mediante una interfaz de inicio de sesión. Para iniciar la aplicación, el usuario debe ingresar:
+ - **correo y contraseña**, en caso de estar previamente registrado
+   Si la autenticación es exitosa, el sistema lo redirige al panel principal del sistema en los campos designados. 
 
-Una vez realizada la configuración y el despliegue del sistema, el usuario podrá acceder al sistema mediante una interfaz de inicio de sesión. Para iniciar la aplicación, el usuario debe ingresar su correo y contraseña en los campos designados. A continuación se presentan las principales funcionalidades relacionadas con el acceso al sistema:.
-- 1.	Inicio de sesión: El usuario ingresa su número de documento y contraseña (si esta previamente registrado) en los campos correspondientes. Si la autenticación es exitosa, el sistema lo redirige al panel principal del sistema.
 
 <img src="/public/CompletoLOG.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
+# Usuario creado por defecto:
 
 Al iniciar la aplicación se crea un usuario con permisos de administrador por defecto el cual se crea automaticamente, esto para facilitar la interacción de los usuarios nuevos con el sistema y evitar conflictos de permisos, al estar en **Iniciar sesión** usa estas credenciales:
-- Correo: **admin@gmail.com**
+- Correo: **admin01@gmail.com**
 - Contraseña: **admin**
+- Haz click en **Ingresar**
 - Ejemplo de uso:
 <img src="/public/log-in2.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
@@ -38,8 +43,24 @@ eso incluye registrar otros usuarios y definir sus permisos en el sistema.
 - **"Usuario registrado correctamente"**
 <img src="/public/registro3.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-⚠️ cada ususario tiene datos unicos, no puedes usar credenciales(nombres, correos) ya registradas,
-teniendo en cuenta eso **NO** puedes usar el correo admin@gmail.com o nombre **admin** en ningún registro ya que existe un  usuario por defecto con estas credenciales 
+## ✖️ Errores al registrar:
+- **Credenciales unicas**
+
+ Cada ususario tiene datos unicos, no puedes usar credenciales(username, correo)    
+ ya registradas en otro usuario previamente
+ - el sistema marcará si la información ingresada ya esta en uso
+ - corrige la información ingresada para que proceso siga su curso correctamente
+
+<img src="/public/registroerror1.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+
+- **Formulario incompleto**
+
+Los Datos requeridos por el Formulario de registro son obligatorios y necesarios para el correcto registro del usuario, al omitir alguno de los campos no se podrá realizar el registro 
+
+ - el sistema marcará si hay algun campo del formulario esta vacío
+ - ingresa la información requerida para que proceso siga su curso correctamente
+
+<img src="/public/registroerror2.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 
   Para crear una cuenta, los datos deben cumplir estos requisitos:
@@ -54,16 +75,51 @@ teniendo en cuenta eso **NO** puedes usar el correo admin@gmail.com o nombre **a
 - **Email**: Dirección de correo electronico
 - Siguiendo los requisitos podrás registrate facilmente.
 - ❗**Rol**: Este campo es asignado automaticamente por el sistema bajo el rol de **Aprendiz** este rol puede ser cambiado unicamente por un **Adminstrador** 
-<img src="/public/Editaruser.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 
-3.	Recuperación de contraseña: Si el usuario olvida su contraseña, tiene la opción de hacer clic en el botón "¿Olvidó su contraseña?". Al hacerlo, se le pedirá que ingrese su **Correo electrónico**. El sistema enviará un código de verificación al correo del usuario, permitiéndole restablecer su contraseña.
+# Recuperación de contraseña: 
+Si el usuario olvida su contraseña,en el formulario de **Incio de sesión**.
 
-<img src="/public/recuperacion.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+tiene la opción de hacer clic en **"¿Olvidó su contraseña?"**
 
-4.	Resultado esperado: Una vez el usuario haya iniciado sesión correctamente, será redirigido a la pantalla de inicio del sistema, donde podrá acceder a todas las funcionalidades disponibles
+<img src="/public/recuperacion1.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
-- sin foto
+Al hacerlo, se le pedirá que ingrese su **Correo electrónico** este correo electronico debe pertenecer a tu cuenta.
+<img src="/public/recuperacion.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+
+ El sistema enviará un código de verificación al correo del usuario, permitiéndole obtener el link para restablecer la contraseña.
+ - Si el correo que enviaste es valido, verás un mensaje como este:
+<img src="/public/recuperacion3.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+
+encontrará este mensaje en su correo, el cual contiene el link para el restablecimiento de su contraseña:
+<img src="/public/recuperacion4.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+
+Al dar click al link de recuperación, sera llevado a un formulario para ingresar su nueva contraseña:
+- Ingrese su nueva contraseña
+- Ingrese nuevamente la contraseña para confirmar
+
+<img src="/public/recuperacion5.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+
+Al dar click en **Restablecer** podra ver el siguiente mensaje:
+<img src="/public/recuperacion6.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 50%; border-radius: 12px;" />
+
+El restablecimiento de su contraseña ha sido exitoso✅.
+
+## ✖️ Errores al restablecer contraseña:
+
+**Correo no valido**
+- Usar un correo que NO esta registrado en el sistema:
+si el correo que proporcionaste para la recuperación no esta registrado en el sistema verás un mensaje como este:
+<img src="/public/recuperacion7.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+
+**link no valido**
+- El link que llega a tu correo tiene una vigencia de **5 minutos** pasado ese tiempo no podrás realizar el restablecimiento:
+<img src="/public/recuperacion9.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+
+Ten en cuenta el tiempo que ha pasado desde que se generó el link:
+<img src="/public/recuperacion8.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+
+Sigue correctamente los pasos y recomendaciones para un restablecimiento de contraseña exitoso.
  ## Consideraciones Legales sobre Datos Personales
  <img src="/public/ministerio.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
