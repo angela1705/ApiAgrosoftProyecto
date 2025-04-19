@@ -9,7 +9,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
-from datetime import datetime
+from datetime import datetime, timedelta
 from apps.Iot.datos_meteorologicos.models import Datos_metereologicos, Evapotranspiracion
 from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer, EvapotranspiracionSerializer
 from django_filters.rest_framework import DjangoFilterBackend
@@ -25,7 +25,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['fk_sensor_id', 'fecha_medicion']
+    filterset_fields = ['fk_sensor_id', 'fk_bancal_id', 'fecha_medicion']
 
     def get_permissions(self):
         if self.action == 'create':
@@ -37,10 +37,33 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             logger.info("Ejecutando get_queryset")
             queryset = super().get_queryset()
             logger.info(f"Total de registros en queryset: {queryset.count()}")
-            date = self.request.query_params.get('date')
-            if date:
-                logger.info(f"Filtrando por fecha: {date}")
-                queryset = queryset.filter(fecha_medicion__date=date)
+
+            # Filtro por fecha_medicion (en formato YYYY-MM-DD)
+            fecha_medicion = self.request.query_params.get('fecha_medicion', None)
+            if fecha_medicion:
+                try:
+                    logger.info(f"Filtrando por fecha_medicion: {fecha_medicion}")
+                    # Parsear la fecha y filtrar por el rango del día completo
+                    fecha = datetime.strptime(fecha_medicion, '%Y-%m-%d')
+                    fecha_inicio = fecha
+                    fecha_fin = fecha + timedelta(days=1)
+                    queryset = queryset.filter(
+                        fecha_medicion__gte=fecha_inicio,
+                        fecha_medicion__lt=fecha_fin
+                    )
+                    logger.info(f"Registros después de filtrar por fecha: {queryset.count()}")
+                except ValueError as e:
+                    logger.error(f"Formato de fecha inválido: {fecha_medicion}, error: {str(e)}")
+                    # Ignorar el filtro si la fecha es inválida
+                    pass
+
+            # Filtro por fk_bancal_id (si está presente)
+            fk_bancal_id = self.request.query_params.get('fk_bancal_id', None)
+            if fk_bancal_id:
+                logger.info(f"Filtrando por fk_bancal_id: {fk_bancal_id}")
+                queryset = queryset.filter(fk_bancal_id=fk_bancal_id)
+                logger.info(f"Registros después de filtrar por bancal: {queryset.count()}")
+
             return queryset.order_by('-fecha_medicion')
         except Exception as e:
             logger.error(f"Error en get_queryset: {str(e)}")

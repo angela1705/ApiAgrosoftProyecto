@@ -98,12 +98,6 @@ export default function ListarSensores() {
             >
               + Registrar Sensor
             </button>
-            <button
-              className="px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-              onClick={() => navigate("/iot/sensores")}
-            >
-              Volver a Tiempo Real
-            </button>
           </div>
 
           {isLoading ? (

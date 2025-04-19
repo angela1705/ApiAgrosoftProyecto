@@ -11,8 +11,22 @@ export interface Sensor {
 export interface SensorData {
   id?: number;
   fk_sensor: number;
-  temperature: number;
-  humidity: number;
+  temperatura: number | null;
+  humedad_ambiente: number | null;
+  humedad_suelo: number | null;
+  luminosidad: number | null;
+  lluvia: number | null;
+  velocidad_viento: number | null;
+  direccion_viento: number | null;
+  ph_suelo: number | null;
   fecha_medicion?: string;
   message?: string;
+}
+
+export interface LluviaData {
+  cantidad: number | null;
+  intensidad: number | null;
+  duracion: number | null;
+  frecuencia: number | null;
+  fecha_medicion?: string;
 }
