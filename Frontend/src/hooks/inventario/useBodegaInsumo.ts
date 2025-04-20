@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { BodegaInsumo } from "@/types/inventario/BodegaInsumo";
 
 const API_URL = "http://127.0.0.1:8000/inventario/bodega_insumo/";
@@ -11,7 +11,7 @@ export const useBodegaInsumos = () => {
       const token = localStorage.getItem("access_token");
       if (!token) throw new Error("No se encontró el token de autenticación.");
 
-      const response = await axios.get(API_URL, {
+      const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("📌 Bodega Insumos recibidos:", response.data);
@@ -35,7 +35,7 @@ export const useRegistrarBodegaInsumo = () => {
 
       console.log("📌 Enviando al backend:", payload);
 
-      const response = await axios.post(API_URL, payload, {
+      const response = await api.post(API_URL, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -67,7 +67,7 @@ export const useActualizarBodegaInsumo = () => {
 
       console.log("📌 Enviando al backend:", payload);
 
-      const response = await axios.put(`${API_URL}${bodegaInsumo.id}/`, payload, {
+      const response = await api.put(`${API_URL}${bodegaInsumo.id}/`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ export const useEliminarBodegaInsumo = () => {
       const token = localStorage.getItem("access_token");
       if (!token) throw new Error("No se encontró el token de autenticación.");
 
-      await axios.delete(`${API_URL}${id}/`, {
+      await api.delete(`${API_URL}${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
     },

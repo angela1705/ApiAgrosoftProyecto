@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { BodegaHerramienta } from "@/types/inventario/BodegaHerramienta";
 
@@ -9,7 +9,7 @@ const fetchBodegaHerramienta = async (): Promise<BodegaHerramienta[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -34,7 +34,7 @@ const registrarBodegaHerramienta = async ({ bodega, herramienta, cantidad }: Omi
         cantidad,
     };
 
-    const response = await axios.post(API_URL, payload, {
+    const response = await api.post(API_URL, payload, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -81,7 +81,7 @@ const actualizarBodegaHerramienta = async ({ id, bodega, herramienta, cantidad }
         cantidad,
     };
 
-    const response = await axios.put(`${API_URL}${id}/`, payload, {
+    const response = await api.put(`${API_URL}${id}/`, payload, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -122,7 +122,7 @@ const eliminarBodegaHerramienta = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    await axios.delete(`${API_URL}${id}/`, {
+    await api.delete(`${API_URL}${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
 };

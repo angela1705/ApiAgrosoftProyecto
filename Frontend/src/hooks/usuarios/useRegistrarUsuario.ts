@@ -18,7 +18,7 @@ export const useRegistrarUsuario = () => {
   const registrarUsuario = async (usuario: NuevoUsuario) => {
     const response = await axios.post(`${API_URL}registro/`, {
       ...usuario,
-      rol_id: 1, // siempre aprendiz
+      rol_id: 1, 
     });
     return response.data;
   };

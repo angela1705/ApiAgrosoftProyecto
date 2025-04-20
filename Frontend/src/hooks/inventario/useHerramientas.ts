@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Herramienta } from "@/types/inventario/Herramientas";
 
@@ -9,7 +9,7 @@ const fetchHerramientas = async (): Promise<Herramienta[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -28,7 +28,7 @@ const registrarHerramienta = async (herramienta: Herramienta) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.post(API_URL, herramienta, {
+    const response = await api.post(API_URL, herramienta, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ const actualizarHerramienta = async (herramienta: Herramienta) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.put(`${API_URL}${herramienta.id}/`, herramienta, {
+    const response = await api.put(`${API_URL}${herramienta.id}/`, herramienta, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -110,7 +110,7 @@ const eliminarHerramienta = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    await axios.delete(`${API_URL}${id}/`, {
+    await api.delete(`${API_URL}${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
 };

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 
@@ -8,7 +8,7 @@ const API_URL = "http://127.0.0.1:8000/inventario/precio-producto/";
 const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Datos de la API (preciosProductos):", response.data); 
@@ -34,7 +34,7 @@ export const usePreciosProductos = () => {
 const fetchUnidadesMedida = async (): Promise<UnidadMedida[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    const response = await axios.get(`${API_URL}unidades_medida/`, {
+    const response = await api.get(`${API_URL}unidades_medida/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -65,7 +65,7 @@ const registrarPrecioProducto = async (
             fecha_caducidad: precioProducto.fecha_caducidad,
         };
         console.log("Payload enviado (registrar):", payload);
-        const response = await axios.post(API_URL, payload, {
+        const response = await api.post(API_URL, payload, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -130,7 +130,7 @@ const actualizarPrecioProducto = async (
             fecha_caducidad: precioProducto.fecha_caducidad,
         };
         console.log("Payload enviado (actualizar):", data);
-        const response = await axios.put(`${API_URL}${id}/`, data, {
+        const response = await api.put(`${API_URL}${id}/`, data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -189,7 +189,7 @@ const eliminarPrecioProducto = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     try {
-        const response = await axios.delete(`${API_URL}${id}/`, {
+        const response = await api.delete(`${API_URL}${id}/`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -243,7 +243,7 @@ const crearUnidadMedida = async (
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     try {
-        const response = await axios.post(
+        const response = await api.post(
             `${API_URL}crear_unidad_medida/`,
             unidad,
             {

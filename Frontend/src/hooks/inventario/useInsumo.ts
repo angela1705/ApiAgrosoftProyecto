@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 
@@ -9,7 +9,7 @@ const fetchInsumos = async (): Promise<Insumo[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -27,7 +27,7 @@ const fetchUnidadesMedida = async (): Promise<UnidadMedida[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(`${API_URL}unidades_medida/`, {
+    const response = await api.get(`${API_URL}unidades_medida/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -45,7 +45,7 @@ const fetchTiposInsumo = async (): Promise<TipoInsumo[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(`${API_URL}tipos_insumo/`, {
+    const response = await api.get(`${API_URL}tipos_insumo/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -64,7 +64,7 @@ const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "ti
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(API_URL, insumo, {
+        const response = await api.post(API_URL, insumo, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -114,7 +114,7 @@ const actualizarInsumo = async (id: number, insumo: ActualizarInsumoParams["insu
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.put(`${API_URL}${id}/`, insumo, {
+        const response = await api.put(`${API_URL}${id}/`, insumo, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -157,7 +157,7 @@ const eliminarInsumo = async (id: number) => {
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.delete(`${API_URL}${id}/`, {
+        const response = await api.delete(`${API_URL}${id}/`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -198,7 +198,7 @@ const crearUnidadMedida = async (unidad: Omit<UnidadMedida, "id" | "fecha_creaci
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(`${API_URL}crear_unidad_medida/`, unidad, {
+        const response = await api.post(`${API_URL}crear_unidad_medida/`, unidad, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -231,7 +231,7 @@ const crearTipoInsumo = async (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | 
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(`${API_URL}crear_tipo_insumo/`, tipo, {
+        const response = await api.post(`${API_URL}crear_tipo_insumo/`, tipo, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -272,7 +272,7 @@ const usarEnActividad = async (id: number, data: { cantidad_usada: number; activ
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(`${API_URL}${id}/usar_en_actividad/`, data, {
+        const response = await api.post(`${API_URL}${id}/usar_en_actividad/`, data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -313,7 +313,7 @@ const descargarReportePDF = async () => {
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.get(`${API_URL}reporte_pdf/`, {
+        const response = await api.get(`${API_URL}reporte_pdf/`, {
             headers: { Authorization: `Bearer ${token}` },
             responseType: 'blob',
         });
