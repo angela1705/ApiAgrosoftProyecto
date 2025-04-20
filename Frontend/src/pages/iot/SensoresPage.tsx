@@ -1,100 +1,155 @@
-import { useState } from "react";
-import { useDatosMeteorologicos } from "@/hooks/iot/useDatosMeteorologicos";
+import { useState, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
-import { Link } from "react-router-dom";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
+import { useNavigate } from "react-router-dom";
+import Tabla from "@/components/globales/Tabla";
+import { Sensor, SensorData } from "@/types/iot/type";
+import {
+  FaTemperatureHigh,
+  FaTint,
+  FaSun,
+  FaCloudRain,
+  FaWind,
+  FaCompass,
+  FaVial,
+} from "react-icons/fa";
 
 export default function SensoresPage() {
-  const { data: latestData = [], chartData = [], isLoading, error } = useDatosMeteorologicos();
-  const [selectedMetric, setSelectedMetric] = useState<string>("");
+  const [selectedDataType, setSelectedDataType] = useState<string | null>(null);
+  const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
+  const { sensores = [], isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
+  const navigate = useNavigate();
 
-  const metrics = [
-    { value: "temperatura", label: "Temperatura (°C)", color: "#8884d8", icon: "🌡️" },
-    { value: "humedad_ambiente", label: "Humedad Ambiente (%)", color: "#82ca9d", icon: "💧" },
-    { value: "humedad_suelo", label: "Humedad Suelo (%)", color: "#ff7300", icon: "🌱" },
-    { value: "luminosidad", label: "Luminosidad (lux)", color: "#ffc107", icon: "☀️" },
-    { value: "lluvia", label: "Lluvia (mm/h)", color: "#00c4ff", icon: "🌧️" },
-    { value: "velocidad_viento", label: "Velocidad Viento (m/s)", color: "#ff4d4f", icon: "💨" },
-    { value: "direccion_viento", label: "Dirección Viento (grados)", color: "#a0d911", icon: "🧭" },
-    { value: "ph_suelo", label: "pH Suelo (pH)", color: "#d81b60", icon: "🧪" },
+  // Definir los tipos de datos que se pueden filtrar, con íconos
+  const dataTypes = [
+    { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" /> },
+    { label: "Humedad (%)", key: "humedad_ambiente", icon: <FaTint className="text-blue-500" /> },
+    { label: "Humedad Suelo (%)", key: "humedad_suelo", icon: <FaTint className="text-blue-700" /> },
+    { label: "Luminosidad (lux)", key: "luminosidad", icon: <FaSun className="text-yellow-500" /> },
+    { label: "Lluvia (mm)", key: "lluvia", icon: <FaCloudRain className="text-gray-500" /> },
+    { label: "Velocidad Viento (m/s)", key: "velocidad_viento", icon: <FaWind className="text-teal-500" /> },
+    { label: "Dirección Viento (grados)", key: "direccion_viento", icon: <FaCompass className="text-green-500" /> },
+    { label: "pH Suelo", key: "ph_suelo", icon: <FaVial className="text-purple-500" /> },
   ];
 
-  const graphData = chartData.map((sensor, index) => ({
-    name: sensor.fecha_medicion ? new Date(sensor.fecha_medicion).toLocaleTimeString() : `Dato ${index + 1}`,
-    temperatura: sensor.temperatura ?? null,
-    humedad_ambiente: sensor.humedad_ambiente ?? null,
-    humedad_suelo: sensor.humedad_suelo ?? null,
-    luminosidad: sensor.luminosidad ?? null,
-    lluvia: sensor.lluvia ?? null,
-    velocidad_viento: sensor.velocidad_viento ?? null,
-    direccion_viento: sensor.direccion_viento ?? null,
-    ph_suelo: sensor.ph_suelo ?? null,
+  useEffect(() => {
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/realtime/");
+
+    ws.onopen = () => {
+      console.log("Conexión WebSocket establecida");
+    };
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("Datos en tiempo real recibidos:", message);
+      if (message.type === "sensor_data") {
+        setRealTimeData((prevData) => {
+          const newData = [...prevData, message.data];
+          return newData.slice(-50); 
+        });
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("Error en WebSocket:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("Conexión WebSocket cerrada");
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  const columns = [
+    { name: "ID", uid: "id" },
+    { name: "Sensor", uid: "sensor" },
+    { name: selectedDataType ? dataTypes.find(dt => dt.key === selectedDataType)?.label || "Dato" : "Dato", uid: "value" },
+    { name: "Fecha de Medición", uid: "fecha_medicion" },
+  ];
+
+  const filteredData = selectedDataType
+    ? realTimeData.filter((dato: SensorData) => {
+        const value = dato[selectedDataType as keyof SensorData];
+        return value !== null && value !== undefined;
+      })
+    : realTimeData;
+
+  const formattedData = filteredData.map((dato: SensorData) => ({
+    id: dato.id || "N/A",
+    sensor: sensores.find((s: Sensor) => s.id === dato.fk_sensor)?.nombre || dato.fk_sensor || "N/A",
+    value: selectedDataType ? dato[selectedDataType as keyof SensorData] ?? "N/A" : "N/A",
+    fecha_medicion: dato.fecha_medicion ? new Date(dato.fecha_medicion).toLocaleString() : "N/A",
   }));
 
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Sensores Activos en Tiempo Real</h2>
+        <div className="w-full max-w-5xl">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Datos Meteorológicos en Tiempo Real</h2>
 
-          <div className="mb-2 flex justify-start gap-2">
-            <Link
-              to="/iot/registrar-sensor"
+          {/* Botón de navegación */}
+          <div className="mb-4 flex justify-start items-center gap-2">
+            <button
               className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-            >
-              + Registrar Sensor
-            </Link>
-            <Link
-              to="/iot/datos-meteorologicos"
-              className="px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+              onClick={() => navigate("/iot/datosmeteorologicos")}
             >
               Ver Datos Históricos
-            </Link>
-            <Link
-              to="/iot/listar-sensores"
-              className="px-3 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg hover:bg-purple-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-            >
-              Listar Sensores
-            </Link>
+            </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6">
-            {metrics.map((metric) => (
+          {/* Botones de tipos de datos o vista detallada */}
+          {selectedDataType ? (
+            <div className="mb-4">
+              {/* Botón de regreso */}
               <button
-                key={metric.value}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105 ${
-                  selectedMetric === metric.value
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                }`}
-                onClick={() => setSelectedMetric(metric.value)}
+                className="flex items-center px-3 py-2 bg-gray-600 text-white text-sm font-semibold rounded-lg hover:bg-gray-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105 mb-4"
+                onClick={() => setSelectedDataType(null)}
               >
-                <span>{metric.icon}</span>
-                <span>{metric.label}</span>
+                <ArrowLeft className="mr-2" size={16} />
+                Volver a Tipos de Datos
               </button>
-            ))}
-          </div>
 
-          {isLoading ? (
-            <p className="text-gray-600 text-center">Cargando datos...</p>
-          ) : error ? (
-            <p className="text-red-500 text-center">Error: {error.message}</p>
-          ) : selectedMetric ? (
-            <LineChart width={600} height={300} data={graphData} className="mx-auto">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey={selectedMetric}
-                stroke={metrics.find((m) => m.value === selectedMetric)?.color}
-                name={metrics.find((m) => m.value === selectedMetric)?.label}
-              />
-            </LineChart>
+              {/* Lista de datos filtrados */}
+              {formattedData.length === 0 ? (
+                <p className="text-gray-600 text-center">
+                  No hay datos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label}
+                </p>
+              ) : (
+                <Tabla columns={columns} data={formattedData} />
+              )}
+            </div>
           ) : (
-            <p className="text-gray-600 text-center">Seleccione una métrica para ver el gráfico</p>
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">Seleccionar Tipo de Dato</h3>
+              <div className="bg-white rounded-lg shadow-md p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {dataTypes.map((type) => (
+                  <button
+                    key={type.key}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                    onClick={() => setSelectedDataType(type.key)}
+                  >
+                    {type.icon}
+                    <span>{type.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Mostrar mensaje de carga o error si no hay tipo de dato seleccionado */}
+          {!selectedDataType && (
+            <>
+              {sensoresLoading ? (
+                <p className="text-gray-600 text-center">Cargando sensores...</p>
+              ) : sensoresError ? (
+                <p className="text-red-500 text-center">Error al cargar sensores: {sensoresError}</p>
+              ) : realTimeData.length === 0 ? (
+                <p className="text-gray-600 text-center">Esperando datos en tiempo real...</p>
+              ) : null}
+            </>
           )}
         </div>
       </div>

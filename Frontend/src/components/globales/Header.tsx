@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ isSidebarOpen }) => {
       <div className="flex-grow" />
 
       {/* Menú de usuario en la derecha */}
-      <Box sx={{ display: 'flex', alignItems: 'center' ,}}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <UserMenu />
       </Box>
     </header>

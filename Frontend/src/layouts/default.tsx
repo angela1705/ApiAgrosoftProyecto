@@ -1,9 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import Navbar from "@/components/globales/Navbar";
 import { Header } from "@/components/globales/Header";
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { isAuthenticated } = useAuth();
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (!isAuthenticated) return false;
+    const savedState = localStorage.getItem("sidebarOpen");
+    return savedState ? JSON.parse(savedState) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(isSidebarOpen));
+  }, [isSidebarOpen]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setIsSidebarOpen(false);
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="relative flex h-screen">

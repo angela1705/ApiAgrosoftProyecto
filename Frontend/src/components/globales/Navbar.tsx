@@ -84,19 +84,20 @@ const menuItems = [
     label: "IoT",
     icon: <GiProcessor />,
     subItems: [
-      { id: 30, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
-      { id: 31, label: "Sensores", path: "/iot/sensores", icon: <FaTachometerAlt /> },
-      { id: 32, label: "Humedad", path: "/iot/humedad", icon: <FaTemperatureHigh /> },
+      { id: 30, label: "Datos en Tiempo Real", path: "/iot/sensores", icon: <FaTachometerAlt /> },
+      { id: 31, label: "Datos Históricos", path: "/iot/datosmeteorologicos", icon: <FaTemperatureHigh /> },
+      { id: 32, label: "Lista de Sensores", path: "/iot/listar-sensores", icon: <FaTachometerAlt /> },
+      { id: 33, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
     ],
   },
-  { id: 33, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
+  { id: 34, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
   {
-    id: 34,
+    id: 35,
     label: "Graficas",
     icon: <FaChartBar />,
     subItems: [
-      { id: 35, label: "Ingresos", path: "/graficas/ingresos" },
-      { id: 36, label: "Cosechas", path: "/graficas/cosechas" },
+      { id: 36, label: "Ingresos", path: "/graficas/ingresos" },
+      { id: 37, label: "Cosechas", path: "/graficas/cosechas" },
     ],
   },
 ];
@@ -207,19 +208,19 @@ function SidebarItem({
 
       {isOpen && isExpanded && item.subItems && (
         <div className="flex flex-col gap-2 mt-2 ml-8">
-          {item.subItems.map((subItem: any) => (
-            <Link
-              key={subItem.id}
-              to={subItem.path}
-              className="flex items-center gap-2 p-2 pl-6 rounded-full transition-all font-medium cursor-pointer 
-              bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto
-              relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
-            >
-              {subItem.icon && <span className="text-gray-600">{subItem.icon}</span>}
-              <span className="text-sm">{subItem.label}</span>
-            </Link>
-          ))}
-        </div>
+        {item.subItems.map((subItem: any) => (
+          <Link
+            key={subItem.id}
+            to={subItem.path}
+            className="flex items-center gap-2 p-2 pl-6 rounded-full transition-all font-medium cursor-pointer 
+            bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto
+            relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
+          >
+            {subItem.icon && <span className="text-gray-600">{subItem.icon}</span>}
+            <span className="text-sm">{subItem.label}</span>
+          </Link>
+        ))}
+      </div>
       )}
     </div>
   );
