@@ -10,12 +10,13 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from ..models import BodegaHerramienta
 from .serializers import BodegaHerramientaSerializer
 
 class BodegaHerramientaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated , PermisoPorRol]
     queryset = BodegaHerramienta.objects.all()
     serializer_class = BodegaHerramientaSerializer
 

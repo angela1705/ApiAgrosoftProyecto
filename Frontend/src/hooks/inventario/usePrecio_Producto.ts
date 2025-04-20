@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 
@@ -8,7 +8,7 @@ const API_URL = "http://127.0.0.1:8000/inventario/precio-producto/";
 const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Datos de la API (preciosProductos):", response.data); 
@@ -34,7 +34,7 @@ export const usePreciosProductos = () => {
 const fetchUnidadesMedida = async (): Promise<UnidadMedida[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    const response = await axios.get(`${API_URL}unidades_medida/`, {
+    const response = await api.get(`${API_URL}unidades_medida/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -65,7 +65,7 @@ const registrarPrecioProducto = async (
             fecha_caducidad: precioProducto.fecha_caducidad,
         };
         console.log("Payload enviado (registrar):", payload);
-        const response = await axios.post(API_URL, payload, {
+        const response = await api.post(API_URL, payload, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -97,9 +97,22 @@ export const useRegistrarPrecioProducto = () => {
                     "Error al registrar el precio de producto",
                 timeout: 3000,
             });
-        },
-    });
-};
+            if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al registrar el precio del producto",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };
 
 const actualizarPrecioProducto = async (
     id: number,
@@ -117,7 +130,7 @@ const actualizarPrecioProducto = async (
             fecha_caducidad: precioProducto.fecha_caducidad,
         };
         console.log("Payload enviado (actualizar):", data);
-        const response = await axios.put(`${API_URL}${id}/`, data, {
+        const response = await api.put(`${API_URL}${id}/`, data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -154,16 +167,29 @@ export const useActualizarPrecioProducto = () => {
                     error.response?.data?.message ||
                     "Error al actualizar el precio de producto",
                 timeout: 3000,
-            });
-        },
-    });
-};
+            }); if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al actualizar el precio del producto",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };
+
 
 const eliminarPrecioProducto = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     try {
-        const response = await axios.delete(`${API_URL}${id}/`, {
+        const response = await api.delete(`${API_URL}${id}/`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -194,10 +220,22 @@ export const useEliminarPrecioProducto = () => {
                     error.response?.data?.message ||
                     "No se pudo eliminar el precio de producto",
                 timeout: 3000,
-            });
-        },
-    });
-};
+            });if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al eliminar el precio del producto",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };
 
 const crearUnidadMedida = async (
     unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">
@@ -205,7 +243,7 @@ const crearUnidadMedida = async (
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
     try {
-        const response = await axios.post(
+        const response = await api.post(
             `${API_URL}crear_unidad_medida/`,
             unidad,
             {
@@ -240,7 +278,19 @@ export const useCrearUnidadMedida = () => {
                     error.response?.data?.message ||
                     "Error al crear la unidad de medida",
                 timeout: 3000,
-            });
-        },
-    });
-};
+            });if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al crear unidad de medida",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };

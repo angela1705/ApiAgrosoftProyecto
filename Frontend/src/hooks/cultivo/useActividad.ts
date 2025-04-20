@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Actividad } from "@/types/cultivo/Actividad";
 import { Insumo } from "@/types/inventario/Insumo";
@@ -13,7 +13,7 @@ const fetchActividades = async (): Promise<Actividad[]> => {
       throw new Error("No se encontró el token de autenticación.");
     }
   
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -35,7 +35,7 @@ const fetchUsuarios = async (): Promise<User[]> => {
         throw new Error("No se encontró el token de autenticación.");
     }
 
-    const response = await axios.get("http://127.0.0.1:8000/usuarios/usuarios/", {
+    const response = await api.get("http://127.0.0.1:8000/usuarios/usuarios/", {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -57,7 +57,7 @@ const fetchInsumos = async (): Promise<Insumo[]>=> {
         throw new Error("No se encontró el token de autenticación.");
     }
 
-    const response = await axios.get("http://127.0.0.1:8000/inventario/insumo/", {
+    const response = await api.get("http://127.0.0.1:8000/inventario/insumo/", {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -80,7 +80,7 @@ const registrarActividad = async (actividad: Actividad) => {
   }
 
   try {
-      const response = await axios.post(API_URL, {
+      const response = await api.post(API_URL, {
           ...actividad,
           usuarios: actividad.usuarios, 
           insumos: actividad.insumos, 
@@ -101,7 +101,7 @@ const eliminarActividad = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
-    return axios.delete(`${API_URL}${id}/`, {
+    return api.delete(`${API_URL}${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   };
@@ -114,7 +114,7 @@ const eliminarActividad = async (id: number) => {
     }
   
     try {
-      const response = await axios.put(`${API_URL}${id}/`, actividad, {
+      const response = await api.put(`${API_URL}${id}/`, actividad, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -133,15 +133,24 @@ export const useRegistrarActividad = () => {
                 description: "Actividad registrada con éxito",
             });
         },
-        onError: () => {
+        onError: (error: any) => {
+          if (error.response?.status === 403) {
             addToast({
-                title: "Error",
-                description: "Error al registrar la actividad",
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+              timeout: 3000,
             });
+          } else {
+            addToast({
+              title: "Error",
+              description: "Error al registrar la actividad",
+              timeout: 3000,
+            });
+          }
         },
-    });
-};
-
+      });
+    };
+  
 
 export const useActualizarActividad = () => {
     const queryClient = useQueryClient();
@@ -151,15 +160,24 @@ export const useActualizarActividad = () => {
             queryClient.invalidateQueries({ queryKey: ["actividades"] });
             addToast({ title: "Éxito", description: "Actividad actualizada con éxito", timeout: 3000 });
         },
-        onError: (error: any) => {
-            addToast({ 
-                title: "Error", 
-                description: error.response?.data?.message || "Error al actualizar la actividad", 
-                timeout: 3000 
-            });
-        },
+      onError: (error: any) => {
+        if (error.response?.status === 403) {
+          addToast({
+            title: "Acceso denegado",
+            description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+            timeout: 3000,
+          });
+        } else {
+          addToast({
+            title: "Error",
+            description: "Error al actualizar la actividad",
+            timeout: 3000,
+          });
+        }
+      },
     });
-};
+  };
+
   export const useEliminarActividad = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -168,8 +186,20 @@ export const useActualizarActividad = () => {
         queryClient.invalidateQueries({ queryKey: ["Actividad"] });
         addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000 });
       },
-      onError: () => {
-        addToast({ title: "Error", description: "Error al actividad el tipo de especie", timeout: 3000 });
+      onError: (error: any) => {
+        if (error.response?.status === 403) {
+          addToast({
+            title: "Acceso denegado",
+            description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+            timeout: 3000,
+          });
+        } else {
+          addToast({
+            title: "Error",
+            description: "Error al eliminar la actividad",
+            timeout: 3000,
+          });
+        }
       },
     });
   };
@@ -191,7 +221,7 @@ export const useActualizarActividad = () => {
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
     try {
-      const response = await axios.post(`${API_URL}${id}/finalizar/`, finalizacionData, {
+      const response = await api.post(`${API_URL}${id}/finalizar/`, finalizacionData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"

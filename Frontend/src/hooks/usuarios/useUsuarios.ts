@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 
 const API_URL = "http://127.0.0.1:8000/usuarios/";
@@ -33,7 +33,7 @@ export const useUsuarios = () => {
   const fetchUsuarios = async (): Promise<Usuario[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    const response = await axios.get(`${API_URL}usuarios/`, {
+    const response = await api.get(`${API_URL}usuarios/`, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
     if (!Array.isArray(response.data)) throw new Error("La API no devolvió un array de usuarios.");
@@ -43,7 +43,7 @@ export const useUsuarios = () => {
   const fetchRoles = async (): Promise<Rol[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    const response = await axios.get(`${API_URL}roles/`, {
+    const response = await api.get(`${API_URL}roles/`, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
     if (!Array.isArray(response.data)) throw new Error("La API no devolvió un array de roles.");
@@ -53,7 +53,7 @@ export const useUsuarios = () => {
   const updateUsuario = async (usuario: UsuarioUpdate): Promise<Usuario> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    const response = await axios.put(`${API_URL}usuarios/${usuario.id}/`, usuario, {
+    const response = await api.put(`${API_URL}usuarios/${usuario.id}/`, usuario, {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
     return response.data; 
@@ -61,7 +61,7 @@ export const useUsuarios = () => {
   const deleteUsuario = async (id: number): Promise<void> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
-    await axios.delete(`${API_URL}usuarios/${id}/`, {
+    await api.delete(`${API_URL}usuarios/${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   };

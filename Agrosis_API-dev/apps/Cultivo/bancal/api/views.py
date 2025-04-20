@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from apps.Cultivo.bancal.models import Bancal
 from apps.Cultivo.bancal.api.serializers import BancalSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from rest_framework.decorators import action
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
@@ -17,7 +18,7 @@ from django.conf import settings
 
 class BancalViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOrRead] 
+    permission_classes = [IsAuthenticated, IsAdminOrRead,PermisoPorRol] 
     serializer_class = BancalSerializer
     
     def get_queryset(self):

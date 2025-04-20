@@ -6,13 +6,13 @@ from datetime import date
 from django.shortcuts import get_object_or_404
 from apps.Finanzas.pagos.models import Pago
 from apps.Finanzas.pagos.api.serializers import PagoSerializer
-from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead
+from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead, PermisoPorRol
 from apps.Finanzas.salario.models import Salario
 from apps.Cultivo.actividades.models import Actividad
 
 class PagoViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOrRead]
+    permission_classes = [IsAuthenticated, IsAdminOrRead, PermisoPorRol]
     serializer_class = PagoSerializer
 
     def get_queryset(self):
