@@ -72,8 +72,20 @@ export const useRegistrarCosecha = () => {
     onSuccess: () => {
       addToast({ title: "Éxito", description: "Cosecha registrada con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al registrar la cosecha", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar la cosecha",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -86,8 +98,20 @@ export const useActualizarCosecha = () => {
       queryClient.invalidateQueries({ queryKey: ["cosechas"] });
       addToast({ title: "Éxito", description: "Cosecha actualizada con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al actualizar la cosecha", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al actualizar la cosecha",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -100,8 +124,20 @@ export const useEliminarCosecha = () => {
       queryClient.invalidateQueries({ queryKey: ["cosechas"] });
       addToast({ title: "Éxito", description: "Cosecha eliminada con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar la cosecha", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar la cosecha",
+          timeout: 3000,
+        });
+      }
     },
   });
 };

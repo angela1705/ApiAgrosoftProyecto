@@ -13,12 +13,13 @@ from datetime import datetime
 from apps.Cultivo.cosechas.models import Cosecha
 from apps.Cultivo.cosechas.api.serializers import CosechaSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, TruncWeek, ExtractWeekDay
 
 class CosechaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOrRead] 
+    permission_classes = [IsAuthenticated, IsAdminOrRead, PermisoPorRol] 
     queryset = Cosecha.objects.all()
     serializer_class = CosechaSerializer
 
