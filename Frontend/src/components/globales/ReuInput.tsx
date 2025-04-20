@@ -2,14 +2,14 @@ import React from "react";
 import { Input } from "@heroui/react";
 
 interface ReusableInputProps {
-  label: string;
+  label?: string;
   placeholder?: string;
   type: string;
   variant?: "flat" | "bordered" | "underlined" | "faded";
   radius?: "full" | "lg" | "md" | "sm" | "none";
   value: string | number;
   step?: string;
-  min?: number;  // Aquí se agrega la propiedad `min` como opcional
+  min?: number;  
   max?:number;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }

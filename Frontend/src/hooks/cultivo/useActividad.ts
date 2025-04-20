@@ -80,7 +80,6 @@ const registrarActividad = async (actividad: Actividad) => {
   }
 
   try {
-      // Asegúrate de enviar los arrays correctamente
       const response = await axios.post(API_URL, {
           ...actividad,
           usuarios: actividad.usuarios, 
