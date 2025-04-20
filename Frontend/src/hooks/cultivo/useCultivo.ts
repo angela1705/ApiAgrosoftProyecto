@@ -1,5 +1,5 @@
 import { useQuery, useMutation,useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Cultivo } from "@/types/cultivo/Cultivo";
 
@@ -10,7 +10,7 @@ const fetchCultivos = async (mostrarInactivos = false): Promise<Cultivo[]> => {
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   const params = mostrarInactivos ? { activo: "false" } : {};
-  const response = await axios.get(API_URL, {
+  const response = await api.get(API_URL, {
       headers: { Authorization: `Bearer ${token}` },
       params
   });
@@ -26,7 +26,7 @@ const registrarCultivo = async (cultivo: Cultivo) => {
 
     try {
         console.log("Enviando datos al backend:", cultivo); 
-        const response = await axios.post(API_URL, cultivo, {
+        const response = await api.post(API_URL, cultivo, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
     try {
-      const response = await axios.put(`${API_URL}${id}/`, cultivo, {
+      const response = await api.put(`${API_URL}${id}/`, cultivo, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -118,7 +118,7 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
   
-    return axios.delete(`${API_URL}${id}/`, {
+    return api.delete(`${API_URL}${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   };

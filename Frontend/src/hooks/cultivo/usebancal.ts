@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Bancal } from "@/types/cultivo/Bancal"; 
 
@@ -12,7 +12,7 @@ const fetchBancales = async (): Promise<Bancal[]> => {
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  const response = await axios.get(API_URL, {
+  const response = await api.get(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -27,7 +27,7 @@ const registrarBancal = async (bancal: Bancal) => {
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  return axios.post(API_URL, bancal, {
+  return api.post(API_URL, bancal, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -75,7 +75,7 @@ const actualizarBancal = async (id: number, bancal: any) => {
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
-    const response = await axios.put(`${API_URL}${id}/`, bancal, {
+    const response = await api.put(`${API_URL}${id}/`, bancal, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -115,7 +115,7 @@ const eliminarBancal = async (id: number) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
-  return axios.delete(`${API_URL}${id}/`, {
+  return api.delete(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

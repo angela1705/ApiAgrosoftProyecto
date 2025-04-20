@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { TipoActividad } from "@/types/cultivo/TipoActividad";
 
@@ -12,7 +12,7 @@ const fetchTipoActividad = async (): Promise<TipoActividad[]> => {
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  const response = await axios.get(API_URL, {
+  const response = await api.get(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -31,7 +31,7 @@ const registrarTipoActividad = async (tipoActividad: TipoActividad) => {
   formData.append("nombre", tipoActividad.nombre);
   formData.append("descripcion", tipoActividad.descripcion);
 
-  return axios.post(API_URL, formData, {
+  return api.post(API_URL, formData, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ const actualizarTipoActividad = async (id: number, tipoActividad: TipoActividad)
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
-    const response = await axios.put(`${API_URL}${id}/`, tipoActividad, {
+    const response = await api.put(`${API_URL}${id}/`, tipoActividad, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -119,7 +119,7 @@ const eliminarTipoActividad = async (id: number) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
-  return axios.delete(`${API_URL}${id}/`, {
+  return api.delete(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
