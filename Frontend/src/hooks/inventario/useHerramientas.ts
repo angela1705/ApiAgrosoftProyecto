@@ -47,12 +47,24 @@ export const useRegistrarHerramienta = () => {
             addToast({ title: "Éxito", description: "Herramienta registrada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al registrar la herramienta" });
-        },
-    });
-};
-
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al registrar la herramienta",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const actualizarHerramienta = async (herramienta: Herramienta) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -76,12 +88,24 @@ export const useActualizarHerramienta = () => {
             addToast({ title: "Éxito", description: "Herramienta actualizada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al actualizar la herramienta" });
-        },
-    });
-};
-
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al actualizar la herramienta",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const eliminarHerramienta = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -100,8 +124,20 @@ export const useEliminarHerramienta = () => {
             addToast({ title: "Éxito", description: "Herramienta eliminada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["herramientas"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "No se pudo eliminar la herramienta" });
+        onError: (error: any) => {
+          if (error.response?.status === 403) {
+            addToast({
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+              timeout: 3000,
+            });
+          } else {
+            addToast({
+              title: "Error",
+              description: "Error al eliminar la herramienta",
+              timeout: 3000,
+            });
+          }
         },
-    });
-};
+      });
+    };

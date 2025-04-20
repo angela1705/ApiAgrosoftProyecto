@@ -83,15 +83,23 @@ export const useRegistrarInsumo = () => {
             addToast({ title: "Éxito", description: "Insumo registrado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.message || "Error al registrar el insumo",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al registrar el insumo",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 interface ActualizarInsumoParams {
     id: number;
     insumo: Omit<Insumo, "unidad_medida" | "tipo_insumo" | "componentes"> & {
@@ -125,14 +133,24 @@ export const useActualizarInsumo = () => {
             addToast({ title: "Éxito", description: "Insumo actualizado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
+          if (error.response?.status === 403) {
             addToast({
-                title: "Error",
-                description: error.response?.data?.message || "Error al actualizar el insumo",
-                timeout: 3000,
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+              timeout: 3000,
             });
+          } else {
+            addToast({
+              title: "Error",
+              description: "Error al actualizar el insumo",
+              timeout: 3000,
+            });
+          }
         },
-    });
-};
+      });
+    };
+
+
 
 const eliminarInsumo = async (id: number) => {
     const token = localStorage.getItem("access_token");
@@ -158,15 +176,23 @@ export const useEliminarInsumo = () => {
             addToast({ title: "Éxito", description: "Insumo eliminado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.message || "No se pudo eliminar el insumo",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al eliminar el insumo",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const crearUnidadMedida = async (unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -224,15 +250,23 @@ export const useCrearTipoInsumo = () => {
             addToast({ title: "Éxito", description: "Tipo de insumo creado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.message || "Error al crear el tipo de insumo",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al crear el insumo",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const usarEnActividad = async (id: number, data: { cantidad_usada: number; actividad_id?: number }) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -257,15 +291,23 @@ export const useUsarEnActividad = () => {
             addToast({ title: "Éxito", description: "Insumo usado en actividad con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.error || "Error al usar el insumo en la actividad",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al usar el insumo en la actividad",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const descargarReportePDF = async () => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");

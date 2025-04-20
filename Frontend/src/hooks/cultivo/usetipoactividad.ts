@@ -56,12 +56,20 @@ export const useRegistrarTipoActividad = () => {
         timeout: 3000,
       });
     },
-    onError: () => {
-      addToast({
-        title: "Error",
-        description: "Error al registrar el tipo de actividad",
-        timeout: 3000,
-      });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar el tipo de actividad",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -90,11 +98,19 @@ export const useActualizarTipoActividad = () => {
       addToast({ title: "Éxito", description: "Tipo de actividad actualizado con éxito", timeout: 3000 });
     },
     onError: (error: any) => {
-      addToast({ 
-        title: "Error", 
-        description: error.response?.data?.message || "Error al actualizar el tipo de actividad", 
-        timeout: 3000 
-      });
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al actualizar el tipo de actividad",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -116,8 +132,20 @@ export const useEliminarTipoActividad = () => {
       queryClient.invalidateQueries({ queryKey: ["tipoActividades"] });
       addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar el tipo de actividad", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar el tipo de actividad",
+          timeout: 3000,
+        });
+      }
     },
   });
 };

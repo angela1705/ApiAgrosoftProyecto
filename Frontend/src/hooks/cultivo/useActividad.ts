@@ -133,15 +133,24 @@ export const useRegistrarActividad = () => {
                 description: "Actividad registrada con éxito",
             });
         },
-        onError: () => {
+        onError: (error: any) => {
+          if (error.response?.status === 403) {
             addToast({
-                title: "Error",
-                description: "Error al registrar la actividad",
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+              timeout: 3000,
             });
+          } else {
+            addToast({
+              title: "Error",
+              description: "Error al registrar la actividad",
+              timeout: 3000,
+            });
+          }
         },
-    });
-};
-
+      });
+    };
+  
 
 export const useActualizarActividad = () => {
     const queryClient = useQueryClient();
@@ -151,15 +160,24 @@ export const useActualizarActividad = () => {
             queryClient.invalidateQueries({ queryKey: ["actividades"] });
             addToast({ title: "Éxito", description: "Actividad actualizada con éxito", timeout: 3000 });
         },
-        onError: (error: any) => {
-            addToast({ 
-                title: "Error", 
-                description: error.response?.data?.message || "Error al actualizar la actividad", 
-                timeout: 3000 
-            });
-        },
+      onError: (error: any) => {
+        if (error.response?.status === 403) {
+          addToast({
+            title: "Acceso denegado",
+            description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+            timeout: 3000,
+          });
+        } else {
+          addToast({
+            title: "Error",
+            description: "Error al actualizar la actividad",
+            timeout: 3000,
+          });
+        }
+      },
     });
-};
+  };
+
   export const useEliminarActividad = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -168,8 +186,20 @@ export const useActualizarActividad = () => {
         queryClient.invalidateQueries({ queryKey: ["Actividad"] });
         addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000 });
       },
-      onError: () => {
-        addToast({ title: "Error", description: "Error al actividad el tipo de especie", timeout: 3000 });
+      onError: (error: any) => {
+        if (error.response?.status === 403) {
+          addToast({
+            title: "Acceso denegado",
+            description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+            timeout: 3000,
+          });
+        } else {
+          addToast({
+            title: "Error",
+            description: "Error al eliminar la actividad",
+            timeout: 3000,
+          });
+        }
       },
     });
   };

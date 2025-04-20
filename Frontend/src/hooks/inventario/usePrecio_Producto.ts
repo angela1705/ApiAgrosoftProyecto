@@ -97,9 +97,22 @@ export const useRegistrarPrecioProducto = () => {
                     "Error al registrar el precio de producto",
                 timeout: 3000,
             });
-        },
-    });
-};
+            if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al registrar el precio del producto",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };
 
 const actualizarPrecioProducto = async (
     id: number,
@@ -154,10 +167,23 @@ export const useActualizarPrecioProducto = () => {
                     error.response?.data?.message ||
                     "Error al actualizar el precio de producto",
                 timeout: 3000,
-            });
-        },
-    });
-};
+            }); if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al actualizar el precio del producto",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };
+
 
 const eliminarPrecioProducto = async (id: number) => {
     const token = localStorage.getItem("access_token");
@@ -194,10 +220,22 @@ export const useEliminarPrecioProducto = () => {
                     error.response?.data?.message ||
                     "No se pudo eliminar el precio de producto",
                 timeout: 3000,
-            });
-        },
-    });
-};
+            });if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al eliminar el precio del producto",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };
 
 const crearUnidadMedida = async (
     unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">
@@ -240,7 +278,19 @@ export const useCrearUnidadMedida = () => {
                     error.response?.data?.message ||
                     "Error al crear la unidad de medida",
                 timeout: 3000,
-            });
-        },
-    });
-};
+            });if (error.response?.status === 403) {
+                addToast({
+                  title: "Acceso denegado",
+                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                  timeout: 3000,
+                });
+              } else {
+                addToast({
+                  title: "Error",
+                  description: "Error al crear unidad de medida",
+                  timeout: 3000,
+                });
+              }
+            },
+          });
+          };

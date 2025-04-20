@@ -11,6 +11,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from ..models import Insumo, UnidadMedida, TipoInsumo
 from apps.Cultivo.actividades.models import Actividad
 from .serializers import InsumoSerializer, UnidadMedidaSerializer, TipoInsumoSerializer
@@ -18,7 +19,7 @@ from .serializers import InsumoSerializer, UnidadMedidaSerializer, TipoInsumoSer
 
 class InsumoViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, PermisoPorRol]
     queryset = Insumo.objects.all()
     serializer_class = InsumoSerializer
 

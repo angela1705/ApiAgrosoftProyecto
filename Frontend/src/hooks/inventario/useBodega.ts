@@ -44,11 +44,23 @@ export const useRegistrarBodega = () => {
             addToast({ title: "Éxito", description: "Bodega registrada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegas"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al registrar la bodega" });
-        },
-    });
-};
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al registrar la bodega",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
 
 const actualizarBodega = async (bodega: Bodega) => {
     const token = localStorage.getItem("access_token");
@@ -71,11 +83,23 @@ export const useActualizarBodega = () => {
             addToast({ title: "Éxito", description: "Bodega actualizada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegas"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al actualizar la bodega" });
-        },
-    });
-};
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al actualizar la bodega",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
 
 const eliminarBodega = async (id: number) => {
     const token = localStorage.getItem("access_token");
@@ -94,8 +118,23 @@ export const useEliminarBodega = () => {
             addToast({ title: "Éxito", description: "Bodega eliminada con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegas"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "No se pudo eliminar la bodega" });
-        },
-    });
-};
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al eliminar la bodega",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+
+
+      
