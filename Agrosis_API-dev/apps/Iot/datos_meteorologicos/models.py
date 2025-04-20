@@ -18,14 +18,3 @@ class Datos_metereologicos(models.Model):
 
     def __str__(self):
         return f"Sensor: {self.fk_sensor.nombre if self.fk_sensor else 'N/A'} - {self.fecha_medicion}"
-
-class Evapotranspiracion(models.Model):
-    fk_bancal = models.ForeignKey(Bancal, on_delete=models.CASCADE)
-    fecha = models.DateField()
-    value = models.DecimalField(max_digits=5, decimal_places=2)
-
-    def __str__(self):
-        return f"Evapotranspiración para {self.fk_bancal} en {self.fecha}"
-
-    class Meta:
-        unique_together = ('fk_bancal', 'fecha')

@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'channels',
     'corsheaders',
     'django_filters',
+    'apps.Iot.evapotranspiracion',
 ]
 
 MIDDLEWARE = [

@@ -121,4 +121,5 @@ urlpatterns = [
     path('usuarios/password_reset_confirm/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-]
+    path('api/iot/evapotranspiracion/', include('apps.Iot.evapotranspiracion.urls')),
+]   
