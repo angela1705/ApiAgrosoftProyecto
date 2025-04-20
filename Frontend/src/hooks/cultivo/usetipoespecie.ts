@@ -64,8 +64,20 @@ export const useRegistrarTipoEspecie = () => {
     onSuccess: () => {
       addToast({ title: "Éxito", description: "Tipo de especie registrado con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al registrar el tipo de especie", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar el tipo de especie",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -78,8 +90,20 @@ export const useActualizarTipoEspecie = () => {
       queryClient.invalidateQueries({ queryKey: ["tipoEspecies"] });
       addToast({ title: "Éxito", description: "Tipo de especie actualizado con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al actualizar el tipo de especie", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al actualizar el tipo de especie",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -92,8 +116,20 @@ export const useEliminarTipoEspecie = () => {
       queryClient.invalidateQueries({ queryKey: ["tipoEspecies"] });
       addToast({ title: "Éxito", description: "Tipo de especie eliminado con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar el tipo de especie", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar el tipo de especie",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
