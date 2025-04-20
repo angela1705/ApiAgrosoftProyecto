@@ -60,15 +60,24 @@ export const useRegistrarLote = () => {
         description: "Lote registrado con éxito",
       });
     },
-    onError: () => {
-      addToast({
-        title: "Error",
-        description: "Error al registrar el lote",
-    
-      });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar el lote",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
+
 const actualizarLote = async (id: number, lote: Lote) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -93,11 +102,19 @@ export const useActualizarLote = () => {
       addToast({ title: "Éxito", description: "Lote actualizado con éxito", timeout: 3000 });
     },
     onError: (error: any) => {
-      addToast({ 
-        title: "Error", 
-        description: error.response?.data?.message || "Error al actualizar el lote", 
-        timeout: 3000 
-      });
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al actualizar el lote",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -119,8 +136,20 @@ export const useEliminarLote = () => {
       queryClient.invalidateQueries({ queryKey: ["lotes"] });
       addToast({ title: "Éxito", description: "Lote eliminado con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar el lote", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar el lote",
+          timeout: 3000,
+        });
+      }
     },
   });
 };

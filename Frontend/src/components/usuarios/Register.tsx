@@ -15,6 +15,8 @@ const Register: React.FC = () => {
   const [success, setSuccess] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -40,13 +42,17 @@ const Register: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        if (data.errors) {
-          const errorMessages = Object.values(data.errors).flat().join(', ');
-          throw new Error(errorMessages);
+        if (data) {
+          const parsedErrors: { [key: string]: string } = {};
+          Object.entries(data).forEach(([key, value]) => {
+            parsedErrors[key] = Array.isArray(value) ? value.join(', ') : String(value);
+          });
+          setFieldErrors(parsedErrors); // ⬅️ Ahora se está usando
+          throw new Error('Corrige los campos marcados');
         }
-        throw new Error(data.message || 'Error en el registro');
+        throw new Error('Error en el registro');
       }
-
+      
       setSuccess('Usuario registrado correctamente');
     } catch (err) {
       setError((err as Error).message || 'Error en el registro');
@@ -134,27 +140,31 @@ const Register: React.FC = () => {
           />
         </motion.div>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
-          <TextField
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            fullWidth
-            required
-            sx={textFieldStyles}
-          />
+        <TextField
+        label="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        fullWidth
+        required
+        error={!!fieldErrors.username}
+        helperText={fieldErrors.username}
+        sx={textFieldStyles}
+      />
         </motion.div>
       </Box>
 
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
-        <TextField
-          type="email"
-          label="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          required
-          sx={textFieldStyles}
-        />
+      <TextField
+        type="email"
+        label="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        fullWidth
+        required
+        error={!!fieldErrors.email}
+        helperText={fieldErrors.email}
+        sx={textFieldStyles}
+      />
       </motion.div>
 
       {error && (

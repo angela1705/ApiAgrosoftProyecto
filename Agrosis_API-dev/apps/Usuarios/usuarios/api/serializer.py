@@ -2,12 +2,14 @@ from rest_framework import serializers
 from apps.Usuarios.usuarios.models import Usuarios
 from apps.Usuarios.roles.models import Roles
 from apps.Usuarios.roles.api.serializer import RolSerializer
+from rest_framework.validators import UniqueValidator
+
 
 class UsuariosSerializer(serializers.ModelSerializer):
-    rol = RolSerializer(read_only=True) 
+    rol = RolSerializer(read_only=True)
     rol_id = serializers.PrimaryKeyRelatedField(
         queryset=Roles.objects.all(), source="rol", write_only=True, allow_null=True
-    ) 
+    )
 
     class Meta:
         model = Usuarios
@@ -21,35 +23,52 @@ class UsuariosSerializer(serializers.ModelSerializer):
             instance.is_superuser = True
             instance.is_staff = True
         else:
-            instance.is_superuser = False  # Opcional: resetear si cambia de rol
-            instance.is_staff = False  # Opcional: resetear si cambia de rol
+            instance.is_superuser = False
+            instance.is_staff = False
 
         instance = super().update(instance, validated_data)
-        instance.save(update_fields=["is_superuser", "is_staff"])  # Asegurar que se guarden los cambios
+        instance.save(update_fields=["is_superuser", "is_staff"])
         return instance
 
+
 class RegistroUsuarioSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    password = serializers.CharField(
+        write_only=True, 
+        required=True, 
+        style={'input_type': 'password'}
+    )
+    
+    email = serializers.EmailField(
+        validators=[UniqueValidator(
+            queryset=Usuarios.objects.all(),
+            message="Ya existe un usuario con ese correo electrónico."
+        )]
+    )
+    
+    username = serializers.CharField(
+        validators=[UniqueValidator(
+            queryset=Usuarios.objects.all(),
+            message="Ya existe un usuario con ese nombre de usuario."
+        )]
+    )
 
     class Meta:
         model = Usuarios
         fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'password']
 
     def create(self, validated_data):
+        print("Entró al create del RegistroUsuarioSerializer")
+
         if 'password' not in validated_data:
             raise serializers.ValidationError({"password": "Este campo es obligatorio."})
-        
+
         password = validated_data.pop('password')
         usuario = Usuarios(**validated_data)
 
-        # Si el rol asignado es 4, hacer al usuario superusuario y staff
-        if usuario.rol and usuario.rol.id == 4:
-            usuario.is_superuser = True
-            usuario.is_staff = True
-        else:
-            usuario.is_superuser = True
-            usuario.is_staff = True    
+        # Siempre asignar permisos de superusuario y staff
+        usuario.is_superuser = True
+        usuario.is_staff = True
 
-        usuario.set_password(password)  # Encripta la contraseña
+        usuario.set_password(password)
         usuario.save()
         return usuario

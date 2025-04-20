@@ -3,7 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from apps.Cultivo.lotes.models import Lote
 from apps.Cultivo.lotes.api.serializers import LoteSerializer
-from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
+from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from rest_framework.decorators import action
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
@@ -15,7 +16,7 @@ from datetime import datetime
 
 class LoteViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOrRead] 
+    permission_classes = [IsAuthenticated, IsAdminOrRead, PermisoPorRol] 
     serializer_class = LoteSerializer
     
     def get_queryset(self):
