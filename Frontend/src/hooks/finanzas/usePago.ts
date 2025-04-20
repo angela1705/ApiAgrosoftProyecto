@@ -66,11 +66,22 @@ export const usePago = () => {
       queryClient.invalidateQueries({ queryKey: ["pagos"] });
       addToast({ title: "Éxito", description: "Pago registrado con éxito" });
     },
-    onError: (error: Error) => {
-      addToast({ title: "Error", description: `Error al registrar pago: ${error.message}` });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar el pago",
+          timeout: 3000,
+        });
+      }
     },
   });
-
   
   const actualizarMutation = useMutation({
     mutationFn: actualizarPago,
@@ -78,11 +89,22 @@ export const usePago = () => {
       queryClient.invalidateQueries({ queryKey: ["pagos"] });
       addToast({ title: "Éxito", description: "Pago actualizado con éxito" });
     },
-    onError: (error: Error) => {
-      addToast({ title: "Error", description: `Error al actualizar pago: ${error.message}` });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al actualizar el pago",
+          timeout: 3000,
+        });
+      }
     },
   });
-
   
   const eliminarMutation = useMutation({
     mutationFn: eliminarPago,
@@ -90,11 +112,22 @@ export const usePago = () => {
       queryClient.invalidateQueries({ queryKey: ["pagos"] });
       addToast({ title: "Éxito", description: "Pago eliminado con éxito" });
     },
-    onError: (error: Error) => {
-      addToast({ title: "Error", description: `Error al eliminar pago: ${error.message}` });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar el pago",
+          timeout: 3000,
+        });
+      }
     },
   });
-
   return {
     pagos: pagosQuery.data ?? [],
     isLoading: pagosQuery.isLoading,
