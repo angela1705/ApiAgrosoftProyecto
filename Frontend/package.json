@@ -61,6 +61,7 @@
     "react-leaflet": "^4.2.1",
     "react-plotly.js": "^2.6.0",
     "react-router-dom": "^6.30.0",
+    "react-select": "^5.10.1",
     "react-toastify": "^11.0.5",
     "recharts": "^2.15.2",
     "sweetalert2": "^11.17.2",
