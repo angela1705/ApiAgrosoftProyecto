@@ -3,7 +3,7 @@ import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarActividad, useInsumos, useUsuarios } from "@/hooks/cultivo/useActividad";
 import { useHerramientas } from "@/hooks/inventario/useHerramientas";
-import { useTipoActividad } from "@/hooks/cultivo/usetipoactividad";
+import { useTipoActividad, useRegistrarTipoActividad } from "@/hooks/cultivo/usetipoactividad";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import ActividadNotifications from "@/components/cultivo/ActividadNotifications";
 import { useAuth } from "@/context/AuthContext";
@@ -11,7 +11,11 @@ import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import Formulario from "@/components/globales/Formulario";
-
+import ReuModal from "@/components/globales/ReuModal";
+import { Plus } from 'lucide-react';
+import { ModalCultivo } from "@/components/cultivo/ModalCultivo";
+import { ModalHerramienta } from "@/components/cultivo/ModalHerramienta";
+ModalHerramienta
 const animatedComponents = makeAnimated();
 
 interface SelectedOption {
@@ -44,11 +48,30 @@ const ActividadPage: React.FC = () => {
     const [searchHerramienta, setSearchHerramienta] = useState("");
 
     const mutation = useRegistrarActividad();
+    const registrarTipoActividad = useRegistrarTipoActividad()
     const { data: tiposActividad } = useTipoActividad();
     const { data: usuarios } = useUsuarios();
     const { data: cultivos } = useCultivos();
     const { data: insumos } = useInsumos();
     const { data: herramientas } = useHerramientas();
+    const [openTipoActividadModal, setOpenTipoActividadModal] = useState(false);
+    const [openCultivoModal, setOpenCultivoModal] = useState(false);
+    const [openHerramientaModal, setOpenHerramientaModal] = useState(false);
+
+
+    const [nuevoTipoActividad, setNuevoTipoActividad] = useState({
+        nombre: "",
+        descripcion: ""
+    });
+    const handleSubmitTipoActividad = () => {
+        registrarTipoActividad.mutate(nuevoTipoActividad, {
+            onSuccess: () => {
+                setOpenTipoActividadModal(false);
+                setNuevoTipoActividad({ nombre: "", descripcion: "" });
+            }
+        });
+    };
+    
 
     const usuarioOptions = usuarios?.map(u => ({ value: u.id, label: u.nombre })) || [];
     const insumoOptions = insumos?.map(i => ({ 
@@ -104,6 +127,37 @@ const ActividadPage: React.FC = () => {
 
     return (
         <DefaultLayout>
+            <ModalHerramienta 
+                isOpen={openHerramientaModal}
+                onOpenChange={setOpenHerramientaModal}
+            />
+             <ModalCultivo 
+                    isOpen={openCultivoModal}
+                    onOpenChange={setOpenCultivoModal}
+             />
+             <ReuModal
+                isOpen={openTipoActividadModal}
+                onOpenChange={setOpenTipoActividadModal}
+                title="Registrar Nuevo Tipo de Actividad"
+                onConfirm={handleSubmitTipoActividad}
+                confirmText="Guardar"
+                cancelText="Cancelar"
+            >
+                <ReuInput
+                    label="Nombre"
+                    placeholder="Ingrese el nombre"
+                    type="text"
+                    value={nuevoTipoActividad.nombre}
+                    onChange={(e) => setNuevoTipoActividad({...nuevoTipoActividad, nombre: e.target.value})}
+                />
+                <ReuInput
+                    label="Descripción"
+                    placeholder="Ingrese la descripción"
+                    type="text"
+                    value={nuevoTipoActividad.descripcion}
+                    onChange={(e) => setNuevoTipoActividad({...nuevoTipoActividad, descripcion: e.target.value})}
+                />
+            </ReuModal>
                 <Formulario 
                     title="Asignar actividad" 
                     onSubmit={handleSubmit}
@@ -166,22 +220,40 @@ const ActividadPage: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Tipo de Actividad</label>
-                            <select 
-                                name="tipo_actividad" 
-                                value={actividad.tipo_actividad || ""} 
-                                onChange={(e) => setActividad({ ...actividad, tipo_actividad: Number(e.target.value) })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
-                            >
-                                <option value="">Seleccione un tipo de actividad</option>
-                                {tiposActividad?.map((tipo) => (
-                                    <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
-                                ))}
-                            </select>
+                        <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Tipo de Actividad</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setOpenTipoActividadModal(true)}
+                            type="button"
+                        >
+                            <Plus className="h-4 w-4" />
+                        </button>
                         </div>
+                    <select 
+                        name="tipo_actividad" 
+                        value={actividad.tipo_actividad || ""} 
+                        onChange={(e) => setActividad({ ...actividad, tipo_actividad: Number(e.target.value) })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
+                    >
+                        <option value="">Seleccione un tipo de actividad</option>
+                        {tiposActividad?.map((tipo) => (
+                            <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+                        ))}
+                    </select>
+                </div>
 
                         <div>
+                        <div className="flex items-center gap-2 mb-1">
                             <label className="block text-sm font-medium text-gray-700">Cultivo</label>
+                            <button 
+                                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                onClick={() => setOpenCultivoModal(true)}
+                                type="button"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </button>
+                        </div>
                             <select 
                                 name="cultivo" 
                                 value={actividad.cultivo || ""} 
@@ -248,7 +320,16 @@ const ActividadPage: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Herramientas Requeridas</label>
+                        <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Herramientas</label>
+                            <button 
+                                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                onClick={() => setOpenHerramientaModal(true)}
+                                type="button"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </button>
+                        </div>
                             <Select
                                 isMulti
                                 options={filteredHerramientas}
@@ -263,7 +344,6 @@ const ActividadPage: React.FC = () => {
                             />
                         </div>
 
-                        {/* Instrucciones Adicionales */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Instrucciones Adicionales</label>
                             <textarea
