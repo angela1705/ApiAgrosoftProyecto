@@ -5,8 +5,6 @@ import { useRegistrarActividad, useInsumos, useUsuarios } from "@/hooks/cultivo/
 import { useHerramientas } from "@/hooks/inventario/useHerramientas";
 import { useTipoActividad, useRegistrarTipoActividad } from "@/hooks/cultivo/usetipoactividad";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
-import ActividadNotifications from "@/components/cultivo/ActividadNotifications";
-import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -26,7 +24,6 @@ interface SelectedOption {
 }
 
 const ActividadPage: React.FC = () => {
-    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [actividad, setActividad] = useState({
@@ -369,7 +366,6 @@ const ActividadPage: React.FC = () => {
 
                
 
-                {user && <ActividadNotifications userId={user.id} />}
                 </DefaultLayout>
     );
 };
