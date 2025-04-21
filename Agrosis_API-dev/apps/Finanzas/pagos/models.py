@@ -1,37 +1,23 @@
 from django.db import models
-from datetime import date
-from apps.Cultivo.actividades.models import Actividad
+from django.core.validators import MinValueValidator
 
 class Pago(models.Model):
-    salario = models.ForeignKey('salario.Salario', on_delete=models.CASCADE)
-    tiempo_trabajado = models.ForeignKey('actividades.Actividad', on_delete=models.CASCADE)  
-    total_a_pagar = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    periodo_inicio = models.DateField(default=date.today)
-    periodo_fin = models.DateField(default=date.today)
-
-    def calcular_horas_trabajadas(self):
-      
-        usuario = self.tiempo_trabajado.usuario
-        
-      
-        actividades = Actividad.objects.filter(
-            usuario=usuario,  
-            fecha_inicio__gte=self.periodo_inicio, 
-            fecha_fin__lte=self.periodo_fin,       
-            estado='COMPLETADA'
-        )
-        
-        total_minutos = 0
-        for actividad in actividades:
-            duracion = actividad.fecha_fin - actividad.fecha_inicio
-            total_minutos += duracion.total_seconds() / 60  
-        
-        horas_totales = total_minutos / 60  
-        jornales_trabajados = horas_totales / 8.5  
-        return jornales_trabajados
-
-    def calcular_total(self):
-        jornales = self.calcular_horas_trabajadas()
-        valor_jornal = float(self.salario.valorJornal)  
-        self.total_a_pagar = jornales * valor_jornal
-        self.save() 
+    actividades = models.ManyToManyField('actividades.Actividad', related_name='pagos', blank=True)
+    salario = models.ForeignKey('salario.Salario', on_delete=models.PROTECT)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    horas_trabajadas = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    jornales = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    total_pago = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    fecha_calculo = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+       
+        if not self.pk and not self.horas_trabajadas:
+            self.horas_trabajadas = 0
+            self.jornales = 0
+            self.total_pago = 0
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"Pago por {self.horas_trabajadas} horas (${self.total_pago})"
