@@ -13,7 +13,6 @@ import ReuModal from "@/components/globales/ReuModal";
 import { Plus } from 'lucide-react';
 import { ModalCultivo } from "@/components/cultivo/ModalCultivo";
 import { ModalHerramienta } from "@/components/cultivo/ModalHerramienta";
-ModalHerramienta
 const animatedComponents = makeAnimated();
 
 interface SelectedOption {
@@ -109,11 +108,7 @@ const ActividadPage: React.FC = () => {
             }))
         };
 
-        mutation.mutate(payload, {
-            onSuccess: () => {
-                navigate("/cultivo/listaractividad/");
-            }
-        });
+        mutation.mutate(payload)
     };
 
     const handleInsumoCantidadChange = (value: number, index: number) => {
@@ -363,9 +358,6 @@ const ActividadPage: React.FC = () => {
                     </button>
                 </div>
                 </Formulario>
-
-               
-
                 </DefaultLayout>
     );
 };
