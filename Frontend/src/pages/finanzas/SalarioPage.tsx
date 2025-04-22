@@ -1,116 +1,102 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { useSalario } from "@/hooks/finanzas/useSalario";
-import { ReuInput } from "@/components/globales/ReuInput";
 import { Salario } from "@/types/finanzas/Salario";
+import { useRegistrarSalario } from "@/hooks/finanzas/useSalario";
+import Formulario from "@/components/globales/Formulario";
+
 
 const SalarioPage: React.FC = () => {
+
   const [salario, setSalario] = useState<Salario>({
+    id: 0,
     fecha_de_implementacion: "",
-    fecha_de_vencimiento: "",
-    salario_minimo: 0,
-    auxilio_transporte: 0,
-    horas_laborales_mes: 0,
-    valor_hora_ordinaria: 0,
+    valorJornal: 0,
   });
 
-  const { registrarSalario, isRegistrando } = useSalario();
+  const [displayValue, setDisplayValue] = useState(""); // Para mostrar el valor formateado
+  const mutation = useRegistrarSalario();
   const navigate = useNavigate();
 
-  const handleChange = (field: keyof Salario) => (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { value } = e.target;
-    setSalario((prev) => ({
-      ...prev,
-      [field]: field.includes("fecha") ? value : Number(value),
-    }));
+  // Formatear número al estilo colombiano (1.000.000)
+  const formatColombianNumber = (value: string): string => {
+    const numStr = value.replace(/[^\d]/g, '');
+    return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  // Convertir string formateado a número
+  const parseColombianNumber = (value: string): number => {
+    return parseFloat(value.replace(/\./g, '')) || 0;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    if (name === "valorJornal") {
+      // Manejo especial para el campo de valor
+      const formattedValue = formatColombianNumber(value);
+      setDisplayValue(formattedValue);
+      setSalario(prev => ({
+        ...prev,
+        valorJornal: parseColombianNumber(formattedValue)
+      }));
+    } else {
+      setSalario(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutation.mutate(salario, {
+      onSuccess: () => {
+        setSalario({ id: 0, fecha_de_implementacion: "", valorJornal: 0 });
+        setDisplayValue("");
+        navigate("/finanzas/listarsalarios/");
+      },
+    });
   };
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Salario</h2>
-
-          <ReuInput
-            label="Fecha de Implementación"
-            type="date"
-            value={salario.fecha_de_implementacion}
-            onChange={handleChange("fecha_de_implementacion")}
-          />
-          
-          <ReuInput
-            label="Fecha de Vencimiento"
-            type="date"
-            value={salario.fecha_de_vencimiento}
-            onChange={handleChange("fecha_de_vencimiento")}
-          />
-
-          <ReuInput
-            label="Salario Mínimo"
-            placeholder="Ingrese el salario mínimo"
-            type="number"
-            value={salario.salario_minimo}
-            onChange={handleChange("salario_minimo")}
-          />
-
-          <ReuInput
-            label="Auxilio de Transporte"
-            placeholder="Ingrese el auxilio de transporte"
-            type="number"
-            value={salario.auxilio_transporte}
-            onChange={handleChange("auxilio_transporte")}
-          />
-
-          <ReuInput
-            label="Horas Laborales por Mes"
-            placeholder="Ingrese las horas laborales por mes"
-            type="number"
-            value={salario.horas_laborales_mes}
-            onChange={handleChange("horas_laborales_mes")}
-          />
-
-          <ReuInput
-            label="Valor Hora Ordinaria"
-            placeholder="Ingrese el valor por hora ordinaria"
-            type="number"
-            value={salario.valor_hora_ordinaria}
-            onChange={handleChange("valor_hora_ordinaria")}
-          />
-
+      <Formulario
+        title="Valor del Jornal "
+        onSubmit={handleSubmit}
+        buttonText="Guardar"
+        isSubmitting={mutation.isPending}
+      >
+        <input
+          type="date"
+          name="fecha_de_implementacion"
+          value={salario.fecha_de_implementacion}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+          required
+        />
+        <input
+          type="text"
+          name="valorJornal"
+          value={displayValue}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+          placeholder="Ej: 85.500"
+          inputMode="numeric"
+          pattern="^[\d.]*$"
+          required
+        />
+        <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-            type="submit"
-            disabled={isRegistrando}
-            onClick={(e) => {
-              e.preventDefault();
-              registrarSalario(salario, {
-                onSuccess: () => {
-                  setSalario({
-                    fecha_de_implementacion: "",
-                    fecha_de_vencimiento: "",
-                    salario_minimo: 0,
-                    auxilio_transporte: 0,
-                    horas_laborales_mes: 0,
-                    valor_hora_ordinaria: 0,
-                  });
-                },
-              });
-            }}
-          >
-            {isRegistrando ? "Registrando..." : "Guardar"}
-          </button>
-
-          <button
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+            type="button"
+            className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
             onClick={() => navigate("/finanzas/listarsalarios/")}
           >
-            Listar Salarios
+            Listar Costo de Jornales
           </button>
         </div>
-      </div>
+      </Formulario>
+    
     </DefaultLayout>
   );
 };
