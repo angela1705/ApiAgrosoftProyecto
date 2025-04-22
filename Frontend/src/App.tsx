@@ -41,7 +41,7 @@ import ListaTipoControlPage from "./pages/cultivo/ListaTipoControlPage";
 import ProductosControlPage from "./pages/cultivo/ProductosControlPage";
 import ListaProductoControlPage from "./pages/cultivo/ListaProductosControlPage";
 import CosechaGraficasPage from "./pages/cultivo/CosechasGraficasPage";
-import ActivityNotifications from "./components/cultivo/ActividadNotifications";
+import ActividadNotifications from "./components/cultivo/ActividadNotifications";
 // Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
 import ListaHerramientaPage from "./pages/inventario/ListaHerramientaPage";
@@ -132,7 +132,11 @@ const App: React.FC = () => {
         <NavbarProvider>
           <GlobalStyles />
           <Toaster position="top-right" reverseOrder={false} />
-          <ActivityNotifications/>
+
+          {/* Otros componentes */}
+          <ActividadNotifications />
+          {/* Más componentes */}
+          
           <Routes>
             {/* Rutas públicas (Usuarios) */}
             <Route path="/login" element={<LoginPage />} />

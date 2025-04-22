@@ -28,6 +28,7 @@ class PrestamoHerramientaSerializer(serializers.ModelSerializer):
 class ActividadSerializer(serializers.ModelSerializer):
     prestamos_insumos = PrestamoInsumoSerializer(many=True, read_only=True)
     prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)
+    tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)
 
     usuarios = serializers.ListField(
         child=serializers.IntegerField(), write_only=True
@@ -44,6 +45,8 @@ class ActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actividad
         fields = '__all__'
+        extra_fields = ['tipo_actividad_nombre']
+
 
     def create(self, validated_data):
         usuario_ids = validated_data.pop('usuarios', [])

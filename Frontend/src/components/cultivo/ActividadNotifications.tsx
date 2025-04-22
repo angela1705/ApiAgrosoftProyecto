@@ -7,7 +7,6 @@ const ActividadNotifications: React.FC = () => {
 
   useEffect(() => {
     if (!user?.id) return;
-
     const socketUrl = `ws://${window.location.hostname}:8000/ws/actividades/notificaciones/${user.id}/`;
     const socket = new WebSocket(socketUrl);
 
@@ -19,7 +18,6 @@ const ActividadNotifications: React.FC = () => {
       const data = JSON.parse(event.data);
       if (data.type === 'actividad_asignada') {
         addToast({
-          icon: '📋',
           title: 'Nueva actividad asignada',
           description: `${data.actividad.tipo_actividad}\nPrioridad: ${data.actividad.prioridad}`,
           timeout: 5000
