@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/components/utils/axios"; 
+import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
-import { Pago } from "@/types/finanzas/Pago";
+import { Pago, CalculoPagoParams, PagoCreateParams } from "@/types/finanzas/Pago";
 
 const API_URL = "http://127.0.0.1:8000/finanzas/pago/";
 
@@ -9,114 +9,124 @@ const fetchPagos = async (): Promise<Pago[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   const response = await api.get(API_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
 
-const registrarPago = async (pago: Pago): Promise<Pago> => {
+const calcularPago = async (params: CalculoPagoParams): Promise<Pago> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
-  const response = await api.post(API_URL, pago, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+
+  const response = await api.post(`${API_URL}calcular_pago/`, params, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
 
-const actualizarPago = async (pago: Pago): Promise<Pago> => {
-  const token = localStorage.getItem("access_token");
-  if (!token || !pago.id) throw new Error("Falta token o ID del pago.");
-  const response = await api.put(`${API_URL}${pago.id}/`, pago, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-};
-
-const eliminarPago = async (id: number): Promise<void> => {
+const crearPago = async (params: PagoCreateParams): Promise<Pago> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
-  await api.delete(`${API_URL}${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+
+  const response = await api.post(API_URL, params, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+const eliminarPago = async (id: number) => {
+  const token = localStorage.getItem("access_token");
+  if (!token) throw new Error("No se encontró el token de autenticación.");
+
+  return api.delete(`${API_URL}${id}/`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
 };
 
-export const usePago = () => {
-  const queryClient = useQueryClient();
-  
- 
-  const pagosQuery = useQuery<Pago[], Error>({
+export const usePagos = () => {
+  return useQuery<Pago[], Error>({
     queryKey: ["pagos"],
     queryFn: fetchPagos,
   });
+};
 
-
-  const registrarMutation = useMutation({
-    mutationFn: registrarPago,
+export const useCalcularPago = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: calcularPago,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pagos"] });
-      addToast({ title: "Éxito", description: "Pago registrado con éxito" });
+      addToast({ 
+        title: "Éxito", 
+        description: "Pago calculado y registrado con éxito", 
+        timeout: 3000 
+      });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
         addToast({
           title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          description: "No tienes permiso para realizar esta acción",
           timeout: 3000,
         });
       } else {
         addToast({
           title: "Error",
-          description: "Error al registrar el pago",
+          description: error.response?.data?.detail || "Error al calcular el pago",
           timeout: 3000,
         });
       }
     },
   });
-  
-  const actualizarMutation = useMutation({
-    mutationFn: actualizarPago,
+};
+
+export const useCrearPago = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: crearPago,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pagos"] });
-      addToast({ title: "Éxito", description: "Pago actualizado con éxito" });
+      addToast({ 
+        title: "Éxito", 
+        description: "Pago creado con éxito", 
+        timeout: 3000 
+      });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
         addToast({
           title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          description: "No tienes permiso para realizar esta acción",
           timeout: 3000,
         });
       } else {
         addToast({
           title: "Error",
-          description: "Error al actualizar el pago",
+          description: "Error al crear el pago",
           timeout: 3000,
         });
       }
     },
   });
-  
-  const eliminarMutation = useMutation({
+};
+
+export const useEliminarPago = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: eliminarPago,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pagos"] });
-      addToast({ title: "Éxito", description: "Pago eliminado con éxito" });
+      addToast({ 
+        title: "Éxito", 
+        description: "Pago eliminado con éxito", 
+        timeout: 3000 
+      });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
         addToast({
           title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          description: "No tienes permiso para realizar esta acción",
           timeout: 3000,
         });
       } else {
@@ -128,16 +138,4 @@ export const usePago = () => {
       }
     },
   });
-  return {
-    pagos: pagosQuery.data ?? [],
-    isLoading: pagosQuery.isLoading,
-    isError: pagosQuery.isError,
-    error: pagosQuery.error,
-    registrarPago: registrarMutation.mutate,
-    isRegistrando: registrarMutation.isPending,
-    actualizarPago: actualizarMutation.mutate,
-    isActualizando: actualizarMutation.isPending,
-    eliminarPago: eliminarMutation.mutate,
-    isEliminando: eliminarMutation.isPending,
-  };
 };
