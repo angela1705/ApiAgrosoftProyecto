@@ -19,6 +19,17 @@ const sensorTypes = [
   { value: "ph_suelo", label: "pH Suelo (pH)" },
 ];
 
+const sensorConfigurations: { [key: string]: { unidad_medida: string; medida_minima: number; medida_maxima: number } } = {
+  temperatura: { unidad_medida: "°C", medida_minima: -40, medida_maxima: 85 },
+  ambient_humidity: { unidad_medida: "%", medida_minima: 0, medida_maxima: 100 },
+  soil_humidity: { unidad_medida: "%", medida_minima: 0, medida_maxima: 100 },
+  luminosidad: { unidad_medida: "lux", medida_minima: 0, medida_maxima: 100000 },
+  lluvia: { unidad_medida: "mm/h", medida_minima: 0, medida_maxima: 50 },
+  velocidad_viento: { unidad_medida: "m/s", medida_minima: 0, medida_maxima: 60 },
+  direccion_viento: { unidad_medida: "grados", medida_minima: 0, medida_maxima: 360 },
+  ph_suelo: { unidad_medida: "pH", medida_minima: 0, medida_maxima: 14 },
+};
+
 export default function ListarSensores() {
   const { sensores, isLoading, error, updateSensor, deleteSensor } = useSensoresRegistrados();
   const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
@@ -76,13 +87,29 @@ export default function ListarSensores() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const value = e.target.value;
-    setSelectedSensor((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        [field]: field === "medida_minima" || field === "medida_maxima" ? Number(value) : value,
-      };
-    });
+    if (field === "tipo_sensor") {
+      const config = sensorConfigurations[value] || { unidad_medida: "", medida_minima: 0, medida_maxima: 0 };
+      setSelectedSensor((prev) =>
+        prev
+          ? {
+              ...prev,
+              tipo_sensor: value,
+              unidad_medida: config.unidad_medida,
+              medida_minima: config.medida_minima,
+              medida_maxima: config.medida_maxima,
+            }
+          : null
+      );
+    } else {
+      setSelectedSensor((prev) =>
+        prev
+          ? {
+              ...prev,
+              [field]: field === "medida_minima" || field === "medida_maxima" ? Number(value) : value,
+            }
+          : null
+      );
+    }
   };
 
   return (
@@ -104,10 +131,11 @@ export default function ListarSensores() {
             <p className="text-gray-600 text-center">Cargando sensores...</p>
           ) : error ? (
             <p className="text-red-500 text-center">Error: {error.message}</p>
-          ) : sensores.length === 0 ? (
-            <p className="text-gray-600 text-center">No hay sensores registrados</p>
           ) : (
-            <Tabla columns={columns} data={formattedData} />
+            <>
+              <Tabla columns={columns} data={formattedData} />
+              
+            </>
           )}
         </div>
       </div>
@@ -149,7 +177,9 @@ export default function ListarSensores() {
           type="text"
           value={selectedSensor?.unidad_medida || ""}
           onChange={(e) => handleChange("unidad_medida", e)}
+          readOnly
         />
+        
         <ReuInput
           label="Descripción"
           type="text"

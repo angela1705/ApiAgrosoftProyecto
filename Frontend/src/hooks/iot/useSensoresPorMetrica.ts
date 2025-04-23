@@ -24,8 +24,7 @@ export const useSensoresPorMetrica = (metrica: string) => {
           },
         });
 
-        if (response.status === 401) {
-          // Token probablemente expirado, intentar refrescar el token
+        if (response.status === 401) { 
           const refreshToken = localStorage.getItem("refresh_token");
           if (refreshToken) {
             const refreshResponse = await fetch("http://127.0.0.1:8000/api/token/refresh/", {

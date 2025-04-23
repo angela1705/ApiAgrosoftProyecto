@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from apps.Iot.evapotranspiracion.api.views import EvapotranspiracionViewSet
 
-router = DefaultRouter()
-router.register(prefix='evapotranspiracion', viewset=EvapotranspiracionViewSet, basename='evapotranspiracion')
+evapotranspiracionrouter = DefaultRouter()
+evapotranspiracionrouter.register(r'evapotranspiracion', EvapotranspiracionViewSet, basename='evapotranspiracion')
 
-urlpatterns = router.urls
+urlpatterns = evapotranspiracionrouter.urls
