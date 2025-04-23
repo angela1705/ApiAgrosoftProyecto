@@ -1,9 +1,22 @@
 export interface Pago {
-    id?: number;
-    salario: number; 
-    tiempo_trabajado: number;
-    total_a_pagar: number | null;
-    periodo_inicio: string; 
-    periodo_fin: string;
-  }
-  
+  id?: number;
+  actividades: number[]; // IDs de actividades
+  salario: number; // ID de salario
+  fecha_inicio: string;
+  fecha_fin: string;
+  horas_trabajadas: number;
+  jornales: number;
+  total_pago: number;
+  fecha_calculo?: string;
+}
+
+export interface CalculoPagoParams {
+  usuario_id: number;
+  fecha_inicio: string;
+  fecha_fin: string;
+}
+
+export interface PagoCreateParams {
+  fecha_inicio: string;
+  fecha_fin: string;
+}

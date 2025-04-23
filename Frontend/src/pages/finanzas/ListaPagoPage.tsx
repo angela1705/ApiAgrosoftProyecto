@@ -1,229 +1,184 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import DefaultLayout from "@/layouts/default";
-import { usePago } from "@/hooks/finanzas/usePago";
-import { Pago } from "@/types/finanzas/Pago";
-import ReuModal from "@/components/globales/ReuModal";
-import { ReuInput } from "@/components/globales/ReuInput";
-import Tabla from "@/components/globales/Tabla";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import DefaultLayout from '@/layouts/default';
+import { Pago } from '@/types/finanzas/Pago';
+import { usePagos, useEliminarPago } from '@/hooks/finanzas/usePago';
+import ReuModal from '@/components/globales/ReuModal';
+import Tabla from '@/components/globales/Tabla'; 
+import { Trash2, Eye } from 'lucide-react';
 
-const ListaPagoPage: React.FC = () => {
- 
+const ListaPagosPage: React.FC = () => {
   const [selectedPago, setSelectedPago] = useState<Pago | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const { pagos, isLoading, actualizarPago, eliminarPago, isActualizando, isEliminando } = usePago();
+  const { data: pagos, isLoading, refetch } = usePagos();
+  const eliminarMutation = useEliminarPago();
   const navigate = useNavigate();
 
-
   const columns = [
-    { name: "Horas Trabajadas", uid: "horas_trabajadas" },
-    { name: "Salario", uid: "salario" },
-    { name: "Total a Pagar", uid: "total_a_pagar" },
-    { name: "Usuario", uid: "usuario" },
-    { name: "Periodo Inicio", uid: "periodo_inicio" },
-    { name: "Periodo Fin", uid: "periodo_fin" },
-    { name: "Horas Extras", uid: "horas_extras" },
-    { name: "Auxilio Transporte", uid: "auxilio_transporte" },
-    { name: "Acciones", uid: "acciones" },
+    { name: 'ID', uid: 'id' },
+    { name: 'Período', uid: 'periodo' },
+    { name: 'Horas Trabajadas', uid: 'horas' },
+    { name: 'Total', uid: 'total' },
+    { name: 'Fecha Cálculo', uid: 'fecha_calculo' },
+    { name: 'Acciones', uid: 'acciones' },
   ];
 
-
-  const handleEdit = (pago: Pago) => {
+  const handleViewDetails = (pago: Pago) => {
     setSelectedPago(pago);
-    setIsEditModalOpen(true);
+    setIsDetailModalOpen(true);
   };
 
   const handleDelete = (pago: Pago) => {
     setSelectedPago(pago);
     setIsDeleteModalOpen(true);
   };
+  const formatMoney = (value: number) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+  
 
   const handleConfirmDelete = () => {
     if (selectedPago && selectedPago.id !== undefined) {
-      eliminarPago(selectedPago.id, {
+      eliminarMutation.mutate(selectedPago.id, {
         onSuccess: () => {
           setIsDeleteModalOpen(false);
+          refetch();
         },
       });
     }
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   const transformedData = (pagos ?? []).map((pago) => ({
-    id: pago.id?.toString() || "",
-    horas_trabajadas: pago.horas_trabajadas,
-    salario: pago.salario,
-    total_a_pagar: pago.total_a_pagar,
-    usuario: pago.usuario,
-    periodo_inicio: pago.periodo_inicio,
-    periodo_fin: pago.periodo_fin,
-    horas_extras: pago.horas_extras,
-    auxilio_transporte: pago.auxilio_transporte,
+    id: pago.id?.toString() || '',
+    periodo: `${formatDate(pago.fecha_inicio)} - ${formatDate(pago.fecha_fin)}`,
+    horas: `${pago.horas_trabajadas} hrs`,
+    total: formatMoney(pago.total_pago), // Aplicamos el formato aquí
+    fecha_calculo: formatDateTime(pago.fecha_calculo || ''),
     acciones: (
-      <>
+      <div className="flex space-x-2">
         <button
-          className="text-green-500 hover:underline mr-2"
-          onClick={() => handleEdit(pago)}
+          className="text-blue-500 hover:text-blue-700"
+          onClick={() => handleViewDetails(pago)}
         >
-          Editar
+          <Eye size={20} />
         </button>
         <button
-          className="text-red-500 hover:underline"
+          className="text-red-500 hover:text-red-700"
           onClick={() => handleDelete(pago)}
         >
-          Eliminar
+          <Trash2 size={20} />
         </button>
-      </>
+      </div>
     ),
   }));
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Pagos</h2>
-          {isLoading ? (
-            <p className="text-gray-600">Cargando...</p>
-          ) : (
-            <>
-              <Tabla columns={columns} data={transformedData} />
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={() => navigate("/finanzas/pago/")}
-                >
-                  Registrar Pago
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Modal de edición */}
-        <ReuModal
-          isOpen={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
-          title="Editar Pago"
-          onConfirm={() => {
-            if (selectedPago && selectedPago.id !== undefined) {
-              actualizarPago(selectedPago, {
-                onSuccess: () => {
-                  setIsEditModalOpen(false);
-                },
-              });
-            }
-          }}
+      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Historial de Pagos</h2>
+      
+      <div className="mb-6 flex justify-between items-center">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
+                                    shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate('/finanzas/pago')}
         >
-          {selectedPago && (
-            <>
-              <ReuInput
-                label="Horas Trabajadas"
-                type="number"
-                value={selectedPago.horas_trabajadas.toString()}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    horas_trabajadas: Number(e.target.value),
-                  }))
-                }
-              />
-              <ReuInput
-                label="Salario"
-                type="number"
-                value={selectedPago.salario.toString()}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    salario: Number(e.target.value),
-                  }))
-                }
-              />
-              <ReuInput
-                label="Total a Pagar"
-                type="number"
-                value={selectedPago.total_a_pagar?.toString() || ""}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    total_a_pagar: Number(e.target.value),
-                  }))
-                }
-              />
-              <ReuInput
-                label="Usuario"
-                type="number"
-                value={selectedPago.usuario.toString()}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    usuario: Number(e.target.value),
-                  }))
-                }
-              />
-              <ReuInput
-                label="Periodo Inicio"
-                type="date"
-                value={selectedPago.periodo_inicio}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    periodo_inicio: e.target.value,
-                  }))
-                }
-              />
-              <ReuInput
-                label="Periodo Fin"
-                type="date"
-                value={selectedPago.periodo_fin}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    periodo_fin: e.target.value,
-                  }))
-                }
-              />
-              <ReuInput
-                label="Horas Extras"
-                type="number"
-                value={selectedPago.horas_extras.toString()}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    horas_extras: Number(e.target.value),
-                  }))
-                }
-              />
-              <ReuInput
-                label="Auxilio Transporte"
-                type="number"
-                value={selectedPago.auxilio_transporte?.toString() || ""}
-                onChange={(e) =>
-                  setSelectedPago((prev) => ({
-                    ...prev!,
-                    auxilio_transporte: Number(e.target.value),
-                  }))
-                }
-              />
-              {isActualizando && <p className="text-gray-600 mt-2">Actualizando...</p>}
-            </>
-          )}
-        </ReuModal>
-
-        {/* Modal de eliminación */}
-        <ReuModal
-          isOpen={isDeleteModalOpen}
-          onOpenChange={setIsDeleteModalOpen}
-          title="¿Estás seguro de eliminar este pago?"
-          onConfirm={handleConfirmDelete}
-        >
-          <p>Esta acción es irreversible.</p>
-          {isEliminando && <p className="text-gray-600 mt-2">Eliminando...</p>}
-        </ReuModal>
+          + Calcular Nuevo Pago
+        </button>
       </div>
+  
+      {isLoading ? (
+        <p className="text-gray-600">Cargando pagos...</p>
+      ) : (
+        <Tabla 
+          columns={columns} 
+          data={transformedData} 
+        />
+      )}
+  
+      <ReuModal
+        isOpen={isDetailModalOpen}
+        onOpenChange={setIsDetailModalOpen}
+        title={`Detalles del Pago #${selectedPago?.id}`}
+        size="lg"
+      >
+        {selectedPago && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Período</p>
+                <p className="font-medium">
+                  {formatDate(selectedPago.fecha_inicio)} - {formatDate(selectedPago.fecha_fin)}
+                </p>
+              </div>
+              
+              <div>
+                <p className="text-sm text-gray-500">Horas Trabajadas</p>
+                <p className="font-medium">{selectedPago.horas_trabajadas} hrs</p>
+              </div>
+              
+              <div>
+                <p className="text-sm text-gray-500">Jornales</p>
+                <p className="font-medium">{selectedPago.jornales}</p>
+              </div>
+              
+              <div>
+                <p className="text-sm text-gray-500">Total a Pagar</p>
+                <p className="font-medium text-green-600">{formatMoney(selectedPago.total_pago)}
+                </p>
+              </div>
+              
+              <div className="md:col-span-2">
+                <p className="text-sm text-gray-500">Fecha de Cálculo</p>
+                <p className="font-medium">{formatDateTime(selectedPago.fecha_calculo || '')}</p>
+              </div>
+            </div>
+            
+            <div>
+              <p className="text-sm text-gray-500">Actividades incluidas</p>
+              <p className="font-medium">{selectedPago.actividades.length} actividades</p>
+            </div>
+          </div>
+        )}
+      </ReuModal>
+  
+      <ReuModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title="¿Estás seguro de eliminar este pago?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmDelete}
+      >
+        <p>Esta acción es irreversible. Se eliminará el registro de pago #{selectedPago?.id}.</p>
+      </ReuModal>
     </DefaultLayout>
   );
 };
 
-export default ListaPagoPage;
+export default ListaPagosPage;
