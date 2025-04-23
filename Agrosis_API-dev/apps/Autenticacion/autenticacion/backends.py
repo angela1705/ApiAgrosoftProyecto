@@ -1,4 +1,3 @@
-# apps/Autenticacion/autenticacion/backends.py
 
 from django.contrib.auth.backends import ModelBackend
 from apps.Usuarios.usuarios.models import Usuarios  
