@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
-import { CosechaGraficaData } from "@/types/cultivo/CosechaGraficas";
+import { PagoGraficaData } from "@/types/finanzas/EgresosGrafica";
 
-const API_URL = "http://127.0.0.1:8000/cultivo/cosechas/datos_graficas/";
+const API_URL = "http://127.0.0.1:8000/finanzas/pago/datos_graficas/";
 
-const fetchCosechaGraficas = async (fechaInicio: string, fechaFin: string): Promise<CosechaGraficaData> => {
+const fetchPagoGraficas = async (fechaInicio: string, fechaFin: string): Promise<PagoGraficaData> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   
@@ -16,20 +16,20 @@ const fetchCosechaGraficas = async (fechaInicio: string, fechaFin: string): Prom
   return response.data;
 };
 
-export const useCosechaGraficas = (fechaInicio: string, fechaFin: string) => {
-    return useQuery<CosechaGraficaData, Error>({
-      queryKey: ["cosechaGraficas", fechaInicio, fechaFin],
-      queryFn: () => fetchCosechaGraficas(fechaInicio, fechaFin),
-      meta: {
-        errorMessage: "Error al cargar los datos para las gráficas"
-      },
-      throwOnError: (error) => {
-        addToast({ 
-          title: "Error", 
-          description: error.message || "Error al cargar los datos", 
-          timeout: 3000 
-        });
-        return false; 
-      }
-    });
-  };
+export const usePagoGraficas = (fechaInicio: string, fechaFin: string) => {
+  return useQuery<PagoGraficaData, Error>({
+    queryKey: ["pagoGraficas", fechaInicio, fechaFin],
+    queryFn: () => fetchPagoGraficas(fechaInicio, fechaFin),
+    meta: {
+      errorMessage: "Error al cargar los datos para las gráficas de pagos"
+    },
+    throwOnError: (error) => {
+      addToast({ 
+        title: "Error", 
+        description: error.message || "Error al cargar los datos", 
+        timeout: 3000 
+      });
+      return false;
+    }
+  });
+};
