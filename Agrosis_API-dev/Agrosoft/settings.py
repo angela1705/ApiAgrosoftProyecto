@@ -85,7 +85,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'apps.Autenticacion.autenticacion.middleware.JWTAuthFromCookieMiddleware',
+    'apps.Autenticacion.autenticacion.middleware.amJWTAuthFromCookieMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
