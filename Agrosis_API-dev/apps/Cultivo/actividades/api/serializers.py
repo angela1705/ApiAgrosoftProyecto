@@ -2,6 +2,8 @@ from rest_framework import serializers
 from apps.Cultivo.actividades.models import Actividad, PrestamoHerramienta, PrestamoInsumo
 from django.shortcuts import get_object_or_404
 from apps.Usuarios.usuarios.models import Usuarios
+from apps.Cultivo.actividades.api.signals import notificar_asignacion_actividad
+
 class UsuarioActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuarios
@@ -26,12 +28,12 @@ class PrestamoHerramientaSerializer(serializers.ModelSerializer):
 class ActividadSerializer(serializers.ModelSerializer):
     prestamos_insumos = PrestamoInsumoSerializer(many=True, read_only=True)
     prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)
+    tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)
 
-    # Entrada personalizada
     usuarios = serializers.ListField(
         child=serializers.IntegerField(), write_only=True
     )
-    usuarios_data = UsuarioActividadSerializer(source='usuarios', many=True, read_only=True)  # Aquí agregas los detalles de los usuarios
+    usuarios_data = UsuarioActividadSerializer(source='usuarios', many=True, read_only=True)  
 
     insumos = serializers.ListField(
         child=serializers.DictField(), write_only=True, required=False
@@ -43,6 +45,8 @@ class ActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actividad
         fields = '__all__'
+        extra_fields = ['tipo_actividad_nombre']
+
 
     def create(self, validated_data):
         usuario_ids = validated_data.pop('usuarios', [])
@@ -74,6 +78,8 @@ class ActividadSerializer(serializers.ModelSerializer):
                 devuelta=herramienta_entry.get('devuelta', False),
                 fecha_devolucion=herramienta_entry.get('fecha_devolucion', None)
             )
+            notificar_asignacion_actividad(actividad, usuario_ids)
+
 
         return actividad
 

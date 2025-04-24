@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { BodegaHerramienta } from "@/types/inventario/BodegaHerramienta";
 
@@ -9,7 +9,7 @@ const fetchBodegaHerramienta = async (): Promise<BodegaHerramienta[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -34,7 +34,7 @@ const registrarBodegaHerramienta = async ({ bodega, herramienta, cantidad }: Omi
         cantidad,
     };
 
-    const response = await axios.post(API_URL, payload, {
+    const response = await api.post(API_URL, payload, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -53,11 +53,23 @@ export const useRegistrarBodegaHerramienta = () => {
             addToast({ title: "Éxito", description: "Registro guardado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al registrar" });
-        },
-    });
-};
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al registrar",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
 
 const actualizarBodegaHerramienta = async ({ id, bodega, herramienta, cantidad }: BodegaHerramienta) => {
     const token = localStorage.getItem("access_token");
@@ -69,7 +81,7 @@ const actualizarBodegaHerramienta = async ({ id, bodega, herramienta, cantidad }
         cantidad,
     };
 
-    const response = await axios.put(`${API_URL}${id}/`, payload, {
+    const response = await api.put(`${API_URL}${id}/`, payload, {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -88,17 +100,29 @@ export const useActualizarBodegaHerramienta = () => {
             addToast({ title: "Éxito", description: "Registro actualizado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "Error al actualizar" });
-        },
-    });
-};
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al actualizar",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
 
 const eliminarBodegaHerramienta = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    await axios.delete(`${API_URL}${id}/`, {
+    await api.delete(`${API_URL}${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
 };
@@ -112,8 +136,20 @@ export const useEliminarBodegaHerramienta = () => {
             addToast({ title: "Éxito", description: "Registro eliminado con éxito" });
             queryClient.invalidateQueries({ queryKey: ["bodegaHerramienta"] });
         },
-        onError: () => {
-            addToast({ title: "Error", description: "No se pudo eliminar el registro" });
-        },
-    });
-};
+        onError: (error: any) => {
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                timeout: 3000,
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al eliminar el registro",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };

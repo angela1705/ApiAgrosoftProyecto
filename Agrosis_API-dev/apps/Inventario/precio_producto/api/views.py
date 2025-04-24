@@ -12,12 +12,13 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.units import inch
 from datetime import datetime
 from apps.Inventario.insumos.models import UnidadMedida
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from ..models import PrecioProducto
 from .serializers import PrecioProductoSerializer, UnidadMedidaSerializer
 
 class PrecioProductoViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, PermisoPorRol]
     queryset = PrecioProducto.objects.all().select_related('unidad_medida', 'Producto')
     serializer_class = PrecioProductoSerializer
 

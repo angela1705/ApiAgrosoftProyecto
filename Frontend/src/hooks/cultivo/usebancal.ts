@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Bancal } from "@/types/cultivo/Bancal"; 
 
@@ -12,7 +12,7 @@ const fetchBancales = async (): Promise<Bancal[]> => {
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  const response = await axios.get(API_URL, {
+  const response = await api.get(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -27,7 +27,7 @@ const registrarBancal = async (bancal: Bancal) => {
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  return axios.post(API_URL, bancal, {
+  return api.post(API_URL, bancal, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -52,20 +52,30 @@ export const useRegistrarBancal = () => {
         description: "Bancal registrado con éxito",
       });
     },
-    onError: () => {
-      addToast({
-        title: "Error",
-        description: "Error al registrar el bancal",
-      });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar el bancal",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
+
 const actualizarBancal = async (id: number, bancal: any) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
   try {
-    const response = await axios.put(`${API_URL}${id}/`, bancal, {
+    const response = await api.put(`${API_URL}${id}/`, bancal, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -84,11 +94,19 @@ export const useActualizarBancal = () => {
       addToast({ title: "Éxito", description: "Bancal actualizado con éxito", timeout: 3000 });
     },
     onError: (error: any) => {
-      addToast({ 
-        title: "Error", 
-        description: error.response?.data?.message || "Error al actualizar el bancal", 
-        timeout: 3000 
-      });
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al actualizar el bancal",
+          timeout: 3000,
+        });
+      }
     },
   });
 };
@@ -97,7 +115,7 @@ const eliminarBancal = async (id: number) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
 
-  return axios.delete(`${API_URL}${id}/`, {
+  return api.delete(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
@@ -110,8 +128,20 @@ export const useEliminarBancal = () => {
       queryClient.invalidateQueries({ queryKey: ["bancales"] });
       addToast({ title: "Éxito", description: "Bancal eliminado con éxito", timeout: 3000 });
     },
-    onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar el bancal", timeout: 3000 });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar el bancal",
+          timeout: 3000,
+        });
+      }
     },
   });
 };

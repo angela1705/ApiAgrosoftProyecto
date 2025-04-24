@@ -10,12 +10,13 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from ..models import Herramienta
 from .serializers import HerramientaSerializer
 
 class HerramientaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, PermisoPorRol]
     queryset = Herramienta.objects.all()
     serializer_class = HerramientaSerializer
 

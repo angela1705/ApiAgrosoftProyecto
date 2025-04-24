@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Ingreso } from "@/types/reportes/Ingreso";
 
@@ -9,7 +9,7 @@ const fetchVentaGraficas = async (fechaInicio: string, fechaFin: string): Promis
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   
-  const response = await axios.get(API_URL, {
+  const response = await api.get(API_URL, {
     params: { fecha_inicio: fechaInicio, fecha_fin: fechaFin },
     headers: { Authorization: `Bearer ${token}` },
   });

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box } from '@mui/material';
 import UserMenu from '../usuarios/UserMenu';
-
+import Notificacion from "./Notificacion";
 interface HeaderProps {
   isSidebarOpen: boolean;
 }
@@ -33,8 +33,10 @@ export const Header: React.FC<HeaderProps> = ({ isSidebarOpen }) => {
 
       {/* Menú de usuario en la derecha */}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
         <UserMenu />
-      </Box>
+        <Notificacion/>
+        </Box>
     </header>
   );
 };

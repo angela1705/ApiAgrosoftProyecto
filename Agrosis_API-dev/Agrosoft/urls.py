@@ -121,6 +121,7 @@ urlpatterns = [
     path('usuarios/change_password/', ChangePasswordView.as_view(), name='change_password'),
     path('usuarios/password_reset_confirm/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('auth/', include('apps.Autenticacion.autenticacion.api.router')),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
 ]   

@@ -48,7 +48,7 @@ const menuItems = [
     label: "Finanzas",
     icon: <FaDollarSign />,
     subItems: [
-      { id: 34, label: "Salario", path: "/finanzas/salario/" },
+      { id: 34, label: "Salario", path: "/finanzas/listarsalarios/" },
       { id: 35, label: "Ventas", path: "/finanzas/ventas/" },
       { id: 36, label: "Pagos", path: "/finanzas/pago/" },
     ],
@@ -98,6 +98,8 @@ const menuItems = [
     subItems: [
       { id: 36, label: "Ingresos", path: "/graficas/ingresos" },
       { id: 37, label: "Cosechas", path: "/graficas/cosechas" },
+      { id: 38, label: "Egresos", path: "/graficas/egresos" },
+
     ],
   },
 ];

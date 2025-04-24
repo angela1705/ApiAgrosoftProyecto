@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 
@@ -9,7 +9,7 @@ const fetchInsumos = async (): Promise<Insumo[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(API_URL, {
+    const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -27,7 +27,7 @@ const fetchUnidadesMedida = async (): Promise<UnidadMedida[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(`${API_URL}unidades_medida/`, {
+    const response = await api.get(`${API_URL}unidades_medida/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -45,7 +45,7 @@ const fetchTiposInsumo = async (): Promise<TipoInsumo[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
-    const response = await axios.get(`${API_URL}tipos_insumo/`, {
+    const response = await api.get(`${API_URL}tipos_insumo/`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -64,7 +64,7 @@ const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "ti
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(API_URL, insumo, {
+        const response = await api.post(API_URL, insumo, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -83,15 +83,23 @@ export const useRegistrarInsumo = () => {
             addToast({ title: "Éxito", description: "Insumo registrado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.message || "Error al registrar el insumo",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al registrar el insumo",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 interface ActualizarInsumoParams {
     id: number;
     insumo: Omit<Insumo, "unidad_medida" | "tipo_insumo" | "componentes"> & {
@@ -106,7 +114,7 @@ const actualizarInsumo = async (id: number, insumo: ActualizarInsumoParams["insu
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.put(`${API_URL}${id}/`, insumo, {
+        const response = await api.put(`${API_URL}${id}/`, insumo, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -125,21 +133,31 @@ export const useActualizarInsumo = () => {
             addToast({ title: "Éxito", description: "Insumo actualizado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
+          if (error.response?.status === 403) {
             addToast({
-                title: "Error",
-                description: error.response?.data?.message || "Error al actualizar el insumo",
-                timeout: 3000,
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+              timeout: 3000,
             });
+          } else {
+            addToast({
+              title: "Error",
+              description: "Error al actualizar el insumo",
+              timeout: 3000,
+            });
+          }
         },
-    });
-};
+      });
+    };
+
+
 
 const eliminarInsumo = async (id: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.delete(`${API_URL}${id}/`, {
+        const response = await api.delete(`${API_URL}${id}/`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -158,21 +176,29 @@ export const useEliminarInsumo = () => {
             addToast({ title: "Éxito", description: "Insumo eliminado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.message || "No se pudo eliminar el insumo",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al eliminar el insumo",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const crearUnidadMedida = async (unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(`${API_URL}crear_unidad_medida/`, unidad, {
+        const response = await api.post(`${API_URL}crear_unidad_medida/`, unidad, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -205,7 +231,7 @@ const crearTipoInsumo = async (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | 
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(`${API_URL}crear_tipo_insumo/`, tipo, {
+        const response = await api.post(`${API_URL}crear_tipo_insumo/`, tipo, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -224,21 +250,29 @@ export const useCrearTipoInsumo = () => {
             addToast({ title: "Éxito", description: "Tipo de insumo creado con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.message || "Error al crear el tipo de insumo",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al crear el insumo",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const usarEnActividad = async (id: number, data: { cantidad_usada: number; actividad_id?: number }) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.post(`${API_URL}${id}/usar_en_actividad/`, data, {
+        const response = await api.post(`${API_URL}${id}/usar_en_actividad/`, data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -257,21 +291,29 @@ export const useUsarEnActividad = () => {
             addToast({ title: "Éxito", description: "Insumo usado en actividad con éxito", timeout: 3000 });
         },
         onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.error || "Error al usar el insumo en la actividad",
+            if (error.response?.status === 403) {
+              addToast({
+                title: "Acceso denegado",
+                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
-            });
-        },
-    });
-};
-
+              });
+            } else {
+              addToast({
+                title: "Error",
+                description: "Error al usar el insumo en la actividad",
+                timeout: 3000,
+              });
+            }
+          },
+        });
+      };
+  
 const descargarReportePDF = async () => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
     try {
-        const response = await axios.get(`${API_URL}reporte_pdf/`, {
+        const response = await api.get(`${API_URL}reporte_pdf/`, {
             headers: { Authorization: `Bearer ${token}` },
             responseType: 'blob',
         });

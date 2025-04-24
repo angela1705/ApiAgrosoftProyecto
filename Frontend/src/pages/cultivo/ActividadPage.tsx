@@ -5,8 +5,6 @@ import { useRegistrarActividad, useInsumos, useUsuarios } from "@/hooks/cultivo/
 import { useHerramientas } from "@/hooks/inventario/useHerramientas";
 import { useTipoActividad, useRegistrarTipoActividad } from "@/hooks/cultivo/usetipoactividad";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
-import ActividadNotifications from "@/components/cultivo/ActividadNotifications";
-import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -15,7 +13,6 @@ import ReuModal from "@/components/globales/ReuModal";
 import { Plus } from 'lucide-react';
 import { ModalCultivo } from "@/components/cultivo/ModalCultivo";
 import { ModalHerramienta } from "@/components/cultivo/ModalHerramienta";
-ModalHerramienta
 const animatedComponents = makeAnimated();
 
 interface SelectedOption {
@@ -26,7 +23,6 @@ interface SelectedOption {
 }
 
 const ActividadPage: React.FC = () => {
-    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [actividad, setActividad] = useState({
@@ -112,11 +108,7 @@ const ActividadPage: React.FC = () => {
             }))
         };
 
-        mutation.mutate(payload, {
-            onSuccess: () => {
-                navigate("/cultivo/listaractividad/");
-            }
-        });
+        mutation.mutate(payload)
     };
 
     const handleInsumoCantidadChange = (value: number, index: number) => {
@@ -366,10 +358,6 @@ const ActividadPage: React.FC = () => {
                     </button>
                 </div>
                 </Formulario>
-
-               
-
-                {user && <ActividadNotifications userId={user.id} />}
                 </DefaultLayout>
     );
 };
