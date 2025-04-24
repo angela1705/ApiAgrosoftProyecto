@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'apps.Cultivo.programacion',
     'apps.Cultivo.cosechas',
     'apps.Cultivo.lotes',
+    'apps.Autenticacion.autenticacion',
     'channels',
     'corsheaders',
     'django_filters',
@@ -84,6 +85,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'apps.Autenticacion.autenticacion.middleware.amJWTAuthFromCookieMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -135,9 +137,9 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testdb1',
+        'NAME': 'agrosoft',
         'USER': 'postgres',
-        'PASSWORD': '1234',
+        'PASSWORD': 'asd',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
@@ -199,6 +201,7 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'usuarios.Usuarios'
 AUTHENTICATION_BACKENDS = [
+    'apps.Autenticacion.autenticacion.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -227,6 +230,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'apps.Autenticacion.autenticacion.authentication.CookieJWTAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [

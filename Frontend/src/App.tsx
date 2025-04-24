@@ -79,6 +79,7 @@ import ListaVentaPage from "./pages/finanzas/ListaVentaPage";
 import ListaSalarioPage from "./pages/finanzas/ListaSalarioPage";
 import ListaPagoPage from "./pages/finanzas/ListaPagoPage";
 import PagoPage from "./pages/finanzas/PagoPage";
+import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
 
 // Reportes
 import Reportes from "./pages/reportes/Reportes";
@@ -215,6 +216,9 @@ const App: React.FC = () => {
               <Route path="/finanzas/listarventas" element={<ListaVentaPage />} />
               <Route path="/finanzas/listarpagos" element={<ListaPagoPage />} />
               <Route path="/finanzas/pago" element={<PagoPage />} />
+              <Route path="/graficas/egresos" element={<EgresoPruebaGraficasPage />} />
+
+              
 
               {/* Reportes */}
               <Route path="/reportes" element={<Reportes />} />
