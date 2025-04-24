@@ -98,6 +98,8 @@ const menuItems = [
     subItems: [
       { id: 36, label: "Ingresos", path: "/graficas/ingresos" },
       { id: 37, label: "Cosechas", path: "/graficas/cosechas" },
+      { id: 38, label: "Egresos", path: "/graficas/egresos" },
+
     ],
   },
 ];
