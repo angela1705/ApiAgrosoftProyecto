@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useCosechaGraficas } from "@/hooks/cultivo/usecosechagrafica";
+import { usePagoGraficas } from "@/hooks/finanzas/useEgresosGrafica";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { addToast } from "@heroui/react";
@@ -15,7 +15,7 @@ const EgresoPruebaGraficasPage: React.FC = () => {
     new Date().toISOString().split("T")[0]
   );
 
-  const { data, isLoading, isError, refetch } = useCosechaGraficas(
+  const { data, isLoading, isError, refetch } = usePagoGraficas(
     fechaInicio,
     fechaFin
   );
@@ -24,7 +24,7 @@ const EgresoPruebaGraficasPage: React.FC = () => {
     refetch().then(() => {
       addToast({
         title: "Éxito",
-        description: `Datos actualizados (${data?.meta.total_registros} registros encontrados)`,
+        description: `Datos actualizados correctamente`,
         timeout: 3000,
       });
     });
@@ -32,122 +32,94 @@ const EgresoPruebaGraficasPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Gráficas de Egresos prueba</h1>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div className="p-4 space-y-6">
+        <div className="flex flex-wrap gap-4 items-end">
           <ReuInput
             label="Fecha Inicio"
             type="date"
             value={fechaInicio}
             onChange={(e) => setFechaInicio(e.target.value)}
           />
-
           <ReuInput
             label="Fecha Fin"
             type="date"
             value={fechaFin}
             onChange={(e) => setFechaFin(e.target.value)}
           />
-        </div>
-
-        <div className="flex gap-4 mb-6">
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             onClick={handleRefetch}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             disabled={isLoading}
           >
-            {isLoading ? "Cargando..." : "Actualizar Gráficas"}
+            {isLoading ? "Cargando..." : "Actualizar"}
           </button>
-          
-          {data?.meta && (
-            <div className="px-4 py-2 bg-gray-100 rounded text-sm">
-              Mostrando datos del {data.meta.fecha_inicio} al {data.meta.fecha_fin} 
-              ({data.meta.total_registros} registros)
-            </div>
-          )}
         </div>
 
         {isError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            Error al cargar los datos de las gráficas
-          </div>
+          <p className="text-red-500">Error al cargar las gráficas.</p>
+        )}
+
+        {!data && !isLoading && (
+          <p className="text-gray-500">No hay datos disponibles.</p>
         )}
 
         {data && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-4 rounded-lg shadow">
-                <h2 className="text-xl font-semibold mb-4">
-                  Egresos prueba por Mes ({data.por_mes.unidad_medida})
-                </h2>
-                <Plot
-                  data={[{
-                    x: data.por_mes.meses,
-                    y: data.por_mes.cantidades,
-                    type: "bar",
-                    marker: { color: "rgb(55, 128, 191)" },
-                  }]}
-                  layout={{
-                    xaxis: { title: "Mes" },
-                    yaxis: { title: `Cantidad (${data.por_mes.unidad_medida})` },
-                    autosize: true,
-                    margin: { t: 30 } // Reduce el espacio superior
-                  }}
-                  config={{ responsive: true }}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="bg-white p-4 rounded-lg shadow">
-                <h2 className="text-xl font-semibold mb-4">
-                  Distribución por Cultivo ({data.por_cultivo.unidad_medida})
-                </h2>
-                <Plot
-                  data={[{
-                    labels: data.por_cultivo.cultivos,
-                    values: data.por_cultivo.cantidades,
-                    type: "pie",
-                    textinfo: "label+percent",
-                    insidetextorientation: "radial",
-                    hoverinfo: "label+value+percent",
-                  }]}
-                  layout={{
-                    height: 400,
-                    autosize: true,
-                    margin: { t: 30, b: 30 }
-                  }}
-                  config={{ responsive: true }}
-                  className="w-full"
-                />
-              </div>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">
-                Egresos prueba por Día de la Semana ({data.por_dia_semana.unidad_medida})
-              </h2>
-              <Plot
-                data={[{
-                  x: data.por_dia_semana.dias,
-                  y: data.por_dia_semana.cantidades,
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Gráfica: pagos por mes */}
+            <Plot
+              data={[
+                {
+                  x: data.por_mes.meses,
+                  y: data.por_mes.total_pago,
                   type: "bar",
-                  marker: { 
-                    color: data.por_dia_semana.dias.map((_, i) => 
-                      `hsl(${i * 360 / data.por_dia_semana.dias.length}, 70%, 50%)`
-                    ) 
-                  },
-                }]}
-                layout={{
-                  xaxis: { title: "Día de la semana" },
-                  yaxis: { title: `Cantidad (${data.por_dia_semana.unidad_medida})` },
-                  autosize: true,
-                  margin: { t: 30 }
-                }}
-                config={{ responsive: true }}
-                className="w-full"
-              />
-            </div>
+                  name: "Total Pagado",
+                  text: data.por_mes.usuario_top,
+                  marker: { color: "#3b82f6" },
+                },
+              ]}
+              layout={{
+                title: "Pagos por Mes",
+                xaxis: { title: "Mes" },
+                yaxis: { title: "Total ($)" },
+              }}
+              style={{ width: "100%", height: "400px" }}
+            />
+
+            {/* Gráfica: pagos por usuario */}
+            <Plot
+              data={[
+                {
+                  x: data.por_usuario.usuarios,
+                  y: data.por_usuario.total_pago,
+                  type: "bar",
+                  marker: { color: "#10b981" },
+                },
+              ]}
+              layout={{
+                title: "Pagos por Usuario",
+                xaxis: { title: "Usuario" },
+                yaxis: { title: "Total ($)" },
+              }}
+              style={{ width: "100%", height: "400px" }}
+            />
+
+            {/* Gráfica: pagos por día de la semana */}
+            <Plot
+              data={[
+                {
+                  x: data.por_dia_semana.dias,
+                  y: data.por_dia_semana.total_pago,
+                  type: "bar",
+                  marker: { color: "#f59e0b" },
+                },
+              ]}
+              layout={{
+                title: "Pagos por Día de la Semana",
+                xaxis: { title: "Día" },
+                yaxis: { title: "Total ($)" },
+              }}
+              style={{ width: "100%", height: "400px" }}
+            />
           </div>
         )}
       </div>
