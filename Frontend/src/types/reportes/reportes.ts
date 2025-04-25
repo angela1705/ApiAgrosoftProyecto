@@ -4,6 +4,7 @@ export const opcionesModulos = [
     { nombre: "Usuarios", modulo: "usuarios" },
     { nombre: "IoT", modulo: "iot" },
     { nombre: "Finanzas", modulo: "finanzas" },
+
 ];
 
 export const reportesPorModulo: Record<string, { nombre: string; reporte: string }[]> = {
@@ -27,5 +28,7 @@ export const reportesPorModulo: Record<string, { nombre: string; reporte: string
     finanzas: [
         { nombre: "Reporte de Ingresos", reporte: "venta" },
         { nombre: "Reporte de Gastos", reporte: "gastos" },
+        { nombre: "Reporte de Egresos", reporte: "pago" },
+
     ],
 };
