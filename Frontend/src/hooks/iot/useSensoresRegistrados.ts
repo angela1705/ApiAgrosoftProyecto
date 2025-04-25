@@ -1,75 +1,78 @@
-import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { addToast } from "@heroui/react";
 import { Sensor } from "@/types/iot/type";
 
-export function useSensoresRegistrados() {
-  const [sensores, setSensores] = useState<Sensor[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  const token = localStorage.getItem("access_token") || "";
+const API_URL = "http://127.0.0.1:8000/iot/sensores/";
+
+// Obtener todos los sensores registrados
+const fetchSensores = async (): Promise<Sensor[]> => {
+  const token = localStorage.getItem("access_token");
+  if (!token) throw new Error("No se encontró el token de autenticación.");
+  const response = await axios.get(API_URL, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+// Actualizar un sensor existente
+const updateSensor = async (sensor: Sensor) => {
+  const token = localStorage.getItem("access_token");
+  if (!token) throw new Error("No se encontró el token de autenticación.");
+  const response = await axios.put(`${API_URL}${sensor.id}/`, sensor, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+// Eliminar un sensor
+const deleteSensor = async (id: number) => {
+  const token = localStorage.getItem("access_token");
+  if (!token) throw new Error("No se encontró el token de autenticación.");
+  await axios.delete(`${API_URL}${id}/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Hook principal
+export const useSensoresRegistrados = () => {
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchSensores = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/iot/sensores/", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-        const result: Sensor[] = await response.json();
-        setSensores(result);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error("Error desconocido"));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (token) fetchSensores();
-    else setError(new Error("No autenticado"));
-  }, [token]);
-
-  const updateSensor = useMutation({
-    mutationFn: async (sensor: Sensor) => {
-      const response = await fetch(`http://127.0.0.1:8000/iot/sensores/${sensor.id}/`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(sensor),
-      });
-      if (!response.ok) throw new Error("Error al actualizar el sensor");
-      return response.json() as Promise<Sensor>;
-    },
-    onSuccess: (updatedSensor: Sensor) => {
-      setSensores((prev) => prev.map((s) => (s.id === updatedSensor.id ? updatedSensor : s)));
-      queryClient.invalidateQueries({ queryKey: ["sensores"] });
-    },
-    onError: (err: Error) => setError(err),
+  // Consulta para obtener los sensores
+  const { data: sensores = [], isLoading, error } = useQuery<Sensor[], Error>({
+    queryKey: ["sensores"],
+    queryFn: fetchSensores,
   });
 
-  const deleteSensor = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await fetch(`http://127.0.0.1:8000/iot/sensores/${id}/`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Error al eliminar el sensor");
-    },
-    onSuccess: (_, id: number) => {
-      setSensores((prev) => prev.filter((s) => s.id !== id));
+  // Mutación para actualizar un sensor
+  const updateMutation = useMutation({
+    mutationFn: updateSensor,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sensores"] });
+      addToast({ title: "Éxito", description: "Sensor actualizado con éxito" });
     },
-    onError: (err: Error) => setError(err),
+    onError: () => {
+      addToast({ title: "Error", description: "Error al actualizar el sensor" });
+    },
   });
 
-  return { sensores, isLoading, error, updateSensor, deleteSensor };
-}
+  // Mutación para eliminar un sensor
+  const deleteMutation = useMutation({
+    mutationFn: deleteSensor,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sensores"] });
+      addToast({ title: "Éxito", description: "Sensor eliminado con éxito" });
+    },
+    onError: () => {
+      addToast({ title: "Error", description: "Error al eliminar el sensor" });
+    },
+  });
+
+  return {
+    sensores,
+    isLoading,
+    error,
+    updateSensor: updateMutation, // Retornamos el objeto de mutación completo
+    deleteSensor: deleteMutation, // Retornamos el objeto de mutación completo
+  };
+};

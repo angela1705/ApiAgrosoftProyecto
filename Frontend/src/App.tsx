@@ -60,7 +60,8 @@ import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
 import SensoresPage from "./pages/iot/SensoresPage";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/RegistrarSensorPage";
-import ListarSensores from "@/components/Iot/ListarSensores";
+import ListarSensores from "@/components/Iot/ListarSensores"; 
+import EvapotranspiracionPage from "./pages/iot/EvapotranspiracionPage";
 
 // Usuarios
 import RegisterPage from "./pages/usuarios/RegisterPage";
@@ -79,6 +80,7 @@ import ListaVentaPage from "./pages/finanzas/ListaVentaPage";
 import ListaSalarioPage from "./pages/finanzas/ListaSalarioPage";
 import ListaPagoPage from "./pages/finanzas/ListaPagoPage";
 import PagoPage from "./pages/finanzas/PagoPage";
+import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
 
 // Reportes
 import Reportes from "./pages/reportes/Reportes";
@@ -164,7 +166,7 @@ const App: React.FC = () => {
               <Route path="/iot/datosmeteorologicos" element={<DatosMeteorologicosPage />} />
               <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
               <Route path="/iot/listar-sensores" element={<ListarSensores />} />
-
+              <Route path="/iot/evapotranspiracion" element={<EvapotranspiracionPage />} />
               {/* Cultivo */}
               <Route path="/cultivo/tipoespecie" element={<TipoEspeciePage />} />
               <Route path="/cultivo/listartipoespecie" element={<ListaTipoEspeciePage />} />
@@ -215,6 +217,9 @@ const App: React.FC = () => {
               <Route path="/finanzas/listarventas" element={<ListaVentaPage />} />
               <Route path="/finanzas/listarpagos" element={<ListaPagoPage />} />
               <Route path="/finanzas/pago" element={<PagoPage />} />
+              <Route path="/graficas/egresos" element={<EgresoPruebaGraficasPage />} />
+
+              
 
               {/* Reportes */}
               <Route path="/reportes" element={<Reportes />} />

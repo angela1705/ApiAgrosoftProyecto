@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 class Venta(models.Model):
-    producto = models.ForeignKey('Inventario.precio_producto.PrecioProducto', on_delete=models.CASCADE)
+    producto = models.ForeignKey('precio_producto.PrecioProducto', on_delete=models.CASCADE)
     cantidad = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
     fecha = models.DateTimeField()

@@ -40,6 +40,7 @@ from apps.Inventario.bodega_insumo.api.routers import bodegaInsumoRouter
 from apps.Inventario.bodega_herramienta.api.routers import bodegaHerramientaRouter
 from apps.Iot.datos_meteorologicos.api.routers import DatosMeteorologicosRouter  
 from apps.Iot.sensores.api.routers import SensoresRouter
+from apps.Iot.evapotranspiracion.api.routers import evapotranspiracionrouter
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -103,7 +104,7 @@ routerInventario.registry.extend(bodegaHerramientaRouter.registry)
 # IOT
 routerIOT.registry.extend(DatosMeteorologicosRouter.registry) 
 routerIOT.registry.extend(SensoresRouter.registry)
-
+routerIOT.registry.extend(evapotranspiracionrouter.registry)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
@@ -122,4 +123,5 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('auth/', include('apps.Autenticacion.autenticacion.api.router')),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-]
+    
+]   

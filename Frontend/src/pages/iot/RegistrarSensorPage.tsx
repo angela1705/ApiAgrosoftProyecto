@@ -15,6 +15,17 @@ const sensorTypes = [
   { value: "ph_suelo", label: "pH Suelo (pH)" },
 ];
 
+const sensorConfigurations: { [key: string]: { unidad_medida: string; medida_minima: number; medida_maxima: number } } = {
+  temperatura: { unidad_medida: "°C", medida_minima: -40, medida_maxima: 85 },
+  ambient_humidity: { unidad_medida: "%", medida_minima: 0, medida_maxima: 100 },
+  soil_humidity: { unidad_medida: "%", medida_minima: 0, medida_maxima: 100 },
+  luminosidad: { unidad_medida: "lux", medida_minima: 0, medida_maxima: 100000 },
+  lluvia: { unidad_medida: "mm/h", medida_minima: 0, medida_maxima: 50 },
+  velocidad_viento: { unidad_medida: "m/s", medida_minima: 0, medida_maxima: 60 },
+  direccion_viento: { unidad_medida: "grados", medida_minima: 0, medida_maxima: 360 },
+  ph_suelo: { unidad_medida: "pH", medida_minima: 0, medida_maxima: 14 },
+};
+
 const RegistrarSensorPage: React.FC = () => {
   const [sensor, setSensor] = useState<Partial<Sensor>>({
     nombre: "",
@@ -29,10 +40,21 @@ const RegistrarSensorPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setSensor((prev) => ({
-      ...prev,
-      [name]: name === "medida_minima" || name === "medida_maxima" ? Number(value) : value,
-    }));
+    if (name === "tipo_sensor") {
+      const config = sensorConfigurations[value] || { unidad_medida: "", medida_minima: 0, medida_maxima: 0 };
+      setSensor((prev) => ({
+        ...prev,
+        tipo_sensor: value,
+        unidad_medida: config.unidad_medida,
+        medida_minima: config.medida_minima,
+        medida_maxima: config.medida_maxima,
+      }));
+    } else {
+      setSensor((prev) => ({
+        ...prev,
+        [name]: name === "medida_minima" || name === "medida_maxima" ? Number(value) : value,
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,6 +73,7 @@ const RegistrarSensorPage: React.FC = () => {
       navigate("/iot/listar-sensores");
     } catch (error) {
       console.error("Error:", error);
+      alert("Error al registrar el sensor");
     }
   };
 
@@ -92,6 +115,7 @@ const RegistrarSensorPage: React.FC = () => {
               type="text"
               value={sensor.unidad_medida || ""}
               onChange={(e) => setSensor({ ...sensor, unidad_medida: e.target.value })}
+              // readOnly eliminado
             />
 
             <ReuInput
