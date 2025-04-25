@@ -105,6 +105,8 @@ routerInventario.registry.extend(bodegaHerramientaRouter.registry)
 routerIOT.registry.extend(DatosMeteorologicosRouter.registry) 
 routerIOT.registry.extend(SensoresRouter.registry)
 routerIOT.registry.extend(evapotranspiracionrouter.registry)
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
@@ -123,5 +125,5 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('auth/', include('apps.Autenticacion.autenticacion.api.router')),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    
+
 ]   
