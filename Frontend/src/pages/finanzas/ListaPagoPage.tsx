@@ -21,6 +21,7 @@ const ListaPagosPage: React.FC = () => {
     { name: 'Período', uid: 'periodo' },
     { name: 'Horas Trabajadas', uid: 'horas' },
     { name: 'Total', uid: 'total' },
+    { name: 'Usuario', uid: 'nombre_usuario' }, 
     { name: 'Fecha Cálculo', uid: 'fecha_calculo' },
     { name: 'Acciones', uid: 'acciones' },
   ];
@@ -79,6 +80,7 @@ const ListaPagosPage: React.FC = () => {
     horas: `${pago.horas_trabajadas} hrs`,
     total: formatMoney(pago.total_pago), // Aplicamos el formato aquí
     fecha_calculo: formatDateTime(pago.fecha_calculo || ''),
+    nombre_usuario: pago.nombre_usuario,  // Asegúrate de que el nombre del usuario esté en los datos
     acciones: (
       <div className="flex space-x-2">
         <button

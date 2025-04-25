@@ -8,6 +8,8 @@ export interface Pago {
   jornales: number;
   total_pago: number;
   fecha_calculo?: string;
+  nombre_usuario?: string; 
+
 }
 
 export interface CalculoPagoParams {
