@@ -10,8 +10,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime, timedelta
-from apps.Iot.datos_meteorologicos.models import Datos_metereologicos, Evapotranspiracion
-from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer, EvapotranspiracionSerializer
+from apps.Iot.datos_meteorologicos.models import Datos_metereologicos   
+from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer   
 from django_filters.rest_framework import DjangoFilterBackend
 import os
 import logging
@@ -43,7 +43,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             if fecha_medicion:
                 try:
                     logger.info(f"Filtrando por fecha_medicion: {fecha_medicion}")
-                    # Parsear la fecha y filtrar por el rango del día completo
                     fecha = datetime.strptime(fecha_medicion, '%Y-%m-%d')
                     fecha_inicio = fecha
                     fecha_fin = fecha + timedelta(days=1)
@@ -54,10 +53,8 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
                     logger.info(f"Registros después de filtrar por fecha: {queryset.count()}")
                 except ValueError as e:
                     logger.error(f"Formato de fecha inválido: {fecha_medicion}, error: {str(e)}")
-                    # Ignorar el filtro si la fecha es inválida
                     pass
 
-            # Filtro por fk_bancal_id (si está presente)
             fk_bancal_id = self.request.query_params.get('fk_bancal_id', None)
             if fk_bancal_id:
                 logger.info(f"Filtrando por fk_bancal_id: {fk_bancal_id}")
@@ -88,7 +85,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos = []
             styles = getSampleStyleSheet()
 
-            # Verificar si el logo existe
             logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
             if not os.path.exists(logo_path):
                 logger.error(f"Logo no encontrado en {logo_path}")
@@ -180,16 +176,3 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
         except Exception as e:
             logger.error(f"Error en reporte_pdf: {str(e)}")
             return Response({"error": str(e)}, status=500)
-
-class EvapotranspiracionViewSet(viewsets.ModelViewSet):
-    queryset = Evapotranspiracion.objects.all()
-    serializer_class = EvapotranspiracionSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['fk_bancal_id', 'fecha']
-
-    def get_permissions(self):
-        if self.action == 'create':
-            return [AllowAny()]
-        return [IsAuthenticated()]

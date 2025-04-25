@@ -13,11 +13,12 @@ import {
   FaCompass,
   FaVial,
 } from "react-icons/fa";
+import { ArrowLeft } from "lucide-react";
 
 export default function SensoresPage() {
   const [selectedDataType, setSelectedDataType] = useState<string | null>(null);
   const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
-  const { sensores = [], isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
+  const { sensores = [] } = useSensoresRegistrados(); // Eliminado sensoresLoading y sensoresError
   const navigate = useNavigate();
 
   // Definir los tipos de datos que se pueden filtrar, con íconos
@@ -79,7 +80,7 @@ export default function SensoresPage() {
 
   const formattedData = filteredData.map((dato: SensorData) => ({
     id: dato.id || "N/A",
-    sensor: sensores.find((s: Sensor) => s.id === dato.fk_sensor)?.nombre || dato.fk_sensor || "N/A",
+    sensor: sensores.find((s: Sensor) => s.id === dato.sensor)?.nombre || dato.sensor || "N/A",
     value: selectedDataType ? dato[selectedDataType as keyof SensorData] ?? "N/A" : "N/A",
     fecha_medicion: dato.fecha_medicion ? new Date(dato.fecha_medicion).toLocaleString() : "N/A",
   }));
@@ -142,11 +143,7 @@ export default function SensoresPage() {
           {/* Mostrar mensaje de carga o error si no hay tipo de dato seleccionado */}
           {!selectedDataType && (
             <>
-              {sensoresLoading ? (
-                <p className="text-gray-600 text-center">Cargando sensores...</p>
-              ) : sensoresError ? (
-                <p className="text-red-500 text-center">Error al cargar sensores: {sensoresError}</p>
-              ) : realTimeData.length === 0 ? (
+              {realTimeData.length === 0 ? (
                 <p className="text-gray-600 text-center">Esperando datos en tiempo real...</p>
               ) : null}
             </>

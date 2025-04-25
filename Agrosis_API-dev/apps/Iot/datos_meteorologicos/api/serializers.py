@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.Iot.datos_meteorologicos.models import Datos_metereologicos, Evapotranspiracion
+from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
 
 class Datos_metereologicosSerializer(serializers.ModelSerializer):
     sensor_nombre = serializers.CharField(source='fk_sensor.nombre', read_only=True, default='N/A')
@@ -13,8 +13,4 @@ class Datos_metereologicosSerializer(serializers.ModelSerializer):
             'velocidad_viento', 'direccion_viento', 'humedad_suelo', 'ph_suelo', 
             'fecha_medicion'
         ]
-
-class EvapotranspiracionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Evapotranspiracion
-        fields = ['id', 'fk_bancal', 'fecha', 'value']
+ 

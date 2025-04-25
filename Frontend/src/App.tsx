@@ -60,7 +60,8 @@ import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
 import SensoresPage from "./pages/iot/SensoresPage";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/RegistrarSensorPage";
-import ListarSensores from "@/components/Iot/ListarSensores";
+import ListarSensores from "@/components/Iot/ListarSensores"; 
+import EvapotranspiracionPage from "./pages/iot/EvapotranspiracionPage";
 
 // Usuarios
 import RegisterPage from "./pages/usuarios/RegisterPage";
@@ -165,7 +166,7 @@ const App: React.FC = () => {
               <Route path="/iot/datosmeteorologicos" element={<DatosMeteorologicosPage />} />
               <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
               <Route path="/iot/listar-sensores" element={<ListarSensores />} />
-
+              <Route path="/iot/evapotranspiracion" element={<EvapotranspiracionPage />} />
               {/* Cultivo */}
               <Route path="/cultivo/tipoespecie" element={<TipoEspeciePage />} />
               <Route path="/cultivo/listartipoespecie" element={<ListaTipoEspeciePage />} />

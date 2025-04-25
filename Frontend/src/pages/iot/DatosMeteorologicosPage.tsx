@@ -23,7 +23,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 export default function DatosMeteorologicosPage() {
   const [selectedDataType, setSelectedDataType] = useState<string | null>(null);
-  const { data: historicos = [], isLoading, error } = useDatosMeteorologicosHistoricos(0, "");
+  const { data: historicos = [], isLoading, error } = useDatosMeteorologicosHistoricos(); // Eliminado 0, ""
   const { sensores = [], isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
   const navigate = useNavigate();
 
@@ -66,7 +66,7 @@ export default function DatosMeteorologicosPage() {
   const formattedData = useMemo(() => {
     return filteredHistoricos.map((dato: SensorData) => ({
       id: dato.id || "N/A",
-      sensor: sensores.find((s: Sensor) => s.id === dato.fk_sensor)?.nombre || dato.fk_sensor || "N/A",
+      sensor: sensores.find((s: Sensor) => s.id === dato.sensor)?.nombre || dato.sensor || "N/A", // Cambiado fk_sensor por sensor
       value: selectedDataType ? dato[selectedDataType as keyof SensorData] ?? "N/A" : "N/A",
       fecha_medicion: dato.fecha_medicion ? new Date(dato.fecha_medicion).toLocaleString() : "N/A",
     }));
@@ -186,7 +186,7 @@ export default function DatosMeteorologicosPage() {
                 <p className="text-gray-600 text-center">Cargando datos históricos...</p>
               ) : error || sensoresError ? (
                 <p className="text-red-500 text-center">
-                  Error al cargar datos: {error || sensoresError}
+                  Error al cargar datos: {(error || sensoresError)?.message} {/* Ajustado a .message */}
                 </p>
               ) : null}
             </>

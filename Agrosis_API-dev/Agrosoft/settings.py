@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'channels',
     'corsheaders',
     'django_filters',
+    'apps.Iot.evapotranspiracion',
 ]
 
 MIDDLEWARE = [
@@ -137,9 +138,9 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft',
+        'NAME': 'agrosoft2',
         'USER': 'postgres',
-        'PASSWORD': 'asd',
+        'PASSWORD': 'adso2024',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
