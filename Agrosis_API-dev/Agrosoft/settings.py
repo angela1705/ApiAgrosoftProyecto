@@ -139,7 +139,7 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_new1',
+        'NAME': 'testdb1',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost', 

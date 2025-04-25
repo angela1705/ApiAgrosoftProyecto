@@ -31,9 +31,7 @@ const ControlPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(control, {
-      onSuccess: () => navigate("/cultivo/controles")
-    });
+    mutation.mutate(control);
   };
 
   const efectividadOptions = Array.from({ length: 11 }, (_, i) => i * 10)
