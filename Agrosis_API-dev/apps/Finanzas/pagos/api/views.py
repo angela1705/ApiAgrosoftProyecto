@@ -8,7 +8,8 @@ from django.db.models.functions import TruncMonth, ExtractWeekDay
 from datetime import datetime, timedelta
 
 class PagoViewSet(viewsets.ModelViewSet):
-    queryset = Pago.objects.all().prefetch_related('actividades', 'salario')
+    queryset = Pago.objects.all().prefetch_related('actividades__usuarios', 'salario')
+    
     serializer_class = PagoSerializer
 
     def get_serializer_class(self):
