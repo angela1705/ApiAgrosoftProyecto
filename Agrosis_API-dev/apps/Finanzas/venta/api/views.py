@@ -13,10 +13,9 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from apps.Finanzas.venta.models import Venta
 from apps.Finanzas.venta.api.serializers import VentaSerializer
-from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead
+from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, ExtractWeekDay
-
 class VentaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOrRead]
@@ -31,11 +30,8 @@ class VentaViewSet(ModelViewSet):
         if not fecha_inicio or not fecha_fin:
             return HttpResponse("Error: Debes proporcionar 'fecha_inicio' y 'fecha_fin'", status=400)
 
-        try:
-            fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-            fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
-        except ValueError:
-            return HttpResponse("Error: Formato de fecha inválido. Use YYYY-MM-DD", status=400)
+        fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+        fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
 
         ventas = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_fin])
         
@@ -51,7 +47,7 @@ class VentaViewSet(ModelViewSet):
 
         styles = getSampleStyleSheet()
         
-        logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
+        logo_path = "media/logo/def_AGROSIS_LOGOTIC.png" 
         logo = Image(logo_path, width=50, height=35)
 
         encabezado_data = [
@@ -62,8 +58,8 @@ class VentaViewSet(ModelViewSet):
 
         tabla_encabezado = Table(encabezado_data, colWidths=[60, 350, 100])
         tabla_encabezado.setStyle(TableStyle([
-            ('SPAN', (0, 0), (0, 2)),
-            ('SPAN', (1, 0), (1, 1)),
+            ('SPAN', (0, 0), (0, 2)), 
+            ('SPAN', (1, 0), (1, 1)), 
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
@@ -75,7 +71,7 @@ class VentaViewSet(ModelViewSet):
         elementos.append(subtitulo)
         elementos.append(Spacer(1, 10))
 
-        objetivo_texto = "Este documento presenta un resumen detallado de las ventas registradas en el sistema, incluyendo información sobre productos, cantidades vendidas, unidades de medida, montos totales y fechas de venta. El objetivo es proporcionar una visión general del desempeño comercial para facilitar el análisis financiero y la toma de decisiones."
+        objetivo_texto = "Este documento presenta un resumen detallado de las ventas registradas en el sistema, incluyendo información sobre productos, cantidades vendidas, montos totales y fechas de venta. El objetivo es proporcionar una visión general del desempeño comercial para facilitar el análisis financiero y la toma de decisiones."
         objetivo = Paragraph("<b>1. Objetivo</b><br/>" + objetivo_texto, styles['Normal'])
         elementos.append(objetivo)
         elementos.append(Spacer(1, 15))
@@ -83,19 +79,17 @@ class VentaViewSet(ModelViewSet):
         elementos.append(Paragraph("<b>2. Detalle de ventas</b>", styles['Heading3']))
         elementos.append(Spacer(1, 5))
 
-        data_ventas = [["Producto", "Cantidad", "Unidad de Medida", "Precio Unitario", "Total", "Fecha"]]
+        data_ventas = [["Producto", "Cantidad", "Precio Unitario", "Total", "Fecha"]]
         for venta in ventas:
-            unidad_medida = venta.producto.unidad_medida.nombre if venta.producto.unidad_medida else "Sin unidad"
             data_ventas.append([
                 venta.producto.Producto.id_cultivo.nombre,
-                f"{venta.cantidad}",
-                unidad_medida,
+                venta.cantidad,
                 f"${venta.producto.precio}",
                 f"${venta.total}",
                 venta.fecha.strftime("%Y-%m-%d")
             ])
 
-        tabla_ventas = Table(data_ventas, colWidths=[120, 60, 80, 80, 80, 80])
+        tabla_ventas = Table(data_ventas, colWidths=[150, 60, 80, 80, 80])
         tabla_ventas.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -143,7 +137,7 @@ class VentaViewSet(ModelViewSet):
 
         ventas_por_producto = (
             ventas
-            .values('producto__Producto', 'producto__unidad_medida__nombre')
+            .values('producto__Producto')
             .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
             .order_by('-total')
         )
@@ -191,7 +185,7 @@ class VentaViewSet(ModelViewSet):
                 'cantidades': [float(v['cantidad']) for v in ventas_por_mes],
             },
             'por_producto': {
-                'productos': [f"{v['producto__Producto']} ({v['producto__unidad_medida__nombre'] or 'Sin unidad'})" for v in ventas_por_producto],
+                'productos': [v['producto__Producto'] for v in ventas_por_producto],
                 'ingresos': [float(v['total']) for v in ventas_por_producto],
                 'cantidades': [float(v['cantidad']) for v in ventas_por_producto],
             },
