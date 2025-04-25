@@ -134,7 +134,9 @@ export default function ListarSensores() {
           ) : (
             <>
               <Tabla columns={columns} data={formattedData} />
-              
+              {sensores.length === 0 && (
+                <p className="text-gray-600 text-center mt-4">No hay sensores registrados</p>
+              )}
             </>
           )}
         </div>
@@ -172,14 +174,10 @@ export default function ListarSensores() {
             ))}
           </select>
         </div>
-        <ReuInput
-          label="Unidad de Medida"
-          type="text"
-          value={selectedSensor?.unidad_medida || ""}
-          onChange={(e) => handleChange("unidad_medida", e)}
-          readOnly
-        />
-        
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+          <p className="mt-1 text-sm text-gray-900">{selectedSensor?.unidad_medida || ""}</p>
+        </div>
         <ReuInput
           label="Descripción"
           type="text"

@@ -60,7 +60,7 @@ import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
 import SensoresPage from "./pages/iot/SensoresPage";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/RegistrarSensorPage";
-import ListarSensores from "@/components/Iot/ListarSensores";
+import ListarSensores from "@/components/Iot/ListarSensores"; 
 import EvapotranspiracionPage from "./pages/iot/EvapotranspiracionPage";
 
 // Usuarios

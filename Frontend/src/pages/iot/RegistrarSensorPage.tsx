@@ -115,7 +115,7 @@ const RegistrarSensorPage: React.FC = () => {
               type="text"
               value={sensor.unidad_medida || ""}
               onChange={(e) => setSensor({ ...sensor, unidad_medida: e.target.value })}
-              readOnly
+              // readOnly eliminado
             />
 
             <ReuInput

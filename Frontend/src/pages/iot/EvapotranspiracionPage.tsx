@@ -3,7 +3,6 @@ import DefaultLayout from "@/layouts/default";
 import { useNavigate } from "react-router-dom";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
-import { Sensor } from "@/types/iot/type";
 
 interface Bancal {
   id: number;
@@ -28,13 +27,12 @@ export default function EvapotranspiracionPage() {
     altitud: "",
   });
   const [bancales, setBancales] = useState<Bancal[]>([]);
-  const [sensores, setSensores] = useState<Sensor[]>([]);
   const [resultados, setResultados] = useState<EvapotranspiracionData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Obtener bancales y sensores al cargar la página
+  // Obtener bancales al cargar la página
   useEffect(() => {
     const fetchBancales = async () => {
       const token = localStorage.getItem("access_token") || "";
@@ -54,26 +52,7 @@ export default function EvapotranspiracionPage() {
       }
     };
 
-    const fetchSensores = async () => {
-      const token = localStorage.getItem("access_token") || "";
-      try {
-        const response = await fetch("http://127.0.0.1:8000/iot/sensores/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) throw new Error("Error al obtener los sensores");
-        const data = await response.json();
-        setSensores(data);
-      } catch (err) {
-        setError("Error al cargar los sensores");
-        console.error(err);
-      }
-    };
-
     fetchBancales();
-    fetchSensores();
   }, []);
 
   // Autocompletar latitud y altitud cuando se selecciona un bancal
@@ -88,7 +67,7 @@ export default function EvapotranspiracionPage() {
     }));
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -184,7 +163,6 @@ export default function EvapotranspiracionPage() {
 
               <ReuInput
                 label="Fecha"
-                name="fecha"
                 type="date"
                 value={formData.fecha}
                 onChange={handleChange}
@@ -192,7 +170,6 @@ export default function EvapotranspiracionPage() {
               />
               <ReuInput
                 label="Latitud"
-                name="latitud"
                 type="number"
                 step="0.01"
                 value={formData.latitud}
@@ -201,7 +178,6 @@ export default function EvapotranspiracionPage() {
               />
               <ReuInput
                 label="Altitud (metros)"
-                name="altitud"
                 type="number"
                 value={formData.altitud}
                 onChange={handleChange}
