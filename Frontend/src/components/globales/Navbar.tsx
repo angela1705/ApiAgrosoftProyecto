@@ -64,6 +64,8 @@ const menuItems = [
       { id: 20, label: "Tipo Control", path: "/cultivo/listartipocontrol/" },
       { id: 21, label: "Afecciones", path: "/cultivo/afecciones/" },
       { id: 22, label: "Productos Control", path: "/cultivo/listarproductoscontrol/" },
+      { id: 22, label: "Reportar plaga", path: "/cultivo/listareporteplaga/" },
+
     ],
   },
   {
