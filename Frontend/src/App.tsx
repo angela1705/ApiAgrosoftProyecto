@@ -42,6 +42,13 @@ import ProductosControlPage from "./pages/cultivo/ProductosControlPage";
 import ListaProductoControlPage from "./pages/cultivo/ListaProductosControlPage";
 import CosechaGraficasPage from "./pages/cultivo/CosechasGraficasPage";
 import ActividadNotifications from "./components/cultivo/ActividadNotifications";
+import RegistroReportePlaga from "./pages/cultivo/ReportePlaga";
+import ListaReportePlaga from "./pages/cultivo/ListaReportePlaga";
+import DetalleReportePlaga from "./pages/cultivo/DetalleReportePlaga";
+import AfeccionesPage from "./pages/cultivo/AfeccionesPage";
+import ListaAfecciones from "./pages/cultivo/ListaAfeccionesPage";
+import ControlPage from "./pages/cultivo/ControlPage";
+import ListaControlPage from "./pages/cultivo/ListaControlPage";
 // Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
 import ListaHerramientaPage from "./pages/inventario/ListaHerramientaPage";
@@ -188,6 +195,14 @@ const App: React.FC = () => {
               <Route path="/cultivo/listartipoplaga" element={<ListaTipoPlagaPage />} />
               <Route path="/cultivo/plaga" element={<PlagaPage />} />
               <Route path="/cultivo/listarplaga" element={<ListaPlagasPage />} />
+              <Route path="/cultivo/reportarplaga/" element={<RegistroReportePlaga />} />
+              <Route path="/cultivo/listareporteplaga/" element={<ListaReportePlaga />} />
+              <Route path="/cultivo/detallereporteplaga/:id" element={<DetalleReportePlaga />} />
+              <Route path="/cultivo/afecciones/" element={<AfeccionesPage />} />
+              <Route path="/cultivo/listafecciones/" element={<ListaAfecciones />} />
+              <Route path="/cultivo/control/" element={<ControlPage />} />
+              <Route path="/cultivo/listacontrol/" element={<ListaControlPage />} />
+
               <Route path="/cultivo/cosecha" element={<CosechaPage />} />
               <Route path="/cultivo/listarcosechas" element={<ListaCosechasPage />} />
               <Route path="/cultivo/tipo_control" element={<TipoControlPage />} />

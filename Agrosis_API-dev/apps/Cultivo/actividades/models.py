@@ -15,7 +15,7 @@ class Actividad(models.Model):
     fecha_fin = models.DateTimeField()
     cultivo = models.ForeignKey('cultivos.Cultivo', on_delete=models.CASCADE)
     
-    usuarios = models.ManyToManyField('usuarios.Usuarios', related_name='actividades')  # muchos usuarios por actividad
+    usuarios = models.ManyToManyField('usuarios.Usuarios', related_name='actividades')
     
     estado = models.CharField(
         max_length=20,
