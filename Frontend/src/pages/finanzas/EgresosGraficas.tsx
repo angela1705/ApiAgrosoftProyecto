@@ -65,61 +65,76 @@ const EgresoPruebaGraficasPage: React.FC = () => {
 
         {data && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            Egresos
             {/* Gráfica: pagos por mes */}
-            <Plot
-              data={[
-                {
-                  x: data.por_mes.meses,
-                  y: data.por_mes.total_pago,
-                  type: "bar",
-                  name: "Total Pagado",
-                  text: data.por_mes.usuario_top,
-                  marker: { color: "#3b82f6" },
-                },
-              ]}
-              layout={{
-                title: "Pagos por Mes",
-                xaxis: { title: "Mes" },
-                yaxis: { title: "Total ($)" },
-              }}
-              style={{ width: "100%", height: "400px" }}
-            />
+            <div>
+              <h2 className="text-xl font-semibold mb-2 text-gray-800">
+                Pagos por Mes
+              </h2>
+              <Plot
+                data={[
+                  {
+                    x: data.por_mes.meses,
+                    y: data.por_mes.total_pago,
+                    type: "bar",
+                    name: "Total Pagado",
+                    text: data.por_mes.usuario_top,
+                    marker: { color: "#3b82f6" },
+                  },
+                ]}
+                layout={{
+                  title: "",
+                  xaxis: { title: "Mes" },
+                  yaxis: { title: "Total ($)" },
+                }}
+                style={{ width: "100%", height: "400px" }}
+              />
+            </div>
 
-            {/* Gráfica: pagos por usuario */}
-            <Plot
-              data={[
-                {
-                  x: data.por_usuario.usuarios,
-                  y: data.por_usuario.total_pago,
-                  type: "bar",
-                  marker: { color: "#10b981" },
-                },
-              ]}
-              layout={{
-                title: "Pagos por Usuario",
-                xaxis: { title: "Usuario" },
-                yaxis: { title: "Total ($)" },
-              }}
-              style={{ width: "100%", height: "400px" }}
-            />
+            <div>
+              <h2 className="text-xl font-semibold mb-2 text-gray-800">
+                Pagos por Usuario
+              </h2>
+              <Plot
+                data={[
+                  {
+                    x: data.por_usuario.usuarios,
+                    y: data.por_usuario.total_pago,
+                    type: "bar",
+                    marker: { color: "#10b981" },
+                  },
+                ]}
+                layout={{
+                  title: "",
+                  xaxis: { title: "Usuario" },
+                  yaxis: { title: "Total ($)" },
+                }}
+                style={{ width: "100%", height: "400px" }}
+              />
+            </div>
 
-            {/* Gráfica: pagos por día de la semana */}
-            <Plot
-              data={[
-                {
-                  x: data.por_dia_semana.dias,
-                  y: data.por_dia_semana.total_pago,
-                  type: "bar",
-                  marker: { color: "#f59e0b" },
-                },
-              ]}
-              layout={{
-                title: "Pagos por Día de la Semana",
-                xaxis: { title: "Día" },
-                yaxis: { title: "Total ($)" },
-              }}
-              style={{ width: "100%", height: "400px" }}
-            />
+            {/* Gráfica: pagos por día de la semana*/}
+            <div>
+              <h2 className="text-xl font-semibold mb-2 text-gray-800">
+                Pagos por Día de la Semana
+              </h2>
+              <Plot
+                data={[
+                  {
+                    x: data.por_dia_semana.dias,
+                    y: data.por_dia_semana.total_pago,
+                    type: "bar",
+                    marker: { color: "#f59e0b" },
+                  },
+                ]}
+                layout={{
+                  title: "",
+                  xaxis: { title: "Día" },
+                  yaxis: { title: "Total ($)" },
+                }}
+                style={{ width: "100%", height: "400px" }}
+              />
+            </div> 
           </div>
         )}
       </div>
