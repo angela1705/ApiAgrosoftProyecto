@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'apps.Cultivo.plantaciones',
     'apps.Cultivo.tipo_actividad',
     'apps.Cultivo.actividades',
+    'apps.Cultivo.ReportePlaga',
     'apps.Iot.datos_meteorologicos',
     'apps.Iot.sensores',
     'apps.Finanzas.pagos',
