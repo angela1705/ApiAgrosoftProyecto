@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from apps.Finanzas.pagos.models import Pago
+from rest_framework.permissions import IsAuthenticated
 from apps.Finanzas.pagos.api.serializers import PagoSerializer, CalculoPagoSerializer, PagoCreateSerializer
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, ExtractWeekDay
@@ -12,10 +13,13 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from django.http import HttpResponse
+from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 
 
 class PagoViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, PermisoPorRol]
     queryset = Pago.objects.all().prefetch_related('actividades__usuarios', 'salario')
+
     
     serializer_class = PagoSerializer
 

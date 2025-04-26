@@ -21,7 +21,7 @@ class PagoSerializer(serializers.ModelSerializer):
         usuarios = set()
 
         actividades = obj.actividades.all() if hasattr(obj, 'actividades') else []
-        print(f"Actividades del pago ID🔴 {getattr(obj, 'id', 'N/A')}: {actividades}")
+        print(f"01 {getattr(obj, 'id', 'N/A')}: {actividades}")
 
         for actividad in actividades:
             try:

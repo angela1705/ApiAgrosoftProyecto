@@ -87,10 +87,10 @@ export const useUsuarios = () => {
         oldData ? oldData.map((u) => (u.id === updatedUsuario.id ? updatedUsuario : u)) : [updatedUsuario]
       );
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
-      addToast({ title: "Éxito", description: "Usuario actualizado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Usuario actualizado con éxito", timeout: 3000, color:"success"});
     },
     onError: (error) => {
-      addToast({ title: "Error", description: error.message || "Error al actualizar el usuario", timeout: 3000 });
+      addToast({ title: "Error", description: error.message || "Error al actualizar el usuario", timeout: 3000, color:"danger" });
     },
   });
 
@@ -98,10 +98,10 @@ export const useUsuarios = () => {
     mutationFn: deleteUsuario,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
-      addToast({ title: "Éxito", description: "Usuario eliminado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Usuario eliminado con éxito", timeout: 3000, color:"success" });
     },
     onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar el usuario", timeout: 3000 });
+      addToast({ title: "Error", description: "Error al eliminar el usuario", timeout: 3000, color:"danger" });
     },
   });
 
