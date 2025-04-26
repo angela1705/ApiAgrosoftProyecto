@@ -59,21 +59,24 @@ export const useCalcularPago = () => {
       addToast({ 
         title: "Éxito", 
         description: "Pago calculado y registrado con éxito", 
-        timeout: 3000 
+        timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
         addToast({
           title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: error.response?.data?.detail || "Error al calcular el pago",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -89,21 +92,24 @@ export const useCrearPago = () => {
       addToast({ 
         title: "Éxito", 
         description: "Pago creado con éxito", 
-        timeout: 3000 
+        timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
         addToast({
           title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al crear el pago",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -119,21 +125,24 @@ export const useEliminarPago = () => {
       addToast({ 
         title: "Éxito", 
         description: "Pago eliminado con éxito", 
-        timeout: 3000 
+        timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
         addToast({
           title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar el pago",
           timeout: 3000,
+          color:"danger"
         });
       }
     },

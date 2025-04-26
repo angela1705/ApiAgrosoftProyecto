@@ -7,6 +7,7 @@ import Formulario from '@/components/globales/Formulario';
 import { ReuInput } from '@/components/globales/ReuInput';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { addToast } from "@heroui/react";
 
 const animatedComponents = makeAnimated();
 
@@ -38,9 +39,15 @@ const CalcularPagoPage: React.FC = () => {
     e.preventDefault();
     
     if (!selectedUsuario) {
-      alert('Por favor seleccione un usuario');
+      addToast({
+        title: "Usuario no seleccionado",
+        description: "Por favor seleccione un usuario antes de calcular el pago.",
+        timeout: 3000,
+        color:"danger"
+      });
       return;
     }
+    
 
     calcularPagoMutation.mutate({
       usuario_id: selectedUsuario.value,
@@ -51,7 +58,7 @@ const CalcularPagoPage: React.FC = () => {
         navigate('/finanzas/listarpagos');
       }
     });
-  };
+      };
 
   return (
     <DefaultLayout>

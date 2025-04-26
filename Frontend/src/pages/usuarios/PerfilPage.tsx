@@ -4,7 +4,7 @@ import { useUsuarios, UsuarioUpdate } from "@/hooks/usuarios/useUsuarios";
 import DefaultLayout from "@/layouts/default";
 import { Box, Button, TextField, Typography, Modal, Backdrop, Fade, IconButton, InputAdornment } from "@mui/material";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { toast } from "react-hot-toast";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -88,7 +88,7 @@ const PerfilPage: React.FC = () => {
     }
     try {
       const token = localStorage.getItem("access_token");
-      await axios.post(
+      await api.post(
         "http://127.0.0.1:8000/usuarios/change_password/",
         { current_password: currentPassword, new_password: newPassword },
         { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
