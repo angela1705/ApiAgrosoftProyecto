@@ -65,11 +65,11 @@ const EgresoPruebaGraficasPage: React.FC = () => {
 
         {data && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            Egresos
+            
             {/* Gráfica: pagos por mes */}
             <div>
               <h2 className="text-xl font-semibold mb-2 text-gray-800">
-                Pagos por Mes
+                Pagos por Mes - Egresos
               </h2>
               <Plot
                 data={[
@@ -114,7 +114,7 @@ const EgresoPruebaGraficasPage: React.FC = () => {
             </div>
 
             {/* Gráfica: pagos por día de la semana*/}
-            <div>
+            {/* <div>
               <h2 className="text-xl font-semibold mb-2 text-gray-800">
                 Pagos por Día de la Semana
               </h2>
@@ -134,7 +134,7 @@ const EgresoPruebaGraficasPage: React.FC = () => {
                 }}
                 style={{ width: "100%", height: "400px" }}
               />
-            </div> 
+            </div>  */}
           </div>
         )}
       </div>

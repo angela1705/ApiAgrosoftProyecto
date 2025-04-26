@@ -60,9 +60,9 @@ const menuItems = [
     subItems: [
       { id: 17, label: "Tipo Plaga", path: "/cultivo/listartipoplaga/" },
       { id: 18, label: "Plaga", path: "/cultivo/listarplaga/" },
-      { id: 19, label: "Control", path: "/cultivo/control/" },
+      { id: 19, label: "Control", path: "/cultivo/listacontrol/" },
       { id: 20, label: "Tipo Control", path: "/cultivo/listartipocontrol/" },
-      { id: 21, label: "Afecciones", path: "/cultivo/afecciones/" },
+      { id: 21, label: "Afecciones", path: "/cultivo/listafecciones/" },
       { id: 22, label: "Productos Control", path: "/cultivo/listarproductoscontrol/" },
       { id: 22, label: "Reportar plaga", path: "/cultivo/listareporteplaga/" },
 

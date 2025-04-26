@@ -10,15 +10,37 @@ class PagoCreateSerializer(serializers.ModelSerializer):
         fields = ['fecha_inicio', 'fecha_fin']
         
 class PagoSerializer(serializers.ModelSerializer):
+    nombre_usuario = serializers.SerializerMethodField()
+
     class Meta:
         model = Pago
         fields = '__all__'
         read_only_fields = ['horas_trabajadas', 'jornales', 'total_pago', 'fecha_calculo', 'salario', 'actividades']
 
+    def get_nombre_usuario(self, obj):
+        usuarios = set()
+
+        actividades = obj.actividades.all() if hasattr(obj, 'actividades') else []
+        print(f"Actividades del pago ID🔴 {getattr(obj, 'id', 'N/A')}: {actividades}")
+
+        for actividad in actividades:
+            try:
+                for usuario in actividad.usuarios.all():
+                    usuarios.add(usuario.nombre)
+            except Exception as e:
+                print(f"Error accediendo a usuarios de la actividad {actividad.id}: {e}")
+
+        return ', '.join(usuarios) if usuarios else 'Desconocido'
+
+
 class CalculoPagoSerializer(serializers.Serializer):
     usuario_id = serializers.IntegerField()
     fecha_inicio = serializers.DateField()
     fecha_fin = serializers.DateField()
+
+
+
+
 
     def validate(self, data):
         if data['fecha_inicio'] > data['fecha_fin']:
