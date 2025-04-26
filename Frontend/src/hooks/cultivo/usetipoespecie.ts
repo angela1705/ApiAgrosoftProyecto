@@ -62,7 +62,7 @@ export const useRegistrarTipoEspecie = () => {
   return useMutation({
     mutationFn: registrarTipoEspecie,
     onSuccess: () => {
-      addToast({ title: "Éxito", description: "Tipo de especie registrado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de especie registrado con éxito", timeout: 3000, color: "success"});
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -76,6 +76,7 @@ export const useRegistrarTipoEspecie = () => {
           title: "Error",
           description: "Error al registrar el tipo de especie",
           timeout: 3000,
+          color: "danger"
         });
       }
     },
