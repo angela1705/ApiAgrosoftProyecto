@@ -31,6 +31,7 @@ export const useRegistrarUsuario = () => {
         title: "Éxito",
         description: "Usuario registrado con éxito.",
         timeout: 3000,
+        color: "success"
       });
     },
     onError: (error: any) => {
@@ -43,6 +44,7 @@ export const useRegistrarUsuario = () => {
             title: "Nombre de usuario inválido",
             description: data.username[0],
             timeout: 4000,
+            color: "danger"
           });
         }
 
@@ -51,6 +53,7 @@ export const useRegistrarUsuario = () => {
             title: "Correo electrónico inválido",
             description: data.email[0],
             timeout: 4000,
+            color: "danger"
           });
         }
 
@@ -60,6 +63,7 @@ export const useRegistrarUsuario = () => {
             title: "Error",
             description: "Error al registrar el usuario.",
             timeout: 3000,
+            color: "danger"
           });
         }
       } else {
@@ -67,6 +71,7 @@ export const useRegistrarUsuario = () => {
           title: "Error",
           description: error.message || "Error inesperado.",
           timeout: 3000,
+          color: "danger"
         });
       }
     },

@@ -26,6 +26,7 @@ const EgresoPruebaGraficasPage: React.FC = () => {
         title: "Éxito",
         description: `Datos actualizados correctamente`,
         timeout: 3000,
+        color:"success"
       });
     });
   };
