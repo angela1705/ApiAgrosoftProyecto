@@ -16,6 +16,7 @@ from apps.Finanzas.venta.api.serializers import VentaSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, ExtractWeekDay
+
 class VentaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOrRead]
@@ -38,6 +39,15 @@ class VentaViewSet(ModelViewSet):
         total_ventas = ventas.count()
         ingresos_totales = sum(v.total for v in ventas)
         promedio_venta = ingresos_totales / total_ventas if total_ventas > 0 else 0
+
+        ventas_por_cultivo = (
+            ventas
+            .values('producto__Producto__id_cultivo__nombre')
+            .annotate(total_ingresos=Sum('total'), total_ventas=Sum('cantidad'))
+            .order_by('-total_ingresos')
+        )
+
+        cultivo_mas_rentable = ventas_por_cultivo.first() if ventas_por_cultivo else None
 
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="reporte_ventas.pdf"'
@@ -106,6 +116,18 @@ class VentaViewSet(ModelViewSet):
         Los ingresos totales fueron de ${ingresos_totales:.2f}, con un promedio de ${promedio_venta:.2f} por venta.
         """
         elementos.append(Paragraph(resumen_texto, styles['Normal']))
+        elementos.append(Spacer(1, 15))
+
+        elementos.append(Paragraph("<b>4. Cultivo Más Rentable</b>", styles['Heading3']))
+        if cultivo_mas_rentable:
+            cultivo_texto = f"""
+            El cultivo más rentable en el período fue <b>{cultivo_mas_rentable['producto__Producto__id_cultivo__nombre']}</b>, 
+            con ingresos totales de <b>${cultivo_mas_rentable['total_ingresos']:.2f}</b> 
+            y un total de <b>{cultivo_mas_rentable['total_ventas']}</b> unidades vendidas.
+            """
+        else:
+            cultivo_texto = "No se encontraron ventas registradas en el período seleccionado, por lo que no se pudo determinar el cultivo más rentable."
+        elementos.append(Paragraph(cultivo_texto, styles['Normal']))
 
         doc.build(elementos)
 

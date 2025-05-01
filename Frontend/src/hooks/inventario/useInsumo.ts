@@ -80,7 +80,7 @@ export const useRegistrarInsumo = () => {
         mutationFn: (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo" | "componentes"> & { unidad_medida_id?: number; tipo_insumo_id?: number; componentes_data?: { insumo_componente: number; cantidad: number }[] }) => registrarInsumo(insumo),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["insumos"] });
-            addToast({ title: "Éxito", description: "Insumo registrado con éxito", timeout: 3000 });
+            addToast({ title: "Éxito", description: "Insumo registrado con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
@@ -88,12 +88,14 @@ export const useRegistrarInsumo = () => {
                 title: "Acceso denegado",
                 description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
+                color: "danger"
               });
             } else {
               addToast({
                 title: "Error",
                 description: "Error al registrar el insumo",
                 timeout: 3000,
+                color: "danger"
               });
             }
           },
@@ -130,7 +132,7 @@ export const useActualizarInsumo = () => {
         mutationFn: ({ id, insumo }: ActualizarInsumoParams) => actualizarInsumo(id, insumo),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["insumos"] });
-            addToast({ title: "Éxito", description: "Insumo actualizado con éxito", timeout: 3000 });
+            addToast({ title: "Éxito", description: "Insumo actualizado con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
           if (error.response?.status === 403) {
@@ -138,12 +140,14 @@ export const useActualizarInsumo = () => {
               title: "Acceso denegado",
               description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
               timeout: 3000,
+              color: "danger"
             });
           } else {
             addToast({
               title: "Error",
               description: "Error al actualizar el insumo",
               timeout: 3000,
+              color: "danger"
             });
           }
         },
@@ -173,7 +177,7 @@ export const useEliminarInsumo = () => {
         mutationFn: (id: number) => eliminarInsumo(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["insumos"] });
-            addToast({ title: "Éxito", description: "Insumo eliminado con éxito", timeout: 3000 });
+            addToast({ title: "Éxito", description: "Insumo eliminado con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
@@ -181,12 +185,14 @@ export const useEliminarInsumo = () => {
                 title: "Acceso denegado",
                 description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
+                color: "danger"
               });
             } else {
               addToast({
                 title: "Error",
                 description: "Error al eliminar el insumo",
                 timeout: 3000,
+                color: "danger"
               });
             }
           },
@@ -214,13 +220,14 @@ export const useCrearUnidadMedida = () => {
         mutationFn: (unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">) => crearUnidadMedida(unidad),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["unidadesMedida"] });
-            addToast({ title: "Éxito", description: "Unidad de medida creada con éxito", timeout: 3000 });
+            addToast({ title: "Éxito", description: "Unidad de medida creada con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
             addToast({
                 title: "Error",
                 description: error.response?.data?.message || "Error al crear la unidad de medida",
                 timeout: 3000,
+                color: "danger"
             });
         },
     });
@@ -247,7 +254,7 @@ export const useCrearTipoInsumo = () => {
         mutationFn: (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | "creada_por_usuario">) => crearTipoInsumo(tipo),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tiposInsumo"] });
-            addToast({ title: "Éxito", description: "Tipo de insumo creado con éxito", timeout: 3000 });
+            addToast({ title: "Éxito", description: "Tipo de insumo creado con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
@@ -255,12 +262,14 @@ export const useCrearTipoInsumo = () => {
                 title: "Acceso denegado",
                 description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
+                color: "danger"
               });
             } else {
               addToast({
                 title: "Error",
                 description: "Error al crear el insumo",
                 timeout: 3000,
+                color: "danger"
               });
             }
           },
@@ -288,7 +297,7 @@ export const useUsarEnActividad = () => {
         mutationFn: ({ id, data }: { id: number; data: { cantidad_usada: number; actividad_id?: number } }) => usarEnActividad(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["insumos"] });
-            addToast({ title: "Éxito", description: "Insumo usado en actividad con éxito", timeout: 3000 });
+            addToast({ title: "Éxito", description: "Insumo usado en actividad con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
@@ -296,53 +305,16 @@ export const useUsarEnActividad = () => {
                 title: "Acceso denegado",
                 description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                 timeout: 3000,
+                color: "danger"
               });
             } else {
               addToast({
                 title: "Error",
                 description: "Error al usar el insumo en la actividad",
                 timeout: 3000,
+                color: "danger"
               });
             }
           },
         });
       };
-  
-const descargarReportePDF = async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) throw new Error("No se encontró el token de autenticación.");
-
-    try {
-        const response = await api.get(`${API_URL}reporte_pdf/`, {
-            headers: { Authorization: `Bearer ${token}` },
-            responseType: 'blob',
-        });
-        return response.data;
-    } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
-        throw error;
-    }
-};
-
-export const useReportePDF = () => {
-    return useMutation({
-        mutationFn: descargarReportePDF,
-        onSuccess: (data) => {
-            const url = window.URL.createObjectURL(new Blob([data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'reporte_insumos.pdf');
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            addToast({ title: "Éxito", description: "Reporte PDF descargado con éxito", timeout: 3000 });
-        },
-        onError: (error: any) => {
-            addToast({
-                title: "Error",
-                description: error.response?.data?.message || "Error al descargar el reporte PDF",
-                timeout: 3000,
-            });
-        },
-    });
-};

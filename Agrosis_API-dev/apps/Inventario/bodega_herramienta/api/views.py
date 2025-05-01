@@ -16,9 +16,15 @@ from .serializers import BodegaHerramientaSerializer
 
 class BodegaHerramientaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated , PermisoPorRol]
+    permission_classes = [IsAuthenticated, PermisoPorRol]
     queryset = BodegaHerramienta.objects.all()
     serializer_class = BodegaHerramientaSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(creador=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(creador=self.request.user)
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
@@ -29,7 +35,6 @@ class BodegaHerramientaViewSet(ModelViewSet):
         elementos = []
         styles = getSampleStyleSheet()
 
-        
         logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
         logo = Image(logo_path, width=50, height=35)
         encabezado_data = [
@@ -60,14 +65,18 @@ class BodegaHerramientaViewSet(ModelViewSet):
         bodega_herramientas = BodegaHerramienta.objects.all()
         total_herramientas = bodega_herramientas.count()
         cantidad_total = sum(bh.cantidad for bh in bodega_herramientas)
+        costo_total = sum(bh.costo_total for bh in bodega_herramientas)
+        cantidad_prestada_total = sum(bh.cantidad_prestada for bh in bodega_herramientas)
 
-        data_herramientas = [["ID", "Bodega", "Herramienta", "Cantidad"]]
+        data_herramientas = [["ID", "Bodega", "Herramienta", "Cantidad", "Costo Total", "Cantidad Prestada"]]
         for bh in bodega_herramientas:
             data_herramientas.append([
                 bh.id,
                 bh.bodega.nombre if bh.bodega else "Sin Bodega",
                 bh.herramienta.nombre if bh.herramienta else "Sin Herramienta",
-                bh.cantidad
+                bh.cantidad,
+                f"${bh.costo_total:.2f}",
+                bh.cantidad_prestada
             ])
 
         tabla_herramientas = Table(data_herramientas)
@@ -84,7 +93,9 @@ class BodegaHerramientaViewSet(ModelViewSet):
         elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading2']))
         resumen_texto = f"""
         Se registraron {total_herramientas} herramientas en bodega,
-        con un total acumulado de {cantidad_total} unidades.
+        con un total acumulado de {cantidad_total} unidades,
+        un costo total de ${costo_total:.2f} y
+        {cantidad_prestada_total} unidades prestadas.
         """
         elementos.append(Paragraph(resumen_texto, styles['Normal']))
 
