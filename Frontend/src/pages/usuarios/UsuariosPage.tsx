@@ -8,6 +8,8 @@ import { useAuth } from "@/context/AuthContext";
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { EditIcon, Trash2 } from "lucide-react";
+import RegistroMasivoModal from "@/pages/usuarios/RegistroMasivoModal";
+
 
 const UsuariosPage: React.FC = () => {
   const { user } = useAuth();
@@ -17,7 +19,10 @@ const UsuariosPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  
+  const [openModal, setOpenModal] = useState(false);
+  const [modalMasivoAbierto, setModalMasivoAbierto] = useState(false);
+
+
   const [newUser, setNewUser] = useState({
     nombre: "",
     apellido: "",
@@ -85,25 +90,27 @@ const UsuariosPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Usuarios</h2>
-
-      <div className="mb-2 flex justify-start">
-        <button
-          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-          onClick={() => navigate("/usuarios/secondregis/")}
-          >
-          + Registrar
-        </button>
-      </div>
-
-      <div className="mb-2 flex justify-start">
-    <button
+<div className="mb-2 flex justify-start">
+  <button
     className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-    onClick={() => window.open('/registro-masivo', '_blank')}
+    onClick={() => navigate("/usuarios/secondregis/")}
   >
-    + Registro Masivo
-   </button>
-    </div>
+    + Registrar
+  </button>
+</div>
+
+<button
+  onClick={() => setModalMasivoAbierto(true)}
+  className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+>
+  + Registro Masivo
+</button>
+
+<RegistroMasivoModal
+  isOpen={modalMasivoAbierto}
+  onOpenChange={setModalMasivoAbierto}
+/>
+
 
       {isLoading ? (
         <p className="text-gray-600 text-center">Cargando usuarios...</p>
