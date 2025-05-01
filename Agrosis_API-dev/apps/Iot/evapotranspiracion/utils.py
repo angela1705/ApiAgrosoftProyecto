@@ -6,7 +6,7 @@ from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
 def calcular_penman_monteith(datos_diarios, latitud, altitud):
     # ... (implementación completa que ya tienes) ...
     # retorna ETo en mm/día
-
+    pass
 def calcular_evapotranspiracion_diaria(bancal_id, fecha, latitud=0, altitud=0):
     fecha_inicio = datetime.combine(fecha, datetime.min.time())
     fecha_fin    = fecha_inicio + timedelta(days=1)

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import api from "@/components/utils/axios"; 
+import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 
@@ -11,11 +11,11 @@ const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
     const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Datos de la API (preciosProductos):", response.data); 
+    console.log("Datos de la API (preciosProductos):", response.data);
     return response.data.map((item: any) => ({
         id: item.id,
-        cosecha: item.Producto_id || null,
-        unidad_medida: item.unidad_medida || null,
+        cosecha: item.Producto || `Cosecha ${item.Producto_id}`,
+        unidad_medida: item.unidad_medida?.nombre || null,
         precio: Number(item.precio),
         fecha_registro: item.fecha_registro,
         stock: Number(item.stock),
@@ -84,7 +84,8 @@ export const useRegistrarPrecioProducto = () => {
             addToast({
                 title: "Éxito",
                 description: "Precio de producto registrado con éxito",
-                timeout: 3000, color: "success"
+                timeout: 3000,
+                color: "success"
             });
         },
         onError: (error: any) => {
@@ -100,22 +101,22 @@ export const useRegistrarPrecioProducto = () => {
             });
             if (error.response?.status === 403) {
                 addToast({
-                  title: "Acceso denegado",
-                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                  timeout: 3000,
-                  color: "danger"
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                    timeout: 3000,
+                    color: "danger"
                 });
-              } else {
+            } else {
                 addToast({
-                  title: "Error",
-                  description: "Error al registrar el precio del producto",
-                  timeout: 3000,
-                  color: "danger"
+                    title: "Error",
+                    description: "Error al registrar el precio del producto",
+                    timeout: 3000,
+                    color: "danger"
                 });
-              }
-            },
-          });
-          };
+            }
+        },
+    });
+};
 
 const actualizarPrecioProducto = async (
     id: number,
@@ -158,7 +159,8 @@ export const useActualizarPrecioProducto = () => {
             addToast({
                 title: "Éxito",
                 description: "Precio de producto actualizado con éxito",
-                timeout: 3000, color: "success"
+                timeout: 3000,
+                color: "success"
             });
         },
         onError: (error: any) => {
@@ -171,25 +173,25 @@ export const useActualizarPrecioProducto = () => {
                     "Error al actualizar el precio de producto",
                 timeout: 3000,
                 color: "danger"
-            }); if (error.response?.status === 403) {
+            });
+            if (error.response?.status === 403) {
                 addToast({
-                  title: "Acceso denegado",
-                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                  timeout: 3000,
-                  color : "danger"
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                    timeout: 3000,
+                    color: "danger"
                 });
-              } else {
+            } else {
                 addToast({
-                  title: "Error",
-                  description: "Error al actualizar el precio del producto",
-                  timeout: 3000,
-                  color: "danger"
+                    title: "Error",
+                    description: "Error al actualizar el precio del producto",
+                    timeout: 3000,
+                    color: "danger"
                 });
-              }
-            },
-          });
-          };
-
+            }
+        },
+    });
+};
 
 const eliminarPrecioProducto = async (id: number) => {
     const token = localStorage.getItem("access_token");
@@ -228,24 +230,25 @@ export const useEliminarPrecioProducto = () => {
                     "No se pudo eliminar el precio de producto",
                 timeout: 3000,
                 color: "danger"
-            });if (error.response?.status === 403) {
+            });
+            if (error.response?.status === 403) {
                 addToast({
-                  title: "Acceso denegado",
-                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                  timeout: 3000,
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                    timeout: 3000,
                     color: "danger"
                 });
-              } else {
+            } else {
                 addToast({
-                  title: "Error",
-                  description: "Error al eliminar el precio del producto",
-                  timeout: 3000,
-                  color: "danger"
+                    title: "Error",
+                    description: "Error al eliminar el precio del producto",
+                    timeout: 3000,
+                    color: "danger"
                 });
-              }
-            },
-          });
-          };
+            }
+        },
+    });
+};
 
 const crearUnidadMedida = async (
     unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">
@@ -290,21 +293,22 @@ export const useCrearUnidadMedida = () => {
                     "Error al crear la unidad de medida",
                 timeout: 3000,
                 color: "danger"
-            });if (error.response?.status === 403) {
+            });
+            if (error.response?.status === 403) {
                 addToast({
-                  title: "Acceso denegado",
-                  description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                  timeout: 3000,
-                  color: "danger"
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+                    timeout: 3000,
+                    color: "danger"
                 });
-              } else {
+            } else {
                 addToast({
-                  title: "Error",
-                  description: "Error al crear unidad de medida",
-                  timeout: 3000,
-                  color: "danger"
+                    title: "Error",
+                    description: "Error al crear unidad de medida",
+                    timeout: 3000,
+                    color: "danger"
                 });
-              }
-            },
-          });
-          };
+            }
+        },
+    });
+};
