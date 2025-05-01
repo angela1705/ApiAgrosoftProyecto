@@ -17,6 +17,7 @@ const UsuariosPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  
   const [newUser, setNewUser] = useState({
     nombre: "",
     apellido: "",
@@ -94,6 +95,15 @@ const UsuariosPage: React.FC = () => {
           + Registrar
         </button>
       </div>
+
+      <div className="mb-2 flex justify-start">
+    <button
+    className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+    onClick={() => window.open('/registro-masivo', '_blank')}
+  >
+    + Registro Masivo
+   </button>
+    </div>
 
       {isLoading ? (
         <p className="text-gray-600 text-center">Cargando usuarios...</p>
