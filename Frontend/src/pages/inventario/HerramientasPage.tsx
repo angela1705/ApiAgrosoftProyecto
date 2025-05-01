@@ -4,16 +4,7 @@ import DefaultLayout from "@/layouts/default";
 import { useRegistrarHerramienta } from "@/hooks/inventario/useHerramientas";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Formulario from "@/components/globales/Formulario";
-
-interface Herramienta {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  cantidad: number;
-  estado: string;
-  fecha_registro: string;
-  activo: boolean;
-}
+import { Herramienta } from "@/types/inventario/Herramientas";
 
 const HerramientaPage: React.FC = () => {
   const [herramienta, setHerramienta] = useState<Herramienta>({
@@ -24,6 +15,7 @@ const HerramientaPage: React.FC = () => {
     estado: "Disponible",
     fecha_registro: new Date().toISOString(),
     activo: true,
+    precio: 0,
   });
 
   const mutation = useRegistrarHerramienta();
@@ -41,9 +33,15 @@ const HerramientaPage: React.FC = () => {
           estado: "Disponible",
           fecha_registro: new Date().toISOString(),
           activo: true,
+          precio: 0,
         });
       },
     });
+  };
+
+  const formatPrice = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    return numericValue ? Number(numericValue) : 0;
   };
 
   return (
@@ -91,6 +89,18 @@ const HerramientaPage: React.FC = () => {
           value={herramienta.estado}
           onChange={(e) =>
             setHerramienta({ ...herramienta, estado: e.target.value })
+          }
+        />
+        <ReuInput
+          label="Precio (COP)"
+          placeholder="Ingrese el precio"
+          type="text"
+          value={herramienta.precio.toLocaleString("es-CO")}
+          onChange={(e) =>
+            setHerramienta({
+              ...herramienta,
+              precio: formatPrice(e.target.value),
+            })
           }
         />
         <ReuInput

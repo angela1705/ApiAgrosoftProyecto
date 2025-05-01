@@ -84,7 +84,7 @@ export const useRegistrarPrecioProducto = () => {
             addToast({
                 title: "Éxito",
                 description: "Precio de producto registrado con éxito",
-                timeout: 3000,
+                timeout: 3000, color: "success"
             });
         },
         onError: (error: any) => {
@@ -96,18 +96,21 @@ export const useRegistrarPrecioProducto = () => {
                     error.response?.data?.message ||
                     "Error al registrar el precio de producto",
                 timeout: 3000,
+                color: "danger"
             });
             if (error.response?.status === 403) {
                 addToast({
                   title: "Acceso denegado",
                   description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                   timeout: 3000,
+                  color: "danger"
                 });
               } else {
                 addToast({
                   title: "Error",
                   description: "Error al registrar el precio del producto",
                   timeout: 3000,
+                  color: "danger"
                 });
               }
             },
@@ -155,7 +158,7 @@ export const useActualizarPrecioProducto = () => {
             addToast({
                 title: "Éxito",
                 description: "Precio de producto actualizado con éxito",
-                timeout: 3000,
+                timeout: 3000, color: "success"
             });
         },
         onError: (error: any) => {
@@ -167,17 +170,20 @@ export const useActualizarPrecioProducto = () => {
                     error.response?.data?.message ||
                     "Error al actualizar el precio de producto",
                 timeout: 3000,
+                color: "danger"
             }); if (error.response?.status === 403) {
                 addToast({
                   title: "Acceso denegado",
                   description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                   timeout: 3000,
+                  color : "danger"
                 });
               } else {
                 addToast({
                   title: "Error",
                   description: "Error al actualizar el precio del producto",
                   timeout: 3000,
+                  color: "danger"
                 });
               }
             },
@@ -209,6 +215,7 @@ export const useEliminarPrecioProducto = () => {
                 title: "Éxito",
                 description: "Precio de producto eliminado con éxito",
                 timeout: 3000,
+                color: "success"
             });
         },
         onError: (error: any) => {
@@ -220,17 +227,20 @@ export const useEliminarPrecioProducto = () => {
                     error.response?.data?.message ||
                     "No se pudo eliminar el precio de producto",
                 timeout: 3000,
+                color: "danger"
             });if (error.response?.status === 403) {
                 addToast({
                   title: "Acceso denegado",
                   description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                   timeout: 3000,
+                    color: "danger"
                 });
               } else {
                 addToast({
                   title: "Error",
                   description: "Error al eliminar el precio del producto",
                   timeout: 3000,
+                  color: "danger"
                 });
               }
             },
@@ -267,6 +277,7 @@ export const useCrearUnidadMedida = () => {
                 title: "Éxito",
                 description: "Unidad de medida creada con éxito",
                 timeout: 3000,
+                color: "success"
             });
         },
         onError: (error: any) => {
@@ -278,17 +289,20 @@ export const useCrearUnidadMedida = () => {
                     error.response?.data?.message ||
                     "Error al crear la unidad de medida",
                 timeout: 3000,
+                color: "danger"
             });if (error.response?.status === 403) {
                 addToast({
                   title: "Acceso denegado",
                   description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
                   timeout: 3000,
+                  color: "danger"
                 });
               } else {
                 addToast({
                   title: "Error",
                   description: "Error al crear unidad de medida",
                   timeout: 3000,
+                  color: "danger"
                 });
               }
             },
