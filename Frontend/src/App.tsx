@@ -79,7 +79,6 @@ import PerfilPage from "./pages/usuarios/PerfilPage";
 import ForgotPasswordPage from "./pages/usuarios/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/usuarios/ResetPasswordPage";
 import UsuariosSecondPage from "./pages/usuarios/RegisterSecondPage";
-import RegistroMasivoPage from "./pages/usuarios/RegistroMasivoPage";
 
 // Finanzas
 import SalarioPage from "./pages/finanzas/SalarioPage";
@@ -169,7 +168,6 @@ const App: React.FC = () => {
               <Route path="/perfil" element={<PerfilPage />} />
               <Route path="/usuarios/secondregis" element={<UsuariosSecondPage />} />
               <Route path="/usuarios" element={<UsuariosPage />} />
-              <Route path="/registro-masivo" element={<RegistroMasivoPage />} />
 
               {/* IoT */}
               <Route path="/iot/sensores" element={<SensoresPage />} />
