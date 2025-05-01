@@ -5,21 +5,22 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from ..models import Insumo
 from django.utils import timezone
-from datetime import timedelta
 import hashlib
 
 User = get_user_model()
+active_connections = {}
 
 class InsumoConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.sent_notifications = set()  # Conjunto para rastrear notificaciones enviadas
+        self.sent_notifications = set()
         self.check_task = None
+        self.user_id = None
+        self.group_name = None
 
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs'].get('user_id')
         print(f"Conectando WebSocket para user_id: {self.user_id}")
-        
         if self.user_id == 'admin':
             self.group_name = "insumo_admin_group"
         else:
@@ -29,42 +30,39 @@ class InsumoConsumer(AsyncWebsocketConsumer):
                     print(f"Usuario {self.user_id} no encontrado, cerrando conexión")
                     await self.close(code=4001)
                     return
-                
                 self.group_name = f"insumo_user_{self.user_id}"
-                await self.channel_layer.group_send(
-                    self.group_name,
-                    {
-                        "type": "force_disconnect",
-                        "message": "Nueva conexión establecida"
-                    }
-                )
             except (ValueError, TypeError) as e:
                 print(f"Error en user_id: {e}, cerrando conexión")
                 await self.close(code=4000)
                 return
-
+        if self.group_name in active_connections:
+            print(f"Conexión existente encontrada para {self.group_name}, cerrando conexión anterior")
+            await active_connections[self.group_name].close(code=4002)
+        active_connections[self.group_name] = self
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
         print(f"Conexión aceptada para {self.group_name}")
         self.check_task = asyncio.create_task(self.periodic_check())
 
-    async def force_disconnect(self, event):
-        print(f"Desconexión forzada: {event['message']}")
-        await self.close(code=4002)
-
     async def disconnect(self, close_code):
         print(f"WebSocket desconectado con código: {close_code}")
+        if self.group_name and self.group_name in active_connections:
+            if active_connections[self.group_name] == self:
+                del active_connections[self.group_name]
         if hasattr(self, 'group_name'):
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
         if self.check_task:
             self.check_task.cancel()
+            print("Tarea periódica cancelada")
 
     async def send_notification(self, event):
         current_hash = event['hash']
         if current_hash in self.sent_notifications:
             print(f"Notificación duplicada ignorada: {current_hash}")
             return
-            
+        if self.group_name not in active_connections or active_connections[self.group_name] != self:
+            print(f"Conexión cerrada para {self.group_name}, no se enviará la notificación")
+            return
         self.sent_notifications.add(current_hash)
         message_data = {
             'message': event['message'],
@@ -74,7 +72,10 @@ class InsumoConsumer(AsyncWebsocketConsumer):
             'hash': current_hash
         }
         print(f"Enviando notificación al cliente: {message_data}")
-        await self.send(text_data=json.dumps(message_data))
+        try:
+            await self.send(text_data=json.dumps(message_data))
+        except Exception as e:
+            print(f"Error al enviar notificación: {e}")
 
     @database_sync_to_async
     def get_user(self, user_id):
@@ -87,14 +88,11 @@ class InsumoConsumer(AsyncWebsocketConsumer):
     def check_insumos(self):
         insumos = Insumo.objects.filter(activo=True)
         notificaciones = []
-        
         today = timezone.now().date()
-        umbral_cantidad = 10 
-        umbral_dias = 7       
-        
+        umbral_cantidad = 10
+        umbral_dias = 7
         for insumo in insumos:
             timestamp = str(int(timezone.now().timestamp() * 1000))
-            # Hash basado solo en insumo_id y tipo de notificación
             if insumo.cantidad <= umbral_cantidad:
                 insumo_hash = hashlib.md5(f"{insumo.id}low_stock".encode()).hexdigest()
                 notif = {
@@ -117,12 +115,14 @@ class InsumoConsumer(AsyncWebsocketConsumer):
                 }
                 print(f"Notificación generada: {notif}")
                 notificaciones.append(notif)
-        
         return notificaciones
 
     async def periodic_check(self):
         while True:
             try:
+                if self.group_name not in active_connections or active_connections[self.group_name] != self:
+                    print(f"Conexión cerrada para {self.group_name}, deteniendo tarea periódica")
+                    break
                 print(f"Verificando insumos para {self.group_name}")
                 notificaciones = await self.check_insumos()
                 for notif in notificaciones:
@@ -137,7 +137,7 @@ class InsumoConsumer(AsyncWebsocketConsumer):
                             "hash": notif["hash"]
                         }
                     )
-                await asyncio.sleep(300) 
+                await asyncio.sleep(300)
             except asyncio.CancelledError:
                 print("Tarea periódica cancelada")
                 break

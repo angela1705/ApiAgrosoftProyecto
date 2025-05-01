@@ -62,7 +62,7 @@ class HerramientaViewSet(ModelViewSet):
         cantidad_total = sum(herramienta.cantidad for herramienta in herramientas)
 
         data_herramientas = [
-            ["ID", "Nombre", "Descripción", "Cantidad", "Estado", "Activo", "Fecha Registro"]
+            ["ID", "Nombre", "Descripción", "Cantidad", "Estado", "Activo", "Fecha Registro", "Precio"]
         ]
         for herramienta in herramientas:
             fecha_registro = herramienta.fecha_registro.strftime('%Y-%m-%d %H:%M') if herramienta.fecha_registro else "N/A"
@@ -73,10 +73,11 @@ class HerramientaViewSet(ModelViewSet):
                 str(herramienta.cantidad),
                 herramienta.estado,
                 "Sí" if herramienta.activo else "No",
-                fecha_registro
+                fecha_registro,
+                f"${herramienta.precio:,.0f}"
             ])
 
-        tabla_herramientas = Table(data_herramientas, colWidths=[30, 80, 120, 40, 50, 40, 70])
+        tabla_herramientas = Table(data_herramientas, colWidths=[30, 80, 120, 40, 50, 40, 70, 60])
         tabla_herramientas.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),

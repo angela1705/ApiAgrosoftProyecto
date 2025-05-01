@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 
 const API_URL = "http://127.0.0.1:8000/usuarios/";
@@ -16,7 +16,7 @@ export const useRegistrarUsuario = () => {
   const queryClient = useQueryClient();
 
   const registrarUsuario = async (usuario: NuevoUsuario) => {
-    const response = await axios.post(`${API_URL}registro/`, {
+    const response = await api.post(`${API_URL}registro/`, {
       ...usuario,
       rol_id: 1, 
     });
@@ -35,7 +35,7 @@ export const useRegistrarUsuario = () => {
       });
     },
     onError: (error: any) => {
-      if (axios.isAxiosError(error) && error.response?.data) {
+      if (api.isAxiosError(error) && error.response?.data) {
         const data = error.response.data;
 
         // Mostrar errores específicos

@@ -29,6 +29,8 @@ const ListaBodegaHerramientaPage: React.FC = () => {
     { name: "Bodega", uid: "bodega" },
     { name: "Herramienta", uid: "herramienta" },
     { name: "Cantidad", uid: "cantidad" },
+    { name: "Costo Total", uid: "costo_total" }, // Nueva columna
+    { name: "Cantidad Prestada", uid: "cantidad_prestada" }, // Nueva columna
     { name: "Acciones", uid: "acciones" },
   ];
 
@@ -54,15 +56,21 @@ const ListaBodegaHerramientaPage: React.FC = () => {
     }
   };
 
-
   const transformedData = (bodegaHerramientas ?? []).map((item: BodegaHerramienta) => {
     const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
     const herramientaNombre = herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido";
+    
+    // Manejar costo_total para evitar errores
+    const costoTotal = item.costo_total != null ? Number(item.costo_total) : 0;
+    const costoTotalFormatted = isNaN(costoTotal) ? "0.00" : costoTotal.toFixed(2);
+
     return {
       id: item.id?.toString() || "",
       bodega: bodegaNombre,
       herramienta: herramientaNombre,
       cantidad: item.cantidad,
+      costo_total: `$${costoTotalFormatted}`, // Formato seguro
+      cantidad_prestada: item.cantidad_prestada,
       nombre: `${bodegaNombre} ${herramientaNombre} ${item.cantidad}`,
       acciones: (
         <>
@@ -85,7 +93,9 @@ const ListaBodegaHerramientaPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Bodega Herramientas</h2><br /><br />
+      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Bodega Herramientas</h2>
+      <br />
+      <br />
       <div className="mb-2 flex justify-start">
         <button
           className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
@@ -161,6 +171,24 @@ const ListaBodegaHerramientaPage: React.FC = () => {
               type="number"
               value={selectedBodegaHerramienta.cantidad}
               onChange={(e) => setSelectedBodegaHerramienta({ ...selectedBodegaHerramienta, cantidad: Number(e.target.value) })}
+            />
+            <ReuInput
+              label="Cantidad Prestada"
+              placeholder="Ingrese la cantidad prestada"
+              type="number"
+              value={selectedBodegaHerramienta.cantidad_prestada}
+              onChange={(e) => setSelectedBodegaHerramienta({ ...selectedBodegaHerramienta, cantidad_prestada: Number(e.target.value) })}
+            />
+            <ReuInput
+              label="Costo Total"
+              placeholder="Costo calculado"
+              type="text"
+              value={
+                selectedBodegaHerramienta.costo_total != null
+                  ? `$${Number(selectedBodegaHerramienta.costo_total).toFixed(2)}`
+                  : "$0.00"
+              }
+              onChange={() => {}} // Solo lectura
             />
           </>
         )}

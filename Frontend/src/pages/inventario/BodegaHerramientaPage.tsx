@@ -8,14 +8,16 @@ import { useHerramientas } from "@/hooks/inventario/useHerramientas";
 import Formulario from "@/components/globales/Formulario";
 import BodegaHerramientaNotifications from "@/components/inventario/BodegaHerramientaNotifications";
 import { useAuth } from "@/context/AuthContext";
+import { ReuInput } from "@/components/globales/ReuInput";
 
 const BodegaHerramientaPage: React.FC = () => {
   const { user } = useAuth();
-  const [bodegaHerramienta, setBodegaHerramienta] = useState<BodegaHerramienta>({
-    id: 0,
+  const [bodegaHerramienta, setBodegaHerramienta] = useState<Omit<BodegaHerramienta, "id" | "costo_total">>({
     bodega: 0,
     herramienta: 0,
     cantidad: 0,
+    creador: user?.id,
+    cantidad_prestada: 0,
   });
 
   const { data: bodegas } = useBodegas();
@@ -33,13 +35,13 @@ const BodegaHerramientaPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!bodegaHerramienta.bodega || !bodegaHerramienta.herramienta) {
-      alert("Por favor, selecciona una bodega y una herramienta válidas.");
+    if (!bodegaHerramienta.bodega || !bodegaHerramienta.herramienta || !bodegaHerramienta.cantidad) {
+      alert("Por favor, completa todos los campos requeridos.");
       return;
     }
     mutation.mutate(bodegaHerramienta, {
       onSuccess: () => {
-        setBodegaHerramienta({ id: 0, bodega: 0, herramienta: 0, cantidad: 0 });
+        setBodegaHerramienta({ bodega: 0, herramienta: 0, cantidad: 0, creador: user?.id, cantidad_prestada: 0 });
         navigate("/inventario/listarbodegaherramienta/");
       },
     });
@@ -53,39 +55,53 @@ const BodegaHerramientaPage: React.FC = () => {
         buttonText="Guardar"
         isSubmitting={mutation.isPending}
       >
-        <select
-          name="bodega"
-          value={bodegaHerramienta.bodega}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
-        >
-          <option value="0">Seleccione una Bodega</option>
-          {bodegas?.map((bodega: { id: number; nombre: string }) => (
-            <option key={bodega.id} value={bodega.id}>
-              {bodega.nombre}
-            </option>
-          ))}
-        </select>
-        <select
-          name="herramienta"
-          value={bodegaHerramienta.herramienta}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
-        >
-          <option value="0">Seleccione una Herramienta</option>
-          {herramientas?.map((herramienta: { id: number; nombre: string }) => (
-            <option key={herramienta.id} value={herramienta.id}>
-              {herramienta.nombre}
-            </option>
-          ))}
-        </select>
-        <input
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Bodega</label>
+          <select
+            name="bodega"
+            value={bodegaHerramienta.bodega}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+          >
+            <option value="0">Seleccione una Bodega</option>
+            {bodegas?.map((bodega: { id: number; nombre: string }) => (
+              <option key={bodega.id} value={bodega.id}>
+                {bodega.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Herramienta</label>
+          <select
+            name="herramienta"
+            value={bodegaHerramienta.herramienta}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+          >
+            <option value="0">Seleccione una Herramienta</option>
+            {herramientas?.map((herramienta: { id: number; nombre: string }) => (
+              <option key={herramienta.id} value={herramienta.id}>
+                {herramienta.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+        <ReuInput
+          label="Cantidad"
           type="number"
-          name="cantidad"
+          variant="bordered"
+          radius="md"
           value={bodegaHerramienta.cantidad}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
-          placeholder="Cantidad"
+          onChange={(e) => setBodegaHerramienta((prev) => ({ ...prev, cantidad: Number(e.target.value) }))}
+        />
+        <ReuInput
+          label="Cantidad Prestada"
+          type="number"
+          variant="bordered"
+          radius="md"
+          value={bodegaHerramienta.cantidad_prestada}
+          onChange={(e) => setBodegaHerramienta((prev) => ({ ...prev, cantidad_prestada: Number(e.target.value) }))}
         />
         <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
@@ -97,7 +113,7 @@ const BodegaHerramientaPage: React.FC = () => {
           </button>
         </div>
       </Formulario>
-      <BodegaHerramientaNotifications userId3={user.id} />
+      {user && <BodegaHerramientaNotifications userId3={user.id} />}
     </DefaultLayout>
   );
 };

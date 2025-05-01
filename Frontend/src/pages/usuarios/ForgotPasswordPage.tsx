@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { addToast } from "@heroui/react";
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
@@ -20,18 +20,33 @@ const ForgotPasswordPage: React.FC = () => {
         },
         body: JSON.stringify({ email }),
       });
-      const data = await response.json();
-      if (response.ok) {
-        toast.success('Correo de recuperación enviado. Revisa tu bandeja de entrada.');
-        navigate('/login');
-      } else {
-        toast.error(data.error || 'Error al enviar el correo.');
+        const data = await response.json();
+        if (response.ok) {
+          addToast({
+            title: "Éxito",
+            description: "Correo de recuperación enviado. Revisa tu bandeja de entrada.",
+            timeout: 3000,
+            color: "success"
+          });
+          navigate('/login');
+        } else {
+          addToast({
+            title: "Error",
+            description: data.error || "Error al enviar el correo.",
+            timeout: 3000,
+            color: "danger"
+          });
+        }
+      } catch (error) {
+        addToast({
+          title: "Error de conexión",
+          description: "Error al conectar con el servidor.",
+          timeout: 3000,
+          color: "danger"
+        });
       }
-    } catch (error) {
-      toast.error('Error al conectar con el servidor.');
     }
-  };
-
+      
   const textFieldStyles = {
     '& .MuiOutlinedInput-root': {
       borderRadius: '12px',

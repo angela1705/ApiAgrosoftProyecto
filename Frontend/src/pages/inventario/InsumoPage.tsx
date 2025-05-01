@@ -9,6 +9,7 @@ import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 import InsumoNotifications from "@/components/inventario/InsumoNotifications";
 import { useAuth } from "@/context/AuthContext";
 import { addToast } from "@heroui/react";
+import { Plus } from 'lucide-react';
 
 const InsumoPage: React.FC = () => {
     const { user } = useAuth();
@@ -73,7 +74,6 @@ const InsumoPage: React.FC = () => {
                 }
             }
 
-            
             for (const componente of insumo.componentes_data) {
                 const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
                 if (insumoComponente && insumoComponente.id !== undefined) {
@@ -92,7 +92,6 @@ const InsumoPage: React.FC = () => {
             }
         }
 
-        
         registrarInsumo.mutate(insumo, {
             onSuccess: () => {
                 setInsumo({
@@ -221,55 +220,55 @@ const InsumoPage: React.FC = () => {
                     value={insumo.cantidad}
                     onChange={(e) => setInsumo({ ...insumo, cantidad: Number(e.target.value) })}
                 />
-                <div className="flex items-end gap-2">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Unidad de Medida</label>
-                        <select
-                            value={insumo.unidad_medida_id || ""}
-                            onChange={(e) => setInsumo({ ...insumo, unidad_medida_id: e.target.value ? Number(e.target.value) : undefined })}
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
-                            disabled={isLoadingUnidades}
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setIsUnidadModalOpen(true)}
+                            type="button"
                         >
-                            <option value="">Seleccione una unidad</option>
-                            {unidadesMedida?.map((unidad) => (
-                                <option key={unidad.id} value={unidad.id}>
-                                    {unidad.nombre}
-                                </option>
-                            ))}
-                        </select>
+                            <Plus className="h-4 w-4" />
+                        </button>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setIsUnidadModalOpen(true)}
-                        className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    <select
+                        value={insumo.unidad_medida_id || ""}
+                        onChange={(e) => setInsumo({ ...insumo, unidad_medida_id: e.target.value ? Number(e.target.value) : undefined })}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                        disabled={isLoadingUnidades}
                     >
-                        Nueva Unidad
-                    </button>
+                        <option value="">Seleccione una unidad</option>
+                        {unidadesMedida?.map((unidad) => (
+                            <option key={unidad.id} value={unidad.id}>
+                                {unidad.nombre}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                <div className="flex items-end gap-2">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Insumo</label>
-                        <select
-                            value={insumo.tipo_insumo_id || ""}
-                            onChange={(e) => setInsumo({ ...insumo, tipo_insumo_id: e.target.value ? Number(e.target.value) : undefined })}
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
-                            disabled={isLoadingTipos}
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Tipo de Insumo</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setIsTipoModalOpen(true)}
+                            type="button"
                         >
-                            <option value="">Seleccione un tipo</option>
-                            {tiposInsumo?.map((tipo) => (
-                                <option key={tipo.id} value={tipo.id}>
-                                    {tipo.nombre}
-                                </option>
-                            ))}
-                        </select>
+                            <Plus className="h-4 w-4" />
+                        </button>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setIsTipoModalOpen(true)}
-                        className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    <select
+                        value={insumo.tipo_insumo_id || ""}
+                        onChange={(e) => setInsumo({ ...insumo, tipo_insumo_id: e.target.value ? Number(e.target.value) : undefined })}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                        disabled={isLoadingTipos}
                     >
-                        Nuevo Tipo
-                    </button>
+                        <option value="">Seleccione un tipo</option>
+                        {tiposInsumo?.map((tipo) => (
+                            <option key={tipo.id} value={tipo.id}>
+                                {tipo.nombre}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="flex items-center">
                     <input
@@ -291,10 +290,18 @@ const InsumoPage: React.FC = () => {
                 </div>
                 {insumo.es_compuesto && (
                     <div className="col-span-1 sm:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Componentes</label>
-                        <div className="flex flex-col sm:flex-row gap-4 mb-4 items-end">
+                        <div className="flex items-center gap-2 mb-1">
+                            <label className="block text-sm font-medium text-gray-700">Componentes</label>
+                            <button
+                                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                onClick={handleAddComponente}
+                                type="button"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </button>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-4 mb-4">
                             <div className="flex-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Insumo</label>
                                 <select
                                     value={nuevoComponente.insumo_componente}
                                     onChange={(e) => setNuevoComponente({ ...nuevoComponente, insumo_componente: Number(e.target.value) })}
@@ -318,15 +325,6 @@ const InsumoPage: React.FC = () => {
                                     value={nuevoComponente.cantidad}
                                     onChange={(e) => setNuevoComponente({ ...nuevoComponente, cantidad: Number(e.target.value) })}
                                 />
-                            </div>
-                            <div className="flex items-end">
-                                <button
-                                    type="button"
-                                    onClick={handleAddComponente}
-                                    className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                                >
-                                    Agregar
-                                </button>
                             </div>
                         </div>
                         <div className="space-y-2">
