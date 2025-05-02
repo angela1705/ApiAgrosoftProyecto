@@ -1,72 +1,98 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "../../components/globales/ReuInput";
-import Formulario from "@/components/globales/Formulario";
-import { Programacion } from "../../types/cultivo/Programacion";
-import { useRegistrarProgramacion } from "../../hooks/cultivo/useProgramacion";
+import { ReuInput } from "@/components/globales/ReuInput";
+import { useRegistrarCosecha } from "@/hooks/cultivo/usecosecha";
+import { useCultivos } from "@/hooks/cultivo/useCultivo";
+import { useNavigate } from "react-router-dom";
 
-const ProgramacionPage: React.FC = () => {
-  const [programacion, setProgramacion] = useState<Omit<Programacion, "id">>({
-    ubicacion: "",
-    hora_prog: "",
-    fecha_prog: "",
-    estado: false,
-  });
+const CosechaPage: React.FC = () => {
 
-  const mutation = useRegistrarProgramacion();
-  const navigate = useNavigate();
+    const [cosecha, setCosecha] = useState({
+        id_cultivo: 0,
+        cantidad: 0,
+        unidades_de_medida: "",
+        fecha: "",
+    });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    mutation.mutate(programacion);
-  };
+    const mutation = useRegistrarCosecha();
+    const { data: cultivos } = useCultivos();
+    const navigate = useNavigate();
 
-  return (
-    <DefaultLayout>
-      <Formulario
-        title="Registro de Programación"
-        onSubmit={handleSubmit}
-        isSubmitting={mutation.isPending}
-        buttonText="Guardar"
-      >
-        <ReuInput
-          label="Ubicación"
-          placeholder="Ingrese la ubicación"
-          type="text"
-          value={programacion.ubicacion}
-          onChange={(e) => setProgramacion({ ...programacion, ubicacion: e.target.value })}
-        />
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setCosecha((prev) => ({
+            ...prev,
+            [name]: name === "unidades_de_medida" || name === "fecha" ? value : Number(value),
+        }));
+    };
 
-        <ReuInput
-          label="Hora Programada"
-          placeholder="Ingrese la hora programada"
-          type="datetime-local"
-          value={programacion.hora_prog}
-          onChange={(e) => setProgramacion({ ...programacion, hora_prog: e.target.value })}
-        />
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        mutation.mutate(cosecha);
+    };
 
-        <ReuInput
-          label="Fecha Programada"
-          placeholder="Ingrese la fecha programada"
-          type="date"
-          value={programacion.fecha_prog}
-          onChange={(e) => setProgramacion({ ...programacion, fecha_prog: e.target.value })}
-        />
+    return (
+        <DefaultLayout>
+            <div className="w-full flex flex-col items-center min-h-screen p-6">
+                <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registrar Cosecha</h2>
 
-        <div className="col-span-1 md:col-span-2 flex flex-col items-center gap-12">
-          <button
-            className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
-            type="button"
-            onClick={() => navigate("/cultivo/listarprogramaciones/")}
-          >
-            Listar Programaciones
-          </button>
+                    <form onSubmit={handleSubmit}>
+                        <label className="block text-sm font-medium text-gray-700 mt-4">Cultivo</label>
+                        <select
+                            name="id_cultivo"
+                            value={cosecha.id_cultivo || ""}
+                            onChange={handleChange}
+                            className="w-full p-2 border border-gray-300 rounded-lg"
+                        >
+                            <option value="">Seleccione un cultivo</option>
+                            {cultivos?.map((cultivo) => (
+                                <option key={cultivo.id} value={cultivo.id}>
+                                    {cultivo.nombre}
+                                </option>
+                            ))}
+                        </select>
 
-        </div>
-      </Formulario>
-    </DefaultLayout>
-  );
+                        <ReuInput
+                            label="Cantidad"
+                            type="number"
+                            value={cosecha.cantidad}
+                            onChange={(e) => setCosecha({ ...cosecha, cantidad: Number(e.target.value) })}
+                        />
+
+                        <ReuInput
+                            label="Unidades de Medida"
+                            type="text"
+                            value={cosecha.unidades_de_medida}
+                            onChange={(e) => setCosecha({ ...cosecha, unidades_de_medida: e.target.value })}
+                        />
+
+                        <ReuInput
+                            label="Fecha de recolección"
+                            type="date"
+                            value={cosecha.fecha}
+                            onChange={(e) => setCosecha({ ...cosecha, fecha: e.target.value })}
+                        />
+
+                        <button
+                            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
+                            type="submit"
+                            disabled={mutation.isPending}
+                        >
+                            {mutation.isPending ? "Registrando..." : "Guardar"}
+                        </button>
+                    </form>
+
+                    <button
+                        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
+                        onClick={() => navigate("/cultivo/listarcosechas/")}
+                    >
+                        Listar Cosechas
+                    </button>
+                </div>
+            </div>
+        </DefaultLayout>
+    );
 };
 
-export default ProgramacionPage;
+export default CosechaPage;
