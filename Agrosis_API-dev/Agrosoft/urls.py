@@ -15,12 +15,9 @@ from apps.Cultivo.controles.api.router import controlRouter
 from apps.Cultivo.cosechas.api.router import cosechaRouter 
 from apps.Cultivo.cultivos.api.router import cultivoRouter 
 from apps.Cultivo.especies.api.router import especiesRouter 
-from apps.Cultivo.fase_lunar.api.router import faseLunarRouter 
 from apps.Cultivo.lotes.api.router import lotesRouter 
 from apps.Cultivo.plagas.api.router import plagasRouter 
 from apps.Cultivo.plantaciones.api.router import plantacionRouter 
-from apps.Cultivo.productos_control.api.router import productosControlRouter 
-from apps.Cultivo.programacion.api.router import programacionRouter 
 from apps.Cultivo.residuos.api.router import residuosRouter 
 from apps.Cultivo.semillero.api.router import semilleroRouter 
 from apps.Cultivo.tipo_actividad.api.router import tipoActividadRouter 
@@ -28,7 +25,6 @@ from apps.Cultivo.tipo_control.api.router import tipoControlRouter
 from apps.Cultivo.tipo_especies.api.router import tipoEspecieRouter 
 from apps.Cultivo.tipo_plaga.api.router import tipoPlagaRouter 
 from apps.Cultivo.tipos_residuos.api.router import tipoResiduoRouter 
-from apps.Cultivo.tareas.api.router import tareaRouter
 from apps.Cultivo.ReportePlaga.api.router import reporte_plaga_router
 from apps.Finanzas.pagos.api.router import pagoRouter
 from apps.Finanzas.services.router import costo_beneficio_router
@@ -75,12 +71,9 @@ routerCultivo.registry.extend(controlRouter.registry)
 routerCultivo.registry.extend(cosechaRouter.registry)
 routerCultivo.registry.extend(cultivoRouter.registry)
 routerCultivo.registry.extend(especiesRouter.registry)
-routerCultivo.registry.extend(faseLunarRouter.registry)
 routerCultivo.registry.extend(lotesRouter.registry)
 routerCultivo.registry.extend(plagasRouter.registry)
 routerCultivo.registry.extend(plantacionRouter.registry)
-routerCultivo.registry.extend(productosControlRouter.registry)
-routerCultivo.registry.extend(programacionRouter.registry)
 routerCultivo.registry.extend(residuosRouter.registry)
 routerCultivo.registry.extend(semilleroRouter.registry)
 routerCultivo.registry.extend(tipoActividadRouter.registry)
@@ -88,7 +81,6 @@ routerCultivo.registry.extend(tipoControlRouter.registry)
 routerCultivo.registry.extend(tipoEspecieRouter.registry)
 routerCultivo.registry.extend(tipoPlagaRouter.registry)
 routerCultivo.registry.extend(tipoResiduoRouter.registry)
-routerCultivo.registry.extend(tareaRouter.registry)
 routerCultivo.registry.extend(reporte_plaga_router.registry)
 # Finanzas
 routerFinanzas.registry.extend(pagoRouter.registry)

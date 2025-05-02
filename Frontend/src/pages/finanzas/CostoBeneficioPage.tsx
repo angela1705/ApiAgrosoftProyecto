@@ -7,25 +7,21 @@ import { useCosechas } from "@/hooks/cultivo/usecosecha";
 import { useAnalisisPorCosecha } from "@/hooks/finanzas/useCostoBeneficio";
 import { Cosecha } from "@/types/cultivo/Cosecha";
 
-// Función para formatear números con separadores de miles
 const formatNumber = (value: number | undefined): string => {
   if (value === undefined) return '0';
   return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 const CostoBeneficioPage: React.FC = () => {
-  // Obtener listado de cosechas
   const { 
     data: cosechas, 
     isLoading: loadingCosechas, 
     error: errorCosechas 
   } = useCosechas();
   
-  // Estado para la cosecha seleccionada
   const [selectedCosecha, setSelectedCosecha] = useState<Cosecha | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   
-  // Obtener análisis de costo-beneficio cuando se selecciona una cosecha
   const { 
     data: analisis, 
     isLoading: loadingAnalisis, 
@@ -43,6 +39,7 @@ const CostoBeneficioPage: React.FC = () => {
         <div className="flex justify-center items-center h-screen">
           <CustomSpinner
             label="Cargando cosechas..."
+            color="primary"
             variant="wave"
             className="text-primary"
           />
@@ -100,6 +97,7 @@ const CostoBeneficioPage: React.FC = () => {
             <div className="flex justify-center py-8">
               <CustomSpinner
                 label="Calculando análisis..."
+                color="primary"
                 variant="spinner"
                 className="text-primary"
               />

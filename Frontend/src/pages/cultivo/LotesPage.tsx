@@ -21,7 +21,7 @@ const LotesPage: React.FC = () => {
   const mutation = useRegistrarLote();
   const navigate = useNavigate()
 
-  const handleSubmit=(e)=>{
+  const handleSubmit=(e: React.FormEvent)=>{
     e.preventDefault()
 
     mutation.mutate(lote)

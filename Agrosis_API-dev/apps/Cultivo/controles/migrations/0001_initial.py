@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('afecciones', '0001_initial'),
-        ('productos_control', '0001_initial'),
         ('tipo_control', '0001_initial'),
     ]
 
