@@ -14,6 +14,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from django.http import HttpResponse
 from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
+from django.core.exceptions import ValidationError
 
 
 class PagoViewSet(viewsets.ModelViewSet):
