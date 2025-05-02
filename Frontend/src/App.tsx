@@ -79,7 +79,6 @@ import PerfilPage from "./pages/usuarios/PerfilPage";
 import ForgotPasswordPage from "./pages/usuarios/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/usuarios/ResetPasswordPage";
 import UsuariosSecondPage from "./pages/usuarios/RegisterSecondPage";
-import RegistroMasivoPage from "./pages/usuarios/RegistroMasivoPage";
 
 // Finanzas
 import SalarioPage from "./pages/finanzas/SalarioPage";
@@ -90,7 +89,7 @@ import ListaPagoPage from "./pages/finanzas/ListaPagoPage";
 import PagoPage from "./pages/finanzas/PagoPage";
 import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
 import DetalleReportePago from "./pages/finanzas/ReporteEgresos";
-
+import CostoBeneficioPage from "./pages/finanzas/CostoBeneficioPage";
 // Reportes
 import Reportes from "./pages/reportes/Reportes";
 import GraficaIngreso from "./pages/reportes/GraficaIngreso";
@@ -169,7 +168,6 @@ const App: React.FC = () => {
               <Route path="/perfil" element={<PerfilPage />} />
               <Route path="/usuarios/secondregis" element={<UsuariosSecondPage />} />
               <Route path="/usuarios" element={<UsuariosPage />} />
-              <Route path="/registro-masivo" element={<RegistroMasivoPage />} />
 
               {/* IoT */}
               <Route path="/iot/sensores" element={<SensoresPage />} />
@@ -237,6 +235,7 @@ const App: React.FC = () => {
               <Route path="/finanzas/pago" element={<PagoPage />} />
               <Route path="/graficas/egresos" element={<EgresoPruebaGraficasPage />} />
               <Route path="/finanzas/reporteEgresos/:id" element={<DetalleReportePago />} />
+              <Route path="/finanzas/costo_beneficio/" element={<CostoBeneficioPage />} />
 
 
               

@@ -51,6 +51,8 @@ const menuItems = [
       { id: 34, label: "Salario", path: "/finanzas/listarsalarios/" },
       { id: 35, label: "Ventas", path: "/finanzas/ventas/" },
       { id: 36, label: "Pagos", path: "/finanzas/pago/" },
+      { id: 99, label: "Costo Beneficio", path: "/finanzas/costo_beneficio/" },
+
     ],
   },
   {
