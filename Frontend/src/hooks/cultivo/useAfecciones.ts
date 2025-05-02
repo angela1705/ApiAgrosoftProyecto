@@ -67,7 +67,25 @@ export const useCrearAfeccion = () => {
         title: "Éxito",
         description: "Afección registrada correctamente",
         timeout: 3000,
+        color:"success"
       });
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+          color:"warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar la afeccion",
+          timeout: 3000,
+          color:"danger"
+        });
+      }
     },
   });
 };
@@ -83,10 +101,28 @@ export const useActualizarAfeccion = () => {
         title: "Éxito",
         description: "Afección actualizada correctamente",
         timeout: 3000,
+        color:"success"
       });
     },
-  });
-};
+        onError: (error: any) => {
+          if (error.response?.status === 403) {
+            addToast({
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+              timeout: 3000,
+              color:"warning"
+            });
+          } else {
+            addToast({
+              title: "Error",
+              description: "Error al eliminar la afeccion",
+              timeout: 3000,
+              color:"danger"
+            });
+          }
+        },
+      });
+    };
 
 export const useCambiarEstadoAfeccion = () => {
   const queryClient = useQueryClient();
@@ -99,7 +135,25 @@ export const useCambiarEstadoAfeccion = () => {
         title: "Éxito",
         description: "Estado de afección actualizado",
         timeout: 3000,
+        color:"success"
       });
     },
-  });
-};
+        onError: (error: any) => {
+          if (error.response?.status === 403) {
+            addToast({
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+              timeout: 3000,
+              color:"warning"
+            });
+          } else {
+            addToast({
+              title: "Error",
+              description: "Error al actualizar el estado de afeccion",
+              timeout: 3000,
+              color:"danger"
+            });
+          }
+        },
+      });
+    };

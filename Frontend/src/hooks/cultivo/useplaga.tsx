@@ -76,7 +76,7 @@ export const useRegistrarPlaga = () => {
   return useMutation({
     mutationFn: registrarPlaga,
     onSuccess: () => {
-      addToast({ title: "Éxito", description: "Plaga registrada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Plaga registrada con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -84,12 +84,14 @@ export const useRegistrarPlaga = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar la plaga",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -104,7 +106,7 @@ export const useActualizarPlaga = () => {
     mutationFn: ({ id, plaga }: { id: number; plaga: Plaga }) => actualizarPlaga(id, plaga),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["plagas"] });
-      addToast({ title: "Éxito", description: "Plaga actualizada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Plaga actualizada con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -112,12 +114,14 @@ export const useActualizarPlaga = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar la plaga",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -137,6 +141,7 @@ export const useEliminarPlaga = () => {
         title: "Éxito",
         description: "Plaga eliminada con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -145,12 +150,14 @@ export const useEliminarPlaga = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar la plaga",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
