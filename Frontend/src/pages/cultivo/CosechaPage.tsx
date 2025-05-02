@@ -38,20 +38,24 @@ const CosechaPage: React.FC = () => {
             onSubmit={handleSubmit}
             >
 
-                        <label className="block text-sm font-medium text-gray-700 mt-4">Cultivo</label>
-                        <select
-                            name="id_cultivo"
-                            value={cosecha.id_cultivo || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded-lg"
-                        >
-                            <option value="">Seleccione un cultivo</option>
-                            {cultivos?.map((cultivo) => (
-                                <option key={cultivo.id} value={cultivo.id}>
-                                    {cultivo.nombre}
-                                </option>
-                            ))}
-                        </select>
+            <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Cultivo
+                    </label>
+                    <select
+                        name="id_cultivo"
+                        value={cosecha.id_cultivo || ""}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                    >
+                        <option value="">Seleccione un cultivo</option>
+                        {cultivos?.map((cultivo) => (
+                        <option key={cultivo.id} value={cultivo.id}>
+                            {cultivo.nombre}
+                        </option>
+                        ))}
+                    </select>
+                    </div>
 
                         <ReuInput
                             label="Cantidad"
