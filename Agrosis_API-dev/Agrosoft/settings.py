@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'apps.Cultivo.tareas',
     'apps.Cultivo.afecciones',
     'apps.Cultivo.controles',
-    'apps.Cultivo.productos_control',
     'apps.Cultivo.plantaciones',
     'apps.Cultivo.tipo_actividad',
     'apps.Cultivo.actividades',
