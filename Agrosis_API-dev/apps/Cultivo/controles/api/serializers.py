@@ -3,8 +3,9 @@ from apps.Cultivo.controles.models import Control
 from apps.Cultivo.afecciones.api.serializers import AfeccionSerializer
 from apps.Cultivo.afecciones.models import Afeccion
 
-from apps.Cultivo.productos_control.api.serializers import ProductoControlSerializer
-from apps.Cultivo.productos_control.models import ProductoControl
+
+from apps.Inventario.insumos.models import Insumo
+from apps.Inventario.insumos.api.serializers import InsumoSerializer
 
 from apps.Cultivo.tipo_control.api.serializers import TipoControlSerializer
 from apps.Cultivo.tipo_control.models import TipoControl
@@ -20,9 +21,9 @@ class ControlSerializer(serializers.ModelSerializer):
         source='afeccion',
         write_only=True
     )
-    producto = ProductoControlSerializer(read_only=True)
+    producto = InsumoSerializer(read_only=True)
     producto_id = serializers.PrimaryKeyRelatedField(
-        queryset=ProductoControl.objects.all(),
+        queryset=Insumo.objects.all(),
         source='producto',
         write_only=True
     )
