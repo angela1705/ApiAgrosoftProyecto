@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useRegistrarBancal } from "@/hooks/cultivo/usebancal";
 import { useLotes } from "@/hooks/cultivo/uselotes";
 import { useNavigate } from "react-router-dom";
-
+import Formulario from "@/components/globales/Formulario";
 const BancalPage: React.FC = () => {
   const [bancal, setBancal] = useState({
     nombre: "",
@@ -29,14 +29,17 @@ const BancalPage: React.FC = () => {
     }));
   };
 
-
+  const handleSubmit = (e: React.FormEvent) =>{
+    e.preventDefault()
+    mutation.mutate(bancal)
+  }
 
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registro de Bancal</h2>
+      <Formulario title="Registro de Bancal"
+      onSubmit={handleSubmit}
+      >
 
           <ReuInput
             label="Nombre"
@@ -97,26 +100,21 @@ const BancalPage: React.FC = () => {
             </select>
           </div>
 
-          <button
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
-            type="submit"
-            disabled={mutation.isPending}
-            onClick={(e) => {
-              e.preventDefault();
-              mutation.mutate(bancal);
-            }}
-          >
-            {mutation.isPending ? "Registrando..." : "Guardar"}
-          </button>
-          <button
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
-            onClick={() => navigate("/cultivo/listarbancal/")}
-          >
-            Listar Bancales
-          </button>
-        </div>
-      </div>
 
+          <div className="col-span-1 md:col-span-2 flex justify-center">
+              <button
+                  className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
+                  type="button"
+                  onClick={() => navigate("/cultivo/listarbancal/")}
+                  >
+                  Listar bancales
+                  </button>
+              </div>
+
+     
+
+      </Formulario>
+      
     </DefaultLayout>
   );
 };
