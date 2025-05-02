@@ -31,6 +31,7 @@ from apps.Cultivo.tipos_residuos.api.router import tipoResiduoRouter
 from apps.Cultivo.tareas.api.router import tareaRouter
 from apps.Cultivo.ReportePlaga.api.router import reporte_plaga_router
 from apps.Finanzas.pagos.api.router import pagoRouter
+from apps.Finanzas.services.router import costo_beneficio_router
 from apps.Finanzas.salario.api.router import salarioRouter
 from apps.Finanzas.venta.api.router import ventaRouter
 from apps.Inventario.herramientas.api.routers import herramientaRouter
@@ -93,6 +94,7 @@ routerCultivo.registry.extend(reporte_plaga_router.registry)
 routerFinanzas.registry.extend(pagoRouter.registry)
 routerFinanzas.registry.extend(salarioRouter.registry)
 routerFinanzas.registry.extend(ventaRouter.registry)
+routerFinanzas.registry.extend(costo_beneficio_router.registry)
 
 # Inventario
 routerInventario.registry.extend(herramientaRouter.registry)
