@@ -50,6 +50,7 @@ export const useRegistrarBancal = () => {
       addToast({
         title: "Éxito",
         description: "Bancal registrado con éxito",
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -58,12 +59,14 @@ export const useRegistrarBancal = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar el bancal",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -91,7 +94,7 @@ export const useActualizarBancal = () => {
     mutationFn: ({ id, bancal }: { id: number; bancal: any }) => actualizarBancal(id, bancal),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bancales"] });
-      addToast({ title: "Éxito", description: "Bancal actualizado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Bancal actualizado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -99,12 +102,14 @@ export const useActualizarBancal = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar el bancal",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -126,7 +131,7 @@ export const useEliminarBancal = () => {
     mutationFn: (id: number) => eliminarBancal(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bancales"] });
-      addToast({ title: "Éxito", description: "Bancal eliminado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Bancal eliminado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -134,12 +139,14 @@ export const useEliminarBancal = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar el bancal",
           timeout: 3000,
+          color:"danger"
         });
       }
     },

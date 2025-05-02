@@ -49,6 +49,7 @@ export const useRegistrarEspecie = () => {
       addToast({
         title: "Éxito",
         description: "Especie registrada con éxito",
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -63,6 +64,7 @@ export const useRegistrarEspecie = () => {
           title: "Error",
           description: "Error al registrar la especie",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -98,12 +100,14 @@ export const useActualizarEspecie = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar la especie",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -125,7 +129,7 @@ export const useEliminarEspecie = () => {
     mutationFn: (id: number) => eliminarEspecie(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["especies"] });
-      addToast({ title: "Éxito", description: "Especie eliminada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Especie eliminada con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -133,12 +137,14 @@ export const useEliminarEspecie = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar la especie",
           timeout: 3000,
+          color:"danger"
         });
       }
     },

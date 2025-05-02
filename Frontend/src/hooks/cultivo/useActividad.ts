@@ -131,6 +131,7 @@ export const useRegistrarActividad = () => {
             addToast({
                 title: "Éxito",
                 description: "Actividad registrada con éxito",
+                color:"success"
             });
         },
         onError: (error: any) => {
@@ -139,12 +140,14 @@ export const useRegistrarActividad = () => {
               title: "Acceso denegado",
               description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
               timeout: 3000,
+              color:"warning"
             });
           } else {
             addToast({
               title: "Error",
               description: "Error al registrar la actividad",
               timeout: 3000,
+              color:"danger"
             });
           }
         },
@@ -166,12 +169,14 @@ export const useActualizarActividad = () => {
             title: "Acceso denegado",
             description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
             timeout: 3000,
+            color:"warning"
           });
         } else {
           addToast({
             title: "Error",
             description: "Error al actualizar la actividad",
             timeout: 3000,
+            color:"danger"
           });
         }
       },
@@ -184,7 +189,7 @@ export const useActualizarActividad = () => {
       mutationFn: (id: number) => eliminarActividad(id),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["Actividad"] });
-        addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000 });
+        addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000, color:"success" });
       },
       onError: (error: any) => {
         if (error.response?.status === 403) {
@@ -192,12 +197,14 @@ export const useActualizarActividad = () => {
             title: "Acceso denegado",
             description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
             timeout: 3000,
+            color:"warning"
           });
         } else {
           addToast({
             title: "Error",
             description: "Error al eliminar la actividad",
             timeout: 3000,
+            color:"danger"
           });
         }
       },
@@ -258,14 +265,16 @@ export const useActualizarActividad = () => {
         addToast({ 
           title: "Éxito", 
           description: "Actividad finalizada con éxito", 
-          timeout: 3000 
+          timeout: 3000, 
+          color:"success"
         });
       },
       onError: (error: any) => {
         addToast({ 
           title: "Error", 
           description: error.response?.data?.message || "Error al finalizar la actividad", 
-          timeout: 3000 
+          timeout: 3000,
+          color:"danger" 
         });
       },
     });

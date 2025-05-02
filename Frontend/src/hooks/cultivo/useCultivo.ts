@@ -53,6 +53,7 @@ export const useRegistrarCultivo = () => {
             addToast({
               title: "Éxito",
               description: "Cultivo registrado con éxito",
+              color:"success"
             });
           },
     onError: (error: any) => {
@@ -61,12 +62,14 @@ export const useRegistrarCultivo = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar el cultivo",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -94,7 +97,7 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
       mutationFn: ({ id, cultivo }: { id: number; cultivo: any }) => actualizarCultivo(id, cultivo),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["cultivos"] });
-        addToast({ title: "Éxito", description: "Cultivo actualizado con éxito", timeout: 3000 });
+        addToast({ title: "Éxito", description: "Cultivo actualizado con éxito", timeout: 3000, color:"success" });
       },
       onError: (error: any) => {
         if (error.response?.status === 403) {
@@ -102,12 +105,14 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
             title: "Acceso denegado",
             description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
             timeout: 3000,
+            color:"warning"
           });
         } else {
           addToast({
             title: "Error",
             description: "Error al actualizar el cultivo",
             timeout: 3000,
+            color:"danger"
           });
         }
       },
@@ -129,7 +134,7 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
       mutationFn: (id: number) => eliminarCultivo(id),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["cultivos"] });
-        addToast({ title: "Éxito", description: "Cultivo eliminado con éxito", timeout: 3000 });
+        addToast({ title: "Éxito", description: "Cultivo eliminado con éxito", timeout: 3000, color:"success" });
       },
       onError: (error: any) => {
         if (error.response?.status === 403) {
@@ -143,6 +148,7 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
             title: "Error",
             description: "Error al eliminar el cultivo",
             timeout: 3000,
+            color:"danger"
           });
         }
       },

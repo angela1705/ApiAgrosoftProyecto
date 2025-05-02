@@ -48,7 +48,8 @@ export const useCrearReportePlaga = () => {
       addToast({ 
         title: "Éxito", 
         description: "Reporte de plaga creado correctamente", 
-        timeout: 3000 
+        timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -56,6 +57,7 @@ export const useCrearReportePlaga = () => {
         title: "Error",
         description: error.response?.data?.message || "Error al crear el reporte",
         timeout: 3000,
+        color:"danger"
       });
     },
   });
@@ -72,6 +74,7 @@ export const useActualizarEstadoReporte = () => {
         title: "Éxito",
         description: "Estado del reporte actualizado",
         timeout: 3000,
+        color:"success"
       });
     },
   });

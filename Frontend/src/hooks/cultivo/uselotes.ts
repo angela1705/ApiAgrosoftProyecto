@@ -58,6 +58,7 @@ export const useRegistrarLote = () => {
       addToast({
         title: "Éxito",
         description: "Lote registrado con éxito",
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -66,12 +67,14 @@ export const useRegistrarLote = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar el lote",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -99,7 +102,7 @@ export const useActualizarLote = () => {
     mutationFn: ({ id, lote }: { id: number; lote: Lote }) => actualizarLote(id, lote),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lotes"] });
-      addToast({ title: "Éxito", description: "Lote actualizado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Lote actualizado con éxito", timeout: 3000, color:"success"});
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -107,12 +110,14 @@ export const useActualizarLote = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar el lote",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -134,7 +139,7 @@ export const useEliminarLote = () => {
     mutationFn: (id: number) => eliminarLote(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lotes"] });
-      addToast({ title: "Éxito", description: "Lote eliminado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Lote eliminado con éxito", timeout: 3000, color:"success"});
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -142,12 +147,14 @@ export const useEliminarLote = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar el lote",
           timeout: 3000,
+          color:"success"
         });
       }
     },
