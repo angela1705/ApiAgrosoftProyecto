@@ -100,7 +100,7 @@ const LotesPage: React.FC = () => {
             type="button"
             onClick={() => navigate("/cultivo/listarlotes/")}
           >
-            Listar lotes maricones
+            Listar lotes 
           </button>
         </div>
           </Formulario>
