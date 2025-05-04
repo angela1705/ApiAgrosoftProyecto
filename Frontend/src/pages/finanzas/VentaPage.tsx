@@ -6,7 +6,8 @@ import { ReuInput } from "@/components/globales/ReuInput";
 import { Venta } from "@/types/finanzas/Venta";
 import { usePreciosProductos } from "@/hooks/inventario/usePrecio_Producto";
 import Tabla from "@/components/globales/Tabla";
-import {Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { PagoModal } from "@/components/finanzas/PagoModal";
 
 const VentaPage: React.FC = () => {
   const [venta, setVenta] = useState<Venta>({
@@ -19,6 +20,7 @@ const VentaPage: React.FC = () => {
 
   const [productosAgregados, setProductosAgregados] = useState<Venta[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { registrarVenta, isRegistrando } = useVenta();
   const { data: precio_producto, isLoading: precioProductoLoading } = usePreciosProductos();
@@ -60,8 +62,6 @@ const VentaPage: React.FC = () => {
     });
   };
 
-  
-
   const handleDelete = (index: number) => {
     const nuevosProductos = productosAgregados.filter((_, i) => i !== index);
     setProductosAgregados(nuevosProductos);
@@ -74,6 +74,7 @@ const VentaPage: React.FC = () => {
     { name: "Total", uid: "total" },
     { name: "Quitar", uid: "acciones" },
   ];
+  
   const transformedData = productosAgregados.map((venta, index) => {
     const productoNombre = precio_producto?.find(p => p.id === venta.producto)?.cultivo || "Desconocido";
     const precio = Number(venta.precio) || 0;
@@ -86,14 +87,12 @@ const VentaPage: React.FC = () => {
       precio: `${precio.toFixed(2)}`,
       total: `${total.toFixed(2)}`,
       acciones: (
-        <>
-          <button
-            className="text-red-500 hover:underline"
-            onClick={() => handleDelete(index)}
-          >
-            <Trash2 size={22} color='red'/>
-          </button>
-        </>
+        <button
+          className="text-red-500 hover:underline"
+          onClick={() => handleDelete(index)}
+        >
+          <Trash2 size={22} color='red'/>
+        </button>
       ),
     };
   });
@@ -101,6 +100,28 @@ const VentaPage: React.FC = () => {
   const calcularTotalVenta = () => {
     return productosAgregados.reduce((sum, item) => sum + item.total, 0);
   };
+
+  const handleFinalizarVenta = () => {
+    productosAgregados.forEach(producto => {
+      registrarVenta(
+        { ...producto, fecha: venta.fecha },
+        {
+          onSuccess: () => {
+            setProductosAgregados([]);
+            setVenta({
+              producto: 0,
+              cantidad: 0,
+              precio: 0,
+              total: 0,
+              fecha: new Date().toISOString().split("T")[0],
+            });
+            setIsModalOpen(false);
+          },
+        }
+      );
+    });
+  };
+  console.log(precio_producto)
 
   return (
     <DefaultLayout>
@@ -115,13 +136,13 @@ const VentaPage: React.FC = () => {
                 name="producto"
                 value={venta.producto || ""}
                 onChange={handleChange("producto")}
-                className="w-full mb-4 p-2 border rounded"
+                className="w-full mb-4 p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={precioProductoLoading}
               >
                 <option value="0">Seleccione un producto</option>
                 {precio_producto?.map((precioProducto) => (
                   <option key={precioProducto.id} value={precioProducto.id}>
-                    {precioProducto.cultivo}
+                    {precioProducto.cosecha}
                   </option>
                 ))}
               </select>
@@ -167,32 +188,13 @@ const VentaPage: React.FC = () => {
 
               <div className="flex justify-between items-center mt-4">
                 <div className="text-lg font-semibold">
-                  Total Venta: {calcularTotalVenta().toFixed(2)}
+                  Total Venta: ${calcularTotalVenta().toFixed(2)}
                 </div>
 
                 <button
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
                   disabled={isRegistrando || productosAgregados.length === 0}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    productosAgregados.forEach(producto => {
-                      registrarVenta(
-                        { ...producto, fecha: venta.fecha },
-                        {
-                          onSuccess: () => {
-                            setProductosAgregados([]);
-                            setVenta({
-                              producto: 0,
-                              cantidad: 0,
-                              precio: 0,
-                              total: 0,
-                              fecha: new Date().toISOString().split("T")[0],
-                            });
-                          },
-                        }
-                      );
-                    });
-                  }}
+                  onClick={() => setIsModalOpen(true)}
                 >
                   {isRegistrando ? "Registrando..." : "Finalizar Venta"}
                 </button>
@@ -201,12 +203,19 @@ const VentaPage: React.FC = () => {
           )}
 
           <button
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-colors"
             onClick={() => navigate("/finanzas/listarventas/")}
           >
             Listar Ventas
           </button>
         </div>
+
+        <PagoModal
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          total={calcularTotalVenta()}
+          onConfirm={handleFinalizarVenta}
+        />
       </div>
     </DefaultLayout>
   );
