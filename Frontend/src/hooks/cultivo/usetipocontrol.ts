@@ -80,17 +80,29 @@ export const useRegistrarTipoControl = () => {
         title: "Éxito",
         description: "Tipo de control registrado con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
-    onError: () => {
-      addToast({
-        title: "Error",
-        description: "Error al registrar el tipo de control",
-        timeout: 3000,
-      });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "danger",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: error.response?.data?.message || "Error al registrar el tipo de control",
+          timeout: 3000,
+          color: "danger",
+        });
+      }
     },
   });
 };
+
 
 export const useActualizarTipoControl = () => {
   const queryClient = useQueryClient();
@@ -103,14 +115,25 @@ export const useActualizarTipoControl = () => {
         title: "Éxito",
         description: "Tipo de control actualizado con éxito",
         timeout: 3000,
+        color: "success",
       });
     },
     onError: (error: any) => {
-      addToast({
-        title: "Error",
-        description: error.response?.data?.message || "Error al actualizar el tipo de control",
-        timeout: 3000,
-      });
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "danger",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: error.response?.data?.message || "Error al actualizar el tipo de control",
+          timeout: 3000,
+          color: "danger",
+        });
+      }
     },
   });
 };
@@ -125,14 +148,26 @@ export const useEliminarTipoControl = () => {
         title: "Éxito",
         description: "Tipo de control eliminado con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
-    onError: () => {
-      addToast({
-        title: "Error",
-        description: "Error al eliminar el tipo de control",
-        timeout: 3000,
-      });
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "danger",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: error.response?.data?.message || "Error al eliminar el tipo de control",
+          timeout: 3000,
+          color: "danger",
+        });
+      }
     },
   });
 };
+

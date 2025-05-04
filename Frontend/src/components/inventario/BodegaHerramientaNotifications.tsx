@@ -28,13 +28,27 @@ const BodegaHerramientaNotifications: React.FC<BodegaHerramientaNotificationsPro
   const baseReconnectDelay = 3000;
 
   const connectWebSocket = () => {
-    if ((!userId3 || userId3 === 0) && !isAdmin) return;
+    if ((!userId3 || userId3 <= 0) && !isAdmin) {
+      console.error("No se puede conectar WebSocket: userId3 inválido o no proporcionado");
+      addToast({
+        title: "Error de Conexión",
+        description: "ID de usuario inválido. Por favor, inicia sesión nuevamente.",
+        timeout: 10000,
+        color: "danger",
+      });
+      return;
+    }
+
+    const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
     const wsUrl = isAdmin
-      ? `ws://${window.location.hostname}:8000/ws/inventario/bodega_herramienta/admin/`
-      : `ws://${window.location.hostname}:8000/ws/inventario/bodega_herramienta/${userId3}/`;
+      ? `${protocol}${window.location.hostname}:8000/ws/inventario/bodega_herramienta/admin/`
+      : `${protocol}${window.location.hostname}:8000/ws/inventario/bodega_herramienta/${userId3}/`;
+
+    console.log(`Intentando conectar WebSocket a: ${wsUrl}`);
     socketRef.current = new WebSocket(wsUrl);
 
     socketRef.current.onopen = () => {
+      console.log("Conexión WebSocket establecida");
       reconnectAttempts.current = 0;
       if (reconnectTimer.current) {
         clearTimeout(reconnectTimer.current);
@@ -45,6 +59,7 @@ const BodegaHerramientaNotifications: React.FC<BodegaHerramientaNotificationsPro
     socketRef.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log("Mensaje WebSocket recibido:", data);
         if (data.hash && receivedIds.current.has(data.hash)) {
           return;
         }
@@ -80,22 +95,40 @@ const BodegaHerramientaNotifications: React.FC<BodegaHerramientaNotificationsPro
               ? "warning"
               : "success",
         });
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error al procesar mensaje WebSocket:", error);
+      }
     };
 
-    socketRef.current.onerror = () => {};
+    socketRef.current.onerror = (error) => {
+      console.error("Error en WebSocket:", error);
+    };
 
     socketRef.current.onclose = (event) => {
+      console.log(`WebSocket cerrado con código: ${event.code}, razón: ${event.reason}`);
+      if (event.code === 4001) {
+        console.error("Conexión cerrada: usuario no encontrado");
+        addToast({
+          title: "Error de Conexión",
+          description: "Usuario no encontrado. Por favor, verifica tu sesión.",
+          timeout: 10000,
+          color: "danger",
+        });
+        return;
+      }
       if (event.code === 4002) {
+        console.warn("Conexión cerrada: otra conexión activa para el mismo usuario");
         return;
       }
       if (reconnectAttempts.current < maxReconnectAttempts) {
         const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts.current);
+        console.log(`Intentando reconectar en ${delay}ms... (Intento ${reconnectAttempts.current + 1})`);
         reconnectTimer.current = setTimeout(() => {
           reconnectAttempts.current += 1;
           connectWebSocket();
         }, delay);
       } else {
+        console.error("Máximo de intentos de reconexión alcanzado");
         addToast({
           title: "Error de Conexión",
           description: "No se pudo reconectar al servidor de notificaciones. Por favor, intenta de nuevo más tarde.",

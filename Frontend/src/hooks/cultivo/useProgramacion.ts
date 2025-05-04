@@ -65,6 +65,7 @@ export const useRegistrarProgramacion = () => {
         title: "Éxito",
         description: "Programación registrada con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
     onError: () => {
@@ -72,6 +73,7 @@ export const useRegistrarProgramacion = () => {
         title: "Error",
         description: "Error al registrar la programación",
         timeout: 3000,
+        color:"danger"
       });
     },
   });
@@ -82,10 +84,10 @@ export const useActualizarProgramacion = () => {
     mutationFn: ({ id, programacion }: { id: number; programacion: Programacion }) => actualizarProgramacion(id, programacion),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["programaciones"] });
-      addToast({ title: "Éxito", description: "Programacion actualizado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Programacion actualizado con éxito", timeout: 3000, color:"success" });
     },
     onError: () => {
-      addToast({ title: "Error", description: "Error al actualizar la programacion", timeout: 3000 });
+      addToast({ title: "Error", description: "Error al actualizar la programacion", timeout: 3000, color:"danger" });
     },
   });
 };
@@ -96,10 +98,10 @@ export const useEliminarProgramacion = () => {
     mutationFn: (id: number) => eliminarProgramacion(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["programaciones"] });
-      addToast({ title: "Éxito", description: "Programacion eliminada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Programacion eliminada con éxito", timeout: 3000, color:"success" });
     },
     onError: () => {
-      addToast({ title: "Error", description: "Error al eliminar la programacion", timeout: 3000 });
+      addToast({ title: "Error", description: "Error al eliminar la programacion", timeout: 3000, color:"danger" });
     },
   });
 };

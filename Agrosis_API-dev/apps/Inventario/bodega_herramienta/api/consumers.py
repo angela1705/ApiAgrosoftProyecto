@@ -5,7 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from ..models import BodegaHerramienta
+from apps.Inventario.bodega_herramienta.models import BodegaHerramienta
 from apps.Cultivo.actividades.models import PrestamoHerramienta
 import logging
 
@@ -23,27 +23,35 @@ class BodegaHerramientaConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs'].get('user_id')
+        logger.info(f"Intento de conexión WebSocket con user_id: {self.user_id}")
+
         if self.user_id == 'admin':
             self.group_name = "bodega_herramienta_admin_group"
         else:
             try:
                 self.user_id = int(self.user_id)
-                if not await self.get_user(self.user_id):
+                user = await self.get_user(self.user_id)
+                if not user:
+                    logger.error(f"Usuario con ID {self.user_id} no encontrado")
                     await self.close(code=4001)
                     return
                 self.group_name = f"bodega_herramienta_user_{self.user_id}"
             except (ValueError, TypeError):
+                logger.error(f"ID de usuario inválido: {self.user_id}")
                 await self.close(code=4000)
                 return
 
         if self.group_name in active_connections:
+            logger.info(f"Cerrando conexión previa para {self.group_name}")
             await active_connections[self.group_name].close(code=4002)
         active_connections[self.group_name] = self
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
+        logger.info(f"Conexión WebSocket establecida para {self.group_name}")
         self.check_task = asyncio.create_task(self.periodic_check())
 
     async def disconnect(self, close_code):
+        logger.info(f"Desconexión WebSocket para {self.group_name}, código: {close_code}")
         if self.group_name and self.group_name in active_connections:
             if active_connections[self.group_name] == self:
                 del active_connections[self.group_name]
@@ -94,18 +102,19 @@ class BodegaHerramientaConsumer(AsyncWebsocketConsumer):
                     "hash": herramienta_hash
                 }
                 notificaciones.append(notif)
-            if herramienta.cantidad_prestada > 0:
-                prestamos = PrestamoHerramienta.objects.filter(
-                    herramienta_id=herramienta.herramienta.id, 
-                    bodega_herramienta_id=herramienta.id, 
-                    devuelta=False
-                )
+
+            prestamos = PrestamoHerramienta.objects.filter(
+                bodega_herramienta=herramienta,
+                devuelta=False
+            )
+            cantidad_prestada = prestamos.count()
+            if cantidad_prestada > 0:
                 for prestamo in prestamos:
                     herramienta_hash = hashlib.md5(f"{herramienta.id}lent_{prestamo.id}".encode()).hexdigest()
                     notif = {
                         "herramienta_id": herramienta.id,
                         "actividad_id": prestamo.actividad_id,
-                        "message": f"{herramienta.cantidad_prestada} unidades de {herramienta.herramienta.nombre} están prestadas para la actividad ID {prestamo.actividad_id}.",
+                        "message": f"1 unidad de {herramienta.herramienta.nombre} está prestada para la actividad ID {prestamo.actividad_id} desde la bodega {herramienta.bodega.nombre}.",
                         "notification_type": "info",
                         "timestamp": timestamp,
                         "hash": herramienta_hash
@@ -117,6 +126,7 @@ class BodegaHerramientaConsumer(AsyncWebsocketConsumer):
         while True:
             try:
                 if self.group_name not in active_connections or active_connections[self.group_name] != self:
+                    logger.info(f"Terminando periodic_check para {self.group_name}")
                     break
                 notificaciones = await self.check_herramientas()
                 for notif in notificaciones:
@@ -134,6 +144,8 @@ class BodegaHerramientaConsumer(AsyncWebsocketConsumer):
                     )
                 await asyncio.sleep(300)
             except asyncio.CancelledError:
+                logger.info(f"periodic_check cancelado para {self.group_name}")
                 break
-            except Exception:
+            except Exception as e:
+                logger.error(f"Error en periodic_check para {self.group_name}: {str(e)}")
                 await asyncio.sleep(300)

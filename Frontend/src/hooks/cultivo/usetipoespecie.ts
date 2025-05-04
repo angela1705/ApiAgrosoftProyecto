@@ -70,6 +70,7 @@ export const useRegistrarTipoEspecie = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
@@ -89,7 +90,7 @@ export const useActualizarTipoEspecie = () => {
     mutationFn: ({ id, tipoEspecie }: { id: number; tipoEspecie: TipoEspecie }) => actualizarTipoEspecie(id, tipoEspecie),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tipoEspecies"] });
-      addToast({ title: "Éxito", description: "Tipo de especie actualizado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de especie actualizado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -97,12 +98,14 @@ export const useActualizarTipoEspecie = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar el tipo de especie",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -115,7 +118,7 @@ export const useEliminarTipoEspecie = () => {
     mutationFn: (id: number) => eliminarTipoEspecie(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tipoEspecies"] });
-      addToast({ title: "Éxito", description: "Tipo de especie eliminado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de especie eliminado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -123,12 +126,14 @@ export const useEliminarTipoEspecie = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar el tipo de especie",
           timeout: 3000,
+          color:"danger"
         });
       }
     },

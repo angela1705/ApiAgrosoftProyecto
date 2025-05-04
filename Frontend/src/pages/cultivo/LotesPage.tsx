@@ -21,10 +21,17 @@ const LotesPage: React.FC = () => {
   const mutation = useRegistrarLote();
   const navigate = useNavigate()
 
+  const handleSubmit=(e: React.FormEvent)=>{
+    e.preventDefault()
+
+    mutation.mutate(lote)
+  }
 
   return (
     <DefaultLayout>
-          <Formulario title="Registro de Lote">
+          <Formulario title="Registro de Lote"
+          onSubmit={handleSubmit}
+          >
             <ReuInput
               label="Nombre"
               placeholder="Ingrese el nombre"
@@ -87,24 +94,17 @@ const LotesPage: React.FC = () => {
               />
             </div>
 
-            <button
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
-              type="submit"
-              disabled={mutation.isPending}
-              onClick={(e) => {
-                e.preventDefault();
-                mutation.mutate(lote);
-              }}
-            >
-              {mutation.isPending ? "Registrando..." : "Guardar"}
-            </button>
-          </Formulario>
+            <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
+            className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
+            type="button"
             onClick={() => navigate("/cultivo/listarlotes/")}
           >
-            Listar lotes
+            Listar lotes 
           </button>
+        </div>
+          </Formulario>
+  
     </DefaultLayout>
   );
 };
