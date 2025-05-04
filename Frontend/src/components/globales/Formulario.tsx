@@ -1,4 +1,5 @@
 import React, { FormEvent } from "react";
+import { Spinner } from "@heroui/react";
 
 interface FormContainerProps {
   title: string;
@@ -49,7 +50,17 @@ const Formulario: React.FC<FormContainerProps> = ({
                   : "bg-green-500 hover:bg-green-600 shadow-md hover:shadow-lg"
               }`}
             >
-              {isSubmitting ? "Procesando..." : buttonText}
+              {isSubmitting ? (
+                <Spinner
+                  label="Procesando..."
+                  variant="default"
+                  color="white"
+                  size="sm"
+                  className="mx-auto"
+                />
+              ) : (
+                buttonText
+              )}
             </button>
           </div>
         </form>
