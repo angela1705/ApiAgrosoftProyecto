@@ -21,7 +21,7 @@ const registrarCosecha = async (cosecha: Cosecha) => {
   const formData = new FormData();
   formData.append("id_cultivo", cosecha.id_cultivo.toString());
   formData.append("cantidad", cosecha.cantidad.toString());
-  formData.append("unidades_de_medida", cosecha.unidades_de_medida);
+  formData.append("unidades_de_medida", cosecha.unidades_de_medida.toString());
   formData.append("fecha", cosecha.fecha);
 
   return api.post(API_URL, formData, {
@@ -39,7 +39,7 @@ const actualizarCosecha = async (id: number, cosecha: Cosecha) => {
   const formData = new FormData();
   formData.append("id_cultivo", cosecha.id_cultivo.toString());
   formData.append("cantidad", cosecha.cantidad.toString());
-  formData.append("unidades_de_medida", cosecha.unidades_de_medida);
+  formData.append("unidades_de_medida", cosecha.unidades_de_medida.toString());
   formData.append("fecha", cosecha.fecha);
 
   return api.put(`${API_URL}${id}/`, formData, {

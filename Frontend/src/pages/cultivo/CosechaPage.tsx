@@ -5,19 +5,23 @@ import { useRegistrarCosecha } from "@/hooks/cultivo/usecosecha";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import { useNavigate } from "react-router-dom";
 import Formulario from "@/components/globales/Formulario";
-
+import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
+import { Plus } from 'lucide-react';
+import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
 const CosechaPage: React.FC = () => {
 
     const [cosecha, setCosecha] = useState({
         id_cultivo: 0,
         cantidad: 0,
-        unidades_de_medida: "",
+        unidades_de_medida: 0,
         fecha: "",
     });
 
     const mutation = useRegistrarCosecha();
     const { data: cultivos } = useCultivos();
     const navigate = useNavigate();
+    const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
+    const [openUnidadesMedidaModal, setOpenUnidadesMedidaModal] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -64,12 +68,35 @@ const CosechaPage: React.FC = () => {
                             onChange={(e) => setCosecha({ ...cosecha, cantidad: Number(e.target.value) })}
                         />
 
-                        <ReuInput
-                            label="Unidades de Medida"
-                            type="text"
-                            value={cosecha.unidades_de_medida}
-                            onChange={(e) => setCosecha({ ...cosecha, unidades_de_medida: e.target.value })}
+                    <ModalUnidadMedida 
+                            isOpen={openUnidadesMedidaModal} 
+                            onOpenChange={setOpenUnidadesMedidaModal} 
                         />
+                        <div>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+                                            <button 
+                                                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                                onClick={() => setOpenUnidadesMedidaModal(true)}
+                                                type="button"
+                                            >
+                                                <Plus className="h-4 w-4" />
+                                            </button>
+                                        </div>
+                                        <select
+                                            value={cosecha.unidades_de_medida}
+                                            onChange={(e) => setCosecha({ ...cosecha, unidades_de_medida: Number(e.target.value)})}
+                                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                            disabled={loadingUnidadesMedida}
+                                        >
+                                            <option value="">Seleccione una unidad</option>
+                                            {unidadesMedida?.map((unidad) => (
+                                                <option key={unidad.id} value={unidad.id}>
+                                                    {unidad.nombre}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
 
                         <ReuInput
                             label="Fecha de recolección"

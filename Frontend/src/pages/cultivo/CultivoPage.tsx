@@ -5,12 +5,15 @@ import { useRegistrarCultivo } from "@/hooks/cultivo/useCultivo";
 import { useEspecies } from "@/hooks/cultivo/useEspecie";
 import { useBancales } from "@/hooks/cultivo/usebancal";
 import { useNavigate } from "react-router-dom";
+import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 import Formulario from "@/components/globales/Formulario";
-
+import { Plus } from 'lucide-react';
+import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
+import CustomSpinner from "@/components/globales/Spinner";
 const CultivoPage: React.FC = () => {
   const [cultivo, setCultivo] = useState({
     nombre: "",
-    unidad_de_medida: "",
+    unidad_de_medida: 0,
     activo: false,
     fechaSiembra: "",
     Especie: 0,
@@ -20,6 +23,10 @@ const CultivoPage: React.FC = () => {
   const mutation = useRegistrarCultivo();
   const { data: especies, isLoading: loadingEspecies } = useEspecies();
   const { data: bancales, isLoading: loadingBancales } = useBancales();
+  const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
+  const [openUnidadesMedidaModal, setOpenUnidadesMedidaModal] = useState(false);
+ 
+    
   const navigate = useNavigate();
 
   const handleChange = (
@@ -45,7 +52,17 @@ const CultivoPage: React.FC = () => {
   };
 
   if (loadingEspecies || loadingBancales) {
-    return <div>Cargando datos...</div>;
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-200px)]"> 
+        <CustomSpinner 
+          label="Cargando datos..."
+          variant="wave"
+          color="primary"
+          size="md"
+          className="my-auto"
+        />
+      </div>
+    );
   }
 
   return (
@@ -64,15 +81,37 @@ const CultivoPage: React.FC = () => {
           onChange={(e) => setCultivo({ ...cultivo, nombre: e.target.value })}
         />
 
-        <ReuInput
-          label="Unidad de Medida"
-          placeholder="Ej: kg, g, unidades"
-          type="text"
-          value={cultivo.unidad_de_medida}
-          onChange={(e) =>
-            setCultivo({ ...cultivo, unidad_de_medida: e.target.value })
-          }
-        />
+      <ModalUnidadMedida 
+          isOpen={openUnidadesMedidaModal} 
+          onOpenChange={setOpenUnidadesMedidaModal} 
+      />
+       <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setOpenUnidadesMedidaModal(true)}
+                            type="button"
+                        >
+                            <Plus className="h-4 w-4" />
+                        </button>
+                    </div>
+                    <select
+                        value={cultivo.unidad_de_medida}
+                        onChange={(e) => setCultivo({ ...cultivo, unidad_de_medida: Number(e.target.value)})}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                        disabled={loadingUnidadesMedida}
+                    >
+                        <option value="">Seleccione una unidad</option>
+                        {unidadesMedida?.map((unidad) => (
+                            <option key={unidad.id} value={unidad.id}>
+                                {unidad.nombre}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+        
 
         <ReuInput
           label="Fecha de Siembra"
