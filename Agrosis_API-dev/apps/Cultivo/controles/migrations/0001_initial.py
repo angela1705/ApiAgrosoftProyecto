@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('descripcion', models.TextField()),
                 ('fechaControl', models.DateField()),
                 ('id_afeccion', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='afecciones.afeccion')),
-                ('id_producto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='productos_control.productocontrol')),
+                ('id_producto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='insumos.Insumo')),
                 ('id_tipoControl', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tipo_control.tipocontrol')),
             ],
         ),
