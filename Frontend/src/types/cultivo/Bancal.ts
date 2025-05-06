@@ -5,5 +5,5 @@ export interface Bancal {
     TamY: number;
     posX: number;
     posY: number;
-    fk_lote: number;
+    lote: number;
   }

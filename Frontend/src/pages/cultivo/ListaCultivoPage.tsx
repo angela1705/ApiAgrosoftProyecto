@@ -8,7 +8,8 @@ import ReuModal from "@/components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
 import { useNavigate } from "react-router-dom";
 import { EditIcon, Trash2 } from "lucide-react"; 
-
+import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
+import { UnidadMedida } from "@/types/inventario/Insumo";
 const ListarCultivoPage: React.FC = () => {
   const [cultivo, setCultivo] = useState({
     nombre: "",
@@ -29,6 +30,7 @@ const ListarCultivoPage: React.FC = () => {
   const { data: especies } = useEspecies();
   const { data: bancales } = useBancales();
   const navigate = useNavigate();
+  const { data: unidadesMedida } = useUnidadesMedida();
 
   const columns = [
     { name: "Nombre", uid: "nombre" },
@@ -65,7 +67,7 @@ const ListarCultivoPage: React.FC = () => {
   const transformedData = (cultivos ?? []).map((cultivo) => ({
     id: cultivo.id?.toString() || '',
     nombre: cultivo.nombre,
-    unidad_de_medida: cultivo.unidad_de_medida,
+    unidad_de_medida: unidadesMedida?.find((um) => um.id === cultivo.unidad_de_medida)?.nombre || "sin unidad",
     activo: cultivo.activo ? "Sí" : "No",
     fechaSiembra: cultivo.fechaSiembra,
     fk_especie: especies?.find((especie) => especie.id === cultivo.Especie)?.nombre || 'Sin especie',
@@ -123,32 +125,26 @@ const ListarCultivoPage: React.FC = () => {
           }
         }}
       >
-        <ReuInput
-          label="Nombre"
-          placeholder="Ingrese el nombre"
-          type="text"
-          value={selectedCultivo?.nombre || ''}
-          onChange={(e) =>
-            setSelectedCultivo((prev: any) => ({
-              ...prev,
-              nombre: e.target.value,
-            }))
-          }
-          className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-lg px-4 py-2"
-        />
-        <ReuInput
-          label="Unidad de Medida"
-          placeholder="Ej: kg, g, unidades"
-          type="text"
-          value={selectedCultivo?.unidad_de_medida || ''}
-          onChange={(e) =>
-            setSelectedCultivo((prev: any) => ({
-              ...prev,
-              unidad_de_medida: e.target.value,
-            }))
-          }
-          className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-lg px-4 py-2"
-        />
+        <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+            <select
+              value={selectedCultivo?.unidades_de_medida || 0}
+              onChange={(e) =>
+                setSelectedCultivo((prev: any) => ({
+                  ...prev,
+                  unidades_de_medida: parseInt(e.target.value),
+                }))
+                
+              }
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+            >
+              <option value="">Seleccione una unidad</option>
+              {unidadesMedida?.map((unidad: UnidadMedida) => (
+                <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
+              ))}
+            </select>
+          </div>
+      
         <ReuInput
           label="Fecha de Siembra"
           type="date"
@@ -159,7 +155,6 @@ const ListarCultivoPage: React.FC = () => {
               fechaSiembra: e.target.value,
             }))
           }
-          className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-lg px-4 py-2"
         />
         <label className="flex items-center space-x-2">
           <input

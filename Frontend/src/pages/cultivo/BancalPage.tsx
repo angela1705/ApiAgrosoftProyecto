@@ -12,7 +12,7 @@ const BancalPage: React.FC = () => {
     TamY: 0,
     posX: 0,
     posY: 0,
-    fk_lote: 0,
+    lote: 0,
   });
 
   const mutation = useRegistrarBancal();
@@ -90,7 +90,7 @@ const BancalPage: React.FC = () => {
             <select
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               name="lote"
-              value={bancal.fk_lote}
+              value={bancal.lote}
               onChange={handleChange}
             >
               <option value="">Seleccione un lote</option>
