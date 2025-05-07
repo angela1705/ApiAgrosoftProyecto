@@ -91,10 +91,17 @@ const registrarActividad = async (actividad: Actividad) => {
               Authorization: `Bearer ${token}`,
           },
       });
+      console.log("Datos enviados a la API:", actividad);
+
       return response.data;
   } catch (error: any) {
-      console.error("Error en la API:", error.response?.data);
-      throw error;
+    console.error("Error en la API:", {
+      mensaje: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      headers: error.response?.headers,
+    });
+          throw error;
   }
 };
 const eliminarActividad = async (id: number) => {

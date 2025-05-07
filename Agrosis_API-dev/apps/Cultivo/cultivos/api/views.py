@@ -2,7 +2,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from apps.Cultivo.cultivos.models import Cultivo
-from apps.Cultivo.cultivos.api.serializers import CultivoSerializer
+from apps.Cultivo.cultivos.api.serializers import CultivoSerializer, EventoTrazabilidadSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead
 from apps.Usuarios.usuarios.api.permissions import PermisoPorRol 
 from rest_framework.decorators import action
@@ -13,6 +13,10 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime
+from apps.Cultivo.actividades.models import Actividad
+from apps.Cultivo.cosechas.models import Cosecha
+from rest_framework.response import Response
+
 
 class CultivoViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -113,3 +117,36 @@ class CultivoViewSet(viewsets.ModelViewSet):
 
         doc.build(elementos)
         return response
+    
+    @action(detail=True, methods=['get'], url_path='trazabilidad')
+    def trazabilidad(self, request, pk=None):
+        cultivo = self.get_object()
+
+        actividades = Actividad.objects.filter(cultivo=cultivo)
+        cosechas = Cosecha.objects.filter(id_cultivo=cultivo)
+
+        eventos = []
+
+        for act in actividades:
+            eventos.append({
+                "tipo": "Actividad",
+                "fecha": act.fecha_fin.date(),
+                "datos": {
+                    "nombre": act.descripcion,
+                    "tipoActividad": act.tipo_actividad.nombre,
+                }
+            })
+
+        for cos in cosechas:
+            eventos.append({
+                "tipo": "Cosecha",
+                "fecha": cos.fecha,
+                "datos": {
+                    "cantidad": cos.cantidad,
+                }
+            })
+
+        eventos.sort(key=lambda x: x["fecha"])  # Orden cronológico
+
+        serializer = EventoTrazabilidadSerializer(eventos, many=True)
+        return Response(serializer.data)
