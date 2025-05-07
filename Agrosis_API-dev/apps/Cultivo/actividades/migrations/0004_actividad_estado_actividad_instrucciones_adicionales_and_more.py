@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('actividades', '0003_remove_actividad_programacion_and_more'),
+        ('actividades', '0001_initial'),
     ]
 
     operations = [
