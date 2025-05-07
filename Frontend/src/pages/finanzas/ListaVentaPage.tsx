@@ -7,6 +7,7 @@ import { Venta } from "@/types/finanzas/Venta";
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
+import { Trash2, EditIcon } from 'lucide-react';
 
 const ListaVentaPage: React.FC = () => {
   const [selectedVenta, setSelectedVenta] = useState<Venta | null>(null);
@@ -26,7 +27,7 @@ const ListaVentaPage: React.FC = () => {
   ];
 
   const handleEdit = (venta: Venta) => {
-    console.log("Editando venta:", venta); // 👈 Esto te ayudará a verificar
+    console.log("Editando venta:", venta);
     setSelectedVenta(venta);
     setIsEditModalOpen(true);
   };
@@ -59,13 +60,13 @@ const ListaVentaPage: React.FC = () => {
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(venta)}
         >
-          Editar
+          <EditIcon size={20} color='black'/>
         </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(venta)}
         >
-          Eliminar
+          <Trash2 size={20}  color='red'/>
         </button>
       </>
     ),
@@ -74,7 +75,6 @@ const ListaVentaPage: React.FC = () => {
   return (
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Ventas</h2>
           {isLoading || cultivosLoading ? (
             <p className="text-gray-600">Cargando...</p>
@@ -185,7 +185,6 @@ const ListaVentaPage: React.FC = () => {
           <p>Esta acción es irreversible.</p>
           {isEliminando && <p className="text-gray-600 mt-2">Eliminando...</p>}
         </ReuModal>
-      </div>
     </DefaultLayout>
   );
 };
