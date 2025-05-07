@@ -1,5 +1,5 @@
 from django.db import models
-
+from apps.Inventario.insumos.models import UnidadMedida
 class Actividad(models.Model):
     ESTADO_CHOICES = [
         ('PENDIENTE', 'Pendiente'),
@@ -35,6 +35,8 @@ class PrestamoInsumo(models.Model):
     cantidad_usada = models.IntegerField(default=0)
     cantidad_devuelta = models.IntegerField(default=0)
     fecha_devolucion = models.DateTimeField(null=True, blank=True)
+    unidad_medida = models.ForeignKey(UnidadMedida, on_delete=models.PROTECT, null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.insumo.nombre} prestado a {self.actividad}"
