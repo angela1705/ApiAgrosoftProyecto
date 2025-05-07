@@ -5,6 +5,7 @@ import { useRegistrarBancal } from "@/hooks/cultivo/usebancal";
 import { useLotes } from "@/hooks/cultivo/uselotes";
 import { useNavigate } from "react-router-dom";
 import Formulario from "@/components/globales/Formulario";
+  
 const BancalPage: React.FC = () => {
   const [bancal, setBancal] = useState({
     nombre: "",

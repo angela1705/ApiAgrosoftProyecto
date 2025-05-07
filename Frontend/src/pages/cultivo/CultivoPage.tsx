@@ -10,6 +10,8 @@ import Formulario from "@/components/globales/Formulario";
 import { Plus } from 'lucide-react';
 import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
 import CustomSpinner from "@/components/globales/Spinner";
+import { ModalBancal } from "@/components/cultivo/ModalBancal";
+import { ModalEspecie } from "@/components/cultivo/ModalEspecie";
 const CultivoPage: React.FC = () => {
   const [cultivo, setCultivo] = useState({
     nombre: "",
@@ -25,7 +27,9 @@ const CultivoPage: React.FC = () => {
   const { data: bancales, isLoading: loadingBancales } = useBancales();
   const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
   const [openUnidadesMedidaModal, setOpenUnidadesMedidaModal] = useState(false);
- 
+  const [openBancal, setOpenBancal] = useState(false);
+  const [openEspecie, setOpenEspecie] = useState(false);
+
     
   const navigate = useNavigate();
 
@@ -85,6 +89,14 @@ const CultivoPage: React.FC = () => {
           isOpen={openUnidadesMedidaModal} 
           onOpenChange={setOpenUnidadesMedidaModal} 
       />
+      <ModalBancal
+      isOpen={openBancal}
+      onOpenChange={setOpenBancal}
+      />
+      <ModalEspecie
+      isOpen={openEspecie}
+      onOpenChange={setOpenEspecie}
+      />
        <div>
                     <div className="flex items-center gap-2 mb-1">
                         <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
@@ -133,16 +145,23 @@ const CultivoPage: React.FC = () => {
           />
           <span>Activo</span>
         </label>
+        <div className="mb-1">
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Especie</label>
+            <button 
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setOpenEspecie(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">
-            Especie
-          </label>
           <select
             name="Especie"
             value={cultivo.Especie || ""}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
           >
             <option value="">Seleccione una especie</option>
             {especies?.map((especie) => (
@@ -153,15 +172,24 @@ const CultivoPage: React.FC = () => {
           </select>
         </div>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">
-            Bancal
-          </label>
+
+        <div className="mb-1">
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Bancal</label>
+            <button 
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setOpenBancal(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+
           <select
             name="Bancal"
             value={cultivo.Bancal || ""}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
           >
             <option value="">Seleccione un bancal</option>
             {bancales?.map((bancal) => (
@@ -171,6 +199,7 @@ const CultivoPage: React.FC = () => {
             ))}
           </select>
         </div>
+
 
         <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
