@@ -8,7 +8,10 @@ import { usePlagas } from "@/hooks/cultivo/useplaga";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import { useBancales } from "@/hooks/cultivo/usebancal";
 import { Afeccion } from "@/types/cultivo/Afeccion";
-
+import { ModalPlaga } from "@/components/cultivo/ModalPlaga";
+import { ModalBancal } from "@/components/cultivo/ModalBancal";
+import { ModalCultivo } from "@/components/cultivo/ModalCultivo";
+import { Plus } from "lucide-react";
 const AfeccionesPage: React.FC = () => {
   const [afeccion, setAfeccion] = useState<Omit<Afeccion, 'id' | 'estado'>>({
     nombre: "",
@@ -26,6 +29,9 @@ const AfeccionesPage: React.FC = () => {
   const { data: bancales } = useBancales();
   const mutation = useCrearAfeccion();
   const navigate = useNavigate();
+  const [openPlaga, setopenPlaga] = useState(false)
+  const [openCultivo, setopenCultivo] = useState(false)
+  const [openBancal, setopenBancal] = useState(false)
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,6 +56,18 @@ const AfeccionesPage: React.FC = () => {
         isSubmitting={mutation.isPending}
         buttonText="Guardar"
       >
+        <ModalPlaga
+        isOpen={openPlaga}
+        onOpenChange={setopenPlaga}
+        />
+        <ModalCultivo
+        isOpen={openCultivo}
+        onOpenChange={setopenCultivo}
+        />
+        <ModalBancal
+        isOpen={openBancal}
+        onOpenChange={setopenBancal}
+        />
         <ReuInput
           label="Nombre"
           placeholder="Nombre descriptivo de la afección"
@@ -74,7 +92,7 @@ const AfeccionesPage: React.FC = () => {
           
         />
 
-        <div className="col-span-1 sm:col-span-2">
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Gravedad</label>
           <select
             name="gravedad"
@@ -88,54 +106,79 @@ const AfeccionesPage: React.FC = () => {
             <option value="G">Grave</option>
           </select>
         </div>
-
-        <div className="col-span-1 sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Plaga</label>
+        <div>
+        <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Plaga</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setopenPlaga(true)}
+                            type="button"
+                        >
+                            <Plus className="h-4 w-4" />
+                        </button>
+                    </div>
           <select
-            name="plaga_id"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={afeccion.plaga_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione una plaga</option>
-            {plagas?.map(plaga => (
-              <option key={plaga.id} value={plaga.id}>{plaga.nombre}</option>
-            ))}
-          </select>
+              name="plaga_id"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={afeccion.plaga_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione una plaga</option>
+              {plagas?.map(plaga => (
+                <option key={plaga.id} value={plaga.id}>{plaga.nombre}</option>
+              ))}
+            </select>
         </div>
-
-        <div className="col-span-1 sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cultivo</label>
+        <div>
+        <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Cultivo</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setopenCultivo(true)}
+                            type="button"
+                        >
+                            <Plus className="h-4 w-4" />
+                        </button>
+                    </div>
           <select
-            name="cultivo_id"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={afeccion.cultivo_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione un cultivo</option>
-            {cultivos?.map(cultivo => (
-              <option key={cultivo.id} value={cultivo.id}>{cultivo.nombre}</option>
-            ))}
-          </select>
+              name="cultivo_id"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={afeccion.cultivo_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione un cultivo</option>
+              {cultivos?.map(cultivo => (
+                <option key={cultivo.id} value={cultivo.id}>{cultivo.nombre}</option>
+              ))}
+            </select>
         </div>
-
-        <div className="col-span-1 sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Bancal</label>
+        <div>
+        <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Bancal</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setopenBancal(true)}
+                            type="button"
+                        >
+                            <Plus className="h-4 w-4" />
+                        </button>
+                    </div>
           <select
-            name="bancal_id"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={afeccion.bancal_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione un bancal</option>
-            {bancales?.map(bancal => (
-              <option key={bancal.id} value={bancal.id}>{bancal.nombre}</option>
-            ))}
-          </select>
+              name="bancal_id"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={afeccion.bancal_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione un bancal</option>
+              {bancales?.map(bancal => (
+                <option key={bancal.id} value={bancal.id}>{bancal.nombre}</option>
+              ))}
+            </select>
         </div>
+         
 
         <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
