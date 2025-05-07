@@ -5,7 +5,8 @@ import { useRegistrarBancal } from "@/hooks/cultivo/usebancal";
 import { useLotes } from "@/hooks/cultivo/uselotes";
 import { useNavigate } from "react-router-dom";
 import Formulario from "@/components/globales/Formulario";
-  
+import { ModalLote } from "@/components/cultivo/ModalLote";
+import { Plus } from "lucide-react";
 const BancalPage: React.FC = () => {
   const [bancal, setBancal] = useState({
     nombre: "",
@@ -34,13 +35,17 @@ const BancalPage: React.FC = () => {
     e.preventDefault()
     mutation.mutate(bancal)
   }
-
+  const [openLote, setopenLote] = useState(false)
 
   return (
     <DefaultLayout>
       <Formulario title="Registro de Bancal"
       onSubmit={handleSubmit}
       >
+        <ModalLote
+        isOpen={openLote}
+        onOpenChange={setopenLote}
+        />
 
           <ReuInput
             label="Nombre"
@@ -86,8 +91,17 @@ const BancalPage: React.FC = () => {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-1">
+          <div className="flex items-center gap-2 mb-1">
             <label className="block text-sm font-medium text-gray-700">Lote</label>
+            <button 
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setopenLote(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
             <select
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               name="lote"
@@ -99,7 +113,9 @@ const BancalPage: React.FC = () => {
                 <option key={lote.id} value={lote.id}>{lote.nombre}</option>
               ))}
             </select>
-          </div>
+            </div>
+
+            
 
 
           <div className="col-span-1 md:col-span-2 flex justify-center">
