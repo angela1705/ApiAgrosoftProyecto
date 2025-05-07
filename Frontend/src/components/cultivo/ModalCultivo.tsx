@@ -15,7 +15,7 @@ interface ModalCultivoProps {
 export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoProps) => {
   const [nuevoCultivo, setNuevoCultivo] = useState<Cultivo>({
     nombre: "",
-    unidad_de_medida: "",
+    unidad_de_medida: 0,
     activo: false,
     fechaSiembra: "",
     Especie: 0,
@@ -43,7 +43,7 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
         onOpenChange(false);
         setNuevoCultivo({
           nombre: "",
-          unidad_de_medida: "",
+          unidad_de_medida:0,
           activo: false,
           fechaSiembra: "",
           Especie: 0,
@@ -77,7 +77,7 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
           placeholder="Ej: kg, g, unidades"
           type="text"
           value={nuevoCultivo.unidad_de_medida}
-          onChange={(e)=> setNuevoCultivo({...nuevoCultivo, unidad_de_medida: e.target.value})}
+          onChange={(e)=> setNuevoCultivo({...nuevoCultivo, unidad_de_medida: Number(e.target.value)})}
         />
 
         <ReuInput

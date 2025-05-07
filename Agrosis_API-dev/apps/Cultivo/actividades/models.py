@@ -1,7 +1,6 @@
 from django.db import models
-
+from apps.Inventario.insumos.models import UnidadMedida
 class Actividad(models.Model):
-    
     ESTADO_CHOICES = [
         ('PENDIENTE', 'Pendiente'),
         ('EN_PROCESO', 'En proceso'),
@@ -14,9 +13,7 @@ class Actividad(models.Model):
     fecha_inicio = models.DateTimeField()
     fecha_fin = models.DateTimeField()
     cultivo = models.ForeignKey('cultivos.Cultivo', on_delete=models.CASCADE)
-    
     usuarios = models.ManyToManyField('usuarios.Usuarios', related_name='actividades')
-    
     estado = models.CharField(
         max_length=20,
         choices=ESTADO_CHOICES,
@@ -31,25 +28,31 @@ class Actividad(models.Model):
 
     def __str__(self):
         return f"{self.tipo_actividad} - {self.estado}"
-    
+
 class PrestamoInsumo(models.Model):
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='prestamos_insumos')
     insumo = models.ForeignKey('insumos.Insumo', on_delete=models.CASCADE)
     cantidad_usada = models.IntegerField(default=0)
     cantidad_devuelta = models.IntegerField(default=0)
     fecha_devolucion = models.DateTimeField(null=True, blank=True)
+    unidad_medida = models.ForeignKey(UnidadMedida, on_delete=models.PROTECT, null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.insumo.nombre} prestado a {self.actividad}"
 
-
 class PrestamoHerramienta(models.Model):
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='prestamos_herramientas')
     herramienta = models.ForeignKey('herramientas.Herramienta', on_delete=models.CASCADE)
+    bodega_herramienta = models.ForeignKey(
+        'bodega_herramienta.BodegaHerramienta',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     entregada = models.BooleanField(default=True)
     devuelta = models.BooleanField(default=False)
     fecha_devolucion = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.herramienta.nombre} prestada a {self.actividad}"
-

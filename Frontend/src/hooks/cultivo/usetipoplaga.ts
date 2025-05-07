@@ -62,7 +62,7 @@ export const useRegistrarTipoPlaga = () => {
   return useMutation({
     mutationFn: registrarTipoPlaga,
     onSuccess: () => {
-      addToast({ title: "Éxito", description: "Tipo de plaga registrado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de plaga registrado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -70,12 +70,14 @@ export const useRegistrarTipoPlaga = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"danger"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar Tipo de  plaga",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -90,7 +92,7 @@ export const useActualizarTipoPlaga = () => {
     mutationFn: ({ id, tipoPlaga }: { id: number; tipoPlaga: TipoPlaga }) => actualizarTipoPlaga(id, tipoPlaga),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tipoPlagas"] });
-      addToast({ title: "Éxito", description: "Tipo de plaga actualizado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de plaga actualizado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -98,12 +100,14 @@ export const useActualizarTipoPlaga = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar Tipo de  plaga",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -118,7 +122,7 @@ export const useEliminarTipoPlaga = () => {
     mutationFn: (id: number) => eliminarTipoPlaga(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tipoPlagas"] });
-      addToast({ title: "Éxito", description: "Tipo de plaga eliminado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de plaga eliminado con éxito", timeout: 3000, color:"success" });
     },
     
     onError: (error: any) => {
@@ -127,12 +131,14 @@ export const useEliminarTipoPlaga = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar la plaga",
           timeout: 3000,
+          color:"danger"
         });
       }
     },

@@ -19,6 +19,7 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
     estado: "Disponible",
     fecha_registro: new Date().toISOString().slice(0, 16),
     activo: true,
+    precio: 0
   });
 
   const mutation = useRegistrarHerramienta();
@@ -47,10 +48,16 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
           estado: "Disponible",
           fecha_registro: new Date().toISOString().slice(0, 16),
           activo: true,
+          precio: 0
+
         });
         onSuccess?.();
       }
     });
+  };
+  const formatPrice = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    return numericValue ? Number(numericValue) : 0;
   };
 
   return (
@@ -101,6 +108,18 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
             <option value="Dañada">Dañada</option>
           </select>
         </div>
+        <ReuInput
+          label="Precio (COP)"
+          placeholder="Ingrese el precio"
+          type="text"
+          value={herramienta.precio.toLocaleString("es-CO")}
+          onChange={(e) =>
+            setHerramienta({
+              ...herramienta,
+              precio: formatPrice(e.target.value),
+            })
+          }
+        />
 
         <ReuInput
           label="Fecha de Registro"

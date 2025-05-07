@@ -84,6 +84,7 @@ export const useRegistrarProductoControl = () => {
         title: "Éxito",
         description: "Producto de control registrado con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -92,12 +93,14 @@ export const useRegistrarProductoControl = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar el producto de control",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -115,6 +118,7 @@ export const useActualizarProductoControl = () => {
         title: "Éxito",
         description: "Producto de control actualizado con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -123,12 +127,14 @@ export const useActualizarProductoControl = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar el producto de control",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -145,6 +151,7 @@ export const useEliminarProductoControl = () => {
         title: "Éxito",
         description: "Producto de control eliminado con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
         onError: (error: any) => {
@@ -153,12 +160,14 @@ export const useEliminarProductoControl = () => {
               title: "Acceso denegado",
               description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
               timeout: 3000,
+              color:"warning"
             });
           } else {
             addToast({
               title: "Error",
               description: "Error al eliminar el producto de control",
               timeout: 3000,
+              color:"danger"
             });
           }
         },

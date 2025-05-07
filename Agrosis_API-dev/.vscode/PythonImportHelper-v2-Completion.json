@@ -1169,6 +1169,14 @@
         "documentation": {}
     },
     {
+        "label": "DefaultRouter",
+        "importPath": "rest_framework.routers",
+        "description": "rest_framework.routers",
+        "isExtraImport": true,
+        "detail": "rest_framework.routers",
+        "documentation": {}
+    },
+    {
         "label": "get_schema_view",
         "importPath": "drf_yasg.views",
         "description": "drf_yasg.views",
@@ -1433,6 +1441,14 @@
         "documentation": {}
     },
     {
+        "label": "costo_beneficio_router",
+        "importPath": "apps.Finanzas.services.router",
+        "description": "apps.Finanzas.services.router",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.services.router",
+        "documentation": {}
+    },
+    {
         "label": "salarioRouter",
         "importPath": "apps.Finanzas.salario.api.router",
         "description": "apps.Finanzas.salario.api.router",
@@ -1566,6 +1582,14 @@
         "description": "rest_framework.views",
         "isExtraImport": true,
         "detail": "rest_framework.views",
+        "documentation": {}
+    },
+    {
+        "label": "Response",
+        "importPath": "rest_framework.response",
+        "description": "rest_framework.response",
+        "isExtraImport": true,
+        "detail": "rest_framework.response",
         "documentation": {}
     },
     {
@@ -2529,6 +2553,30 @@
         "documentation": {}
     },
     {
+        "label": "transaction",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "migrations",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
         "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
@@ -3858,6 +3906,30 @@
     },
     {
         "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "migrations",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -5705,6 +5777,30 @@
         "documentation": {}
     },
     {
+        "label": "viewsets",
+        "importPath": "rest_framework",
+        "description": "rest_framework",
+        "isExtraImport": true,
+        "detail": "rest_framework",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "rest_framework",
+        "description": "rest_framework",
+        "isExtraImport": true,
+        "detail": "rest_framework",
+        "documentation": {}
+    },
+    {
+        "label": "serializers",
+        "importPath": "rest_framework",
+        "description": "rest_framework",
+        "isExtraImport": true,
+        "detail": "rest_framework",
+        "documentation": {}
+    },
+    {
         "label": "serializers",
         "importPath": "rest_framework",
         "description": "rest_framework",
@@ -5921,6 +6017,30 @@
         "documentation": {}
     },
     {
+        "label": "Actividad",
+        "importPath": "apps.Cultivo.actividades.models",
+        "description": "apps.Cultivo.actividades.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.actividades.models",
+        "documentation": {}
+    },
+    {
+        "label": "PrestamoInsumo",
+        "importPath": "apps.Cultivo.actividades.models",
+        "description": "apps.Cultivo.actividades.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.actividades.models",
+        "documentation": {}
+    },
+    {
+        "label": "PrestamoHerramienta",
+        "importPath": "apps.Cultivo.actividades.models",
+        "description": "apps.Cultivo.actividades.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.actividades.models",
+        "documentation": {}
+    },
+    {
         "label": "PrestamoHerramienta",
         "importPath": "apps.Cultivo.actividades.models",
         "description": "apps.Cultivo.actividades.models",
@@ -5945,11 +6065,203 @@
         "documentation": {}
     },
     {
-        "label": "notificar_asignacion_actividad",
-        "importPath": "apps.Cultivo.actividades.api.signals",
-        "description": "apps.Cultivo.actividades.api.signals",
+        "label": "Insumo",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
         "isExtraImport": true,
-        "detail": "apps.Cultivo.actividades.api.signals",
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "Insumo",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "UnidadMedida",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "UnidadMedida",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "Herramienta",
+        "importPath": "apps.Inventario.herramientas.models",
+        "description": "apps.Inventario.herramientas.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.herramientas.models",
+        "documentation": {}
+    },
+    {
+        "label": "Herramienta",
+        "importPath": "apps.Inventario.herramientas.models",
+        "description": "apps.Inventario.herramientas.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.herramientas.models",
+        "documentation": {}
+    },
+    {
+        "label": "Herramienta",
+        "importPath": "apps.Inventario.herramientas.models",
+        "description": "apps.Inventario.herramientas.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.herramientas.models",
+        "documentation": {}
+    },
+    {
+        "label": "BodegaHerramienta",
+        "importPath": "apps.Inventario.bodega_herramienta.models",
+        "description": "apps.Inventario.bodega_herramienta.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.bodega_herramienta.models",
+        "documentation": {}
+    },
+    {
+        "label": "BodegaHerramienta",
+        "importPath": "apps.Inventario.bodega_herramienta.models",
+        "description": "apps.Inventario.bodega_herramienta.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.bodega_herramienta.models",
+        "documentation": {}
+    },
+    {
+        "label": "BodegaHerramienta",
+        "importPath": "apps.Inventario.bodega_herramienta.models",
+        "description": "apps.Inventario.bodega_herramienta.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.bodega_herramienta.models",
+        "documentation": {}
+    },
+    {
+        "label": "BodegaHerramienta",
+        "importPath": "apps.Inventario.bodega_herramienta.models",
+        "description": "apps.Inventario.bodega_herramienta.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.bodega_herramienta.models",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "django.utils",
+        "description": "django.utils",
+        "isExtraImport": true,
+        "detail": "django.utils",
         "documentation": {}
     },
     {
@@ -6646,6 +6958,14 @@
         "description": "apps.Usuarios.usuarios.api.permissions",
         "isExtraImport": true,
         "detail": "apps.Usuarios.usuarios.api.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "action",
+        "importPath": "rest_framework.decorators",
+        "description": "rest_framework.decorators",
+        "isExtraImport": true,
+        "detail": "rest_framework.decorators",
         "documentation": {}
     },
     {
@@ -8121,6 +8441,14 @@
         "documentation": {}
     },
     {
+        "label": "Sum",
+        "importPath": "django.db.models",
+        "description": "django.db.models",
+        "isExtraImport": true,
+        "detail": "django.db.models",
+        "documentation": {}
+    },
+    {
         "label": "Avg",
         "importPath": "django.db.models",
         "description": "django.db.models",
@@ -8527,6 +8855,22 @@
         "description": "apps.Cultivo.cosechas.api.views",
         "isExtraImport": true,
         "detail": "apps.Cultivo.cosechas.api.views",
+        "documentation": {}
+    },
+    {
+        "label": "Cosecha",
+        "importPath": "apps.Cultivo.cosechas.models",
+        "description": "apps.Cultivo.cosechas.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.cosechas.models",
+        "documentation": {}
+    },
+    {
+        "label": "Cosecha",
+        "importPath": "apps.Cultivo.cosechas.models",
+        "description": "apps.Cultivo.cosechas.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.cosechas.models",
         "documentation": {}
     },
     {
@@ -9170,6 +9514,14 @@
         "documentation": {}
     },
     {
+        "label": "Pago",
+        "importPath": "apps.Finanzas.pagos.models",
+        "description": "apps.Finanzas.pagos.models",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.pagos.models",
+        "documentation": {}
+    },
+    {
         "label": "Salario",
         "importPath": "apps.Finanzas.salario.models",
         "description": "apps.Finanzas.salario.models",
@@ -9284,131 +9636,75 @@
         "documentation": {}
     },
     {
+        "label": "CostoBeneficioViewSet",
+        "importPath": "apps.Finanzas.services.views",
+        "description": "apps.Finanzas.services.views",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.services.views",
+        "documentation": {}
+    },
+    {
+        "label": "Decimal",
+        "importPath": "decimal",
+        "description": "decimal",
+        "isExtraImport": true,
+        "detail": "decimal",
+        "documentation": {}
+    },
+    {
+        "label": "defaultdict",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "Venta",
+        "importPath": "apps.Finanzas.venta.models",
+        "description": "apps.Finanzas.venta.models",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.venta.models",
+        "documentation": {}
+    },
+    {
+        "label": "Venta",
+        "importPath": "apps.Finanzas.venta.models",
+        "description": "apps.Finanzas.venta.models",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.venta.models",
+        "documentation": {}
+    },
+    {
+        "label": "Venta",
+        "importPath": "apps.Finanzas.venta.models",
+        "description": "apps.Finanzas.venta.models",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.venta.models",
+        "documentation": {}
+    },
+    {
+        "label": "PrecioProducto",
+        "importPath": "apps.Inventario.precio_producto.models",
+        "description": "apps.Inventario.precio_producto.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.precio_producto.models",
+        "documentation": {}
+    },
+    {
+        "label": "AnalisisCostoBeneficio",
+        "importPath": "apps.Finanzas.services.services",
+        "description": "apps.Finanzas.services.services",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.services.services",
+        "documentation": {}
+    },
+    {
         "label": "VentaViewSet",
         "importPath": "apps.Finanzas.venta.api.views",
         "description": "apps.Finanzas.venta.api.views",
         "isExtraImport": true,
         "detail": "apps.Finanzas.venta.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "Venta",
-        "importPath": "apps.Finanzas.venta.models",
-        "description": "apps.Finanzas.venta.models",
-        "isExtraImport": true,
-        "detail": "apps.Finanzas.venta.models",
-        "documentation": {}
-    },
-    {
-        "label": "Venta",
-        "importPath": "apps.Finanzas.venta.models",
-        "description": "apps.Finanzas.venta.models",
-        "isExtraImport": true,
-        "detail": "apps.Finanzas.venta.models",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
-        "documentation": {}
-    },
-    {
-        "label": "timezone",
-        "importPath": "django.utils",
-        "description": "django.utils",
-        "isExtraImport": true,
-        "detail": "django.utils",
         "documentation": {}
     },
     {
@@ -9435,6 +9731,30 @@
         "importPath": "logging",
         "description": "logging",
         "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "Bodega",
+        "importPath": "apps.Inventario.bodega.models",
+        "description": "apps.Inventario.bodega.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.bodega.models",
+        "documentation": {}
+    },
+    {
+        "label": "Bodega",
+        "importPath": "apps.Inventario.bodega.models",
+        "description": "apps.Inventario.bodega.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.bodega.models",
+        "documentation": {}
+    },
+    {
+        "label": "Bodega",
+        "importPath": "apps.Inventario.bodega.models",
+        "description": "apps.Inventario.bodega.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.bodega.models",
         "documentation": {}
     },
     {
@@ -9510,30 +9830,6 @@
         "documentation": {}
     },
     {
-        "label": "Bodega",
-        "importPath": "apps.Inventario.bodega.models",
-        "description": "apps.Inventario.bodega.models",
-        "isExtraImport": true,
-        "detail": "apps.Inventario.bodega.models",
-        "documentation": {}
-    },
-    {
-        "label": "Bodega",
-        "importPath": "apps.Inventario.bodega.models",
-        "description": "apps.Inventario.bodega.models",
-        "isExtraImport": true,
-        "detail": "apps.Inventario.bodega.models",
-        "documentation": {}
-    },
-    {
-        "label": "Herramienta",
-        "importPath": "apps.Inventario.herramientas.models",
-        "description": "apps.Inventario.herramientas.models",
-        "isExtraImport": true,
-        "detail": "apps.Inventario.herramientas.models",
-        "documentation": {}
-    },
-    {
         "label": "BodegaInsumo",
         "importPath": "apps.Inventario.bodega_insumo.models",
         "description": "apps.Inventario.bodega_insumo.models",
@@ -9548,30 +9844,6 @@
         "importPath": "uuid",
         "description": "uuid",
         "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "Insumo",
-        "importPath": "apps.Inventario.insumos.models",
-        "description": "apps.Inventario.insumos.models",
-        "isExtraImport": true,
-        "detail": "apps.Inventario.insumos.models",
-        "documentation": {}
-    },
-    {
-        "label": "UnidadMedida",
-        "importPath": "apps.Inventario.insumos.models",
-        "description": "apps.Inventario.insumos.models",
-        "isExtraImport": true,
-        "detail": "apps.Inventario.insumos.models",
-        "documentation": {}
-    },
-    {
-        "label": "UnidadMedida",
-        "importPath": "apps.Inventario.insumos.models",
-        "description": "apps.Inventario.insumos.models",
-        "isExtraImport": true,
-        "detail": "apps.Inventario.insumos.models",
         "documentation": {}
     },
     {
@@ -10023,7 +10295,7 @@
         "kind": 5,
         "importPath": "Agrosoft.settings",
         "description": "Agrosoft.settings",
-        "peekOfCode": "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft',\n        'USER': 'postgres',\n        'PASSWORD': 'pass',\n        'HOST': 'localhost', \n        'PORT': '5432',\n        'OPTIONS': {\n            'client_encoding': 'UTF8',",
+        "peekOfCode": "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft',\n        'USER': 'postgres',\n        'PASSWORD': 'hate',\n        'HOST': 'localhost', \n        'PORT': '5432',\n        'OPTIONS': {\n            'client_encoding': 'UTF8',",
         "detail": "Agrosoft.settings",
         "documentation": {}
     },
@@ -10482,7 +10754,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.actividades.api.serializers",
         "description": "apps.Cultivo.actividades.api.serializers",
-        "peekOfCode": "class UsuarioActividadSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Usuarios\n        fields = ['nombre']  \nclass PrestamoInsumoSerializer(serializers.ModelSerializer):\n    insumo_nombre = serializers.CharField(source='insumo.nombre', read_only=True)\n    unidad_medida = serializers.CharField(source='insumo.unidad_medida.abreviatura', read_only=True)\n    class Meta:\n        model = PrestamoInsumo\n        fields = '__all__'",
+        "peekOfCode": "class UsuarioActividadSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Usuarios\n        fields = ['nombre']\nclass PrestamoInsumoSerializer(serializers.ModelSerializer):\n    insumo_nombre = serializers.CharField(source='insumo.nombre', read_only=True)\n    unidad_medida = serializers.CharField(source='insumo.unidad_medida.abreviatura', read_only=True)\n    class Meta:\n        model = PrestamoInsumo\n        fields = '__all__'",
         "detail": "apps.Cultivo.actividades.api.serializers",
         "documentation": {}
     },
@@ -10500,7 +10772,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.actividades.api.serializers",
         "description": "apps.Cultivo.actividades.api.serializers",
-        "peekOfCode": "class PrestamoHerramientaSerializer(serializers.ModelSerializer):\n    herramienta_nombre = serializers.CharField(source='herramienta.nombre', read_only=True)\n    class Meta:\n        model = PrestamoHerramienta\n        fields = '__all__'\nclass ActividadSerializer(serializers.ModelSerializer):\n    prestamos_insumos = PrestamoInsumoSerializer(many=True, read_only=True)\n    prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)\n    tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)\n    usuarios = serializers.ListField(",
+        "peekOfCode": "class PrestamoHerramientaSerializer(serializers.ModelSerializer):\n    herramienta_nombre = serializers.CharField(source='herramienta.nombre', read_only=True)\n    class Meta:\n        model = PrestamoHerramienta\n        fields = '__all__'\nclass ActividadSerializer(serializers.ModelSerializer):\n    prestamos_insumos = PrestamoInsumoSerializer(many=True, read_only=True)\n    prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)\n    tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)\n    usuarios = serializers.ListField(child=serializers.IntegerField(), write_only=True)",
         "detail": "apps.Cultivo.actividades.api.serializers",
         "documentation": {}
     },
@@ -10509,7 +10781,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.actividades.api.serializers",
         "description": "apps.Cultivo.actividades.api.serializers",
-        "peekOfCode": "class ActividadSerializer(serializers.ModelSerializer):\n    prestamos_insumos = PrestamoInsumoSerializer(many=True, read_only=True)\n    prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)\n    tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)\n    usuarios = serializers.ListField(\n        child=serializers.IntegerField(), write_only=True\n    )\n    usuarios_data = UsuarioActividadSerializer(source='usuarios', many=True, read_only=True)  \n    insumos = serializers.ListField(\n        child=serializers.DictField(), write_only=True, required=False",
+        "peekOfCode": "class ActividadSerializer(serializers.ModelSerializer):\n    prestamos_insumos = PrestamoInsumoSerializer(many=True, read_only=True)\n    prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)\n    tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)\n    usuarios = serializers.ListField(child=serializers.IntegerField(), write_only=True)\n    usuarios_data = UsuarioActividadSerializer(source='usuarios', many=True, read_only=True)\n    insumos = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)\n    herramientas = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)\n    class Meta:\n        model = Actividad",
         "detail": "apps.Cultivo.actividades.api.serializers",
         "documentation": {}
     },
@@ -10518,7 +10790,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.actividades.api.serializers",
         "description": "apps.Cultivo.actividades.api.serializers",
-        "peekOfCode": "class FinalizarActividadSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Actividad\n        fields = ['fecha_fin']\n    def validate(self, data):\n        data['estado'] = 'COMPLETADA'\n        if not data.get('fecha_fin'):\n            raise serializers.ValidationError(\"La fecha de finalización es requerida\")\n        return data",
+        "peekOfCode": "class FinalizarActividadSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Actividad\n        fields = ['fecha_fin']\n    def validate(self, data):\n        data['estado'] = 'COMPLETADA'\n        if not data.get('fecha_fin'):\n            raise serializers.ValidationError(\"La fecha de finalización es requerida\")\n        return data\n    def update(self, instance, validated_data):",
         "detail": "apps.Cultivo.actividades.api.serializers",
         "documentation": {}
     },
@@ -10586,6 +10858,15 @@
         "documentation": {}
     },
     {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Cultivo.actividades.migrations.0006_prestamoherramienta_bodega_herramienta",
+        "description": "apps.Cultivo.actividades.migrations.0006_prestamoherramienta_bodega_herramienta",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0005_remove_actividad_cantidadusada_and_more'),\n        ('bodega_herramienta', '0006_alter_bodegaherramienta_options_and_more'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='prestamoherramienta',\n            name='bodega_herramienta',\n            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='bodega_herramienta.bodegaherramienta'),",
+        "detail": "apps.Cultivo.actividades.migrations.0006_prestamoherramienta_bodega_herramienta",
+        "documentation": {}
+    },
+    {
         "label": "ActividadesConfig",
         "kind": 6,
         "importPath": "apps.Cultivo.actividades.apps",
@@ -10617,7 +10898,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.actividades.models",
         "description": "apps.Cultivo.actividades.models",
-        "peekOfCode": "class PrestamoHerramienta(models.Model):\n    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='prestamos_herramientas')\n    herramienta = models.ForeignKey('herramientas.Herramienta', on_delete=models.CASCADE)\n    entregada = models.BooleanField(default=True)\n    devuelta = models.BooleanField(default=False)\n    fecha_devolucion = models.DateTimeField(null=True, blank=True)\n    def __str__(self):\n        return f\"{self.herramienta.nombre} prestada a {self.actividad}\"",
+        "peekOfCode": "class PrestamoHerramienta(models.Model):\n    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='prestamos_herramientas')\n    herramienta = models.ForeignKey('herramientas.Herramienta', on_delete=models.CASCADE)\n    bodega_herramienta = models.ForeignKey(\n        'bodega_herramienta.BodegaHerramienta',\n        on_delete=models.CASCADE,\n        null=True,\n        blank=True\n    )\n    entregada = models.BooleanField(default=True)",
         "detail": "apps.Cultivo.actividades.models",
         "documentation": {}
     },
@@ -12170,6 +12451,60 @@
         "documentation": {}
     },
     {
+        "label": "costo_beneficio_router",
+        "kind": 5,
+        "importPath": "apps.Finanzas.services.router",
+        "description": "apps.Finanzas.services.router",
+        "peekOfCode": "costo_beneficio_router = DefaultRouter()\ncosto_beneficio_router.register(\n    prefix='costo-beneficio', \n    viewset=CostoBeneficioViewSet, \n    basename='costo-beneficio'\n)\nurlpatterns = costo_beneficio_router.urls",
+        "detail": "apps.Finanzas.services.router",
+        "documentation": {}
+    },
+    {
+        "label": "urlpatterns",
+        "kind": 5,
+        "importPath": "apps.Finanzas.services.router",
+        "description": "apps.Finanzas.services.router",
+        "peekOfCode": "urlpatterns = costo_beneficio_router.urls",
+        "detail": "apps.Finanzas.services.router",
+        "documentation": {}
+    },
+    {
+        "label": "CosechaSerializer",
+        "kind": 6,
+        "importPath": "apps.Finanzas.services.serializers",
+        "description": "apps.Finanzas.services.serializers",
+        "peekOfCode": "class CosechaSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Cosecha\n        fields = ['id', 'cantidad', 'fecha', 'unidades_de_medida']\nclass AnalisisCostoBeneficioSerializer(serializers.Serializer):\n    cosecha = CosechaSerializer()\n    costos = serializers.DictField(child=serializers.DecimalField(max_digits=12, decimal_places=2))\n    ingresos = serializers.DictField(child=serializers.DecimalField(max_digits=12, decimal_places=2))\n    metricas = serializers.DictField(child=serializers.DecimalField(max_digits=12, decimal_places=2))",
+        "detail": "apps.Finanzas.services.serializers",
+        "documentation": {}
+    },
+    {
+        "label": "AnalisisCostoBeneficioSerializer",
+        "kind": 6,
+        "importPath": "apps.Finanzas.services.serializers",
+        "description": "apps.Finanzas.services.serializers",
+        "peekOfCode": "class AnalisisCostoBeneficioSerializer(serializers.Serializer):\n    cosecha = CosechaSerializer()\n    costos = serializers.DictField(child=serializers.DecimalField(max_digits=12, decimal_places=2))\n    ingresos = serializers.DictField(child=serializers.DecimalField(max_digits=12, decimal_places=2))\n    metricas = serializers.DictField(child=serializers.DecimalField(max_digits=12, decimal_places=2))",
+        "detail": "apps.Finanzas.services.serializers",
+        "documentation": {}
+    },
+    {
+        "label": "AnalisisCostoBeneficio",
+        "kind": 6,
+        "importPath": "apps.Finanzas.services.services",
+        "description": "apps.Finanzas.services.services",
+        "peekOfCode": "class AnalisisCostoBeneficio:\n    @staticmethod\n    def calcular_para_cosecha(cosecha):\n        resultados = {\n            'cosecha': {\n                'id': cosecha.id,\n                'cantidad': cosecha.cantidad,\n                'fecha': cosecha.fecha,\n                'cultivo': str(cosecha.id_cultivo)\n            },",
+        "detail": "apps.Finanzas.services.services",
+        "documentation": {}
+    },
+    {
+        "label": "CostoBeneficioViewSet",
+        "kind": 6,
+        "importPath": "apps.Finanzas.services.views",
+        "description": "apps.Finanzas.services.views",
+        "peekOfCode": "class CostoBeneficioViewSet(viewsets.ViewSet):\n    @action(detail=False, methods=['get'], url_path='por-cosecha/(?P<cosecha_id>\\d+)')\n    def por_cosecha(self, request, cosecha_id=None):\n        try:\n            cosecha = Cosecha.objects.get(pk=cosecha_id)\n            analisis = AnalisisCostoBeneficio.calcular_para_cosecha(cosecha)\n            return Response(analisis)\n        except Cosecha.DoesNotExist:\n            return Response(\n                {\"error\": \"Cosecha no encontrada\"},",
+        "detail": "apps.Finanzas.services.views",
+        "documentation": {}
+    },
+    {
         "label": "ventaRouter",
         "kind": 5,
         "importPath": "apps.Finanzas.venta.api.router",
@@ -12363,7 +12698,7 @@
         "kind": 6,
         "importPath": "apps.Inventario.bodega_herramienta.api.consumers",
         "description": "apps.Inventario.bodega_herramienta.api.consumers",
-        "peekOfCode": "class BodegaHerramientaConsumer(AsyncWebsocketConsumer):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.sent_notifications = set()\n        self.check_task = None\n        self.user_id = None\n        self.group_name = None\n    async def connect(self):\n        self.user_id = self.scope['url_route']['kwargs'].get('user_id')\n        if self.user_id == 'admin':",
+        "peekOfCode": "class BodegaHerramientaConsumer(AsyncWebsocketConsumer):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.sent_notifications = set()\n        self.check_task = None\n        self.user_id = None\n        self.group_name = None\n    async def connect(self):\n        self.user_id = self.scope['url_route']['kwargs'].get('user_id')\n        logger.info(f\"Intento de conexión WebSocket con user_id: {self.user_id}\")",
         "detail": "apps.Inventario.bodega_herramienta.api.consumers",
         "documentation": {}
     },
@@ -12426,7 +12761,16 @@
         "kind": 6,
         "importPath": "apps.Inventario.bodega_herramienta.api.serializers",
         "description": "apps.Inventario.bodega_herramienta.api.serializers",
-        "peekOfCode": "class BodegaHerramientaSerializer(serializers.ModelSerializer):\n    bodega = serializers.PrimaryKeyRelatedField(queryset=Bodega.objects.all())\n    herramienta = serializers.PrimaryKeyRelatedField(queryset=Herramienta.objects.all())\n    creador = serializers.PrimaryKeyRelatedField(queryset=Usuarios.objects.all(), allow_null=True)\n    class Meta:\n        model = BodegaHerramienta\n        fields = ['id', 'bodega', 'herramienta', 'cantidad', 'creador', 'costo_total', 'cantidad_prestada']",
+        "peekOfCode": "class BodegaHerramientaSerializer(serializers.ModelSerializer):\n    bodega = serializers.PrimaryKeyRelatedField(queryset=Bodega.objects.all())\n    herramienta = serializers.PrimaryKeyRelatedField(queryset=Herramienta.objects.all())\n    creador = serializers.PrimaryKeyRelatedField(queryset=Usuarios.objects.all(), allow_null=True)\n    class Meta:\n        model = BodegaHerramienta\n        fields = ['id', 'bodega', 'herramienta', 'cantidad', 'creador', 'costo_total', 'cantidad_prestada']\nclass PrestamoHerramientaSerializer(serializers.ModelSerializer):\n    herramienta = serializers.PrimaryKeyRelatedField(queryset=Herramienta.objects.all())\n    bodega_herramienta = serializers.PrimaryKeyRelatedField(",
+        "detail": "apps.Inventario.bodega_herramienta.api.serializers",
+        "documentation": {}
+    },
+    {
+        "label": "PrestamoHerramientaSerializer",
+        "kind": 6,
+        "importPath": "apps.Inventario.bodega_herramienta.api.serializers",
+        "description": "apps.Inventario.bodega_herramienta.api.serializers",
+        "peekOfCode": "class PrestamoHerramientaSerializer(serializers.ModelSerializer):\n    herramienta = serializers.PrimaryKeyRelatedField(queryset=Herramienta.objects.all())\n    bodega_herramienta = serializers.PrimaryKeyRelatedField(\n        queryset=BodegaHerramienta.objects.all(),\n        required=False,\n        allow_null=True\n    )\n    class Meta:\n        model = PrestamoHerramienta\n        fields = ['id', 'herramienta', 'bodega_herramienta', 'entregada', 'devuelta', 'fecha_devolucion']",
         "detail": "apps.Inventario.bodega_herramienta.api.serializers",
         "documentation": {}
     },
@@ -12444,7 +12788,7 @@
         "kind": 2,
         "importPath": "apps.Inventario.bodega_herramienta.api.signals",
         "description": "apps.Inventario.bodega_herramienta.api.signals",
-        "peekOfCode": "def notificar_prestamo_herramienta(sender, instance, created, **kwargs):\n    channel_layer = get_channel_layer()\n    timestamp = str(int(timezone.now().timestamp() * 1000))\n    herramienta = BodegaHerramienta.objects.filter(herramienta_id=instance.herramienta_id).first()\n    if not herramienta:\n        return\n    herramienta_hash = hashlib.md5(f\"{herramienta.id}prestamo_{instance.id}{timestamp}\".encode()).hexdigest()\n    user_id = herramienta.creador.id if herramienta.creador else 1\n    user_group_name = f\"bodega_herramienta_user_{user_id}\"\n    admin_group_name = \"bodega_herramienta_admin_group\"",
+        "peekOfCode": "def notificar_prestamo_herramienta(sender, instance, created, **kwargs):\n    channel_layer = get_channel_layer()\n    timestamp = str(int(timezone.now().timestamp() * 1000))\n    herramienta = instance.bodega_herramienta\n    if not herramienta:\n        logger.warning(f\"No se encontró BodegaHerramienta para PrestamoHerramienta ID {instance.id}\")\n        return\n    herramienta_hash = hashlib.md5(f\"{herramienta.id}prestamo_{instance.id}{timestamp}\".encode()).hexdigest()\n    user_id = herramienta.creador.id if herramienta.creador else 1\n    user_group_name = f\"bodega_herramienta_user_{user_id}\"",
         "detail": "apps.Inventario.bodega_herramienta.api.signals",
         "documentation": {}
     },
@@ -12518,6 +12862,24 @@
         "description": "apps.Inventario.bodega_herramienta.migrations.0006_alter_bodegaherramienta_options_and_more",
         "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('bodega_herramienta', '0005_alter_bodegaherramienta_cantidad'),\n        migrations.swappable_dependency(settings.AUTH_USER_MODEL),\n    ]\n    operations = [\n        migrations.AlterModelOptions(\n            name='bodegaherramienta',\n            options={'verbose_name': 'Bodega Herramienta', 'verbose_name_plural': 'Bodega Herramientas'},\n        ),",
         "detail": "apps.Inventario.bodega_herramienta.migrations.0006_alter_bodegaherramienta_options_and_more",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Inventario.bodega_herramienta.migrations.0007_remove_bodegaherramienta_cantidad_prestada",
+        "description": "apps.Inventario.bodega_herramienta.migrations.0007_remove_bodegaherramienta_cantidad_prestada",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('bodega_herramienta', '0006_alter_bodegaherramienta_options_and_more'),\n    ]\n    operations = [\n        migrations.RemoveField(\n            model_name='bodegaherramienta',\n            name='cantidad_prestada',\n        ),\n    ]",
+        "detail": "apps.Inventario.bodega_herramienta.migrations.0007_remove_bodegaherramienta_cantidad_prestada",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Inventario.bodega_herramienta.migrations.0008_bodegaherramienta_cantidad_prestada",
+        "description": "apps.Inventario.bodega_herramienta.migrations.0008_bodegaherramienta_cantidad_prestada",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('bodega_herramienta', '0007_remove_bodegaherramienta_cantidad_prestada'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='bodegaherramienta',\n            name='cantidad_prestada',\n            field=models.PositiveIntegerField(default=0),\n        ),",
+        "detail": "apps.Inventario.bodega_herramienta.migrations.0008_bodegaherramienta_cantidad_prestada",
         "documentation": {}
     },
     {

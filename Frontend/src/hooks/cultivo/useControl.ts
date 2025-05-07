@@ -57,25 +57,54 @@ export const useControl = (id: number) => {
   });
 };
 
+
 export const useCrearControl = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: crearControl,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["controles"] });
-      addToast({
-        title: "Éxito",
-        description: "Control registrado correctamente",
-        timeout: 3000,
-      });
+    onSuccess: (data) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: ["controles"] });
+        addToast({
+          title: "Éxito",
+          description: "Control registrado correctamente",
+          timeout: 3000,
+          color:"success"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "No se pudo registrar el control",
+          timeout: 3000,
+          color:"danger"
+        });
+      }
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color:"warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar el control",
+          timeout: 3000,
+          color:"danger"
+        });
+      }
     },
   });
 };
 
+
 export const useActualizarControl = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, control }: { id: number; control: Partial<Control> }) => 
+    mutationFn: ({ id, control }: { id: number; control: Partial<Control> }) =>
       actualizarControl(id, control),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["controles"] });
@@ -83,7 +112,25 @@ export const useActualizarControl = () => {
         title: "Éxito",
         description: "Control actualizado correctamente",
         timeout: 3000,
+        color: "success",
       });
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "danger",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al actualizar el control",
+          timeout: 3000,
+          color: "danger",
+        });
+      }
     },
   });
 };
@@ -98,7 +145,25 @@ export const useEliminarControl = () => {
         title: "Éxito",
         description: "Control eliminado correctamente",
         timeout: 3000,
+        color: "success",
       });
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "danger",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar el control",
+          timeout: 3000,
+          color: "danger",
+        });
+      }
     },
   });
 };

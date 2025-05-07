@@ -54,6 +54,7 @@ export const useRegistrarTipoActividad = () => {
         title: "Éxito",
         description: "Tipo de actividad registrado con éxito",
         timeout: 3000,
+        color:"success"
       });
     },
     onError: (error: any) => {
@@ -62,12 +63,14 @@ export const useRegistrarTipoActividad = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar el tipo de actividad",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -95,7 +98,7 @@ export const useActualizarTipoActividad = () => {
     mutationFn: ({ id, tipoActividad }: { id: number; tipoActividad: TipoActividad }) => actualizarTipoActividad(id, tipoActividad),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tipoActividades"] });
-      addToast({ title: "Éxito", description: "Tipo de actividad actualizado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de actividad actualizado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -103,12 +106,14 @@ export const useActualizarTipoActividad = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar el tipo de actividad",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -130,7 +135,7 @@ export const useEliminarTipoActividad = () => {
     mutationFn: (id: number) => eliminarTipoActividad(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tipoActividades"] });
-      addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -138,12 +143,14 @@ export const useEliminarTipoActividad = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar el tipo de actividad",
           timeout: 3000,
+          color:"danger"
         });
       }
     },

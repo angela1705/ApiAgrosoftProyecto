@@ -51,13 +51,14 @@
     };
 
     const transformedData = (bancales ?? []).map((bancal) => ({
+      
       id: bancal.id?.toString() || '',
       nombre: bancal.nombre,
       TamX: bancal.TamX,
       TamY: bancal.TamY,
       posX: bancal.posX,
       posY: bancal.posY,
-      fk_lote: lotes?.find((lote) => lote.id === bancal.fk_lote)?.nombre || 'Sin lote',
+      fk_lote: lotes?.find((lote) => lote.id === bancal.lote)?.nombre || 'Sin lote',
       acciones: (
         <>
           <button

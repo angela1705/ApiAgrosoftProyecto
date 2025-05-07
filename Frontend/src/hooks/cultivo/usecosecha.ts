@@ -21,7 +21,7 @@ const registrarCosecha = async (cosecha: Cosecha) => {
   const formData = new FormData();
   formData.append("id_cultivo", cosecha.id_cultivo.toString());
   formData.append("cantidad", cosecha.cantidad.toString());
-  formData.append("unidades_de_medida", cosecha.unidades_de_medida);
+  formData.append("unidades_de_medida", cosecha.unidades_de_medida.toString());
   formData.append("fecha", cosecha.fecha);
 
   return api.post(API_URL, formData, {
@@ -39,7 +39,7 @@ const actualizarCosecha = async (id: number, cosecha: Cosecha) => {
   const formData = new FormData();
   formData.append("id_cultivo", cosecha.id_cultivo.toString());
   formData.append("cantidad", cosecha.cantidad.toString());
-  formData.append("unidades_de_medida", cosecha.unidades_de_medida);
+  formData.append("unidades_de_medida", cosecha.unidades_de_medida.toString());
   formData.append("fecha", cosecha.fecha);
 
   return api.put(`${API_URL}${id}/`, formData, {
@@ -70,7 +70,7 @@ export const useRegistrarCosecha = () => {
   return useMutation({
     mutationFn: registrarCosecha,
     onSuccess: () => {
-      addToast({ title: "Éxito", description: "Cosecha registrada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Cosecha registrada con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -78,12 +78,14 @@ export const useRegistrarCosecha = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar la cosecha",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -96,7 +98,7 @@ export const useActualizarCosecha = () => {
     mutationFn: ({ id, cosecha }: { id: number; cosecha: Cosecha }) => actualizarCosecha(id, cosecha),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cosechas"] });
-      addToast({ title: "Éxito", description: "Cosecha actualizada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Cosecha actualizada con éxito", timeout: 3000, color:"success"});
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -104,12 +106,14 @@ export const useActualizarCosecha = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"danger"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al actualizar la cosecha",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
@@ -122,7 +126,7 @@ export const useEliminarCosecha = () => {
     mutationFn: (id: number) => eliminarCosecha(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cosechas"] });
-      addToast({ title: "Éxito", description: "Cosecha eliminada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Cosecha eliminada con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -130,12 +134,14 @@ export const useEliminarCosecha = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
           timeout: 3000,
+          color:"warning"
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al eliminar la cosecha",
           timeout: 3000,
+          color:"danger"
         });
       }
     },
