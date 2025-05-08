@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import DefaultLayout from "@/layouts/default";
-import {useRegistrarPrecioProducto,useUnidadesMedida,useCrearUnidadMedida,} from "@/hooks/inventario/usePrecio_Producto";
+import { useRegistrarPrecioProducto, useUnidadesMedida, useCrearUnidadMedida } from "@/hooks/inventario/usePrecio_Producto";
 import { useCosechas } from "@/hooks/cultivo/usecosecha";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Formulario from "@/components/globales/Formulario";
 import ReuModal from "@/components/globales/ReuModal";
+import { ModalCosecha } from "@/components/cultivo/ModalCosecha";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 import { addToast } from "@heroui/react";
+import { Plus } from 'lucide-react';
 
 const PrecioProductoPage: React.FC = () => {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { data: cosechas } = useCosechas();
-    const { data: unidadesMedida, isLoading: isLoadingUnidades } =
-        useUnidadesMedida();
+    const { data: unidadesMedida, isLoading: isLoadingUnidades } = useUnidadesMedida();
     const registrarPrecioProducto = useRegistrarPrecioProducto();
     const crearUnidadMedida = useCrearUnidadMedida();
 
@@ -21,6 +24,7 @@ const PrecioProductoPage: React.FC = () => {
         Omit<PrecioProducto, "id" | "unidad_medida"> & { unidad_medida_id?: number }
     >({
         cosecha: 0,
+        nombre_cultivo: "",
         precio: 0,
         fecha_registro: new Date().toISOString().slice(0, 10),
         stock: 0,
@@ -34,7 +38,8 @@ const PrecioProductoPage: React.FC = () => {
         nombre: "",
         descripcion: "",
     });
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUnidadModalOpen, setIsUnidadModalOpen] = useState(false);
+    const [isCosechaModalOpen, setIsCosechaModalOpen] = useState(false);
 
     const handleSubmitPrecioProducto = (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,6 +55,7 @@ const PrecioProductoPage: React.FC = () => {
             onSuccess: () => {
                 setPrecioProducto({
                     cosecha: 0,
+                    nombre_cultivo: "",
                     precio: 0,
                     fecha_registro: new Date().toISOString().slice(0, 10),
                     stock: 0,
@@ -63,7 +69,7 @@ const PrecioProductoPage: React.FC = () => {
     const handleSubmitUnidadMedida = () => {
         crearUnidadMedida.mutate(nuevaUnidad, {
             onSuccess: () => {
-                setIsModalOpen(false);
+                setIsUnidadModalOpen(false);
                 setNuevaUnidad({ nombre: "", descripcion: "" });
             },
         });
@@ -81,63 +87,66 @@ const PrecioProductoPage: React.FC = () => {
                 buttonText="Guardar"
                 isSubmitting={registrarPrecioProducto.isPending}
             >
-                <div className="flex items-end gap-2">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Cosecha
-                        </label>
-                        <select
-                            value={precioProducto.cosecha || ""}
-                            onChange={(e) =>
-                                setPrecioProducto({
-                                    ...precioProducto,
-                                    cosecha: Number(e.target.value),
-                                })
-                            }
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Cosecha</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setIsCosechaModalOpen(true)}
+                            type="button"
                         >
-                            <option value="">Seleccione una cosecha</option>
-                            {cosechas?.map((cosecha) => (
-                                <option key={cosecha.id} value={cosecha.id}>
-                                    {`Cosecha ${cosecha.id_cultivo} - ${cosecha.fecha}`}
-                                </option>
-                            ))}
-                        </select>
+                            <Plus className="h-4 w-4" />
+                        </button>
                     </div>
-                </div>
-                <div className="flex items-end gap-2">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Unidad de Medida
-                        </label>
-                        <select
-                            value={precioProducto.unidad_medida_id || ""}
-                            onChange={(e) =>
-                                setPrecioProducto({
-                                    ...precioProducto,
-                                    unidad_medida_id: e.target.value
-                                        ? Number(e.target.value)
-                                        : undefined,
-                                })
-                            }
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
-                            disabled={isLoadingUnidades}
-                        >
-                            <option value="">Seleccione una unidad</option>
-                            {unidadesMedida?.map((unidad) => (
-                                <option key={unidad.id} value={unidad.id}>
-                                    {unidad.nombre}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => setIsModalOpen(true)}
-                        className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    <select
+                        value={precioProducto.cosecha || ""}
+                        onChange={(e) =>
+                            setPrecioProducto({
+                                ...precioProducto,
+                                cosecha: Number(e.target.value),
+                            })
+                        }
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
-                        Nueva Unidad
-                    </button>
+                        <option value="">Seleccione una cosecha</option>
+                        {cosechas?.map((cosecha) => (
+                            <option key={cosecha.id} value={cosecha.id}>
+                                {`Cosecha ${cosecha.id_cultivo} - ${cosecha.fecha}`}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setIsUnidadModalOpen(true)}
+                            type="button"
+                        >
+                            <Plus className="h-4 w-4" />
+                        </button>
+                    </div>
+                    <select
+                        value={precioProducto.unidad_medida_id || ""}
+                        onChange={(e) =>
+                            setPrecioProducto({
+                                ...precioProducto,
+                                unidad_medida_id: e.target.value
+                                    ? Number(e.target.value)
+                                    : undefined,
+                            })
+                        }
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                        disabled={isLoadingUnidades}
+                    >
+                        <option value="">Seleccione una unidad</option>
+                        {unidadesMedida?.map((unidad) => (
+                            <option key={unidad.id} value={unidad.id}>
+                                {unidad.nombre}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <ReuInput
                     label="Precio"
@@ -206,8 +215,8 @@ const PrecioProductoPage: React.FC = () => {
             </Formulario>
 
             <ReuModal
-                isOpen={isModalOpen}
-                onOpenChange={setIsModalOpen}
+                isOpen={isUnidadModalOpen}
+                onOpenChange={setIsUnidadModalOpen}
                 title="Crear Nueva Unidad de Medida"
                 onConfirm={handleSubmitUnidadMedida}
             >
@@ -237,6 +246,12 @@ const PrecioProductoPage: React.FC = () => {
                     }
                 />
             </ReuModal>
+
+            <ModalCosecha
+                isOpen={isCosechaModalOpen}
+                onOpenChange={setIsCosechaModalOpen}
+                onSuccess={() => queryClient.invalidateQueries({ queryKey: ["cosechas"] })}
+            />
         </DefaultLayout>
     );
 };

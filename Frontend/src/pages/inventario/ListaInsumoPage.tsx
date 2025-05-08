@@ -173,8 +173,6 @@ const ListaInsumoPage: React.FC = () => {
                 <p className="text-gray-600">Cargando...</p>
             ) : error ? (
                 <p className="text-red-600">Error al cargar los insumos: {error.message}</p>
-            ) : transformedData.length === 0 ? (
-                <p className="text-gray-600">No hay insumos registrados.</p>
             ) : (
                 <Tabla columns={columns} data={transformedData} />
             )}
@@ -186,10 +184,8 @@ const ListaInsumoPage: React.FC = () => {
                 onConfirm={async () => {
                     if (selectedInsumo && selectedInsumo.id !== undefined) {
                         if (selectedInsumo.es_compuesto && selectedInsumo.componentes) {
-                            
                             const cantidadDiferencia = selectedInsumo.cantidad - originalCantidad;
                             if (cantidadDiferencia !== 0) {
-                                
                                 for (const componente of selectedInsumo.componentes) {
                                     const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
                                     if (!insumoComponente) {
@@ -208,8 +204,6 @@ const ListaInsumoPage: React.FC = () => {
                                         return;
                                     }
                                 }
-
-                                
                                 for (const componente of selectedInsumo.componentes) {
                                     const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
                                     if (insumoComponente && insumoComponente.id !== undefined) {
@@ -228,8 +222,6 @@ const ListaInsumoPage: React.FC = () => {
                                 }
                             }
                         }
-
-                        
                         actualizarMutation.mutate({ 
                             id: selectedInsumo.id, 
                             insumo: {
