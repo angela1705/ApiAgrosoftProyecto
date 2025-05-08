@@ -9,13 +9,11 @@ import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from "lucide-react";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 
-
 const formatCOPNumber = (value: number | string): string => {
     const num = typeof value === 'string' ? parseFloat(value.replace(/\./g, '')) : value;
     if (isNaN(num)) return '';
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
-
 
 const parseCOPNumber = (value: string): number => {
     return parseFloat(value.replace(/\./g, '')) || 0;
@@ -125,10 +123,6 @@ const ListaPrecioProductoPage: React.FC = () => {
 
             {isLoading ? (
                 <p className="text-gray-600">Cargando...</p>
-            ) : transformedData.length === 0 ? (
-                <p className="text-gray-600">
-                    No hay precios de productos registrados.
-                </p>
             ) : (
                 <Tabla columns={columns} data={transformedData} />
             )}

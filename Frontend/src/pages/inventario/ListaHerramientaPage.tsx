@@ -56,7 +56,7 @@ const ListaHerramientaPage: React.FC = () => {
         return numericValue ? Number(numericValue) : 0;
     };
 
-    // Calcular el valor total
+    
     const totalValor = (herramientas ?? []).reduce((sum, herramienta) => {
         return sum + herramienta.cantidad * herramienta.precio;
     }, 0);
@@ -82,7 +82,7 @@ const ListaHerramientaPage: React.FC = () => {
                 </>
             ),
         })),
-        // Fila para el total
+        
         {
             id: "total",
             nombre: "Total",
