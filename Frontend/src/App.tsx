@@ -11,7 +11,7 @@ import BlogPage from "./pages/globales/blog";
 import Calendar from "./pages/globales/Calendar";
 import AboutPage from "./pages/globales/about";
 import DashboardPage from "./pages/globales/Dashboard";
-import Mapa from "./pages/globales/Mapa";
+//import Mapa from "./pages/globales/Mapa";
 
 // Cultivo
 import TipoEspeciePage from "./pages/cultivo/TipoEspeciePage";
@@ -49,6 +49,7 @@ import AfeccionesPage from "./pages/cultivo/AfeccionesPage";
 import ListaAfecciones from "./pages/cultivo/ListaAfeccionesPage";
 import ControlPage from "./pages/cultivo/ControlPage";
 import ListaControlPage from "./pages/cultivo/ListaControlPage";
+import { TrazabilidadCosecha } from "./pages/cultivo/TrazabilidadCosecha";
 // Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
 import ListaHerramientaPage from "./pages/inventario/ListaHerramientaPage";
@@ -162,7 +163,6 @@ const App: React.FC = () => {
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/calendario" element={<Calendar />} />
               <Route path="/about" element={<AboutPage />} />
-              <Route path="/mapa" element={<Mapa />} />
 
               {/* Usuarios */}
               <Route path="/perfil" element={<PerfilPage />} />
@@ -203,6 +203,8 @@ const App: React.FC = () => {
               <Route path="/cultivo/listafecciones/" element={<ListaAfecciones />} />
               <Route path="/cultivo/control/" element={<ControlPage />} />
               <Route path="/cultivo/listacontrol/" element={<ListaControlPage />} />
+              <Route path="/cultivo/trazabilidad/" element={<TrazabilidadCosecha />} />
+              <Route path="/cultivo/cultivo/" element={<CultivoPage />} />
 
               <Route path="/cultivo/cosecha" element={<CosechaPage />} />
               <Route path="/cultivo/listarcosechas" element={<ListaCosechasPage />} />
