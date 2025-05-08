@@ -4,5 +4,8 @@ export interface Venta {
     cantidad: number;    
     total: number;     
     fecha: string;      
-    precio: number;      
+    precio: number;
+    monto_entregado: number,
+    cambio: number,
+    unidades_de_medida: number,      
 }
