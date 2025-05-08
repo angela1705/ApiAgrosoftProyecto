@@ -8,6 +8,7 @@ import { usePreciosProductos } from "@/hooks/inventario/usePrecio_Producto";
 import Tabla from "@/components/globales/Tabla";
 import { Trash2 } from 'lucide-react';
 import { PagoModal } from "@/components/finanzas/PagoModal";
+import { TiqueteModal } from "@/components/finanzas/TiqueteModal";
 
 const VentaPage: React.FC = () => {
   const [venta, setVenta] = useState<Venta>({
@@ -16,12 +17,16 @@ const VentaPage: React.FC = () => {
     precio: 0,
     total: 0,
     fecha: '',
+    monto_entregado: 0,
+    cambio: 0,
+    unidades_de_medida: 0,
   });
 
   const [productosAgregados, setProductosAgregados] = useState<Venta[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isTiqueteModalOpen, setIsTiqueteModalOpen] = useState(false);
+  const [ventaIdForTiquete, setVentaIdForTiquete] = useState<number | null>(null);
   const { registrarVenta, isRegistrando } = useVenta();
   const { data: precio_producto, isLoading: precioProductoLoading } = usePreciosProductos();
   const navigate = useNavigate();
@@ -30,7 +35,9 @@ const VentaPage: React.FC = () => {
     const { value } = e.target;
     setVenta((prev) => ({
       ...prev,
-      [field]: field === "cantidad" || field === "precio" || field === "producto" ? Number(value) : value,
+      [field]: field === "cantidad" || field === "precio" || field === "producto" || field === "unidades_de_medida" 
+        ? Number(value) 
+        : value,
     }));
   };
 
@@ -42,6 +49,7 @@ const VentaPage: React.FC = () => {
       ...venta,
       precio: productoSeleccionado.precio,
       total: venta.cantidad * productoSeleccionado.precio,
+      unidades_de_medida: productoSeleccionado.unidad_medida?.id || 0,
     };
 
     if (editIndex !== null) {
@@ -59,6 +67,9 @@ const VentaPage: React.FC = () => {
       precio: 0,
       total: 0,
       fecha: venta.fecha,
+      monto_entregado: 0,
+      cambio: 0,
+      unidades_de_medida: 0,
     });
   };
 
@@ -70,6 +81,7 @@ const VentaPage: React.FC = () => {
   const columns = [
     { name: "Producto", uid: "producto" },
     { name: "Cantidad", uid: "cantidad" },
+    { name: "Unidad", uid: "unidad" },
     { name: "Precio Unitario", uid: "precio" },
     { name: "Total", uid: "total" },
     { name: "Quitar", uid: "acciones" },
@@ -77,6 +89,7 @@ const VentaPage: React.FC = () => {
   
   const transformedData = productosAgregados.map((venta, index) => {
     const productoNombre = precio_producto?.find(p => p.id === venta.producto)?.cultivo || "Desconocido";
+    const unidadNombre = precio_producto?.find(p => p.id === venta.producto)?.unidad_medida?.nombre || "unidad";
     const precio = Number(venta.precio) || 0;
     const total = Number(venta.total) || 0;
     
@@ -84,6 +97,7 @@ const VentaPage: React.FC = () => {
       id: index.toString(),
       producto: productoNombre,
       cantidad: venta.cantidad,
+      unidad: unidadNombre,
       precio: `${precio.toFixed(2)}`,
       total: `${total.toFixed(2)}`,
       acciones: (
@@ -101,27 +115,37 @@ const VentaPage: React.FC = () => {
     return productosAgregados.reduce((sum, item) => sum + item.total, 0);
   };
 
-  const handleFinalizarVenta = () => {
-    productosAgregados.forEach(producto => {
-      registrarVenta(
-        { ...producto, fecha: venta.fecha },
-        {
-          onSuccess: () => {
-            setProductosAgregados([]);
-            setVenta({
-              producto: 0,
-              cantidad: 0,
-              precio: 0,
-              total: 0,
-              fecha: new Date().toISOString().split("T")[0],
-            });
-            setIsModalOpen(false);
-          },
-        }
-      );
-    });
+  const handleFinalizarVenta = (montoEntregado: number) => {
+    const ventasConMonto = productosAgregados.map(producto => ({
+      ...producto,
+      monto_entregado: montoEntregado,
+      fecha: venta.fecha || new Date().toISOString().split("T")[0],
+    }));
+
+    registrarVenta(
+      ventasConMonto[0], // Solo registramos uno como ejemplo
+      {
+        onSuccess: (ventaRegistrada) => {
+          setProductosAgregados([]);
+          setVenta({
+            producto: 0,
+            cantidad: 0,
+            precio: 0,
+            total: 0,
+            fecha: new Date().toISOString().split("T")[0],
+            monto_entregado: 0,
+            cambio: 0,
+            unidades_de_medida: 0,
+          });
+          setIsModalOpen(false);
+          
+          // Abrir modal de tiquete con el ID de la venta
+          setVentaIdForTiquete(ventaRegistrada.id);
+          setIsTiqueteModalOpen(true);
+        },
+      }
+    );
   };
-  console.log(precio_producto)
 
   return (
     <DefaultLayout>
@@ -142,7 +166,7 @@ const VentaPage: React.FC = () => {
                 <option value="0">Seleccione un producto</option>
                 {precio_producto?.map((precioProducto) => (
                   <option key={precioProducto.id} value={precioProducto.id}>
-                    {precioProducto.cosecha}
+                    {precioProducto.cosecha} - {precioProducto.unidad_medida?.nombre || 'unidad'}
                   </option>
                 ))}
               </select>
@@ -216,6 +240,11 @@ const VentaPage: React.FC = () => {
           total={calcularTotalVenta()}
           onConfirm={handleFinalizarVenta}
         />
+        <TiqueteModal
+        isOpen={isTiqueteModalOpen}
+        onOpenChange={setIsTiqueteModalOpen}
+        ventaId={ventaIdForTiquete}
+      />
       </div>
     </DefaultLayout>
   );

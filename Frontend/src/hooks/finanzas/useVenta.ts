@@ -5,6 +5,7 @@ import { Venta } from "@/types/finanzas/Venta";
 
 const API_URL = "http://127.0.0.1:8000/finanzas/venta/";
 
+
 const fetchVentas = async (): Promise<Venta[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -99,3 +100,4 @@ export const useVenta = () => {
     isEliminando: eliminarMutation.isPending,
   };
 };
+

@@ -16,6 +16,9 @@ from apps.Finanzas.venta.api.serializers import VentaSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, ExtractWeekDay
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import mm
+from apps.Finanzas.venta.models import Venta
 
 class VentaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -219,3 +222,135 @@ class VentaViewSet(ModelViewSet):
         }
 
         return Response(data)
+    
+    @action(detail=True, methods=['get'])
+    def factura_pdf(self, request, pk=None):
+        """
+        Genera un PDF con la factura de una venta específica mostrando:
+        - Todos los productos vendidos en esa venta
+        - Monto entregado y cambio
+        - Fecha y hora actual del sistema
+        """
+        try:
+            # Obtenemos la venta con todas las relaciones necesarias
+            venta = Venta.objects.select_related(
+                'producto__Producto__id_cultivo',
+                'producto__unidad_medida',
+                'unidades_de_medida'
+            ).get(id=pk)
+            
+            producto = venta.producto
+            cultivo = producto.Producto.id_cultivo if producto.Producto else None
+            
+            # Obtenemos el nombre del producto
+            nombre_producto = cultivo.nombre if cultivo else "Producto sin nombre"
+            unidad_medida = producto.unidad_medida.nombre if producto.unidad_medida else "unidad"
+            
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="factura_{venta.id}.pdf"'
+
+            # Configuración del PDF
+            c = canvas.Canvas(response, pagesize=(80 * mm, 250 * mm))
+            width, height = 80 * mm, 250 * mm
+            y = height - 10 * mm  # Posición inicial desde arriba
+            
+            # Establecemos la fecha y hora actual
+            ahora = timezone.now()
+            fecha_hora_actual = ahora.strftime("%d/%m/%y, %I:%M %p")
+
+            # Encabezado
+            c.setFont("Courier-Bold", 8)
+            c.drawCentredString(width / 2, y, fecha_hora_actual)
+            y -= 5 * mm
+            c.setFont("Courier-Bold", 10)
+            c.drawCentredString(width / 2, y, "Agrosoft")
+            y -= 5 * mm
+
+            c.setFont("Courier", 8)
+            c.drawCentredString(width / 2, y, "NIT: 541235")
+            y -= 4 * mm
+            c.drawCentredString(width / 2, y, "DIR: Centro de Gestión y Desarrollo Sostenible Surcolombiano")
+            y -= 4 * mm
+            c.drawCentredString(width / 2, y, "TELS: 3132132123")
+            y -= 6 * mm
+
+            c.setFont("Courier-Bold", 8)
+            c.drawCentredString(width / 2, y, "FACTURA DE VENTA")
+            y -= 5 * mm
+
+            # Información DIAN
+            c.setFont("Courier", 7)
+            dian_info = [
+                "Documento equivalente electrónico",
+                "Autorización DIAN N° 187647056540",
+                "Vigencia hasta 2026-07-29",
+                "--------------------------------------"
+            ]
+            for line in dian_info:
+                c.drawCentredString(width / 2, y, line)
+                y -= 4 * mm
+
+            # Información de la venta
+            caja_info = [
+                f"No. Factura: {venta.id}",
+                f"Fecha: {ahora.strftime('%Y-%m-%d')}",
+                f"Hora: {ahora.strftime('%H:%M')}",
+                "Cliente: CONSUMIDOR FINAL",
+                "NIT/CC: 222222222222",
+                "--------------------------------------",
+                "DESCRIPCIÓN          CANT   V.UNIT   TOTAL",
+                "--------------------------------------"
+            ]
+            for line in caja_info:
+                c.drawCentredString(width / 2, y, line)
+                y -= 4 * mm
+
+            # Detalle del producto vendido
+            descripcion = nombre_producto[:15].ljust(15)
+            cantidad = str(venta.cantidad).rjust(3)
+            valor_unit = f"{producto.precio:,.2f}".rjust(7)
+            total = f"{venta.total:,.2f}".rjust(7)
+            linea_producto = f"{descripcion} {cantidad} {valor_unit} {total}"
+
+            c.drawCentredString(width / 2, y, linea_producto)
+            y -= 6 * mm
+
+            # Totales y pagos
+            subtotal = float(venta.total) / 1.19
+            impuesto = float(venta.total) - subtotal
+
+            totales = [
+                "--------------------------------------",
+                f"SUBTOTAL: ${subtotal:,.2f}",
+                f"IVA (19%): ${impuesto:,.2f}",
+                f"TOTAL: ${venta.total:,.2f}",
+                "--------------------------------------",
+                f"EFECTIVO: ${venta.monto_entregado:,.2f}",
+                f"CAMBIO: ${venta.cambio:,.2f}",
+                "--------------------------------------"
+            ]
+            for line in totales:
+                c.drawCentredString(width / 2, y, line)
+                y -= 4 * mm
+
+            # Información adicional
+            pago_info = [
+                "Forma de pago: Efectivo",
+                "--------------------------------------",
+                "¡Gracias por su compra!",
+                "Software by Agrosoft",
+                f"Factura generada el: {ahora.strftime('%Y-%m-%d %H:%M')}"
+            ]
+            for line in pago_info:
+                c.drawCentredString(width / 2, y, line)
+                y -= 4 * mm
+
+            c.showPage()
+            c.save()
+
+            return response
+
+        except Venta.DoesNotExist:
+            return Response({"error": "Venta no encontrada"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)

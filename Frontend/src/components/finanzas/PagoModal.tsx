@@ -6,7 +6,7 @@ interface PagoModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   total: number;
-  onConfirm: () => void;
+  onConfirm: (montoEntregado: number) => void;
 }
 
 export const PagoModal: React.FC<PagoModalProps> = ({
@@ -18,18 +18,22 @@ export const PagoModal: React.FC<PagoModalProps> = ({
   const [metodoPago, setMetodoPago] = useState("efectivo");
   const [fechaPago, setFechaPago] = useState(new Date().toISOString().split("T")[0]);
   const [montoEntregado, setMontoEntregado] = useState(0);
-  const [montoSobrante, setMontoSobrante] = useState(0);
+  const [cambio, setCambio] = useState(0);
 
   const setQuickPay = (amount: number | 'total') => {
     const newAmount = amount === 'total' ? total : amount;
     setMontoEntregado(newAmount);
-    setMontoSobrante(newAmount - total);
+    setCambio(newAmount - total);
   };
 
   const handleMontoEntregadoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     setMontoEntregado(value);
-    setMontoSobrante(value - total);
+    setCambio(value - total);
+  };
+
+  const handleConfirm = () => {
+    onConfirm(montoEntregado);
   };
 
   return (
@@ -38,7 +42,7 @@ export const PagoModal: React.FC<PagoModalProps> = ({
       onOpenChange={onOpenChange}
       title="Detalles de Pago"
       size="lg"
-      onConfirm={onConfirm}
+      onConfirm={handleConfirm}
       confirmText="Confirmar Pago"
     >
       <div className="space-y-4">
@@ -46,17 +50,16 @@ export const PagoModal: React.FC<PagoModalProps> = ({
           <p className="text-lg font-semibold">Valor Total: ${total.toFixed(2)}</p>
         </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Método de Pago</label>
-            <select
-              className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={metodoPago}
-              onChange={(e) => setMetodoPago(e.target.value)}
-            >
-              <option value="efectivo">Efectivo</option>
-              <option value="transferencia">Transferencia</option>
-            </select>
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Método de Pago</label>
+          <select
+            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={metodoPago}
+            onChange={(e) => setMetodoPago(e.target.value)}
+          >
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia</option>
+          </select>
         </div>
 
         <ReuInput
@@ -75,9 +78,10 @@ export const PagoModal: React.FC<PagoModalProps> = ({
         />
 
         <ReuInput
-          label="Monto Sobrante"
+          label="Cambio"
           type="number"
-          value={montoSobrante.toFixed(2)}
+          value={cambio.toFixed(2)}
+          readOnly
         />
 
         <div className="space-y-2">
@@ -102,6 +106,7 @@ export const PagoModal: React.FC<PagoModalProps> = ({
             </button>
           </div>
         </div>
+      </div>
     </ReuModal>
   );
 };
