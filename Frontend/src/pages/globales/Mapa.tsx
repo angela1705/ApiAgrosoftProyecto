@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+/*import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import DefaultLayout from "@/layouts/default";
 import  { Icon } from "leaflet";
@@ -39,4 +39,4 @@ const MapaPage: React.FC = () => {
   );
 };
 
-export default MapaPage;
+export default MapaPage;*/
