@@ -73,9 +73,11 @@ export const usePlagas = () => {
 };
 
 export const useRegistrarPlaga = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: registrarPlaga,
     onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['plagas']})
       addToast({ title: "Éxito", description: "Plaga registrada con éxito", timeout: 3000, color:"success" });
     },
     onError: (error: any) => {
