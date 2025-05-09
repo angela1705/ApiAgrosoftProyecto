@@ -1,4 +1,3 @@
-// src/components/finanzas/TiqueteModal.tsx
 import React, { useState, useEffect } from "react";
 import ReuModal from "@/components/globales/ReuModal";
 import { useFacturaPDF } from "@/hooks/finanzas/useTiquete";

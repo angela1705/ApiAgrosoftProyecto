@@ -32,7 +32,7 @@ const menuItems = [
     label: "Cultivos",
     icon: <FaLeaf />,
     subItems: [
-      { id: 6, label: "Cultivo", path: "/cultivo/cultivo/" },
+      { id: 6, label: "Cultivo", path: "/cultivo/listarcultivos/" },
       { id: 7, label: "Especies", path: "/cultivo/listarespecies/" },
       { id: 8, label: "Tipo Especie", path: "/cultivo/listartipoespecie/" },
       { id: 9, label: "Bancal", path: "/cultivo/listarbancal/" },
@@ -50,8 +50,8 @@ const menuItems = [
     icon: <FaDollarSign />,
     subItems: [
       { id: 16, label: "Salario", path: "/finanzas/listarsalarios/" },
-      { id: 17, label: "Ventas", path: "/finanzas/ventas/" },
-      { id: 18, label: "Pagos", path: "/finanzas/pago/" },
+      { id: 17, label: "Ventas", path: "/finanzas/listarventas/" },
+      { id: 18, label: "Pagos", path: "/finanzas/listarpagos/" },
       { id: 19, label: "Costo Beneficio", path: "/finanzas/costo_beneficio/" },
 
     ],
