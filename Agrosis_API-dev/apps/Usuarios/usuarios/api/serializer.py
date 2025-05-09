@@ -18,7 +18,6 @@ class UsuariosSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         nuevo_rol = validated_data.get("rol", instance.rol)
 
-        # Si el rol es 4, asignar is_superuser e is_staff a True
         if nuevo_rol and nuevo_rol.id == 4:
             instance.is_superuser = True
             instance.is_staff = True
