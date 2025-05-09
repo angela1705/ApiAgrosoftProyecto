@@ -3,6 +3,7 @@ from apps.Usuarios.usuarios.models import Usuarios
 from apps.Usuarios.roles.models import Roles
 from apps.Usuarios.roles.api.serializer import RolSerializer
 from rest_framework.validators import UniqueValidator
+from django.contrib.auth.base_user import BaseUserManager
 
 
 class UsuariosSerializer(serializers.ModelSerializer):
@@ -71,3 +72,22 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
         usuario.set_password(password)
         usuario.save()
         return usuario
+class UsuariosManager(BaseUserManager):
+    def create_user(self, username, email=None, password=None, nombre=None, apellido=None, **extra_fields):
+        if not username:
+            raise ValueError('El nombre de usuario es obligatorio')
+        if not email:
+            raise ValueError('El correo electrónico es obligatorio')
+
+        email = self.normalize_email(email)
+        user = self.model(
+            username=username,
+            email=email,
+            nombre=nombre,
+            apellido=apellido,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+

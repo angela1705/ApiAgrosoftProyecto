@@ -1153,6 +1153,14 @@
         "documentation": {}
     },
     {
+        "label": "RegistroMasivoUsuariosView",
+        "importPath": "apps.Usuarios.usuarios.api.views",
+        "description": "apps.Usuarios.usuarios.api.views",
+        "isExtraImport": true,
+        "detail": "apps.Usuarios.usuarios.api.views",
+        "documentation": {}
+    },
+    {
         "label": "UsuariosViewSet",
         "importPath": "apps.Usuarios.usuarios.api.views",
         "description": "apps.Usuarios.usuarios.api.views",
@@ -4369,6 +4377,14 @@
         "documentation": {}
     },
     {
+        "label": "IntegrityError",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
         "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
@@ -6866,6 +6882,14 @@
     },
     {
         "label": "HttpResponse",
+        "importPath": "django.http",
+        "description": "django.http",
+        "isExtraImport": true,
+        "detail": "django.http",
+        "documentation": {}
+    },
+    {
+        "label": "JsonResponse",
         "importPath": "django.http",
         "description": "django.http",
         "isExtraImport": true,
@@ -9649,6 +9673,14 @@
         "documentation": {}
     },
     {
+        "label": "BaseUserManager",
+        "importPath": "django.contrib.auth.base_user",
+        "description": "django.contrib.auth.base_user",
+        "isExtraImport": true,
+        "detail": "django.contrib.auth.base_user",
+        "documentation": {}
+    },
+    {
         "label": "send_mail",
         "importPath": "django.core.mail",
         "description": "django.core.mail",
@@ -9678,6 +9710,31 @@
         "description": "django.utils.crypto",
         "isExtraImport": true,
         "detail": "django.utils.crypto",
+        "documentation": {}
+    },
+    {
+        "label": "MultiPartParser",
+        "importPath": "rest_framework.parsers",
+        "description": "rest_framework.parsers",
+        "isExtraImport": true,
+        "detail": "rest_framework.parsers",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "csrf_exempt",
+        "importPath": "django.views.decorators.csrf",
+        "description": "django.views.decorators.csrf",
+        "isExtraImport": true,
+        "detail": "django.views.decorators.csrf",
         "documentation": {}
     },
     {
@@ -10726,7 +10783,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.cosechas.api.serializers",
         "description": "apps.Cultivo.cosechas.api.serializers",
-        "peekOfCode": "class CosechaSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Cosecha\n        fields = '__all__'",
+        "peekOfCode": "class CosechaSerializer(serializers.ModelSerializer):\n    cultivo_nombre = serializers.CharField(source='id_cultivo.nombre', read_only=True)\n    class Meta:\n        model = Cosecha\n        fields = '__all__'",
         "detail": "apps.Cultivo.cosechas.api.serializers",
         "documentation": {}
     },
@@ -13458,6 +13515,15 @@
         "documentation": {}
     },
     {
+        "label": "UsuariosManager",
+        "kind": 6,
+        "importPath": "apps.Usuarios.usuarios.api.serializer",
+        "description": "apps.Usuarios.usuarios.api.serializer",
+        "peekOfCode": "class UsuariosManager(BaseUserManager):\n    def create_user(self, username, email=None, password=None, nombre=None, apellido=None, **extra_fields):\n        if not username:\n            raise ValueError('El nombre de usuario es obligatorio')\n        if not email:\n            raise ValueError('El correo electrónico es obligatorio')\n        email = self.normalize_email(email)\n        user = self.model(\n            username=username,\n            email=email,",
+        "detail": "apps.Usuarios.usuarios.api.serializer",
+        "documentation": {}
+    },
+    {
         "label": "notificar_asignacion_actividad",
         "kind": 2,
         "importPath": "apps.Usuarios.usuarios.api.signals",
@@ -13480,7 +13546,16 @@
         "kind": 6,
         "importPath": "apps.Usuarios.usuarios.api.views",
         "description": "apps.Usuarios.usuarios.api.views",
-        "peekOfCode": "class RegistroUsuarioView(APIView):\n    permission_classes = [AllowAny]\n    def post(self, request):\n        serializer = RegistroUsuarioSerializer(data=request.data)\n        if serializer.is_valid():\n            usuario = serializer.save()\n            return Response(serializer.data, status=status.HTTP_201_CREATED)\n        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)\nclass CurrentUserView(APIView):\n    permission_classes = [IsAuthenticated]",
+        "peekOfCode": "class RegistroUsuarioView(APIView):\n    permission_classes = [AllowAny]\n    def post(self, request):\n        serializer = RegistroUsuarioSerializer(data=request.data)\n        if serializer.is_valid():\n            usuario = serializer.save()\n            return Response(serializer.data, status=status.HTTP_201_CREATED)\n        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)\nclass RegistroMasivoUsuariosView(APIView):\n    parser_classes = [MultiPartParser]",
+        "detail": "apps.Usuarios.usuarios.api.views",
+        "documentation": {}
+    },
+    {
+        "label": "RegistroMasivoUsuariosView",
+        "kind": 6,
+        "importPath": "apps.Usuarios.usuarios.api.views",
+        "description": "apps.Usuarios.usuarios.api.views",
+        "peekOfCode": "class RegistroMasivoUsuariosView(APIView):\n    parser_classes = [MultiPartParser]\n    permission_classes = [AllowAny]\n    def post(self, request, *args, **kwargs):\n        archivo = request.FILES.get('archivo')\n        if not archivo:\n            return Response({'error': 'No se proporcionó ningún archivo.'}, status=status.HTTP_400_BAD_REQUEST)\n        try:\n            df = pd.read_excel(archivo)\n        except Exception as e:",
         "detail": "apps.Usuarios.usuarios.api.views",
         "documentation": {}
     },
