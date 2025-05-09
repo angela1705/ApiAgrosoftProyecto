@@ -75,7 +75,7 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
         />
 
 <div>
-            <label className="block text-sm font-medium text-gray-700">Unidad de medidad tu papa</label>
+            <label className="block text-sm font-medium text-gray-700">Unidad de medida</label>
                     <select
                         value={nuevoCultivo.unidad_de_medida}
                         onChange={(e) => setNuevoCultivo({ ...nuevoCultivo, unidad_de_medida: Number(e.target.value)})}
