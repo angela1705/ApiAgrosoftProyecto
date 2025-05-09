@@ -52,9 +52,11 @@ export const useLotes = () => {
 };
 
 export const useRegistrarLote = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (lote: Lote) => registrarLote(lote),
     onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['lotes'] })
       addToast({
         title: "Éxito",
         description: "Lote registrado con éxito",

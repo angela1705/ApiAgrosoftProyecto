@@ -47,9 +47,12 @@ export const useTipoActividad = () => {
 };
 
 export const useRegistrarTipoActividad = () => {
+  const queryClient  = useQueryClient();
   return useMutation({
+
     mutationFn: (tipoEspecie: TipoActividad) => registrarTipoActividad(tipoEspecie),
     onSuccess: () => {
+      queryClient.invalidateQueries({queryKey:['tipoActividades'] })
       addToast({
         title: "Éxito",
         description: "Tipo de actividad registrado con éxito",
