@@ -8,7 +8,6 @@ import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
 
 
-// Componente para inputs de salario con formato colombiano
 const SalarioInput = ({
   label,
   value,
@@ -52,12 +51,10 @@ const ListaSalarioPage: React.FC = () => {
   const deleteMutation = useEliminarSalario();
   const navigate = useNavigate();
 
-  // Formateador de números colombianos
   const formatColombianNumber = (value: number): string => {
     return new Intl.NumberFormat('es-CO').format(value);
   };
 
-  // Manejadores de eventos
   const handleEdit = (salario: Salario) => {
     setSelectedSalario(salario);
     setDisplayValue(formatColombianNumber(salario.valorJornal));
@@ -80,7 +77,6 @@ const ListaSalarioPage: React.FC = () => {
     }
   };
 
-  // Transformación de datos para la tabla
   const transformedData = salarios?.map((salario) => ({
     id: salario.id.toString(),
     fecha_de_implementacion: new Date(salario.fecha_de_implementacion).toLocaleDateString(),
@@ -107,17 +103,17 @@ const ListaSalarioPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Listado del valor del Jornal</h1>
-          <button
-            onClick={() => navigate("/finanzas/salario/")}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            aria-label="Registrar nuevo salario"
-          >
-            + Registrar
-          </button>
-        </div>
+          <h1 className="text-2xl text-center font-bold text-gray-800 mb-6">Listado del valor del Jornal</h1>
+          <div className="mb-6 flex justify-between items-center">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
+                                    shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate('/finanzas/salario')}
+        >
+          + Registrar
+        </button>
+      </div>
 
         {isLoading ? (
           <div className="text-center py-8">Cargando salarios...</div>
@@ -132,7 +128,6 @@ const ListaSalarioPage: React.FC = () => {
           />
         )}
 
-        {/* Modal de Edición */}
         <ReuModal
           isOpen={isEditModalOpen}
           onOpenChange={setIsEditModalOpen}
@@ -182,7 +177,6 @@ const ListaSalarioPage: React.FC = () => {
           )}
         </ReuModal>
 
-        {/* Modal de Eliminación */}
         <ReuModal
           isOpen={isDeleteModalOpen}
           onOpenChange={setIsDeleteModalOpen}
@@ -200,7 +194,6 @@ const ListaSalarioPage: React.FC = () => {
             </div>
           )}
         </ReuModal>
-      </div>
     </DefaultLayout>
   );
 };
