@@ -22,13 +22,12 @@ Django==5.1
 django-cors-headers==4.7.0
 django-extensions==3.2.3
 django-filter==25.1
-django-seed==0.3.1
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 dnspython==2.7.0
 drf-yasg==1.21.8
 email_validator==2.2.0
-Faker==37.1.0
+et_xmlfile==2.0.0
 fastapi==0.115.11
 fastapi-cli==0.0.7
 filelock==3.15.4
@@ -47,6 +46,7 @@ mdurl==0.1.2
 msgpack==1.1.0
 mysqlclient==2.2.7
 numpy==2.2.4
+openpyxl==3.1.5
 packaging==24.1
 pandas==2.2.3
 pillow==11.0.0
@@ -85,7 +85,6 @@ sqlparse==0.5.1
 standard-aifc==3.13.0
 standard-chunk==3.13.0
 starlette==0.46.0
-toposort==1.10
 Twisted==24.11.0
 txaio==23.1.1
 typer==0.15.2
