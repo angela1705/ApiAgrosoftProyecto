@@ -47,9 +47,12 @@ export const useCultivos = (mostrarInactivos = false) => {
 };
 
 export const useRegistrarCultivo = () => {
+  const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: (cultivo: Cultivo) => registrarCultivo(cultivo),
+      mutationFn: (cultivo: Cultivo) => registrarCultivo(cultivo),
         onSuccess: () => {
+          queryClient.invalidateQueries({queryKey:['cultivos']});
             addToast({
               title: "Éxito",
               description: "Cultivo registrado con éxito",

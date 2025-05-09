@@ -57,12 +57,19 @@ export const useTipoEspecies = () => {
     queryFn: fetchTipoEspecies,
   });
 };
-
 export const useRegistrarTipoEspecie = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: registrarTipoEspecie,
     onSuccess: () => {
-      addToast({ title: "Éxito", description: "Tipo de especie registrado con éxito", timeout: 3000, color: "success"});
+      queryClient.invalidateQueries({ queryKey: ["tipoEspecies"] });
+      addToast({
+        title: "Éxito",
+        description: "Tipo de especie registrado con éxito",
+        timeout: 3000,
+        color: "success"
+      });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -83,6 +90,7 @@ export const useRegistrarTipoEspecie = () => {
     },
   });
 };
+
 
 export const useActualizarTipoEspecie = () => {
   const queryClient = useQueryClient();

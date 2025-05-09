@@ -5,6 +5,7 @@ import { useEspecies } from "@/hooks/cultivo/useEspecie";
 import { useBancales } from "@/hooks/cultivo/usebancal";
 import { Cultivo } from "@/types/cultivo/Cultivo";
 import { useState } from "react";
+import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 
 interface ModalCultivoProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
   const { data: especies } = useEspecies();
   const { data: bancales } = useBancales();
   const mutation = useRegistrarCultivo();
+  const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -72,13 +74,22 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
           onChange={(e)=> setNuevoCultivo({...nuevoCultivo, nombre: e.target.value})}
         />
 
-        <ReuInput
-          label="Unidad de Medida"
-          placeholder="Ej: kg, g, unidades"
-          type="text"
-          value={nuevoCultivo.unidad_de_medida}
-          onChange={(e)=> setNuevoCultivo({...nuevoCultivo, unidad_de_medida: Number(e.target.value)})}
-        />
+<div>
+            <label className="block text-sm font-medium text-gray-700">Unidad de medidad tu papa</label>
+                    <select
+                        value={nuevoCultivo.unidad_de_medida}
+                        onChange={(e) => setNuevoCultivo({ ...nuevoCultivo, unidad_de_medida: Number(e.target.value)})}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                        disabled={loadingUnidadesMedida}
+                    >
+                        <option value="">Seleccione una unidad</option>
+                        {unidadesMedida?.map((unidad) => (
+                            <option key={unidad.id} value={unidad.id}>
+                                {unidad.nombre}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
         <ReuInput
           label="Fecha de Siembra"
