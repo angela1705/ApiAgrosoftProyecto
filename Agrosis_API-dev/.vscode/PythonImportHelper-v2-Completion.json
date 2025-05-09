@@ -107,22 +107,6 @@
         "documentation": {}
     },
     {
-        "label": "include",
-        "importPath": "django.urls",
-        "description": "django.urls",
-        "isExtraImport": true,
-        "detail": "django.urls",
-        "documentation": {}
-    },
-    {
-        "label": "path",
-        "importPath": "django.urls",
-        "description": "django.urls",
-        "isExtraImport": true,
-        "detail": "django.urls",
-        "documentation": {}
-    },
-    {
         "label": "re_path",
         "importPath": "django.urls",
         "description": "django.urls",
@@ -164,6 +148,14 @@
     },
     {
         "label": "path",
+        "importPath": "django.urls",
+        "description": "django.urls",
+        "isExtraImport": true,
+        "detail": "django.urls",
+        "documentation": {}
+    },
+    {
+        "label": "re_path",
         "importPath": "django.urls",
         "description": "django.urls",
         "isExtraImport": true,
@@ -801,46 +793,6 @@
         "documentation": {}
     },
     {
-        "label": "admin",
-        "importPath": "django.contrib",
-        "description": "django.contrib",
-        "isExtraImport": true,
-        "detail": "django.contrib",
-        "documentation": {}
-    },
-    {
-        "label": "admin",
-        "importPath": "django.contrib",
-        "description": "django.contrib",
-        "isExtraImport": true,
-        "detail": "django.contrib",
-        "documentation": {}
-    },
-    {
-        "label": "admin",
-        "importPath": "django.contrib",
-        "description": "django.contrib",
-        "isExtraImport": true,
-        "detail": "django.contrib",
-        "documentation": {}
-    },
-    {
-        "label": "admin",
-        "importPath": "django.contrib",
-        "description": "django.contrib",
-        "isExtraImport": true,
-        "detail": "django.contrib",
-        "documentation": {}
-    },
-    {
-        "label": "admin",
-        "importPath": "django.contrib",
-        "description": "django.contrib",
-        "isExtraImport": true,
-        "detail": "django.contrib",
-        "documentation": {}
-    },
-    {
         "label": "TokenObtainPairView",
         "importPath": "rest_framework_simplejwt.views",
         "description": "rest_framework_simplejwt.views",
@@ -870,38 +822,6 @@
         "description": "rest_framework_simplejwt.views",
         "isExtraImport": true,
         "detail": "rest_framework_simplejwt.views",
-        "documentation": {}
-    },
-    {
-        "label": "DefaultRouter",
-        "importPath": "rest_framework.routers",
-        "description": "rest_framework.routers",
-        "isExtraImport": true,
-        "detail": "rest_framework.routers",
-        "documentation": {}
-    },
-    {
-        "label": "DefaultRouter",
-        "importPath": "rest_framework.routers",
-        "description": "rest_framework.routers",
-        "isExtraImport": true,
-        "detail": "rest_framework.routers",
-        "documentation": {}
-    },
-    {
-        "label": "DefaultRouter",
-        "importPath": "rest_framework.routers",
-        "description": "rest_framework.routers",
-        "isExtraImport": true,
-        "detail": "rest_framework.routers",
-        "documentation": {}
-    },
-    {
-        "label": "DefaultRouter",
-        "importPath": "rest_framework.routers",
-        "description": "rest_framework.routers",
-        "isExtraImport": true,
-        "detail": "rest_framework.routers",
         "documentation": {}
     },
     {
@@ -1233,6 +1153,14 @@
         "documentation": {}
     },
     {
+        "label": "RegistroMasivoUsuariosView",
+        "importPath": "apps.Usuarios.usuarios.api.views",
+        "description": "apps.Usuarios.usuarios.api.views",
+        "isExtraImport": true,
+        "detail": "apps.Usuarios.usuarios.api.views",
+        "documentation": {}
+    },
+    {
         "label": "UsuariosViewSet",
         "importPath": "apps.Usuarios.usuarios.api.views",
         "description": "apps.Usuarios.usuarios.api.views",
@@ -1313,14 +1241,6 @@
         "documentation": {}
     },
     {
-        "label": "faseLunarRouter",
-        "importPath": "apps.Cultivo.fase_lunar.api.router",
-        "description": "apps.Cultivo.fase_lunar.api.router",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.fase_lunar.api.router",
-        "documentation": {}
-    },
-    {
         "label": "lotesRouter",
         "importPath": "apps.Cultivo.lotes.api.router",
         "description": "apps.Cultivo.lotes.api.router",
@@ -1342,22 +1262,6 @@
         "description": "apps.Cultivo.plantaciones.api.router",
         "isExtraImport": true,
         "detail": "apps.Cultivo.plantaciones.api.router",
-        "documentation": {}
-    },
-    {
-        "label": "productosControlRouter",
-        "importPath": "apps.Cultivo.productos_control.api.router",
-        "description": "apps.Cultivo.productos_control.api.router",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.productos_control.api.router",
-        "documentation": {}
-    },
-    {
-        "label": "programacionRouter",
-        "importPath": "apps.Cultivo.programacion.api.router",
-        "description": "apps.Cultivo.programacion.api.router",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.programacion.api.router",
         "documentation": {}
     },
     {
@@ -1414,14 +1318,6 @@
         "description": "apps.Cultivo.tipos_residuos.api.router",
         "isExtraImport": true,
         "detail": "apps.Cultivo.tipos_residuos.api.router",
-        "documentation": {}
-    },
-    {
-        "label": "tareaRouter",
-        "importPath": "apps.Cultivo.tareas.api.router",
-        "description": "apps.Cultivo.tareas.api.router",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.tareas.api.router",
         "documentation": {}
     },
     {
@@ -1721,6 +1617,14 @@
         "documentation": {}
     },
     {
+        "label": "Response",
+        "importPath": "rest_framework.response",
+        "description": "rest_framework.response",
+        "isExtraImport": true,
+        "detail": "rest_framework.response",
+        "documentation": {}
+    },
+    {
         "label": "authenticate",
         "importPath": "django.contrib.auth",
         "description": "django.contrib.auth",
@@ -1754,38 +1658,6 @@
     },
     {
         "label": "AllowAny",
-        "importPath": "rest_framework.permissions",
-        "description": "rest_framework.permissions",
-        "isExtraImport": true,
-        "detail": "rest_framework.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "IsAuthenticated",
-        "importPath": "rest_framework.permissions",
-        "description": "rest_framework.permissions",
-        "isExtraImport": true,
-        "detail": "rest_framework.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "IsAuthenticated",
-        "importPath": "rest_framework.permissions",
-        "description": "rest_framework.permissions",
-        "isExtraImport": true,
-        "detail": "rest_framework.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "IsAuthenticated",
-        "importPath": "rest_framework.permissions",
-        "description": "rest_framework.permissions",
-        "isExtraImport": true,
-        "detail": "rest_framework.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "IsAuthenticated",
         "importPath": "rest_framework.permissions",
         "description": "rest_framework.permissions",
         "isExtraImport": true,
@@ -2377,46 +2249,6 @@
         "documentation": {}
     },
     {
-        "label": "AppConfig",
-        "importPath": "django.apps",
-        "description": "django.apps",
-        "isExtraImport": true,
-        "detail": "django.apps",
-        "documentation": {}
-    },
-    {
-        "label": "AppConfig",
-        "importPath": "django.apps",
-        "description": "django.apps",
-        "isExtraImport": true,
-        "detail": "django.apps",
-        "documentation": {}
-    },
-    {
-        "label": "AppConfig",
-        "importPath": "django.apps",
-        "description": "django.apps",
-        "isExtraImport": true,
-        "detail": "django.apps",
-        "documentation": {}
-    },
-    {
-        "label": "AppConfig",
-        "importPath": "django.apps",
-        "description": "django.apps",
-        "isExtraImport": true,
-        "detail": "django.apps",
-        "documentation": {}
-    },
-    {
-        "label": "AppConfig",
-        "importPath": "django.apps",
-        "description": "django.apps",
-        "isExtraImport": true,
-        "detail": "django.apps",
-        "documentation": {}
-    },
-    {
         "label": "BaseAuthentication",
         "importPath": "rest_framework.authentication",
         "description": "rest_framework.authentication",
@@ -2438,6 +2270,14 @@
         "description": "django.contrib.auth.backends",
         "isExtraImport": true,
         "detail": "django.contrib.auth.backends",
+        "documentation": {}
+    },
+    {
+        "label": "Usuarios",
+        "importPath": "apps.Usuarios.usuarios.models",
+        "description": "apps.Usuarios.usuarios.models",
+        "isExtraImport": true,
+        "detail": "apps.Usuarios.usuarios.models",
         "documentation": {}
     },
     {
@@ -2801,14 +2641,6 @@
         "documentation": {}
     },
     {
-        "label": "models",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
         "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
@@ -2826,14 +2658,6 @@
     },
     {
         "label": "migrations",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -2865,7 +2689,7 @@
         "documentation": {}
     },
     {
-        "label": "migrations",
+        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -2873,7 +2697,7 @@
         "documentation": {}
     },
     {
-        "label": "models",
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -2921,7 +2745,7 @@
         "documentation": {}
     },
     {
-        "label": "migrations",
+        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -2929,7 +2753,7 @@
         "documentation": {}
     },
     {
-        "label": "models",
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -2962,14 +2786,6 @@
     },
     {
         "label": "migrations",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3105,7 +2921,7 @@
         "documentation": {}
     },
     {
-        "label": "models",
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3113,7 +2929,7 @@
         "documentation": {}
     },
     {
-        "label": "migrations",
+        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3169,7 +2985,7 @@
         "documentation": {}
     },
     {
-        "label": "models",
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3201,7 +3017,7 @@
         "documentation": {}
     },
     {
-        "label": "migrations",
+        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3209,7 +3025,7 @@
         "documentation": {}
     },
     {
-        "label": "models",
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3217,7 +3033,7 @@
         "documentation": {}
     },
     {
-        "label": "migrations",
+        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3258,14 +3074,6 @@
     },
     {
         "label": "migrations",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3482,14 +3290,6 @@
     },
     {
         "label": "migrations",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3682,14 +3482,6 @@
     },
     {
         "label": "migrations",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -3706,14 +3498,6 @@
     },
     {
         "label": "models",
-        "importPath": "django.db",
-        "description": "django.db",
-        "isExtraImport": true,
-        "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -4593,7 +4377,7 @@
         "documentation": {}
     },
     {
-        "label": "migrations",
+        "label": "IntegrityError",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -4601,7 +4385,7 @@
         "documentation": {}
     },
     {
-        "label": "models",
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -4609,7 +4393,7 @@
         "documentation": {}
     },
     {
-        "label": "migrations",
+        "label": "models",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -4625,7 +4409,7 @@
         "documentation": {}
     },
     {
-        "label": "models",
+        "label": "migrations",
         "importPath": "django.db",
         "description": "django.db",
         "isExtraImport": true,
@@ -4638,46 +4422,14 @@
         "description": "django.db",
         "isExtraImport": true,
         "detail": "django.db",
-        "documentation": {}
-    },
-    {
-        "label": "TestCase",
-        "importPath": "django.test",
-        "description": "django.test",
-        "isExtraImport": true,
-        "detail": "django.test",
-        "documentation": {}
-    },
-    {
-        "label": "TestCase",
-        "importPath": "django.test",
-        "description": "django.test",
-        "isExtraImport": true,
-        "detail": "django.test",
-        "documentation": {}
-    },
-    {
-        "label": "TestCase",
-        "importPath": "django.test",
-        "description": "django.test",
-        "isExtraImport": true,
-        "detail": "django.test",
-        "documentation": {}
-    },
-    {
-        "label": "TestCase",
-        "importPath": "django.test",
-        "description": "django.test",
-        "isExtraImport": true,
-        "detail": "django.test",
         "documentation": {}
     },
     {
-        "label": "TestCase",
-        "importPath": "django.test",
-        "description": "django.test",
+        "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
         "isExtraImport": true,
-        "detail": "django.test",
+        "detail": "django.db",
         "documentation": {}
     },
     {
@@ -5225,43 +4977,11 @@
         "documentation": {}
     },
     {
-        "label": "render",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
+        "label": "AsyncWebsocketConsumer",
+        "importPath": "channels.generic.websocket",
+        "description": "channels.generic.websocket",
         "isExtraImport": true,
-        "detail": "django.shortcuts",
-        "documentation": {}
-    },
-    {
-        "label": "render",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
-        "isExtraImport": true,
-        "detail": "django.shortcuts",
-        "documentation": {}
-    },
-    {
-        "label": "render",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
-        "isExtraImport": true,
-        "detail": "django.shortcuts",
-        "documentation": {}
-    },
-    {
-        "label": "render",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
-        "isExtraImport": true,
-        "detail": "django.shortcuts",
-        "documentation": {}
-    },
-    {
-        "label": "render",
-        "importPath": "django.shortcuts",
-        "description": "django.shortcuts",
-        "isExtraImport": true,
-        "detail": "django.shortcuts",
+        "detail": "channels.generic.websocket",
         "documentation": {}
     },
     {
@@ -5302,6 +5022,14 @@
         "description": "channels.generic.websocket",
         "isExtraImport": true,
         "detail": "channels.generic.websocket",
+        "documentation": {}
+    },
+    {
+        "label": "database_sync_to_async",
+        "importPath": "channels.db",
+        "description": "channels.db",
+        "isExtraImport": true,
+        "detail": "channels.db",
         "documentation": {}
     },
     {
@@ -5350,6 +5078,14 @@
         "description": "apps.Cultivo.actividades.api.views",
         "isExtraImport": true,
         "detail": "apps.Cultivo.actividades.api.views",
+        "documentation": {}
+    },
+    {
+        "label": "ActividadNotificacionConsumer",
+        "importPath": "apps.Cultivo.actividades.api.consumers",
+        "description": "apps.Cultivo.actividades.api.consumers",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.actividades.api.consumers",
         "documentation": {}
     },
     {
@@ -5545,71 +5281,7 @@
         "documentation": {}
     },
     {
-        "label": "serializers",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
-        "label": "viewsets",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
-        "label": "serializers",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
-        "label": "viewsets",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
-        "label": "serializers",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
-        "label": "viewsets",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
         "label": "status",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
-        "label": "serializers",
-        "importPath": "rest_framework",
-        "description": "rest_framework",
-        "isExtraImport": true,
-        "detail": "rest_framework",
-        "documentation": {}
-    },
-    {
-        "label": "viewsets",
         "importPath": "rest_framework",
         "description": "rest_framework",
         "isExtraImport": true,
@@ -6002,6 +5674,22 @@
     },
     {
         "label": "PrestamoInsumo",
+        "importPath": "apps.Cultivo.actividades.models",
+        "description": "apps.Cultivo.actividades.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.actividades.models",
+        "documentation": {}
+    },
+    {
+        "label": "Actividad",
+        "importPath": "apps.Cultivo.actividades.models",
+        "description": "apps.Cultivo.actividades.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.actividades.models",
+        "documentation": {}
+    },
+    {
+        "label": "Actividad",
         "importPath": "apps.Cultivo.actividades.models",
         "description": "apps.Cultivo.actividades.models",
         "isExtraImport": true,
@@ -6066,6 +5754,46 @@
     },
     {
         "label": "Insumo",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "UnidadMedida",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "Insumo",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "UnidadMedida",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "UnidadMedida",
+        "importPath": "apps.Inventario.insumos.models",
+        "description": "apps.Inventario.insumos.models",
+        "isExtraImport": true,
+        "detail": "apps.Inventario.insumos.models",
+        "documentation": {}
+    },
+    {
+        "label": "UnidadMedida",
         "importPath": "apps.Inventario.insumos.models",
         "description": "apps.Inventario.insumos.models",
         "isExtraImport": true,
@@ -6297,11 +6025,11 @@
         "documentation": {}
     },
     {
-        "label": "async_to_sync",
-        "importPath": "asgiref.sync",
-        "description": "asgiref.sync",
+        "label": "get_channel_layer",
+        "importPath": "channels.layers",
+        "description": "channels.layers",
         "isExtraImport": true,
-        "detail": "asgiref.sync",
+        "detail": "channels.layers",
         "documentation": {}
     },
     {
@@ -6329,35 +6057,19 @@
         "documentation": {}
     },
     {
-        "label": "JWTAuthentication",
-        "importPath": "rest_framework_simplejwt.authentication",
-        "description": "rest_framework_simplejwt.authentication",
+        "label": "async_to_sync",
+        "importPath": "asgiref.sync",
+        "description": "asgiref.sync",
         "isExtraImport": true,
-        "detail": "rest_framework_simplejwt.authentication",
+        "detail": "asgiref.sync",
         "documentation": {}
     },
     {
-        "label": "JWTAuthentication",
-        "importPath": "rest_framework_simplejwt.authentication",
-        "description": "rest_framework_simplejwt.authentication",
+        "label": "async_to_sync",
+        "importPath": "asgiref.sync",
+        "description": "asgiref.sync",
         "isExtraImport": true,
-        "detail": "rest_framework_simplejwt.authentication",
-        "documentation": {}
-    },
-    {
-        "label": "JWTAuthentication",
-        "importPath": "rest_framework_simplejwt.authentication",
-        "description": "rest_framework_simplejwt.authentication",
-        "isExtraImport": true,
-        "detail": "rest_framework_simplejwt.authentication",
-        "documentation": {}
-    },
-    {
-        "label": "JWTAuthentication",
-        "importPath": "rest_framework_simplejwt.authentication",
-        "description": "rest_framework_simplejwt.authentication",
-        "isExtraImport": true,
-        "detail": "rest_framework_simplejwt.authentication",
+        "detail": "asgiref.sync",
         "documentation": {}
     },
     {
@@ -6721,14 +6433,6 @@
         "documentation": {}
     },
     {
-        "label": "IsAdminOrRead",
-        "importPath": "apps.Usuarios.usuarios.api.permissions",
-        "description": "apps.Usuarios.usuarios.api.permissions",
-        "isExtraImport": true,
-        "detail": "apps.Usuarios.usuarios.api.permissions",
-        "documentation": {}
-    },
-    {
         "label": "PermisoPorRol",
         "importPath": "apps.Usuarios.usuarios.api.permissions",
         "description": "apps.Usuarios.usuarios.api.permissions",
@@ -6770,38 +6474,6 @@
     },
     {
         "label": "PermisoPorRol",
-        "importPath": "apps.Usuarios.usuarios.api.permissions",
-        "description": "apps.Usuarios.usuarios.api.permissions",
-        "isExtraImport": true,
-        "detail": "apps.Usuarios.usuarios.api.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "IsAdminOrRead",
-        "importPath": "apps.Usuarios.usuarios.api.permissions",
-        "description": "apps.Usuarios.usuarios.api.permissions",
-        "isExtraImport": true,
-        "detail": "apps.Usuarios.usuarios.api.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "IsAdminOrRead",
-        "importPath": "apps.Usuarios.usuarios.api.permissions",
-        "description": "apps.Usuarios.usuarios.api.permissions",
-        "isExtraImport": true,
-        "detail": "apps.Usuarios.usuarios.api.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "PermisoPorRol",
-        "importPath": "apps.Usuarios.usuarios.api.permissions",
-        "description": "apps.Usuarios.usuarios.api.permissions",
-        "isExtraImport": true,
-        "detail": "apps.Usuarios.usuarios.api.permissions",
-        "documentation": {}
-    },
-    {
-        "label": "IsAdminOrRead",
         "importPath": "apps.Usuarios.usuarios.api.permissions",
         "description": "apps.Usuarios.usuarios.api.permissions",
         "isExtraImport": true,
@@ -7210,6 +6882,14 @@
     },
     {
         "label": "HttpResponse",
+        "importPath": "django.http",
+        "description": "django.http",
+        "isExtraImport": true,
+        "detail": "django.http",
+        "documentation": {}
+    },
+    {
+        "label": "JsonResponse",
         "importPath": "django.http",
         "description": "django.http",
         "isExtraImport": true,
@@ -8281,7 +7961,7 @@
         "documentation": {}
     },
     {
-        "label": "inch",
+        "label": "mm",
         "importPath": "reportlab.lib.units",
         "description": "reportlab.lib.units",
         "isExtraImport": true,
@@ -8321,11 +8001,11 @@
         "documentation": {}
     },
     {
-        "label": "settings",
-        "importPath": "django.conf",
-        "description": "django.conf",
+        "label": "inch",
+        "importPath": "reportlab.lib.units",
+        "description": "reportlab.lib.units",
         "isExtraImport": true,
-        "detail": "django.conf",
+        "detail": "reportlab.lib.units",
         "documentation": {}
     },
     {
@@ -8570,6 +8250,14 @@
         "documentation": {}
     },
     {
+        "label": "EventoTrazabilidadSerializer",
+        "importPath": "apps.Cultivo.cultivos.api.serializers",
+        "description": "apps.Cultivo.cultivos.api.serializers",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.cultivos.api.serializers",
+        "documentation": {}
+    },
+    {
         "label": "Cultivo",
         "importPath": "apps.Cultivo.cultivos.models",
         "description": "apps.Cultivo.cultivos.models",
@@ -8714,43 +8402,11 @@
         "documentation": {}
     },
     {
-        "label": "ProductoControlSerializer",
-        "importPath": "apps.Cultivo.productos_control.api.serializers",
-        "description": "apps.Cultivo.productos_control.api.serializers",
+        "label": "InsumoSerializer",
+        "importPath": "apps.Inventario.insumos.api.serializers",
+        "description": "apps.Inventario.insumos.api.serializers",
         "isExtraImport": true,
-        "detail": "apps.Cultivo.productos_control.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControlSerializer",
-        "importPath": "apps.Cultivo.productos_control.api.serializers",
-        "description": "apps.Cultivo.productos_control.api.serializers",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.productos_control.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControl",
-        "importPath": "apps.Cultivo.productos_control.models",
-        "description": "apps.Cultivo.productos_control.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.productos_control.models",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControl",
-        "importPath": "apps.Cultivo.productos_control.models",
-        "description": "apps.Cultivo.productos_control.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.productos_control.models",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControl",
-        "importPath": "apps.Cultivo.productos_control.models",
-        "description": "apps.Cultivo.productos_control.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.productos_control.models",
+        "detail": "apps.Inventario.insumos.api.serializers",
         "documentation": {}
     },
     {
@@ -8855,6 +8511,22 @@
         "description": "apps.Cultivo.cosechas.api.views",
         "isExtraImport": true,
         "detail": "apps.Cultivo.cosechas.api.views",
+        "documentation": {}
+    },
+    {
+        "label": "Cosecha",
+        "importPath": "apps.Cultivo.cosechas.models",
+        "description": "apps.Cultivo.cosechas.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.cosechas.models",
+        "documentation": {}
+    },
+    {
+        "label": "Cosecha",
+        "importPath": "apps.Cultivo.cosechas.models",
+        "description": "apps.Cultivo.cosechas.models",
+        "isExtraImport": true,
+        "detail": "apps.Cultivo.cosechas.models",
         "documentation": {}
     },
     {
@@ -9082,38 +8754,6 @@
         "documentation": {}
     },
     {
-        "label": "FaseLunarViewSet",
-        "importPath": "apps.Cultivo.fase_lunar.api.views",
-        "description": "apps.Cultivo.fase_lunar.api.views",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.fase_lunar.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "FaseLunar",
-        "importPath": "apps.Cultivo.fase_lunar.models",
-        "description": "apps.Cultivo.fase_lunar.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.fase_lunar.models",
-        "documentation": {}
-    },
-    {
-        "label": "FaseLunar",
-        "importPath": "apps.Cultivo.fase_lunar.models",
-        "description": "apps.Cultivo.fase_lunar.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.fase_lunar.models",
-        "documentation": {}
-    },
-    {
-        "label": "FaseLunarSerializer",
-        "importPath": "apps.Cultivo.fase_lunar.api.serializers",
-        "description": "apps.Cultivo.fase_lunar.api.serializers",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.fase_lunar.api.serializers",
-        "documentation": {}
-    },
-    {
         "label": "LoteViewSet",
         "importPath": "apps.Cultivo.lotes.api.views",
         "description": "apps.Cultivo.lotes.api.views",
@@ -9183,46 +8823,6 @@
         "description": "apps.Cultivo.plantaciones.api.serializers",
         "isExtraImport": true,
         "detail": "apps.Cultivo.plantaciones.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControlViewSet",
-        "importPath": "apps.Cultivo.productos_control.api.views",
-        "description": "apps.Cultivo.productos_control.api.views",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.productos_control.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "ProgramacionViewSet",
-        "importPath": "apps.Cultivo.programacion.api.views",
-        "description": "apps.Cultivo.programacion.api.views",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.programacion.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "Programacion",
-        "importPath": "apps.Cultivo.programacion.models",
-        "description": "apps.Cultivo.programacion.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.programacion.models",
-        "documentation": {}
-    },
-    {
-        "label": "Programacion",
-        "importPath": "apps.Cultivo.programacion.models",
-        "description": "apps.Cultivo.programacion.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.programacion.models",
-        "documentation": {}
-    },
-    {
-        "label": "ProgramacionSerializer",
-        "importPath": "apps.Cultivo.programacion.api.serializers",
-        "description": "apps.Cultivo.programacion.api.serializers",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.programacion.api.serializers",
         "documentation": {}
     },
     {
@@ -9319,38 +8919,6 @@
         "description": "apps.Cultivo.semillero.api.serializers",
         "isExtraImport": true,
         "detail": "apps.Cultivo.semillero.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "TareaViewSet",
-        "importPath": "apps.Cultivo.tareas.api.views",
-        "description": "apps.Cultivo.tareas.api.views",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.tareas.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "Tarea",
-        "importPath": "apps.Cultivo.tareas.models",
-        "description": "apps.Cultivo.tareas.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.tareas.models",
-        "documentation": {}
-    },
-    {
-        "label": "Tarea",
-        "importPath": "apps.Cultivo.tareas.models",
-        "description": "apps.Cultivo.tareas.models",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.tareas.models",
-        "documentation": {}
-    },
-    {
-        "label": "TareaSerializer",
-        "importPath": "apps.Cultivo.tareas.api.serializers",
-        "description": "apps.Cultivo.tareas.api.serializers",
-        "isExtraImport": true,
-        "detail": "apps.Cultivo.tareas.api.serializers",
         "documentation": {}
     },
     {
@@ -9554,6 +9122,22 @@
         "documentation": {}
     },
     {
+        "label": "ValidationError",
+        "importPath": "django.core.exceptions",
+        "description": "django.core.exceptions",
+        "isExtraImport": true,
+        "detail": "django.core.exceptions",
+        "documentation": {}
+    },
+    {
+        "label": "ValidationError",
+        "importPath": "django.core.exceptions",
+        "description": "django.core.exceptions",
+        "isExtraImport": true,
+        "detail": "django.core.exceptions",
+        "documentation": {}
+    },
+    {
         "label": "ObjectDoesNotExist",
         "importPath": "django.core.exceptions",
         "description": "django.core.exceptions",
@@ -9684,6 +9268,14 @@
         "documentation": {}
     },
     {
+        "label": "Venta",
+        "importPath": "apps.Finanzas.venta.models",
+        "description": "apps.Finanzas.venta.models",
+        "isExtraImport": true,
+        "detail": "apps.Finanzas.venta.models",
+        "documentation": {}
+    },
+    {
         "label": "PrecioProducto",
         "importPath": "apps.Inventario.precio_producto.models",
         "description": "apps.Inventario.precio_producto.models",
@@ -9713,6 +9305,14 @@
         "description": "apps.Finanzas.venta.api.serializers",
         "isExtraImport": true,
         "detail": "apps.Finanzas.venta.api.serializers",
+        "documentation": {}
+    },
+    {
+        "label": "canvas",
+        "importPath": "reportlab.pdfgen",
+        "description": "reportlab.pdfgen",
+        "isExtraImport": true,
+        "detail": "reportlab.pdfgen",
         "documentation": {}
     },
     {
@@ -10073,6 +9673,14 @@
         "documentation": {}
     },
     {
+        "label": "BaseUserManager",
+        "importPath": "django.contrib.auth.base_user",
+        "description": "django.contrib.auth.base_user",
+        "isExtraImport": true,
+        "detail": "django.contrib.auth.base_user",
+        "documentation": {}
+    },
+    {
         "label": "send_mail",
         "importPath": "django.core.mail",
         "description": "django.core.mail",
@@ -10102,6 +9710,31 @@
         "description": "django.utils.crypto",
         "isExtraImport": true,
         "detail": "django.utils.crypto",
+        "documentation": {}
+    },
+    {
+        "label": "MultiPartParser",
+        "importPath": "rest_framework.parsers",
+        "description": "rest_framework.parsers",
+        "isExtraImport": true,
+        "detail": "rest_framework.parsers",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "csrf_exempt",
+        "importPath": "django.views.decorators.csrf",
+        "description": "django.views.decorators.csrf",
+        "isExtraImport": true,
+        "detail": "django.views.decorators.csrf",
         "documentation": {}
     },
     {
@@ -10286,7 +9919,7 @@
         "kind": 5,
         "importPath": "Agrosoft.settings",
         "description": "Agrosoft.settings",
-        "peekOfCode": "CORS_ALLOWED_ORIGINS = [\n    \"http://localhost:5173\",  # Frontend Vite\n    \"http://127.0.0.1:5173\",\n]\n# Database\n# https://docs.djangoproject.com/en/5.1/ref/settings/#databases\nDATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft',",
+        "peekOfCode": "CORS_ALLOWED_ORIGINS = [\n    \"http://localhost:5173\",  # Frontend Vite\n    \"http://127.0.0.1:5173\",\n]\n# Database\n# https://docs.djangoproject.com/en/5.1/ref/settizngs/#databases\nDATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft_new1',",
         "detail": "Agrosoft.settings",
         "documentation": {}
     },
@@ -10295,7 +9928,7 @@
         "kind": 5,
         "importPath": "Agrosoft.settings",
         "description": "Agrosoft.settings",
-        "peekOfCode": "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft',\n        'USER': 'postgres',\n        'PASSWORD': 'hate',\n        'HOST': 'localhost', \n        'PORT': '5432',\n        'OPTIONS': {\n            'client_encoding': 'UTF8',",
+        "peekOfCode": "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'agrosoft_new1',\n        'USER': 'postgres',\n        'PASSWORD': 'root',\n        'HOST': 'localhost', \n        'PORT': '5432',\n        'OPTIONS': {\n            'client_encoding': 'UTF8',",
         "detail": "Agrosoft.settings",
         "documentation": {}
     },
@@ -10824,27 +10457,9 @@
     {
         "label": "Migration",
         "kind": 6,
-        "importPath": "apps.Cultivo.actividades.migrations.0002_actividad_programacion",
-        "description": "apps.Cultivo.actividades.migrations.0002_actividad_programacion",
-        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0001_initial'),\n        ('programacion', '0001_initial'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='actividad',\n            name='programacion',\n            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='programacion.programacion'),",
-        "detail": "apps.Cultivo.actividades.migrations.0002_actividad_programacion",
-        "documentation": {}
-    },
-    {
-        "label": "Migration",
-        "kind": 6,
-        "importPath": "apps.Cultivo.actividades.migrations.0003_remove_actividad_programacion_and_more",
-        "description": "apps.Cultivo.actividades.migrations.0003_remove_actividad_programacion_and_more",
-        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0002_actividad_programacion'),\n    ]\n    operations = [\n        migrations.RemoveField(\n            model_name='actividad',\n            name='programacion',\n        ),\n        migrations.AlterField(",
-        "detail": "apps.Cultivo.actividades.migrations.0003_remove_actividad_programacion_and_more",
-        "documentation": {}
-    },
-    {
-        "label": "Migration",
-        "kind": 6,
         "importPath": "apps.Cultivo.actividades.migrations.0004_actividad_estado_actividad_instrucciones_adicionales_and_more",
         "description": "apps.Cultivo.actividades.migrations.0004_actividad_estado_actividad_instrucciones_adicionales_and_more",
-        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0003_remove_actividad_programacion_and_more'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='actividad',\n            name='estado',\n            field=models.CharField(choices=[('PENDIENTE', 'Pendiente'), ('EN_PROCESO', 'En proceso'), ('COMPLETADA', 'Completada'), ('CANCELADA', 'Cancelada')], default='PENDIENTE', max_length=20),\n        ),",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0001_initial'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='actividad',\n            name='estado',\n            field=models.CharField(choices=[('PENDIENTE', 'Pendiente'), ('EN_PROCESO', 'En proceso'), ('COMPLETADA', 'Completada'), ('CANCELADA', 'Cancelada')], default='PENDIENTE', max_length=20),\n        ),",
         "detail": "apps.Cultivo.actividades.migrations.0004_actividad_estado_actividad_instrucciones_adicionales_and_more",
         "documentation": {}
     },
@@ -10864,6 +10479,24 @@
         "description": "apps.Cultivo.actividades.migrations.0006_prestamoherramienta_bodega_herramienta",
         "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0005_remove_actividad_cantidadusada_and_more'),\n        ('bodega_herramienta', '0006_alter_bodegaherramienta_options_and_more'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='prestamoherramienta',\n            name='bodega_herramienta',\n            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='bodega_herramienta.bodegaherramienta'),",
         "detail": "apps.Cultivo.actividades.migrations.0006_prestamoherramienta_bodega_herramienta",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Cultivo.actividades.migrations.0007_prestamoinsumo_unidad_medida",
+        "description": "apps.Cultivo.actividades.migrations.0007_prestamoinsumo_unidad_medida",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0006_prestamoherramienta_bodega_herramienta'),\n        ('insumos', '0010_tipoinsumo_insumo_es_compuesto_insumo_tipo_insumo_and_more'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='prestamoinsumo',\n            name='unidad_medida',\n            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='insumos.unidadmedida'),",
+        "detail": "apps.Cultivo.actividades.migrations.0007_prestamoinsumo_unidad_medida",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Cultivo.actividades.migrations.0008_alter_actividad_fecha_fin_and_more",
+        "description": "apps.Cultivo.actividades.migrations.0008_alter_actividad_fecha_fin_and_more",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('actividades', '0007_prestamoinsumo_unidad_medida'),\n    ]\n    operations = [\n        migrations.AlterField(\n            model_name='actividad',\n            name='fecha_fin',\n            field=models.DateTimeField(),\n        ),",
+        "detail": "apps.Cultivo.actividades.migrations.0008_alter_actividad_fecha_fin_and_more",
         "documentation": {}
     },
     {
@@ -10889,7 +10522,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.actividades.models",
         "description": "apps.Cultivo.actividades.models",
-        "peekOfCode": "class PrestamoInsumo(models.Model):\n    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='prestamos_insumos')\n    insumo = models.ForeignKey('insumos.Insumo', on_delete=models.CASCADE)\n    cantidad_usada = models.IntegerField(default=0)\n    cantidad_devuelta = models.IntegerField(default=0)\n    fecha_devolucion = models.DateTimeField(null=True, blank=True)\n    def __str__(self):\n        return f\"{self.insumo.nombre} prestado a {self.actividad}\"\nclass PrestamoHerramienta(models.Model):\n    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='prestamos_herramientas')",
+        "peekOfCode": "class PrestamoInsumo(models.Model):\n    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='prestamos_insumos')\n    insumo = models.ForeignKey('insumos.Insumo', on_delete=models.CASCADE)\n    cantidad_usada = models.IntegerField(default=0)\n    cantidad_devuelta = models.IntegerField(default=0)\n    fecha_devolucion = models.DateTimeField(null=True, blank=True)\n    unidad_medida = models.ForeignKey(UnidadMedida, on_delete=models.PROTECT, null=True, blank=True)\n    def __str__(self):\n        return f\"{self.insumo.nombre} prestado a {self.actividad}\"\nclass PrestamoHerramienta(models.Model):",
         "detail": "apps.Cultivo.actividades.models",
         "documentation": {}
     },
@@ -11065,15 +10698,6 @@
         "documentation": {}
     },
     {
-        "label": "ConectaConfig",
-        "kind": 6,
-        "importPath": "apps.Cultivo.conecta.apps",
-        "description": "apps.Cultivo.conecta.apps",
-        "peekOfCode": "class ConectaConfig(AppConfig):\n    default_auto_field = 'django.db.models.BigAutoField'\n    name = 'apps.Cultivo.conecta'",
-        "detail": "apps.Cultivo.conecta.apps",
-        "documentation": {}
-    },
-    {
         "label": "controlRouter",
         "kind": 5,
         "importPath": "apps.Cultivo.controles.api.router",
@@ -11087,7 +10711,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.controles.api.serializers",
         "description": "apps.Cultivo.controles.api.serializers",
-        "peekOfCode": "class ControlSerializer(serializers.ModelSerializer):\n    afeccion = AfeccionSerializer(read_only=True)\n    afeccion_id = serializers.PrimaryKeyRelatedField(\n        queryset=Afeccion.objects.all(),\n        source='afeccion',\n        write_only=True\n    )\n    producto = ProductoControlSerializer(read_only=True)\n    producto_id = serializers.PrimaryKeyRelatedField(\n        queryset=ProductoControl.objects.all(),",
+        "peekOfCode": "class ControlSerializer(serializers.ModelSerializer):\n    afeccion = AfeccionSerializer(read_only=True)\n    afeccion_id = serializers.PrimaryKeyRelatedField(\n        queryset=Afeccion.objects.all(),\n        source='afeccion',\n        write_only=True\n    )\n    producto = InsumoSerializer(read_only=True)\n    producto_id = serializers.PrimaryKeyRelatedField(\n        queryset=Insumo.objects.all(),",
         "detail": "apps.Cultivo.controles.api.serializers",
         "documentation": {}
     },
@@ -11105,7 +10729,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.controles.migrations.0001_initial",
         "description": "apps.Cultivo.controles.migrations.0001_initial",
-        "peekOfCode": "class Migration(migrations.Migration):\n    initial = True\n    dependencies = [\n        ('afecciones', '0001_initial'),\n        ('productos_control', '0001_initial'),\n        ('tipo_control', '0001_initial'),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='Control',",
+        "peekOfCode": "class Migration(migrations.Migration):\n    initial = True\n    dependencies = [\n        ('afecciones', '0001_initial'),\n        ('tipo_control', '0001_initial'),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='Control',\n            fields=[",
         "detail": "apps.Cultivo.controles.migrations.0001_initial",
         "documentation": {}
     },
@@ -11116,6 +10740,15 @@
         "description": "apps.Cultivo.controles.migrations.0002_rename_id_afeccion_control_afeccion_and_more",
         "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('controles', '0001_initial'),\n        migrations.swappable_dependency(settings.AUTH_USER_MODEL),\n    ]\n    operations = [\n        migrations.RenameField(\n            model_name='control',\n            old_name='id_afeccion',\n            new_name='afeccion',",
         "detail": "apps.Cultivo.controles.migrations.0002_rename_id_afeccion_control_afeccion_and_more",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Cultivo.controles.migrations.0003_alter_control_producto",
+        "description": "apps.Cultivo.controles.migrations.0003_alter_control_producto",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('controles', '0002_rename_id_afeccion_control_afeccion_and_more'),\n        ('insumos', '0010_tipoinsumo_insumo_es_compuesto_insumo_tipo_insumo_and_more'),\n    ]\n    operations = [\n        migrations.AlterField(\n            model_name='control',\n            name='producto',\n            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='insumos.insumo'),",
+        "detail": "apps.Cultivo.controles.migrations.0003_alter_control_producto",
         "documentation": {}
     },
     {
@@ -11132,7 +10765,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.controles.models",
         "description": "apps.Cultivo.controles.models",
-        "peekOfCode": "class Control(models.Model):\n    afeccion = models.ForeignKey('afecciones.Afeccion', on_delete=models.CASCADE)\n    tipo_control = models.ForeignKey('tipo_control.TipoControl', on_delete=models.CASCADE)\n    producto = models.ForeignKey('productos_control.ProductoControl', on_delete=models.CASCADE)\n    descripcion = models.TextField()\n    fecha_control = models.DateField()\n    responsable = models.ForeignKey('usuarios.Usuarios', on_delete=models.SET_NULL, null=True)\n    efectividad = models.PositiveSmallIntegerField(\n        choices=[(i, f\"{i}%\") for i in range(0, 101, 10)],\n        default=50",
+        "peekOfCode": "class Control(models.Model):\n    afeccion = models.ForeignKey('afecciones.Afeccion', on_delete=models.CASCADE)\n    tipo_control = models.ForeignKey('tipo_control.TipoControl', on_delete=models.CASCADE)\n    producto = models.ForeignKey('insumos.Insumo', on_delete=models.CASCADE)\n    descripcion = models.TextField()\n    fecha_control = models.DateField()\n    responsable = models.ForeignKey('usuarios.Usuarios', on_delete=models.SET_NULL, null=True)\n    efectividad = models.PositiveSmallIntegerField(\n        choices=[(i, f\"{i}%\") for i in range(0, 101, 10)],\n        default=50",
         "detail": "apps.Cultivo.controles.models",
         "documentation": {}
     },
@@ -11150,7 +10783,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.cosechas.api.serializers",
         "description": "apps.Cultivo.cosechas.api.serializers",
-        "peekOfCode": "class CosechaSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Cosecha\n        fields = '__all__'",
+        "peekOfCode": "class CosechaSerializer(serializers.ModelSerializer):\n    cultivo_nombre = serializers.CharField(source='id_cultivo.nombre', read_only=True)\n    class Meta:\n        model = Cosecha\n        fields = '__all__'",
         "detail": "apps.Cultivo.cosechas.api.serializers",
         "documentation": {}
     },
@@ -11182,6 +10815,15 @@
         "documentation": {}
     },
     {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Cultivo.cosechas.migrations.0003_alter_cosecha_unidades_de_medida",
+        "description": "apps.Cultivo.cosechas.migrations.0003_alter_cosecha_unidades_de_medida",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('cosechas', '0002_initial'),\n        ('insumos', '0010_tipoinsumo_insumo_es_compuesto_insumo_tipo_insumo_and_more'),\n    ]\n    operations = [\n        migrations.AlterField(\n            model_name='cosecha',\n            name='unidades_de_medida',\n            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cosechas', to='insumos.unidadmedida'),",
+        "detail": "apps.Cultivo.cosechas.migrations.0003_alter_cosecha_unidades_de_medida",
+        "documentation": {}
+    },
+    {
         "label": "CosechasConfig",
         "kind": 6,
         "importPath": "apps.Cultivo.cosechas.apps",
@@ -11195,7 +10837,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.cosechas.models",
         "description": "apps.Cultivo.cosechas.models",
-        "peekOfCode": "class Cosecha(models.Model):\n    id_cultivo = models.ForeignKey(Cultivo, on_delete=models.CASCADE, related_name=\"cosechas\")\n    cantidad = models.IntegerField()\n    unidades_de_medida = models.CharField(max_length=10)\n    fecha = models.DateField()\n    def __str__(self):\n        return f\"Cosecha {self.fecha} - {self.cantidad} {self.unidades_de_medida}\"",
+        "peekOfCode": "class Cosecha(models.Model):\n    id_cultivo = models.ForeignKey(Cultivo, on_delete=models.CASCADE, related_name=\"cosechas\")\n    cantidad = models.IntegerField()\n    unidades_de_medida = models.ForeignKey(UnidadMedida, on_delete=models.CASCADE, related_name=\"cosechas\")\n    fecha = models.DateField()\n    def __str__(self):\n        return f\"Cosecha {self.fecha} - {self.cantidad} {self.unidades_de_medida}\"",
         "detail": "apps.Cultivo.cosechas.models",
         "documentation": {}
     },
@@ -11213,7 +10855,34 @@
         "kind": 6,
         "importPath": "apps.Cultivo.cultivos.api.serializers",
         "description": "apps.Cultivo.cultivos.api.serializers",
-        "peekOfCode": "class CultivoSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Cultivo\n        fields = '__all__'",
+        "peekOfCode": "class CultivoSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Cultivo\n        fields = '__all__'\nclass ActividadSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Actividad\n        fields = ['id', 'nombre', 'fecha', 'tipoActividad']\nclass CosechaSerializer(serializers.ModelSerializer):\n    class Meta:",
+        "detail": "apps.Cultivo.cultivos.api.serializers",
+        "documentation": {}
+    },
+    {
+        "label": "ActividadSerializer",
+        "kind": 6,
+        "importPath": "apps.Cultivo.cultivos.api.serializers",
+        "description": "apps.Cultivo.cultivos.api.serializers",
+        "peekOfCode": "class ActividadSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Actividad\n        fields = ['id', 'nombre', 'fecha', 'tipoActividad']\nclass CosechaSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Cosecha\n        fields = ['id', 'cantidad', 'fechaCosecha']\nclass EventoTrazabilidadSerializer(serializers.Serializer):\n    tipo = serializers.CharField()",
+        "detail": "apps.Cultivo.cultivos.api.serializers",
+        "documentation": {}
+    },
+    {
+        "label": "CosechaSerializer",
+        "kind": 6,
+        "importPath": "apps.Cultivo.cultivos.api.serializers",
+        "description": "apps.Cultivo.cultivos.api.serializers",
+        "peekOfCode": "class CosechaSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Cosecha\n        fields = ['id', 'cantidad', 'fechaCosecha']\nclass EventoTrazabilidadSerializer(serializers.Serializer):\n    tipo = serializers.CharField()\n    fecha = serializers.DateField()\n    datos = serializers.DictField()",
+        "detail": "apps.Cultivo.cultivos.api.serializers",
+        "documentation": {}
+    },
+    {
+        "label": "EventoTrazabilidadSerializer",
+        "kind": 6,
+        "importPath": "apps.Cultivo.cultivos.api.serializers",
+        "description": "apps.Cultivo.cultivos.api.serializers",
+        "peekOfCode": "class EventoTrazabilidadSerializer(serializers.Serializer):\n    tipo = serializers.CharField()\n    fecha = serializers.DateField()\n    datos = serializers.DictField()",
         "detail": "apps.Cultivo.cultivos.api.serializers",
         "documentation": {}
     },
@@ -11254,6 +10923,15 @@
         "documentation": {}
     },
     {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Cultivo.cultivos.migrations.0004_alter_cultivo_unidad_de_medida",
+        "description": "apps.Cultivo.cultivos.migrations.0004_alter_cultivo_unidad_de_medida",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('cultivos', '0003_alter_cultivo_nombre'),\n        ('insumos', '0010_tipoinsumo_insumo_es_compuesto_insumo_tipo_insumo_and_more'),\n    ]\n    operations = [\n        migrations.AlterField(\n            model_name='cultivo',\n            name='unidad_de_medida',\n            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='insumos.unidadmedida'),",
+        "detail": "apps.Cultivo.cultivos.migrations.0004_alter_cultivo_unidad_de_medida",
+        "documentation": {}
+    },
+    {
         "label": "CultivosConfig",
         "kind": 6,
         "importPath": "apps.Cultivo.cultivos.apps",
@@ -11267,7 +10945,7 @@
         "kind": 6,
         "importPath": "apps.Cultivo.cultivos.models",
         "description": "apps.Cultivo.cultivos.models",
-        "peekOfCode": "class Cultivo(models.Model):\n    Especie = models.ForeignKey('especies.Especie', on_delete=models.CASCADE)\n    Bancal = models.ForeignKey('bancal.Bancal', on_delete=models.CASCADE)\n    nombre = models.CharField(max_length=50, unique=True)\n    unidad_de_medida = models.CharField(max_length=10, null=True)\n    activo = models.BooleanField()\n    fechaSiembra = models.DateField()\n    def __str__(self):\n        return self.nombre",
+        "peekOfCode": "class Cultivo(models.Model):\n    Especie = models.ForeignKey('especies.Especie', on_delete=models.CASCADE)\n    Bancal = models.ForeignKey('bancal.Bancal', on_delete=models.CASCADE)\n    nombre = models.CharField(max_length=50, unique=True)\n    unidad_de_medida = models.ForeignKey(UnidadMedida, on_delete=models.CASCADE)\n    activo = models.BooleanField()\n    fechaSiembra = models.DateField()\n    def __str__(self):\n        return self.nombre",
         "detail": "apps.Cultivo.cultivos.models",
         "documentation": {}
     },
@@ -11332,60 +11010,6 @@
         "description": "apps.Cultivo.especies.models",
         "peekOfCode": "class Especie(models.Model):\n    fk_tipo_especie = models.ForeignKey('tipo_especies.TipoEspecie', on_delete=models.CASCADE)\n    nombre = models.CharField(max_length=30, unique=True)\n    descripcion = models.TextField()\n    largoCrecimiento = models.IntegerField()\n    img = models.ImageField(upload_to='especies_images/', null=True)\n    def __str__(self):\n        return self.nombre",
         "detail": "apps.Cultivo.especies.models",
-        "documentation": {}
-    },
-    {
-        "label": "faseLunarRouter",
-        "kind": 5,
-        "importPath": "apps.Cultivo.fase_lunar.api.router",
-        "description": "apps.Cultivo.fase_lunar.api.router",
-        "peekOfCode": "faseLunarRouter = DefaultRouter()\nfaseLunarRouter.register(prefix='faselunar', viewset=FaseLunarViewSet, basename='faselunar')",
-        "detail": "apps.Cultivo.fase_lunar.api.router",
-        "documentation": {}
-    },
-    {
-        "label": "FaseLunarSerializer",
-        "kind": 6,
-        "importPath": "apps.Cultivo.fase_lunar.api.serializers",
-        "description": "apps.Cultivo.fase_lunar.api.serializers",
-        "peekOfCode": "class FaseLunarSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = FaseLunar\n        fields = '__all__'",
-        "detail": "apps.Cultivo.fase_lunar.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "FaseLunarViewSet",
-        "kind": 6,
-        "importPath": "apps.Cultivo.fase_lunar.api.views",
-        "description": "apps.Cultivo.fase_lunar.api.views",
-        "peekOfCode": "class FaseLunarViewSet(viewsets.ModelViewSet):\n    authentication_classes = [JWTAuthentication]\n    permission_classes = [IsAuthenticated, IsAdminOrRead] \n    queryset = FaseLunar.objects.all()\n    serializer_class = FaseLunarSerializer",
-        "detail": "apps.Cultivo.fase_lunar.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "Migration",
-        "kind": 6,
-        "importPath": "apps.Cultivo.fase_lunar.migrations.0001_initial",
-        "description": "apps.Cultivo.fase_lunar.migrations.0001_initial",
-        "peekOfCode": "class Migration(migrations.Migration):\n    initial = True\n    dependencies = [\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='FaseLunar',\n            fields=[\n                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),\n                ('nombre', models.CharField(max_length=30)),",
-        "detail": "apps.Cultivo.fase_lunar.migrations.0001_initial",
-        "documentation": {}
-    },
-    {
-        "label": "FaseLunarConfig",
-        "kind": 6,
-        "importPath": "apps.Cultivo.fase_lunar.apps",
-        "description": "apps.Cultivo.fase_lunar.apps",
-        "peekOfCode": "class FaseLunarConfig(AppConfig):\n    default_auto_field = 'django.db.models.BigAutoField'\n    name = 'apps.Cultivo.fase_lunar'",
-        "detail": "apps.Cultivo.fase_lunar.apps",
-        "documentation": {}
-    },
-    {
-        "label": "FaseLunar",
-        "kind": 6,
-        "importPath": "apps.Cultivo.fase_lunar.models",
-        "description": "apps.Cultivo.fase_lunar.models",
-        "peekOfCode": "class FaseLunar(models.Model):\n    nombre = models.CharField(max_length=30)\n    fase_lunar = models.CharField(max_length=30)\n    descripcion = models.TextField()\n    recomendaciones = models.TextField()\n    fecha = models.DateField()\n    img = models.ImageField(upload_to='fases_lunares_images/', null=True, blank=True)\n    def __str__(self):\n        return self.nombre",
-        "detail": "apps.Cultivo.fase_lunar.models",
         "documentation": {}
     },
     {
@@ -11566,123 +11190,6 @@
         "description": "apps.Cultivo.plantaciones.models",
         "peekOfCode": "class Plantacion(models.Model):\n    id_cultivo = models.ForeignKey('cultivos.Cultivo', on_delete=models.CASCADE)\n    bancal = models.ForeignKey('bancal.Bancal', on_delete=models.CASCADE)\n    def __str__(self):\n        return f'Plantación {self.id_cultivo.nombre}'",
         "detail": "apps.Cultivo.plantaciones.models",
-        "documentation": {}
-    },
-    {
-        "label": "productosControlRouter",
-        "kind": 5,
-        "importPath": "apps.Cultivo.productos_control.api.router",
-        "description": "apps.Cultivo.productos_control.api.router",
-        "peekOfCode": "productosControlRouter = DefaultRouter()\nproductosControlRouter.register(prefix='productoscontrol', viewset=ProductoControlViewSet, basename='productoscontrol')",
-        "detail": "apps.Cultivo.productos_control.api.router",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControlSerializer",
-        "kind": 6,
-        "importPath": "apps.Cultivo.productos_control.api.serializers",
-        "description": "apps.Cultivo.productos_control.api.serializers",
-        "peekOfCode": "class ProductoControlSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = ProductoControl\n        fields = '__all__'",
-        "detail": "apps.Cultivo.productos_control.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControlViewSet",
-        "kind": 6,
-        "importPath": "apps.Cultivo.productos_control.api.views",
-        "description": "apps.Cultivo.productos_control.api.views",
-        "peekOfCode": "class ProductoControlViewSet(viewsets.ModelViewSet):\n    authentication_classes = [JWTAuthentication]\n    permission_classes = [IsAuthenticated, IsAdminOrRead,PermisoPorRol] \n    queryset = ProductoControl.objects.all()\n    serializer_class = ProductoControlSerializer",
-        "detail": "apps.Cultivo.productos_control.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "Migration",
-        "kind": 6,
-        "importPath": "apps.Cultivo.productos_control.migrations.0001_initial",
-        "description": "apps.Cultivo.productos_control.migrations.0001_initial",
-        "peekOfCode": "class Migration(migrations.Migration):\n    initial = True\n    dependencies = [\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='ProductoControl',\n            fields=[\n                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),\n                ('precio', models.IntegerField()),",
-        "detail": "apps.Cultivo.productos_control.migrations.0001_initial",
-        "documentation": {}
-    },
-    {
-        "label": "Migration",
-        "kind": 6,
-        "importPath": "apps.Cultivo.productos_control.migrations.0002_alter_productocontrol_nombre",
-        "description": "apps.Cultivo.productos_control.migrations.0002_alter_productocontrol_nombre",
-        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('productos_control', '0001_initial'),\n    ]\n    operations = [\n        migrations.AlterField(\n            model_name='productocontrol',\n            name='nombre',\n            field=models.CharField(max_length=30, unique=True),\n        ),",
-        "detail": "apps.Cultivo.productos_control.migrations.0002_alter_productocontrol_nombre",
-        "documentation": {}
-    },
-    {
-        "label": "ProductosControlConfig",
-        "kind": 6,
-        "importPath": "apps.Cultivo.productos_control.apps",
-        "description": "apps.Cultivo.productos_control.apps",
-        "peekOfCode": "class ProductosControlConfig(AppConfig):\n    default_auto_field = 'django.db.models.BigAutoField'\n    name = 'apps.Cultivo.productos_control'",
-        "detail": "apps.Cultivo.productos_control.apps",
-        "documentation": {}
-    },
-    {
-        "label": "ProductoControl",
-        "kind": 6,
-        "importPath": "apps.Cultivo.productos_control.models",
-        "description": "apps.Cultivo.productos_control.models",
-        "peekOfCode": "class ProductoControl(models.Model):\n    precio = models.IntegerField()\n    nombre = models.CharField(max_length=30, unique=True)\n    compuestoActivo = models.CharField(max_length=50)\n    fichaTecnica = models.TextField()\n    Contenido = models.IntegerField()\n    tipoContenido = models.CharField(max_length=10)\n    unidades = models.IntegerField()\n    def __str__(self):\n        return self.nombre",
-        "detail": "apps.Cultivo.productos_control.models",
-        "documentation": {}
-    },
-    {
-        "label": "programacionRouter",
-        "kind": 5,
-        "importPath": "apps.Cultivo.programacion.api.router",
-        "description": "apps.Cultivo.programacion.api.router",
-        "peekOfCode": "programacionRouter = DefaultRouter()\nprogramacionRouter.register(prefix='programacion', viewset=ProgramacionViewSet, basename='programacion')",
-        "detail": "apps.Cultivo.programacion.api.router",
-        "documentation": {}
-    },
-    {
-        "label": "ProgramacionSerializer",
-        "kind": 6,
-        "importPath": "apps.Cultivo.programacion.api.serializers",
-        "description": "apps.Cultivo.programacion.api.serializers",
-        "peekOfCode": "class ProgramacionSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Programacion\n        fields = '__all__'",
-        "detail": "apps.Cultivo.programacion.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "ProgramacionViewSet",
-        "kind": 6,
-        "importPath": "apps.Cultivo.programacion.api.views",
-        "description": "apps.Cultivo.programacion.api.views",
-        "peekOfCode": "class ProgramacionViewSet(viewsets.ModelViewSet):\n    authentication_classes = [JWTAuthentication]\n    permission_classes = [IsAuthenticated, IsAdminOrRead] \n    queryset = Programacion.objects.all()\n    serializer_class = ProgramacionSerializer",
-        "detail": "apps.Cultivo.programacion.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "Migration",
-        "kind": 6,
-        "importPath": "apps.Cultivo.programacion.migrations.0001_initial",
-        "description": "apps.Cultivo.programacion.migrations.0001_initial",
-        "peekOfCode": "class Migration(migrations.Migration):\n    initial = True\n    dependencies = [\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='Programacion',\n            fields=[\n                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),\n                ('ubicacion', models.CharField(max_length=100)),",
-        "detail": "apps.Cultivo.programacion.migrations.0001_initial",
-        "documentation": {}
-    },
-    {
-        "label": "ProgramacionConfig",
-        "kind": 6,
-        "importPath": "apps.Cultivo.programacion.apps",
-        "description": "apps.Cultivo.programacion.apps",
-        "peekOfCode": "class ProgramacionConfig(AppConfig):\n    default_auto_field = 'django.db.models.BigAutoField'\n    name = 'apps.Cultivo.programacion'",
-        "detail": "apps.Cultivo.programacion.apps",
-        "documentation": {}
-    },
-    {
-        "label": "Programacion",
-        "kind": 6,
-        "importPath": "apps.Cultivo.programacion.models",
-        "description": "apps.Cultivo.programacion.models",
-        "peekOfCode": "class Programacion(models.Model):\n    ubicacion = models.CharField(max_length=100)\n    hora_prog = models.DateTimeField()\n    fecha_prog = models.DateField()\n    estado = models.BooleanField()\n    def __str__(self):\n        return f\"Programación {self.ubicacion} - {self.fecha_prog}\"",
-        "detail": "apps.Cultivo.programacion.models",
         "documentation": {}
     },
     {
@@ -11872,60 +11379,6 @@
         "description": "apps.Cultivo.semillero.models",
         "peekOfCode": "class Semillero(models.Model):\n    fk_especie = models.ForeignKey('especies.Especie', on_delete=models.CASCADE)\n    unidades_de_medida = models.IntegerField()\n    fechaSiembra = models.DateField()\n    fechaEstimada = models.DateField()\n    img = models.ImageField(upload_to='semilleros_images/', null=True, blank=True)\n    def __str__(self):\n        return f'Semillero {self.fk_especie.nombre}'",
         "detail": "apps.Cultivo.semillero.models",
-        "documentation": {}
-    },
-    {
-        "label": "tareaRouter",
-        "kind": 5,
-        "importPath": "apps.Cultivo.tareas.api.router",
-        "description": "apps.Cultivo.tareas.api.router",
-        "peekOfCode": "tareaRouter = DefaultRouter()\ntareaRouter.register(prefix='tarea', viewset=TareaViewSet, basename='tarea')",
-        "detail": "apps.Cultivo.tareas.api.router",
-        "documentation": {}
-    },
-    {
-        "label": "TareaSerializer",
-        "kind": 6,
-        "importPath": "apps.Cultivo.tareas.api.serializers",
-        "description": "apps.Cultivo.tareas.api.serializers",
-        "peekOfCode": "class TareaSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Tarea\n        fields = '__all__'",
-        "detail": "apps.Cultivo.tareas.api.serializers",
-        "documentation": {}
-    },
-    {
-        "label": "TareaViewSet",
-        "kind": 6,
-        "importPath": "apps.Cultivo.tareas.api.views",
-        "description": "apps.Cultivo.tareas.api.views",
-        "peekOfCode": "class TareaViewSet(viewsets.ModelViewSet):\n    authentication_classes = [JWTAuthentication]\n    permission_classes = [IsAuthenticated, IsAdminOrRead]  \n    queryset = Tarea.objects.all()\n    serializer_class = TareaSerializer",
-        "detail": "apps.Cultivo.tareas.api.views",
-        "documentation": {}
-    },
-    {
-        "label": "Migration",
-        "kind": 6,
-        "importPath": "apps.Cultivo.tareas.migrations.0001_initial",
-        "description": "apps.Cultivo.tareas.migrations.0001_initial",
-        "peekOfCode": "class Migration(migrations.Migration):\n    initial = True\n    dependencies = [\n        ('cultivos', '0002_initial'),\n        migrations.swappable_dependency(settings.AUTH_USER_MODEL),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='Tarea',\n            fields=[",
-        "detail": "apps.Cultivo.tareas.migrations.0001_initial",
-        "documentation": {}
-    },
-    {
-        "label": "TareasConfig",
-        "kind": 6,
-        "importPath": "apps.Cultivo.tareas.apps",
-        "description": "apps.Cultivo.tareas.apps",
-        "peekOfCode": "class TareasConfig(AppConfig):\n    default_auto_field = 'django.db.models.BigAutoField'\n    name = 'apps.Cultivo.tareas'",
-        "detail": "apps.Cultivo.tareas.apps",
-        "documentation": {}
-    },
-    {
-        "label": "Tarea",
-        "kind": 6,
-        "importPath": "apps.Cultivo.tareas.models",
-        "description": "apps.Cultivo.tareas.models",
-        "peekOfCode": "class Tarea(models.Model):\n    usuario = models.ForeignKey('usuarios.Usuarios', on_delete=models.CASCADE) \n    cultivo = models.ForeignKey('cultivos.Cultivo', on_delete=models.CASCADE) \n    titulo = models.CharField(max_length=100)\n    descripcion = models.TextField(blank=True, null=True)\n    fecha_inicio = models.DateField()\n    fecha_limite = models.DateField()\n    estado = models.BooleanField()\n    prioridad = models.CharField(max_length=50, blank=True, null=True)\n    def __str__(self):",
-        "detail": "apps.Cultivo.tareas.models",
         "documentation": {}
     },
     {
@@ -12586,6 +12039,15 @@
         "documentation": {}
     },
     {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "apps.Finanzas.venta.migrations.0007_venta_cambio_venta_monto_entregado_and_more",
+        "description": "apps.Finanzas.venta.migrations.0007_venta_cambio_venta_monto_entregado_and_more",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('insumos', '0010_tipoinsumo_insumo_es_compuesto_insumo_tipo_insumo_and_more'),\n        ('venta', '0006_alter_venta_options_alter_venta_cantidad_and_more'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='venta',\n            name='cambio',\n            field=models.DecimalField(decimal_places=2, default=0, editable=False, max_digits=10),",
+        "detail": "apps.Finanzas.venta.migrations.0007_venta_cambio_venta_monto_entregado_and_more",
+        "documentation": {}
+    },
+    {
         "label": "VentaConfig",
         "kind": 6,
         "importPath": "apps.Finanzas.venta.apps",
@@ -12599,7 +12061,7 @@
         "kind": 6,
         "importPath": "apps.Finanzas.venta.models",
         "description": "apps.Finanzas.venta.models",
-        "peekOfCode": "class Venta(models.Model):\n    producto = models.ForeignKey('precio_producto.PrecioProducto', on_delete=models.CASCADE)\n    cantidad = models.PositiveIntegerField()\n    total = models.DecimalField(max_digits=10, decimal_places=2, editable=False)\n    fecha = models.DateTimeField()\n    def save(self, *args, **kwargs):\n        if not self.pk: \n            if self.cantidad <= 0:\n                raise ValueError(\"La cantidad debe ser mayor a cero.\")\n            if self.cantidad > self.producto.stock:",
+        "peekOfCode": "class Venta(models.Model):\n    producto = models.ForeignKey('precio_producto.PrecioProducto', on_delete=models.CASCADE)\n    cantidad = models.PositiveIntegerField()\n    total = models.DecimalField(max_digits=10, decimal_places=2, editable=False)\n    fecha = models.DateTimeField()\n    monto_entregado = models.DecimalField(max_digits=10, decimal_places=2, default=0)\n    cambio = models.DecimalField(max_digits=10, decimal_places=2, editable=False, default=0)\n    unidades_de_medida = models.ForeignKey(UnidadMedida, on_delete=models.CASCADE, related_name=\"ventas\")\n    def save(self, *args, **kwargs):\n        if not self.pk:  # Solo al crear",
         "detail": "apps.Finanzas.venta.models",
         "documentation": {}
     },
@@ -13981,6 +13443,15 @@
         "documentation": {}
     },
     {
+        "label": "ActividadNotificacionConsumer",
+        "kind": 6,
+        "importPath": "apps.Usuarios.usuarios.api.consumers",
+        "description": "apps.Usuarios.usuarios.api.consumers",
+        "peekOfCode": "class ActividadNotificacionConsumer(AsyncWebsocketConsumer):\n    async def connect(self):\n        self.user_id = self.scope['url_route']['kwargs'].get('user_id')\n        if not self.user_id:\n            await self.close()\n            return\n        user_exists = await self.check_user_exists(self.user_id)\n        if not user_exists:\n            await self.close()\n            return",
+        "detail": "apps.Usuarios.usuarios.api.consumers",
+        "documentation": {}
+    },
+    {
         "label": "IsAdminOrRead",
         "kind": 6,
         "importPath": "apps.Usuarios.usuarios.api.permissions",
@@ -14017,6 +13488,15 @@
         "documentation": {}
     },
     {
+        "label": "websocket_urlpatterns",
+        "kind": 5,
+        "importPath": "apps.Usuarios.usuarios.api.routing",
+        "description": "apps.Usuarios.usuarios.api.routing",
+        "peekOfCode": "websocket_urlpatterns = [\nre_path(r'ws/usuarios/notificaciones/(?P<user_id>\\d+)/$', ActividadNotificacionConsumer.as_asgi()),\n]",
+        "detail": "apps.Usuarios.usuarios.api.routing",
+        "documentation": {}
+    },
+    {
         "label": "UsuariosSerializer",
         "kind": 6,
         "importPath": "apps.Usuarios.usuarios.api.serializer",
@@ -14035,6 +13515,24 @@
         "documentation": {}
     },
     {
+        "label": "UsuariosManager",
+        "kind": 6,
+        "importPath": "apps.Usuarios.usuarios.api.serializer",
+        "description": "apps.Usuarios.usuarios.api.serializer",
+        "peekOfCode": "class UsuariosManager(BaseUserManager):\n    def create_user(self, username, email=None, password=None, nombre=None, apellido=None, **extra_fields):\n        if not username:\n            raise ValueError('El nombre de usuario es obligatorio')\n        if not email:\n            raise ValueError('El correo electrónico es obligatorio')\n        email = self.normalize_email(email)\n        user = self.model(\n            username=username,\n            email=email,",
+        "detail": "apps.Usuarios.usuarios.api.serializer",
+        "documentation": {}
+    },
+    {
+        "label": "notificar_asignacion_actividad",
+        "kind": 2,
+        "importPath": "apps.Usuarios.usuarios.api.signals",
+        "description": "apps.Usuarios.usuarios.api.signals",
+        "peekOfCode": "def notificar_asignacion_actividad(actividad, usuarios_ids):\n    channel_layer = get_channel_layer()\n    from apps.Cultivo.actividades.api.serializers import ActividadSerializer\n    serializer = ActividadSerializer(actividad)\n    actividad_data = serializer.data\n    for user_id in usuarios_ids:\n        async_to_sync(channel_layer.group_send)(\n            f'user_{user_id}',\n            {\n                'type': 'send_notification',",
+        "detail": "apps.Usuarios.usuarios.api.signals",
+        "documentation": {}
+    },
+    {
         "label": "UsuariosViewSet",
         "kind": 6,
         "importPath": "apps.Usuarios.usuarios.api.views",
@@ -14048,7 +13546,16 @@
         "kind": 6,
         "importPath": "apps.Usuarios.usuarios.api.views",
         "description": "apps.Usuarios.usuarios.api.views",
-        "peekOfCode": "class RegistroUsuarioView(APIView):\n    permission_classes = [AllowAny]\n    def post(self, request):\n        serializer = RegistroUsuarioSerializer(data=request.data)\n        if serializer.is_valid():\n            usuario = serializer.save()\n            return Response(serializer.data, status=status.HTTP_201_CREATED)\n        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)\nclass CurrentUserView(APIView):\n    permission_classes = [IsAuthenticated]",
+        "peekOfCode": "class RegistroUsuarioView(APIView):\n    permission_classes = [AllowAny]\n    def post(self, request):\n        serializer = RegistroUsuarioSerializer(data=request.data)\n        if serializer.is_valid():\n            usuario = serializer.save()\n            return Response(serializer.data, status=status.HTTP_201_CREATED)\n        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)\nclass RegistroMasivoUsuariosView(APIView):\n    parser_classes = [MultiPartParser]",
+        "detail": "apps.Usuarios.usuarios.api.views",
+        "documentation": {}
+    },
+    {
+        "label": "RegistroMasivoUsuariosView",
+        "kind": 6,
+        "importPath": "apps.Usuarios.usuarios.api.views",
+        "description": "apps.Usuarios.usuarios.api.views",
+        "peekOfCode": "class RegistroMasivoUsuariosView(APIView):\n    parser_classes = [MultiPartParser]\n    permission_classes = [AllowAny]\n    def post(self, request, *args, **kwargs):\n        archivo = request.FILES.get('archivo')\n        if not archivo:\n            return Response({'error': 'No se proporcionó ningún archivo.'}, status=status.HTTP_400_BAD_REQUEST)\n        try:\n            df = pd.read_excel(archivo)\n        except Exception as e:",
         "detail": "apps.Usuarios.usuarios.api.views",
         "documentation": {}
     },

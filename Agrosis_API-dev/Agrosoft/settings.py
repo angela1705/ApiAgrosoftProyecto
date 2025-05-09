@@ -45,10 +45,13 @@ INSTALLED_APPS = [
     'apps.Cultivo.especies',
     'apps.Cultivo.tipo_especies',
     'apps.Cultivo.cultivos',
+    'apps.Cultivo.fase_lunar',
     'apps.Cultivo.tipo_control',
     'apps.Cultivo.semillero',
+    'apps.Cultivo.tareas',
     'apps.Cultivo.afecciones',
     'apps.Cultivo.controles',
+    'apps.Cultivo.productos_control',
     'apps.Cultivo.plantaciones',
     'apps.Cultivo.tipo_actividad',
     'apps.Cultivo.actividades',
@@ -70,6 +73,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'apps.Cultivo.residuos',
     'apps.Cultivo.tipos_residuos',
+    'apps.Cultivo.programacion',
     'apps.Cultivo.cosechas',
     'apps.Cultivo.lotes',
     'apps.Autenticacion.autenticacion',
@@ -128,12 +132,12 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.1/ref/settizngs/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_new2',
+        'NAME': 'agrosoft_new1',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost', 

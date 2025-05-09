@@ -61,33 +61,72 @@ export const useVenta = () => {
     mutationFn: registrarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta registrada con éxito" });
+      addToast({ title: "Éxito", description: "Venta registrada con éxito", color:"success" });
     },
-    onError: (error) => {
-      addToast({ title: "Error", description: `Error al registrar venta: ${error.message}` });
-    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
+          timeout: 3000,
+          color: "warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: `Error al registrar venta: ${error.message}`,
+          color: "danger"
+        });
+      }
+    }
   });
-  const actualizarMutation = useMutation({
+    const actualizarMutation = useMutation({
     mutationFn: actualizarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta actualizada con éxito" });
+      addToast({ title: "Éxito", description: "Venta actualizada con éxito", color:"success" });
     },
-    onError: (error) => {
-      addToast({ title: "Error", description: `Error al actualizar venta: ${error.message}` });
-    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
+          timeout: 3000,
+          color: "warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: `Error al Actualizar venta: ${error.message}`,
+          color: "danger"
+        });
+      }
+    }
   });
-  const eliminarMutation = useMutation({
+    const eliminarMutation = useMutation({
     mutationFn: eliminarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta eliminada con éxito" });
+      addToast({ title: "Éxito", description: "Venta eliminada con éxito", color:"success"});
     },
-    onError: (error) => {
-      addToast({ title: "Error", description: `Error al eliminar venta: ${error.message}` });
-    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
+          timeout: 3000,
+          color: "warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: `Error al eliminar venta: ${error.message}`,
+          color: "danger"
+        });
+      }
+    }
   });
-  return {
+    return {
     ventas: ventasQuery.data ?? [],
     isLoading: ventasQuery.isLoading,
     isError: ventasQuery.isError,
