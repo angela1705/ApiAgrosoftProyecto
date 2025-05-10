@@ -33,6 +33,11 @@ const BancalPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) =>{
     e.preventDefault()
+     if (bancal.lote === 0) {
+    alert("Debe seleccionar un lote.");
+    return;
+  }
+
     mutation.mutate(bancal)
   }
   const [openLote, setopenLote] = useState(false)
