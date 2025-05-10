@@ -18,6 +18,11 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib import colors
 from django.utils.timezone import make_aware
 from django.utils import timezone
+from rest_framework.parsers import MultiPartParser
+import pandas as pd
+from django.db import IntegrityError
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 hoy = datetime.today()
 
@@ -136,6 +141,43 @@ class RegistroUsuarioView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class RegistroMasivoUsuariosView(APIView):
+    parser_classes = [MultiPartParser]
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        archivo = request.FILES.get('archivo')
+        if not archivo:
+            return Response({'error': 'No se proporcionó ningún archivo.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            df = pd.read_excel(archivo)
+        except Exception as e:
+            return Response({'error': f'Error al leer el archivo: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        errores = []
+        for index, row in df.iterrows():
+            data = {
+                'nombre': row.get('nombre'),
+                'apellido': row.get('apellido'),
+                'email': row.get('email'),
+                'username': row.get('username'),
+                'password': row.get('password'),
+                 'rol': row.get('rol')
+            }
+            serializer = RegistroUsuarioSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                errores.append({'fila': index + 2, 'errores': serializer.errors})
+
+        if errores:
+            return Response({'mensaje': 'Algunos usuarios no se pudieron registrar.', 'errores': errores}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje': 'Todos los usuarios se registraron exitosamente.'}, status=status.HTTP_201_CREATED)
+       
+
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]

@@ -97,7 +97,7 @@ interface ModalPlagaProps {
             <label className="block text-sm font-medium text-gray-700">Tipo de Plaga</label>
             <select
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={nuevaPlaga.fk_tipo_plaga || ""}
+              value={nuevaPlaga.fk_tipo_plaga}
               onChange={handleChange}
             >
               <option value="">Seleccione un tipo de plaga</option>

@@ -42,8 +42,7 @@ class AnalisisCostoBeneficio:
         ventas = Venta.objects.filter(
         producto__Producto=cosecha
         )
-
-
+        
         for venta in ventas:
             resultados['ingresos']['ventas'] += venta.cantidad * venta.producto.precio
 
@@ -57,7 +56,7 @@ class AnalisisCostoBeneficio:
             resultados['ingresos']['stock_valorizado'] = Decimal('0')
 
         total_costos = sum(resultados['costos'].values())
-        total_ingresos = sum(resultados['ingresos'].values())
+        total_ingresos = resultados['ingresos'].get('ventas', Decimal('0'))
 
         resultados['metricas']['total_costos'] = total_costos
         resultados['metricas']['total_ingresos'] = total_ingresos

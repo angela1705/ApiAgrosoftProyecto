@@ -90,26 +90,26 @@ const UsuariosPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-<div className="mb-2 flex justify-start">
-  <button
-    className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-    onClick={() => navigate("/usuarios/secondregis/")}
-  >
-    + Registrar
-  </button>
-</div>
-
-<button
-  onClick={() => setModalMasivoAbierto(true)}
-  className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
->
-  + Registro Masivo
-</button>
-
-<RegistroMasivoModal
-  isOpen={modalMasivoAbierto}
-  onOpenChange={setModalMasivoAbierto}
-/>
+      <div className="flex gap-4 mb-2">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate("/usuarios/secondregis/")}
+        >
+          + Registrar
+        </button>
+  
+        <button
+          onClick={() => setModalMasivoAbierto(true)}
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+        >
+          + Registro Masivo
+        </button>
+      </div>
+  
+      <RegistroMasivoModal
+        isOpen={modalMasivoAbierto}
+        onOpenChange={setModalMasivoAbierto}
+      />
 
 
       {isLoading ? (

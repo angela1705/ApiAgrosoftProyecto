@@ -43,10 +43,11 @@ export const useBancales = () => {
 };
 
 export const useRegistrarBancal = () => {
-
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (bancal: Bancal) => registrarBancal(bancal),
     onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['bancales']})
       addToast({
         title: "Éxito",
         description: "Bancal registrado con éxito",

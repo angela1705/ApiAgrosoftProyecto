@@ -128,7 +128,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.1/ref/settizngs/#databases
 
 DATABASES = {
     'default': {

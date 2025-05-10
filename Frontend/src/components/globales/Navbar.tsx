@@ -40,6 +40,8 @@ const menuItems = [
       { id: 11, label: "Tipo Actividad", path: "/cultivo/listartipoactividad/" },
       { id: 12, label: "Actividades", path: "/cultivo/listaractividad/" },
       { id: 14, label: "Cosecha", path: "/cultivo/listarcosechas/" },
+      { id: 99, label: "Trazabilidad", path: "/cultivo/trazabilidad/" },
+
     ],
   },
   {
@@ -48,8 +50,8 @@ const menuItems = [
     icon: <FaDollarSign />,
     subItems: [
       { id: 16, label: "Salario", path: "/finanzas/listarsalarios/" },
-      { id: 17, label: "Ventas", path: "/finanzas/ventas/" },
-      { id: 18, label: "Pagos", path: "/finanzas/pago/" },
+      { id: 17, label: "Ventas", path: "/finanzas/listarventas/" },
+      { id: 18, label: "Pagos", path: "/finanzas/listarpagos/" },
       { id: 19, label: "Costo Beneficio", path: "/finanzas/costo_beneficio/" },
 
     ],

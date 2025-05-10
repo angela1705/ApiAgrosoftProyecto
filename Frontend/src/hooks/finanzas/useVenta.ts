@@ -5,6 +5,7 @@ import { Venta } from "@/types/finanzas/Venta";
 
 const API_URL = "http://127.0.0.1:8000/finanzas/venta/";
 
+
 const fetchVentas = async (): Promise<Venta[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -123,52 +124,75 @@ export const useVenta = () => {
     mutationFn: registrarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta registrada con éxito", timeout: 3000, color: "success" });
+      addToast({ title: "Éxito", description: "Venta registrada con éxito", color:"success" });
     },
     onError: (error: any) => {
-      addToast({ title: "Error", description: `Error al registrar venta: ${error.message}`, timeout: 3000, color: "danger" });
-    },
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
+          timeout: 3000,
+          color: "warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: `Error al registrar venta: ${error.message}`,
+          color: "danger"
+        });
+      }
+    }
   });
 
-  const registrarMultiplesMutation = useMutation({
-    mutationFn: registrarMultiplesVentas,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Ventas registradas con éxito", timeout: 3000, color: "success" });
-    },
-    onError: (error: any) => {
-      addToast({
-        title: "Error",
-        description: `Error al registrar ventas: ${error.message}`,
-        timeout: 5000,
-        color: "danger",
-      });
-    },
-  });
-
-  const actualizarMutation = useMutation({
+    const actualizarMutation = useMutation({
     mutationFn: actualizarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta actualizada con éxito", timeout: 3000, color: "success" });
+      addToast({ title: "Éxito", description: "Venta actualizada con éxito", color:"success" });
     },
     onError: (error: any) => {
-      addToast({ title: "Error", description: `Error al actualizar venta: ${error.message}`, timeout: 3000, color: "danger" });
-    },
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
+          timeout: 3000,
+          color: "warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: `Error al Actualizar venta: ${error.message}`,
+          color: "danger"
+        });
+      }
+    }
   });
 
-  const eliminarMutation = useMutation({
+    const eliminarMutation = useMutation({
     mutationFn: eliminarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta eliminada con éxito", timeout: 3000, color: "success" });
+      addToast({ title: "Éxito", description: "Venta eliminada con éxito", color:"success"});
     },
     onError: (error: any) => {
-      addToast({ title: "Error", description: `Error al eliminar venta: ${error.message}`, timeout: 3000, color: "danger" });
-    },
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
+          timeout: 3000,
+          color: "warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: `Error al eliminar venta: ${error.message}`,
+          color: "danger"
+        });
+      }
+    }
   });
 
-  return {
+    return {
     ventas: ventasQuery.data ?? [],
     isLoading: ventasQuery.isLoading,
     isError: ventasQuery.isError,
@@ -183,3 +207,4 @@ export const useVenta = () => {
     isEliminando: eliminarMutation.isPending,
   };
 };
+

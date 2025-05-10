@@ -78,7 +78,7 @@ const CostoBeneficioPage: React.FC = () => {
               >
                 <CustomCard
                   title={`Cosecha #${cosecha.id}`}
-                  subtitle={`Cultivo: ${cosecha.id_cultivo}`}
+                  subtitle={`Cultivo: ${cosecha.cultivo_nombre}`}
                   tracks={`${formatNumber(cosecha.cantidad)} ${cosecha.unidades_de_medida}`}
                   image="/images/default-cosecha.jpg"
                 />

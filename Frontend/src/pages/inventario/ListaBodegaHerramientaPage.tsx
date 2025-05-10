@@ -29,8 +29,8 @@ const ListaBodegaHerramientaPage: React.FC = () => {
     { name: "Bodega", uid: "bodega" },
     { name: "Herramienta", uid: "herramienta" },
     { name: "Cantidad", uid: "cantidad" },
-    { name: "Costo Total", uid: "costo_total" }, // Nueva columna
-    { name: "Cantidad Prestada", uid: "cantidad_prestada" }, // Nueva columna
+    { name: "Costo Total", uid: "costo_total" },
+    { name: "Cantidad Prestada", uid: "cantidad_prestada" },
     { name: "Acciones", uid: "acciones" },
   ];
 
@@ -60,7 +60,6 @@ const ListaBodegaHerramientaPage: React.FC = () => {
     const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
     const herramientaNombre = herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido";
     
-    // Manejar costo_total para evitar errores
     const costoTotal = item.costo_total != null ? Number(item.costo_total) : 0;
     const costoTotalFormatted = isNaN(costoTotal) ? "0.00" : costoTotal.toFixed(2);
 
@@ -69,7 +68,7 @@ const ListaBodegaHerramientaPage: React.FC = () => {
       bodega: bodegaNombre,
       herramienta: herramientaNombre,
       cantidad: item.cantidad,
-      costo_total: `$${costoTotalFormatted}`, // Formato seguro
+      costo_total: `$${costoTotalFormatted}`,
       cantidad_prestada: item.cantidad_prestada,
       nombre: `${bodegaNombre} ${herramientaNombre} ${item.cantidad}`,
       acciones: (
@@ -109,8 +108,6 @@ const ListaBodegaHerramientaPage: React.FC = () => {
 
       {isLoading ? (
         <p className="text-gray-600">Cargando...</p>
-      ) : !bodegaHerramientas || bodegaHerramientas.length === 0 ? (
-        <p className="text-gray-600">No hay datos disponibles.</p>
       ) : (
         <Tabla columns={columns} data={transformedData} />
       )}
@@ -188,7 +185,7 @@ const ListaBodegaHerramientaPage: React.FC = () => {
                   ? `$${Number(selectedBodegaHerramienta.costo_total).toFixed(2)}`
                   : "$0.00"
               }
-              onChange={() => {}} // Solo lectura
+              onChange={() => {}}
             />
           </>
         )}
