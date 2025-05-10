@@ -3,7 +3,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponse
+from django.db import transaction
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
@@ -13,7 +15,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from apps.Finanzas.venta.models import Venta
 from apps.Finanzas.venta.api.serializers import VentaSerializer
-from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
+from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, ExtractWeekDay
 from reportlab.pdfgen import canvas
@@ -25,6 +27,35 @@ class VentaViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminOrRead]
     queryset = Venta.objects.all()
     serializer_class = VentaSerializer
+
+    @action(detail=False, methods=['post'])
+    def registrar_multiples_ventas(self, request):
+        try:
+            with transaction.atomic():
+                ventas_data = request.data.get('ventas', [])
+                if not ventas_data:
+                    return Response(
+                        {"error": "No se proporcionaron ventas"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                serializer = VentaSerializer(data=ventas_data, many=True)
+                if serializer.is_valid():
+                    # Guardar cada venta individualmente para activar la lógica de save
+                    ventas = serializer.save()
+                    return Response(
+                        VentaSerializer(ventas, many=True).data,
+                        status=status.HTTP_201_CREATED
+                    )
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
@@ -40,12 +71,12 @@ class VentaViewSet(ModelViewSet):
         ventas = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_fin])
         
         total_ventas = ventas.count()
-        ingresos_totales = sum(v.total for v in ventas)
+        ingresos_totales = sum(float(v.total) for v in ventas)
         promedio_venta = ingresos_totales / total_ventas if total_ventas > 0 else 0
 
         ventas_por_cultivo = (
             ventas
-            .values('producto__Producto__id_cultivo__nombre')
+            .values('producto__Producto__nombre')
             .annotate(total_ingresos=Sum('total'), total_ventas=Sum('cantidad'))
             .order_by('-total_ingresos')
         )
@@ -95,10 +126,10 @@ class VentaViewSet(ModelViewSet):
         data_ventas = [["Producto", "Cantidad", "Precio Unitario", "Total", "Fecha"]]
         for venta in ventas:
             data_ventas.append([
-                venta.producto.Producto.id_cultivo.nombre,
+                venta.producto.Producto.nombre,
                 venta.cantidad,
-                f"${venta.producto.precio}",
-                f"${venta.total}",
+                f"${float(venta.producto.precio)}",
+                f"${float(venta.total)}",
                 venta.fecha.strftime("%Y-%m-%d")
             ])
 
@@ -124,8 +155,8 @@ class VentaViewSet(ModelViewSet):
         elementos.append(Paragraph("<b>4. Cultivo Más Rentable</b>", styles['Heading3']))
         if cultivo_mas_rentable:
             cultivo_texto = f"""
-            El cultivo más rentable en el período fue <b>{cultivo_mas_rentable['producto__Producto__id_cultivo__nombre']}</b>, 
-            con ingresos totales de <b>${cultivo_mas_rentable['total_ingresos']:.2f}</b> 
+            El cultivo más rentable en el período fue <b>{cultivo_mas_rentable['producto__Producto__nombre']}</b>, 
+            con ingresos totales de <b>${float(cultivo_mas_rentable['total_ingresos']):.2f}</b> 
             y un total de <b>{cultivo_mas_rentable['total_ventas']}</b> unidades vendidas.
             """
         else:
@@ -162,7 +193,7 @@ class VentaViewSet(ModelViewSet):
 
         ventas_por_producto = (
             ventas
-            .values('producto__Producto')
+            .values('producto__Producto__nombre')
             .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
             .order_by('-total')
         )
@@ -210,7 +241,7 @@ class VentaViewSet(ModelViewSet):
                 'cantidades': [float(v['cantidad']) for v in ventas_por_mes],
             },
             'por_producto': {
-                'productos': [v['producto__Producto'] for v in ventas_por_producto],
+                'productos': [v['producto__Producto__nombre'] for v in ventas_por_producto],
                 'ingresos': [float(v['total']) for v in ventas_por_producto],
                 'cantidades': [float(v['cantidad']) for v in ventas_por_producto],
             },

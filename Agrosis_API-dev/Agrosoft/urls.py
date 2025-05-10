@@ -82,6 +82,7 @@ routerCultivo.registry.extend(tipoEspecieRouter.registry)
 routerCultivo.registry.extend(tipoPlagaRouter.registry)
 routerCultivo.registry.extend(tipoResiduoRouter.registry)
 routerCultivo.registry.extend(reporte_plaga_router.registry)
+
 # Finanzas
 routerFinanzas.registry.extend(pagoRouter.registry)
 routerFinanzas.registry.extend(salarioRouter.registry)
@@ -100,6 +101,7 @@ routerInventario.registry.extend(bodegaHerramientaRouter.registry)
 routerIOT.registry.extend(DatosMeteorologicosRouter.registry) 
 routerIOT.registry.extend(SensoresRouter.registry)
 routerIOT.registry.extend(evapotranspiracionrouter.registry)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
@@ -108,7 +110,7 @@ urlpatterns = [
     path('usuarios/', include(routerUsuarios.urls)),
     path('cultivo/', include(routerCultivo.urls)),
     path('iot/', include(routerIOT.urls)),
-    path('finanzas/', include(routerFinanzas.urls)),
+    path('finanzas/', include(routerFinanzas.urls)),  
     path('inventario/', include(routerInventario.urls)),
     path('usuarios/registro/', RegistroUsuarioView.as_view(), name='registro_usuario'),
     path('registro_usuarios_masivo/', RegistroMasivoUsuariosView.as_view(), name='registro_masivo_usuarios'),
@@ -117,7 +119,5 @@ urlpatterns = [
     path('usuarios/change_password/', ChangePasswordView.as_view(), name='change_password'),
     path('usuarios/password_reset_confirm/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    # path('auth/', include('apps.Autenticacion.autenticacion.api.router')),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    
-]   
+]
