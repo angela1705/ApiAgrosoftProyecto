@@ -55,11 +55,33 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
                     logger.error(f"Formato de fecha inválido: {fecha_medicion}, error: {str(e)}")
                     pass
 
+            # Filtro por since (fecha_medicion mayor que el timestamp proporcionado)
+            since = self.request.query_params.get('since', None)
+            if since:
+                try:
+                    logger.info(f"Filtrando por since: {since}")
+                    queryset = queryset.filter(fecha_medicion__gt=since)
+                    logger.info(f"Registros después de filtrar por since: {queryset.count()}")
+                except ValueError as e:
+                    logger.error(f"Formato de fecha inválido para since: {since}, error: {str(e)}")
+                    pass
+
+            # Filtro por fk_bancal_id
             fk_bancal_id = self.request.query_params.get('fk_bancal_id', None)
             if fk_bancal_id:
                 logger.info(f"Filtrando por fk_bancal_id: {fk_bancal_id}")
                 queryset = queryset.filter(fk_bancal_id=fk_bancal_id)
                 logger.info(f"Registros después de filtrar por bancal: {queryset.count()}")
+
+            # Filtro por limit
+            limit = self.request.query_params.get('limit', None)
+            if limit:
+                try:
+                    queryset = queryset[:int(limit)]
+                    logger.info(f"Limite aplicado: {limit}")
+                except ValueError as e:
+                    logger.error(f"Valor de limit inválido: {limit}, error: {str(e)}")
+                    pass
 
             return queryset.order_by('-fecha_medicion')
         except Exception as e:

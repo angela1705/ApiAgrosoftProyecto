@@ -14,11 +14,13 @@ import {
   FaVial,
 } from "react-icons/fa";
 import { ArrowLeft } from "lucide-react";
+import axios from "axios";
 
 export default function SensoresPage() {
   const [selectedDataType, setSelectedDataType] = useState<string | null>(null);
   const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
-  const { sensores = [] } = useSensoresRegistrados(); // Eliminado sensoresLoading y sensoresError
+  const [lastTimestamp, setLastTimestamp] = useState<string | null>(null);
+  const { sensores = [] } = useSensoresRegistrados();
   const navigate = useNavigate();
 
   // Definir los tipos de datos que se pueden filtrar, con íconos
@@ -33,36 +35,53 @@ export default function SensoresPage() {
     { label: "pH Suelo", key: "ph_suelo", icon: <FaVial className="text-purple-500" /> },
   ];
 
+  // Fetch initial data on mount
   useEffect(() => {
-    const ws = new WebSocket("ws://127.0.0.1:8000/ws/realtime/");
-
-    ws.onopen = () => {
-      console.log("Conexión WebSocket establecida");
-    };
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("Datos en tiempo real recibidos:", message);
-      if (message.type === "sensor_data") {
-        setRealTimeData((prevData) => {
-          const newData = [...prevData, message.data];
-          return newData.slice(-50); 
+    const fetchInitialData = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await axios.get("http://127.0.0.1:8000/iot/datosmeteorologicos/", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { limit: 50, ordering: '-fecha_medicion' },
         });
+        const data = response.data;
+        setRealTimeData(data.reverse()); // Reverse to have oldest first
+        if (data.length > 0) {
+          setLastTimestamp(data[data.length - 1].fecha_medicion);
+        }
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
       }
     };
-
-    ws.onerror = (error) => {
-      console.error("Error en WebSocket:", error);
-    };
-
-    ws.onclose = () => {
-      console.log("Conexión WebSocket cerrada");
-    };
-
-    return () => {
-      ws.close();
-    };
+    fetchInitialData();
   }, []);
+
+  // Periodic polling for new data
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (lastTimestamp) {
+        try {
+          const token = localStorage.getItem("access_token");
+          const response = await axios.get("http://127.0.0.1:8000/iot/datosmeteorologicos/", {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { since: lastTimestamp },
+          });
+          const newData = response.data;
+          if (newData.length > 0) {
+            setRealTimeData((prevData) => {
+              const updatedData = [...prevData, ...newData];
+              return updatedData.slice(-50); // Keep only the last 50 records
+            });
+            setLastTimestamp(newData[newData.length - 1].fecha_medicion);
+          }
+        } catch (error) {
+          console.error("Error fetching new data:", error);
+        }
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [lastTimestamp]);
 
   const columns = [
     { name: "ID", uid: "id" },
