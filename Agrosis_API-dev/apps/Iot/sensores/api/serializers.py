@@ -9,4 +9,4 @@ class TipoSensorSerializer(serializers.ModelSerializer):
 class SensorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sensor
-        fields = ['id', 'nombre', 'tipo_sensor', 'unidad_medida', 'descripcion']
+        fields = ['id', 'nombre', 'tipo_sensor', 'unidad_medida', 'descripcion', 'estado']

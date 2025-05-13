@@ -3,9 +3,8 @@ import axios from "axios";
 import { addToast } from "@heroui/react";
 import { Sensor } from "@/types/iot/type";
 
-const API_URL = "http://127.0.0.1:8000/iot/sensores/";
+const API_URL = "http://192.168.1.12:8000/iot/sensores/";
 
-// Obtener todos los sensores registrados
 const fetchSensores = async (): Promise<Sensor[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -15,17 +14,15 @@ const fetchSensores = async (): Promise<Sensor[]> => {
   return response.data;
 };
 
-// Actualizar un sensor existente
 const updateSensor = async (sensor: Sensor) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
-  const response = await axios.put(`${API_URL}${sensor.id}/`, sensor, {
+  const response = await axios.patch(`${API_URL}${sensor.id}/`, sensor, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
 
-// Eliminar un sensor
 const deleteSensor = async (id: number) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -34,17 +31,14 @@ const deleteSensor = async (id: number) => {
   });
 };
 
-// Hook principal
 export const useSensoresRegistrados = () => {
   const queryClient = useQueryClient();
 
-  // Consulta para obtener los sensores
   const { data: sensores = [], isLoading, error } = useQuery<Sensor[], Error>({
     queryKey: ["sensores"],
     queryFn: fetchSensores,
   });
 
-  // Mutación para actualizar un sensor
   const updateMutation = useMutation({
     mutationFn: updateSensor,
     onSuccess: () => {
@@ -56,7 +50,6 @@ export const useSensoresRegistrados = () => {
     },
   });
 
-  // Mutación para eliminar un sensor
   const deleteMutation = useMutation({
     mutationFn: deleteSensor,
     onSuccess: () => {
@@ -72,7 +65,7 @@ export const useSensoresRegistrados = () => {
     sensores,
     isLoading,
     error,
-    updateSensor: updateMutation, // Retornamos el objeto de mutación completo
-    deleteSensor: deleteMutation, // Retornamos el objeto de mutación completo
+    updateSensor: updateMutation,
+    deleteSensor: deleteMutation,
   };
 };

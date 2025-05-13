@@ -1,30 +1,49 @@
+export interface SensorData {
+  id?: number | string;
+  sensor: number;
+  temperatura?: number;
+  humedad_ambiente?: number;
+  humedad_suelo?: number;
+  luminosidad?: number;
+  lluvia?: number;
+  velocidad_viento?: number;
+  direccion_viento?: number;
+  ph_suelo?: number;
+  value?: number;
+  fecha_medicion: string;
+  fecha?: string; // Añadido para useEvapotranspiracion.ts
+}
+
 export interface Sensor {
   id: number;
   nombre: string;
-  tipo: string;
-  ubicacion: string;
-  estado: string;
-  tipo_sensor: string;  
-  unidad_medida: string;  
-  descripcion: string;  
-  medida_minima: number;  
-  medida_maxima: number;  
+  tipo_sensor: string;
+  unidad_medida: string;
+  descripcion?: string;
+  estado: 'activo' | 'inactivo';
 }
 
-export interface SensorData {
+export interface Cultivo {
   id: number;
-  sensor: number; 
-  temperatura: number;
-  humedad: number;
-  radiacion_solar: number;
-  velocidad_viento: number;
-  fecha: string;
-  fecha_medicion: string;  
+  nombre: string;
+  latitud: number; // Añadido para useEvapotranspiracion.ts
+  bancal: number; // Añadido para useEvapotranspiracion.ts
+  // Otros campos según tu modelo
 }
 
 export interface EvapotranspiracionData {
+  id: number;
+  cultivo_id: number;
   fecha: string;
-  et0: number;  
-  cultivoId: number;
-  bancalId: number;
+  evapotranspiracion: number; 
+}
+
+export interface AnalisisCostoBeneficio {
+  id: number;
+  cosecha_id: number;
+  analisis_mensual: {
+    mes: string;
+    costos: number;
+    beneficios: number;
+  }[]; 
 }
