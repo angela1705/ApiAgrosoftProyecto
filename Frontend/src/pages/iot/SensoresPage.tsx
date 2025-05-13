@@ -2,15 +2,15 @@ import { useState } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
 import { useDatosMeteorologicos } from "@/hooks/iot/useDatosMeteorologicos";
+import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorologicosHistoricos";
 import { useNavigate } from "react-router-dom";
-import Tabla from "@/components/globales/Tabla";
 import { Sensor, SensorData } from "@/types/iot/type";
 import { FaTemperatureHigh, FaTint, FaSun, FaCloudRain, FaWind, FaCompass, FaVial } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 
 const dataTypes = [
   { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" />, sensorId: 1, tipo_sensor: "temperatura" },
@@ -23,25 +23,16 @@ const dataTypes = [
   { label: "pH Suelo", key: "ph_suelo", icon: <FaVial className="text-purple-500" />, sensorId: 8, tipo_sensor: "soil_ph" },
 ];
 
-const timePeriods = [
-  { label: "30 min", value: 30 * 60 * 1000 },
-  { label: "1 h", value: 60 * 60 * 1000 },
-  { label: "6 h", value: 6 * 60 * 1000 },
-];
-
 export default function SensoresPage() {
   const [selectedDataType, setSelectedDataType] = useState<string>("temperatura");
   const [selectedSensorId, setSelectedSensorId] = useState<number>(1);
-  const [timePeriod, setTimePeriod] = useState<number>(30 * 60 * 1000);
   const { sensores = [], isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
+  const { data: historicos = [], isLoading: historicosLoading, error: historicosError } = useDatosMeteorologicosHistoricos();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   // Obtener datos en tiempo real para cada sensor
-  const realTimeQueries = dataTypes.map((type) =>
-    useDatosMeteorologicos(type.sensorId)
-  );
-
+  const realTimeQueries = dataTypes.map((type) => useDatosMeteorologicos(type.sensorId));
   const realTimeData = realTimeQueries.map((query) => query.data || []);
   const isLoading = realTimeQueries.some((query) => query.isLoading);
   const error = realTimeQueries.find((query) => query.error)?.error;
@@ -61,10 +52,9 @@ export default function SensoresPage() {
   const toggleSensor = async (sensorId: number, currentEnabled: boolean) => {
     try {
       const newEnabled = !currentEnabled;
-      const response = await api.patch(`/iot/sensores/${sensorId}/`, {
+      await api.patch(`/iot/sensores/${sensorId}/`, {
         estado: newEnabled ? "activo" : "inactivo",
       });
-      console.log("PATCH response:", response.data);
       await queryClient.invalidateQueries({ queryKey: ["sensores"] });
       addToast({
         title: "Éxito",
@@ -89,40 +79,41 @@ export default function SensoresPage() {
     setSelectedSensorId(type.sensorId);
   };
 
-  const columns = [
-    { name: "ID", uid: "id" },
-    { name: "Sensor", uid: "sensor" },
-    { name: dataTypes.find(dt => dt.key === selectedDataType)?.label || "Dato", uid: "value" },
-    { name: "Fecha de Medición", uid: "fecha_medicion" },
-  ];
-
+  // Datos para la gráfica de barras (tiempo real)
   const selectedData = realTimeData[dataTypes.findIndex(dt => dt.sensorId === selectedSensorId)] || [];
   const filteredData = selectedData.filter((dato: SensorData) => {
     const value = dato[selectedDataType as keyof SensorData];
-    const date = new Date(dato.fecha_medicion).getTime();
-    const now = new Date().getTime();
-    const isValidDate = !isNaN(date);
-    return isValidDate && dato.sensor === selectedSensorId && value != null && date >= now - timePeriod;
+    return value != null;
   });
- 
-  const formattedData = filteredData.map((dato: SensorData, index: number) => ({
-    id: `${dato.sensor}-${dato.id}-${index}`,  
-    sensor: sensores.find((s: Sensor) => s.id === dato.sensor)?.nombre || dato.sensor || "N/A",
-    value: dato[selectedDataType as keyof SensorData] ?? "N/A",
-    fecha_medicion: dato.fecha_medicion ? new Date(dato.fecha_medicion).toLocaleString() : "N/A",
-  }));
- 
+
   const barChartData = filteredData
     .sort((a: SensorData, b: SensorData) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())
     .slice(0, 10)
     .map((dato: SensorData, index: number) => ({
+      id: `${dato.id}-${index}`,
       name: `Dato ${index + 1}`,
+      value: dato[selectedDataType as keyof SensorData] ?? 0,
+    }));
+
+  // Datos para la gráfica de líneas (históricos, últimos 10)
+  const filteredHistoricos = historicos.filter((dato: SensorData) => {
+    const value = dato[selectedDataType as keyof SensorData];
+    const isValidDate = !isNaN(new Date(dato.fecha_medicion).getTime());
+    return isValidDate && value !== null && value !== undefined;
+  });
+
+  const lineChartData = filteredHistoricos
+    .sort((a: SensorData, b: SensorData) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())
+    .slice(0, 10)
+    .map((dato: SensorData, index: number) => ({
+      id: `${dato.id}-${index}`,
+      fecha: new Date(dato.fecha_medicion).toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }),
       value: dato[selectedDataType as keyof SensorData] ?? 0,
     }));
 
   const selectedSensor = sensores.find((s: Sensor) => s.id === selectedSensorId);
 
-  if (sensoresLoading || isLoading) {
+  if (sensoresLoading || isLoading || historicosLoading) {
     return (
       <DefaultLayout>
         <div className="w-full flex flex-col items-center min-h-screen p-6">
@@ -132,12 +123,12 @@ export default function SensoresPage() {
     );
   }
 
-  if (sensoresError || error) {
+  if (sensoresError || error || historicosError) {
     return (
       <DefaultLayout>
         <div className="w-full flex flex-col items-center min-h-screen p-6">
           <p className="text-red-500 text-center">
-            Error al cargar los datos: {(sensoresError || error)?.message}
+            Error al cargar los datos: {(sensoresError || error || historicosError)?.message}
           </p>
           <button
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -157,18 +148,20 @@ export default function SensoresPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Datos en Tiempo Real</h2>
 
           <div className="mb-4 flex justify-start items-center gap-2">
-            <button
-              className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+            <motion.button
+              className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg"
               onClick={() => navigate("/iot/datosmeteorologicos")}
+              whileHover={{ scale: 1.05, backgroundColor: "#059669" }}
+              whileTap={{ scale: 0.95 }}
             >
               Ver Datos Históricos
-            </button>
+            </motion.button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {dataTypes.map((type, index) => (
               <motion.div
-                key={type.sensorId} // Usar sensorId como clave única
+                key={type.sensorId}
                 className="bg-blue-800 text-white p-4 rounded-lg text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -177,11 +170,11 @@ export default function SensoresPage() {
                 <h3 className="text-lg font-semibold">{type.label}</h3>
                 <p className="text-2xl">
                   {latestData[type.key]}{" "}
-                  {type.label.includes("(%)") ? "%" : 
-                   type.label.includes("°C") ? "°C" : 
-                   type.label.includes("(lux)") ? "lux" : 
-                   type.label.includes("(mm)") ? "mm" : 
-                   type.label.includes("(m/s)") ? "m/s" : 
+                  {type.label.includes("(%)") ? "%" :
+                   type.label.includes("°C") ? "°C" :
+                   type.label.includes("(lux)") ? "lux" :
+                   type.label.includes("(mm)") ? "mm" :
+                   type.label.includes("(m/s)") ? "m/s" :
                    type.label.includes("(grados)") ? "°" : ""}
                 </p>
               </motion.div>
@@ -198,82 +191,102 @@ export default function SensoresPage() {
             </motion.div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <motion.div
+            className="bg-white p-6 rounded-lg shadow-md mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <h3 className="text-lg font-semibold text-gray-700 mb-4">Seleccionar Tipo de Dato</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {dataTypes.map((type) => (
-                <button
-                  key={type.sensorId} // Usar sensorId como clave única
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                <motion.button
+                  key={type.sensorId}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg"
                   onClick={() => handleDataTypeClick(type)}
+                  whileHover={{ scale: 1.05, backgroundColor: "#3b82f6" }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {type.icon}
                   <span>{type.label}</span>
-                </button>
+                </motion.button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {selectedSensor && (
-            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <motion.div
+              className="bg-white p-6 rounded-lg shadow-md mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
               <h3 className="text-lg font-semibold text-gray-700 mb-4">
                 Control de Sensor - {selectedSensor.nombre}
               </h3>
-              <button
-                className={`px-4 py-2 text-white text-sm font-semibold rounded-lg ${
-                  selectedSensor.estado === "activo" ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"
-                } transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105`}
+              <motion.button
+                className={`px-4 py-2 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg ${
+                  selectedSensor.estado === "activo" ? "bg-red-600" : "bg-green-600"
+                }`}
                 onClick={() => toggleSensor(selectedSensor.id, selectedSensor.estado === "activo")}
+                whileHover={{
+                  scale: 1.05,
+                  backgroundColor: selectedSensor.estado === "activo" ? "#dc2626" : "#059669",
+                }}
+                whileTap={{ scale: 0.95 }}
               >
                 {selectedSensor.estado === "activo" ? "Deshabilitar Sensor" : "Habilitar Sensor"}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           )}
 
-          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">Período de Visualización</h3>
-            <div className="flex gap-4">
-              {timePeriods.map((period) => (
-                <button
-                  key={period.value}
-                  className={`px-4 py-2 text-sm font-semibold rounded-lg ${
-                    timePeriod === period.value
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  } transition-all duration-300 ease-in-out`}
-                  onClick={() => setTimePeriod(period.value)}
-                >
-                  {period.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">Datos en Tiempo Real</h3>
-            {formattedData.length > 0 ? (
-              <>
-                <Tabla columns={columns} data={formattedData} />
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                    Gráfica en Tiempo Real - {dataTypes.find(dt => dt.key === selectedDataType)?.label}
-                  </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={barChartData}>
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="value" fill="#10B981" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </>
-            ) : (
-              <p className="text-gray-600 text-center">
+          <motion.div
+            className="bg-white p-6 rounded-lg shadow-md mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">
+              Gráfica en Tiempo Real - {dataTypes.find(dt => dt.key === selectedDataType)?.label}
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={barChartData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#10B981" />
+              </BarChart>
+            </ResponsiveContainer>
+            {barChartData.length === 0 && (
+              <p className="text-gray-600 text-center mt-4">
                 No hay datos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label}. Verifica si el sensor está activo.
               </p>
             )}
-          </div>
+          </motion.div>
+
+          <motion.div
+            className="bg-white p-6 rounded-lg shadow-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">
+              Gráfica Histórica - {dataTypes.find(dt => dt.key === selectedDataType)?.label}
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={lineChartData}>
+                <XAxis dataKey="fecha" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#1E3A8A" />
+              </LineChart>
+            </ResponsiveContainer>
+            {lineChartData.length === 0 && (
+              <p className="text-gray-600 text-center mt-4">
+                No hay datos históricos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label}.
+              </p>
+            )}
+          </motion.div>
         </div>
       </div>
     </DefaultLayout>
