@@ -12,6 +12,7 @@ export interface User {
   nombre: string;
   apellido: string;
   email: string;
+  numero_de_documento: number;
   username?: string;
   rol: Rol; 
   esAdmin?: boolean; 

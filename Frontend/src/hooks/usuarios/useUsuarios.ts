@@ -14,7 +14,7 @@ export interface Usuario {
   nombre: string;
   apellido: string;
   email: string;
-  numero_de_documento: string;
+  numero_de_documento: number;
   username?: string;
   rol: Rol | null;
 }
@@ -24,7 +24,7 @@ export interface UsuarioUpdate {
   nombre: string;
   apellido: string;
   email: string;
-  numero_de_documento: string;
+  numero_de_documento: number;
   username?: string;
   rol_id: number | null;   
 }

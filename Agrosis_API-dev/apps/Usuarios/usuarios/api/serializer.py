@@ -14,7 +14,7 @@ class UsuariosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'rol_id']
+        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_de_documento', 'rol', 'rol_id']
 
     def update(self, instance, validated_data):
         nuevo_rol = validated_data.get("rol", instance.rol)
@@ -54,7 +54,7 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'password']
+        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_de_documento','rol', 'password']
 
     def create(self, validated_data):
         print("Entró al create del RegistroUsuarioSerializer")

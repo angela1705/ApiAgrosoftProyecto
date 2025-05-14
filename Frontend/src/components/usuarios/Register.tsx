@@ -7,6 +7,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Register: React.FC = () => {
   const [nombre, setNombre] = useState<string>('');
+  const [numero_de_documento, setNumero_de_documento] = useState<number>();
   const [apellido, setApellido] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [username, setUsername] = useState<string>('');
@@ -24,7 +25,7 @@ const Register: React.FC = () => {
     setSuccess('');
     setLoading(true);
 
-    if (!nombre || !apellido || !email || !username || !password) {
+    if (!nombre || !apellido || !email ||!numero_de_documento || !username || !password) {
       setError('Todos los campos son requeridos');
       setLoading(false);
       return;
@@ -36,7 +37,7 @@ const Register: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre, apellido, email, username, password }),
+        body: JSON.stringify({ nombre, apellido, email, numero_de_documento, username, password }),
       });
 
       const data = await response.json();
@@ -152,6 +153,28 @@ const Register: React.FC = () => {
       />
         </motion.div>
       </Box>
+
+            <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+      >
+        <TextField
+          type="number"
+          label="Numero de documento"
+          value={numero_de_documento ?? ''}
+          onChange={(e) => {
+            const value = e.target.value;
+            setNumero_de_documento(value === '' ? undefined : Number(value));
+          }}
+          fullWidth
+          required
+          error={!!fieldErrors.numero_de_documento}
+          helperText={fieldErrors.numero_de_documento}
+          sx={textFieldStyles}
+        />
+      </motion.div>
+
 
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
       <TextField

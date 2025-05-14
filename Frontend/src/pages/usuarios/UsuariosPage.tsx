@@ -168,6 +168,7 @@ const UsuariosPage: React.FC = () => {
         <ReuInput label="Nombre" type="text" value={newUser.nombre} onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })} />
         <ReuInput label="Apellido" type="text" value={newUser.apellido} onChange={(e) => setNewUser({ ...newUser, apellido: e.target.value })} />
         <ReuInput label="Correo Electrónico" type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+        <ReuInput label="Numero de documento" type="number" value={newUser.numero_de_documento} onChange={(e) => setNewUser({ ...newUser, numero_de_documento: e.target.value })} />
         <ReuInput label="Nombre de Usuario" type="text" value={newUser.username} onChange={(e) => setNewUser({ ...newUser, username: e.target.value })} />
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700">Rol</label>
