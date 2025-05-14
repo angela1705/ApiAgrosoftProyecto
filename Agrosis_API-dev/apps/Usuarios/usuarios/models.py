@@ -8,6 +8,7 @@ class Usuarios(AbstractUser):
     rol = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True, default=1)
     nombre = models.CharField(max_length=30)
     apellido = models.CharField(max_length=30)
+    numero_de_documento = models.IntegerField(null=True)
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'email' 

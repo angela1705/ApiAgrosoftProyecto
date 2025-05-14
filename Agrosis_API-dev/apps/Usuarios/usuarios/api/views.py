@@ -45,12 +45,11 @@ class UsuariosViewSet(ModelViewSet):
          fecha_inicio = make_aware(inicio_año)
          fecha_fin = make_aware(hoy)
  
-        #  usuarios = Usuarios.objects.filter(fecha__range=[fecha_inicio, fecha_fin])
-         usuarios = Usuarios.objects.filter(date_joined__range=[fecha_inicio, fecha_fin])  # ✅ Usa 'date_joined'
+         usuarios = Usuarios.objects.filter(date_joined__range=[fecha_inicio, fecha_fin])  
 
 
          total_usuarios = usuarios.count()
-         promedio_usuarios = total_usuarios  # Solo tiene sentido contar, no sumar
+         promedio_usuarios = total_usuarios  
          response = HttpResponse(content_type='application/pdf')
 
          response['Content-Disposition'] = 'attachment; filename="reporte_de_usuarios.pdf"'
@@ -156,15 +155,13 @@ class RegistroMasivoUsuariosView(APIView):
         except Exception as e:
             return Response({'error': f'Error al leer el archivo: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # ✅ Validar si el archivo está vacío (solo encabezados, sin filas)
         if df.empty:
             return Response({'error': 'El archivo no contiene datos.'}, status=status.HTTP_400_BAD_REQUEST)
 
         errores = []
         for index, row in df.iterrows():
-            fila = index + 2  # Excel normalmente comienza en la fila 2 para los datos
+            fila = index + 2  
 
-            # Validación explícita de campos obligatorios
             campos_requeridos = ['nombre', 'apellido', 'email', 'username', 'password']
             faltantes = [campo for campo in campos_requeridos if not row.get(campo)]
 

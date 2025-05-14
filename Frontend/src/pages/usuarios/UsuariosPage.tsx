@@ -27,6 +27,7 @@ const UsuariosPage: React.FC = () => {
     nombre: "",
     apellido: "",
     email: "",
+    numero_de_documento:"",
     username: "",
     rol_id: 1, // Por defecto "Aprendiz"
   });
@@ -39,6 +40,7 @@ const UsuariosPage: React.FC = () => {
     { name: "Nombre", uid: "nombre" },
     { name: "Apellido", uid: "apellido" },
     { name: "Correo electrónico", uid: "email" },
+    {name: "Numero de documento", uid: "numero_de_documento"},
     { name: "Username", uid: "username" },
     { name: "Rol", uid: "rol" },
     { name: "Acciones", uid: "acciones" },
@@ -64,7 +66,7 @@ const UsuariosPage: React.FC = () => {
   const handleRegister = () => {
     registrarUsuario(newUser);
     setIsRegisterModalOpen(false);
-    setNewUser({ nombre: "", apellido: "", email: "", username: "", rol_id: 1 });
+    setNewUser({ nombre: "", apellido: "", email: "", numero_de_documento:"", username: "", rol_id: 1 });
   };
 
   const formattedData = useMemo(() => {
@@ -73,6 +75,7 @@ const UsuariosPage: React.FC = () => {
       nombre: usuario.nombre,
       apellido: usuario.apellido,
       email: usuario.email,
+      numero_de_documento: usuario.numero_de_documento,
       username: usuario.username || "N/A",
       rol: usuario.rol?.rol || "Sin rol",
       acciones: (
@@ -137,6 +140,7 @@ const UsuariosPage: React.FC = () => {
         <ReuInput label="Nombre" type="text" value={selectedUsuario?.nombre || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, nombre: e.target.value })} />
         <ReuInput label="Apellido" type="text" value={selectedUsuario?.apellido || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, apellido: e.target.value })} />
         <ReuInput label="Correo Electrónico" type="email" value={selectedUsuario?.email || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, email: e.target.value })} />
+        <ReuInput label="Numero de documento" type="number" value={selectedUsuario?.numero_de_documento || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, numero_de_documento: e.target.value })} />
         <ReuInput label="Nombre de Usuario" type="text" value={selectedUsuario?.username || ''} onChange={(e) => setSelectedUsuario({ ...selectedUsuario, username: e.target.value })} />
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700">Rol</label>
