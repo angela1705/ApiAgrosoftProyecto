@@ -36,7 +36,6 @@ const ListaInsumoPage: React.FC = () => {
         nombre: "",
         descripcion: "",
     });
-    const [originalCantidad, setOriginalCantidad] = useState<number>(0);
 
     const { data: insumos, isLoading, error, refetch } = useInsumos();
     const { data: unidadesMedida, isLoading: isLoadingUnidades } = useUnidadesMedida();
@@ -63,8 +62,6 @@ const ListaInsumoPage: React.FC = () => {
         { name: "Unidad de Medida", uid: "unidad_medida" },
         { name: "Tipo de Insumo", uid: "tipo_insumo" },
         { name: "Activo", uid: "activo" },
-        { name: "Es Compuesto", uid: "es_compuesto" },
-        { name: "Componentes", uid: "componentes" },
         { name: "Tipo de Empacado", uid: "tipo_empacado" },
         { name: "Fecha de Registro", uid: "fecha_registro" },
         { name: "Fecha de Caducidad", uid: "fecha_caducidad" },
@@ -80,17 +77,8 @@ const ListaInsumoPage: React.FC = () => {
         unidad_medida: insumo.unidad_medida ? insumo.unidad_medida.nombre : "Sin asignar",
         tipo_insumo: insumo.tipo_insumo ? insumo.tipo_insumo.nombre : "Sin asignar",
         activo: insumo.activo ? "Sí" : "No",
-        es_compuesto: insumo.es_compuesto ? "Sí" : "No",
-        componentes: insumo.componentes.length > 0
-            ? insumo.componentes
-                  .map((c) => {
-                      const insumoComponente = insumos?.find((i) => i.id === c.insumo_componente);
-                      return insumoComponente ? `${insumoComponente.nombre} (${c.cantidad})` : `ID: ${c.insumo_componente} (${c.cantidad})`;
-                  })
-                  .join("; ")
-            : "N/A",
         tipo_empacado: insumo.tipo_empacado || "No especificado",
-        fecha_registro: insumo.fecha_registro,
+        fecha_registro: insumo.fecha_registro.slice(0, 10), // Extract only YYYY-MM-DD
         fecha_caducidad: insumo.fecha_caducidad || "No especificada",
         precio_insumo: insumo.precio_insumo !== null && insumo.precio_insumo !== undefined 
             ? formatCOPNumber(insumo.precio_insumo)
@@ -99,7 +87,6 @@ const ListaInsumoPage: React.FC = () => {
             <>
                 <button className="text-green-500 hover:underline mr-2" onClick={() => { 
                     setSelectedInsumo({ ...insumo }); 
-                    setOriginalCantidad(insumo.cantidad); 
                     setIsEditModalOpen(true); 
                 }}>
                     <EditIcon size={22} color="black" />
@@ -181,54 +168,14 @@ const ListaInsumoPage: React.FC = () => {
                 isOpen={isEditModalOpen}
                 onOpenChange={setIsEditModalOpen}
                 title="Editar Insumo"
-                onConfirm={async () => {
+                onConfirm={() => {
                     if (selectedInsumo && selectedInsumo.id !== undefined) {
-                        if (selectedInsumo.es_compuesto && selectedInsumo.componentes) {
-                            const cantidadDiferencia = selectedInsumo.cantidad - originalCantidad;
-                            if (cantidadDiferencia !== 0) {
-                                for (const componente of selectedInsumo.componentes) {
-                                    const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
-                                    if (!insumoComponente) {
-                                        addToast({ 
-                                            title: "Error en componentes",
-                                            description: `Componente con ID ${componente.insumo_componente} no encontrado`
-                                        });
-                                        return;
-                                    }
-                                    const cantidadRequerida = componente.cantidad * cantidadDiferencia;
-                                    if (cantidadDiferencia > 0 && insumoComponente.cantidad < cantidadRequerida) {
-                                        addToast({ 
-                                            title: "Stock insuficiente",
-                                            description: `Stock insuficiente para ${insumoComponente.nombre}. Disponible: ${insumoComponente.cantidad}, Requerido: ${cantidadRequerida}`
-                                        });
-                                        return;
-                                    }
-                                }
-                                for (const componente of selectedInsumo.componentes) {
-                                    const insumoComponente = insumos?.find((i) => i.id === componente.insumo_componente);
-                                    if (insumoComponente && insumoComponente.id !== undefined) {
-                                        const cantidadRequerida = componente.cantidad * cantidadDiferencia;
-                                        await actualizarMutation.mutateAsync({
-                                            id: insumoComponente.id,
-                                            insumo: {
-                                                ...insumoComponente,
-                                                cantidad: insumoComponente.cantidad - cantidadRequerida,
-                                                unidad_medida_id: insumoComponente.unidad_medida?.id,
-                                                tipo_insumo_id: insumoComponente.tipo_insumo?.id,
-                                                componentes_data: insumoComponente.componentes,
-                                            },
-                                        });
-                                    }
-                                }
-                            }
-                        }
                         actualizarMutation.mutate({ 
                             id: selectedInsumo.id, 
                             insumo: {
                                 ...selectedInsumo,
                                 unidad_medida_id: selectedInsumo.unidad_medida?.id || undefined,
                                 tipo_insumo_id: selectedInsumo.tipo_insumo?.id || undefined,
-                                componentes_data: selectedInsumo.componentes,
                             }
                         }, {
                             onSuccess: () => {
@@ -291,7 +238,7 @@ const ListaInsumoPage: React.FC = () => {
                                     disabled={isLoadingUnidades}
                                 >
                                     <option value="">Seleccione una unidad</option>
-                                    {unidadesMedida?.map((unidad) => (
+                                    {unidadesMedida?.map((unidad: UnidadMedida) => (
                                         <option key={unidad.id} value={unidad.id}>
                                             {unidad.nombre}
                                         </option>
@@ -319,7 +266,7 @@ const ListaInsumoPage: React.FC = () => {
                                     disabled={isLoadingTipos}
                                 >
                                     <option value="">Seleccione un tipo</option>
-                                    {tiposInsumo?.map((tipo) => (
+                                    {tiposInsumo?.map((tipo: TipoInsumo) => (
                                         <option key={tipo.id} value={tipo.id}>
                                             {tipo.nombre}
                                         </option>
@@ -343,37 +290,6 @@ const ListaInsumoPage: React.FC = () => {
                             />
                             <label className="ml-2 text-sm font-medium text-gray-700">Activo</label>
                         </div>
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                checked={selectedInsumo.es_compuesto}
-                                onChange={(e) => setSelectedInsumo({ ...selectedInsumo, es_compuesto: e.target.checked })}
-                                className="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <label className="ml-2 text-sm font-medium text-gray-700">Es Compuesto</label>
-                        </div>
-                        {selectedInsumo.es_compuesto && (
-                            <div className="border p-4 rounded-md">
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">Componentes</h3>
-                                {selectedInsumo.componentes.map((comp, index) => (
-                                    <div key={index} className="flex justify-between items-center mb-1">
-                                        <span className="text-gray-700">
-                                            {insumos?.find(i => i.id === comp.insumo_componente)?.nombre || `ID: ${comp.insumo_componente}`} ({comp.cantidad})
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={() => setSelectedInsumo({
-                                                ...selectedInsumo,
-                                                componentes: selectedInsumo.componentes.filter((_, i) => i !== index)
-                                            })}
-                                            className="px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
-                                        >
-                                            Eliminar
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                         <ReuInput
                             label="Tipo de Empacado"
                             placeholder="Ingrese el tipo de empacado"

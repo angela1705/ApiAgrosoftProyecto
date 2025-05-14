@@ -58,34 +58,9 @@ class Insumo(models.Model):
     fecha_registro = models.DateTimeField(default=timezone.now)
     fecha_caducidad = models.DateField(blank=True, null=True)
     precio_insumo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    es_compuesto = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
 
     class Meta:
         db_table = "insumos_insumo"
-
-
-class InsumoCompuesto(models.Model):
-    id = models.AutoField(primary_key=True)
-    insumo_compuesto = models.ForeignKey(
-        Insumo,
-        on_delete=models.CASCADE,
-        related_name="componentes",
-    )
-    insumo_componente = models.ForeignKey(
-        Insumo,
-        on_delete=models.PROTECT,
-        related_name="usado_en_compuestos",
-    )
-    cantidad = models.DecimalField(max_digits=10, decimal_places=2)
-
-    class Meta:
-        db_table = "insumos_insumocompuesto"
-        unique_together = ("insumo_compuesto", "insumo_componente")
-        verbose_name = "Insumo Compuesto"
-        verbose_name_plural = "Insumos Compuestos"
-
-    def __str__(self):
-        return f"{self.insumo_componente.nombre} en {self.insumo_compuesto.nombre}"

@@ -151,7 +151,6 @@ class InsumoViewSet(ModelViewSet):
                 "F Caducidad",
                 "Activo",
                 "Precio",
-                "Compuesto",
             ]
         ]
         for insumo in insumos:
@@ -184,12 +183,11 @@ class InsumoViewSet(ModelViewSet):
                     fecha_caducidad,
                     "Sí" if insumo.activo else "No",
                     str(insumo.precio_insumo),
-                    "Sí" if insumo.es_compuesto else "No",
                 ]
             )
 
         tabla_insumos = Table(
-            data_insumos, colWidths=[30, 60, 80, 40, 50, 50, 50, 80, 50, 30, 50, 30]
+            data_insumos, colWidths=[30, 60, 80, 40, 50, 50, 50, 80, 50, 30, 50]
         )
         tabla_insumos.setStyle(
             TableStyle(
