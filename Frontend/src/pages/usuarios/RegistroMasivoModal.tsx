@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import ReuModal from '@/components/globales/ReuModal';
-import axios from 'axios';
+import api from "@/components/utils/axios"; 
+import { addToast } from "@heroui/react";
 interface RegistroMasivoModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -17,41 +18,68 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({ isOpen, onOpe
     inputFileRef.current?.click();
   };
 
-  const handleArchivoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const archivo = e.target.files?.[0];
-    if (!archivo) return;
+const handleArchivoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const archivo = e.target.files?.[0];
+  if (!archivo) return;
 
-    const formData = new FormData();
-    formData.append('archivo', archivo);
+  const formData = new FormData();
+  formData.append('archivo', archivo);
 
-    try {
-      const response = await axios.post('http://localhost:8000/registro_usuarios_masivo/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+  try {
+    const response = await api.post('http://localhost:8000/registro_usuarios_masivo/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
-      console.log('Respuesta del servidor:', response.data);
-      // Aquí puedes cerrar el modal, mostrar un toast, etc.
-    } catch (error) {
-      console.error('Error al enviar el archivo:', error);
-    }
-  };
+    console.log('Respuesta del servidor:', response.data);
 
-  const exportarAExcel = () => {
+    addToast({
+      title: "Éxito",
+      description: "Archivo cargado correctamente.",
+      timeout: 3000,
+      color: "success",
+    });
+
+    onOpenChange(false); // opcional: cerrar el modal
+  } catch (error: any) {
+    console.error('Error al enviar el archivo:', error);
+
+    addToast({
+      title: "Error",
+      description: error?.response?.data?.detail || "No se pudo cargar el archivo.",
+      timeout: 3000,
+      color: "danger",
+    });
+  }
+};
+
+const exportarAExcel = () => {
+  try {
     const hoja = usuarios.map(({ nombre, apellido, username, email, password }) => ({
-      nombre: nombre,
-      apellido: apellido,
-      username: username,
-      email: email,
-      password: password,
+      nombre,
+      apellido,
+      username,
+      email,
+      password,
     }));
 
     const libro = XLSX.utils.book_new();
     const hojaExcel = XLSX.utils.json_to_sheet(hoja);
     XLSX.utils.book_append_sheet(libro, hojaExcel, 'Usuarios');
     XLSX.writeFile(libro, 'registro_usuarios.xlsx');
-  };
+    
+  } catch (error) {
+    console.error("❌ Error al exportar Excel:", error);
+
+    addToast({
+      title: "Error",
+      description: "No se pudo exportar el Excel.",
+      timeout: 3000,
+      color: "danger",
+    });
+  }
+};
 
   return (
     <ReuModal

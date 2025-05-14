@@ -39,7 +39,7 @@ const UsuariosPage: React.FC = () => {
     { name: "Nombre", uid: "nombre" },
     { name: "Apellido", uid: "apellido" },
     { name: "Correo electrónico", uid: "email" },
-    { name: "Nombre de usuario", uid: "username" },
+    { name: "Username", uid: "username" },
     { name: "Rol", uid: "rol" },
     { name: "Acciones", uid: "acciones" },
   ];

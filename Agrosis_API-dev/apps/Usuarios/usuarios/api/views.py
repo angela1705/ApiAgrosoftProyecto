@@ -156,21 +156,38 @@ class RegistroMasivoUsuariosView(APIView):
         except Exception as e:
             return Response({'error': f'Error al leer el archivo: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # ✅ Validar si el archivo está vacío (solo encabezados, sin filas)
+        if df.empty:
+            return Response({'error': 'El archivo no contiene datos.'}, status=status.HTTP_400_BAD_REQUEST)
+
         errores = []
         for index, row in df.iterrows():
+            fila = index + 2  # Excel normalmente comienza en la fila 2 para los datos
+
+            # Validación explícita de campos obligatorios
+            campos_requeridos = ['nombre', 'apellido', 'email', 'username', 'password']
+            faltantes = [campo for campo in campos_requeridos if not row.get(campo)]
+
+            if faltantes:
+                errores.append({
+                    'fila': fila,
+                    'errores': f"Campos vacíos: {', '.join(faltantes)}"
+                })
+                continue  # saltamos al siguiente
+
             data = {
                 'nombre': row.get('nombre'),
                 'apellido': row.get('apellido'),
                 'email': row.get('email'),
                 'username': row.get('username'),
                 'password': row.get('password'),
-                 'rol': row.get('rol')
             }
+
             serializer = RegistroUsuarioSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
             else:
-                errores.append({'fila': index + 2, 'errores': serializer.errors})
+                errores.append({'fila': fila, 'errores': serializer.errors})
 
         if errores:
             return Response({'mensaje': 'Algunos usuarios no se pudieron registrar.', 'errores': errores}, status=status.HTTP_400_BAD_REQUEST)
