@@ -19,7 +19,7 @@ const VentaPage: React.FC = () => {
     fecha: '',
     monto_entregado: 0,
     cambio: 0,
-    unidades_de_medida: 0,
+    unidades_de_medida: 1,
   });
 
   const [productosAgregados, setProductosAgregados] = useState<Venta[]>([]);
@@ -49,7 +49,7 @@ const VentaPage: React.FC = () => {
       ...venta,
       precio: productoSeleccionado.precio,
       total: venta.cantidad * productoSeleccionado.precio,
-      unidades_de_medida: productoSeleccionado.unidad_medida?.id || 0,
+      unidades_de_medida: productoSeleccionado.unidad_medida?.id ?? 1, // o cualquier ID válido por defecto
     };
 
     if (editIndex !== null) {
@@ -69,7 +69,7 @@ const VentaPage: React.FC = () => {
       fecha: venta.fecha,
       monto_entregado: 0,
       cambio: 0,
-      unidades_de_medida: 0,
+      unidades_de_medida: 1,
     });
   };
 
@@ -135,7 +135,7 @@ const VentaPage: React.FC = () => {
             fecha: new Date().toISOString().split("T")[0],
             monto_entregado: 0,
             cambio: 0,
-            unidades_de_medida: 0,
+            unidades_de_medida: 1,
           });
           setIsModalOpen(false);
           

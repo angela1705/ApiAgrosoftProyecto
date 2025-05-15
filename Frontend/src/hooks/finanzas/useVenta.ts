@@ -1,3 +1,4 @@
+// useVenta.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
@@ -5,116 +6,63 @@ import { Venta } from "@/types/finanzas/Venta";
 
 const API_URL = "http://127.0.0.1:8000/finanzas/venta/";
 
-
 const fetchVentas = async (): Promise<Venta[]> => {
   const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
+  if (!token) throw new Error("Token no encontrado");
   const response = await api.get(API_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
 
 const registrarVenta = async (venta: Venta): Promise<Venta> => {
   const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
-  const payload = {
-    producto: venta.producto,
-    cantidad: venta.cantidad,
-    fecha: venta.fecha,
-  };
-  console.log("Enviando venta al backend:", payload);
-  try {
-    const response = await api.post(API_URL, payload, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log("Respuesta del backend:", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error("Error en registrarVenta:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    throw new Error(
-      error.response?.data?.detail ||
-      error.response?.data?.error ||
-      "Error al registrar la venta."
-    );
-  }
-};
+  if (!token) throw new Error("Token no encontrado");
 
-const registrarMultiplesVentas = async (ventas: Venta[]): Promise<Venta[]> => {
-  const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
-  if (!ventas.length) throw new Error("No se proporcionaron ventas para registrar.");
-  const payload = {
-    ventas: ventas.map(venta => ({
-      producto: venta.producto,
-      cantidad: venta.cantidad,
-      fecha: venta.fecha,
-    })),
-  };
-  console.log("Enviando ventas al backend:", JSON.stringify(payload, null, 2));
-  try {
-    const response = await api.post(`${API_URL}registrar_multiples_ventas/`, payload, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log("Respuesta del backend:", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error("Error en registrarMultiplesVentas:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    const errorMessage =
-      error.response?.status === 405
-        ? "El endpoint /finanzas/venta/registrar_multiples_ventas/ no permite POST. Añada la acción 'registrar_multiples_ventas' al VentaViewSet en el backend."
-        : error.response?.data?.detail ||
-          error.response?.data?.error ||
-          "Error al registrar las ventas.";
-    throw new Error(errorMessage);
-  }
+  console.log("Enviando venta:", venta); // DEBUG
+
+  const response = await api.post(API_URL, venta, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
 };
 
 const actualizarVenta = async (venta: Venta): Promise<Venta> => {
   const token = localStorage.getItem("access_token");
-  if (!token || !venta.id) throw new Error("Falta token o ID de la venta.");
+  if (!token || !venta.id) throw new Error("Falta token o ID");
+
   const payload = {
     producto: venta.producto,
     cantidad: venta.cantidad,
     fecha: venta.fecha,
   };
+
   const response = await api.put(`${API_URL}${venta.id}/`, payload, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
+
   return response.data;
 };
 
 const eliminarVenta = async (id: number): Promise<void> => {
   const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
+  if (!token) throw new Error("Token no encontrado");
+
   await api.delete(`${API_URL}${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 export const useVenta = () => {
   const queryClient = useQueryClient();
+
   const ventasQuery = useQuery<Venta[], Error>({
     queryKey: ["ventas"],
     queryFn: fetchVentas,
@@ -124,87 +72,72 @@ export const useVenta = () => {
     mutationFn: registrarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta registrada con éxito", color:"success" });
+      addToast({
+        title: "Éxito",
+        description: "Venta registrada con éxito",
+        color: "success",
+      });
     },
     onError: (error: any) => {
-      if (error.response?.status === 403) {
-        addToast({
-          title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
-          timeout: 3000,
-          color: "warning"
-        });
-      } else {
-        addToast({
-          title: "Error",
-          description: `Error al registrar venta: ${error.message}`,
-          color: "danger"
-        });
-      }
-    }
+      console.error("Error detalle:", error.response?.data);
+      addToast({
+        title: "Error",
+        description: `Error al registrar venta: ${JSON.stringify(error.response?.data)}`,
+        color: "danger",
+      });
+    },
   });
 
-    const actualizarMutation = useMutation({
+  const actualizarMutation = useMutation({
     mutationFn: actualizarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta actualizada con éxito", color:"success" });
+      addToast({
+        title: "Éxito",
+        description: "Venta actualizada con éxito",
+        color: "success",
+      });
     },
     onError: (error: any) => {
-      if (error.response?.status === 403) {
-        addToast({
-          title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
-          timeout: 3000,
-          color: "warning"
-        });
-      } else {
-        addToast({
-          title: "Error",
-          description: `Error al Actualizar venta: ${error.message}`,
-          color: "danger"
-        });
-      }
-    }
+      console.error("Error detalle:", error.response?.data);
+      addToast({
+        title: "Error",
+        description: `Error al actualizar venta: ${JSON.stringify(error.response?.data)}`,
+        color: "danger",
+      });
+    },
   });
 
-    const eliminarMutation = useMutation({
+  const eliminarMutation = useMutation({
     mutationFn: eliminarVenta,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      addToast({ title: "Éxito", description: "Venta eliminada con éxito", color:"success"});
+      addToast({
+        title: "Éxito",
+        description: "Venta eliminada con éxito",
+        color: "success",
+      });
     },
     onError: (error: any) => {
-      if (error.response?.status === 403) {
-        addToast({
-          title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador",
-          timeout: 3000,
-          color: "warning"
-        });
-      } else {
-        addToast({
-          title: "Error",
-          description: `Error al eliminar venta: ${error.message}`,
-          color: "danger"
-        });
-      }
-    }
+      console.error("Error detalle:", error.response?.data);
+      addToast({
+        title: "Error",
+        description: `Error al eliminar venta: ${JSON.stringify(error.response?.data)}`,
+        color: "danger",
+      });
+    },
   });
 
-    return {
+  return {
     ventas: ventasQuery.data ?? [],
     isLoading: ventasQuery.isLoading,
     isError: ventasQuery.isError,
     error: ventasQuery.error,
     registrarVenta: registrarMutation.mutate,
     isRegistrando: registrarMutation.isPending,
-    registrarMultiplesVentas: registrarMultiplesMutation.mutate,
-    isRegistrandoMultiples: registrarMultiplesMutation.isPending,
     actualizarVenta: actualizarMutation.mutate,
     isActualizando: actualizarMutation.isPending,
     eliminarVenta: eliminarMutation.mutate,
     isEliminando: eliminarMutation.isPending,
   };
 };
-

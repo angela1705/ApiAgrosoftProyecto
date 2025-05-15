@@ -11,7 +11,7 @@ class Venta(models.Model):
     cambio = models.DecimalField(max_digits=10, decimal_places=2, editable=False, default=0)
     unidades_de_medida = models.ForeignKey(UnidadMedida, on_delete=models.CASCADE, related_name="ventas")
     def save(self, *args, **kwargs):
-        if not self.pk:  # Solo al crear
+        if not self.pk:  
             if self.cantidad <= 0:
                 raise ValidationError("La cantidad debe ser mayor a cero.")
             if self.cantidad > self.producto.stock:
