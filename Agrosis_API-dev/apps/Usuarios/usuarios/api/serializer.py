@@ -14,7 +14,7 @@ class UsuariosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'rol_id']
+        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento', 'rol', 'rol_id']
 
     def update(self, instance, validated_data):
         nuevo_rol = validated_data.get("rol", instance.rol)
@@ -34,7 +34,7 @@ class UsuariosSerializer(serializers.ModelSerializer):
 class RegistroUsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, 
-        required=True, 
+        required=False, 
         style={'input_type': 'password'}
     )
     
@@ -52,9 +52,23 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
         )]
     )
 
+    numero_documento = serializers.IntegerField(
+    min_value=1000000,  
+    validators=[UniqueValidator(
+            queryset=Usuarios.objects.all(),
+            message="Ya existe un usuario con ese número de documento."
+        )],
+    error_messages={
+        "min_value": "El número de documento debe tener al menos 7 dígitos.",
+        "required": "El número de documento es obligatorio.",
+        "invalid": "Ingrese un número de documento válido."
+    }
+)
+
+
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'rol', 'password']
+        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento','rol', 'password']
 
     def create(self, validated_data):
         print("Entró al create del RegistroUsuarioSerializer")

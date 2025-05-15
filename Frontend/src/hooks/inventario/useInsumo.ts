@@ -59,7 +59,7 @@ export const useTiposInsumo = () => {
     });
 };
 
-const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo" | "componentes"> & { unidad_medida_id?: number; tipo_insumo_id?: number; componentes_data?: { insumo_componente: number; cantidad: number }[] }) => {
+const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo"> & { unidad_medida_id?: number; tipo_insumo_id?: number }) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
 
@@ -77,37 +77,36 @@ const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "ti
 export const useRegistrarInsumo = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo" | "componentes"> & { unidad_medida_id?: number; tipo_insumo_id?: number; componentes_data?: { insumo_componente: number; cantidad: number }[] }) => registrarInsumo(insumo),
+        mutationFn: (insumo: Omit<Insumo, "id" | "unidad_medida" | "tipo_insumo"> & { unidad_medida_id?: number; tipo_insumo_id?: number }) => registrarInsumo(insumo),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["insumos"] });
             addToast({ title: "Éxito", description: "Insumo registrado con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
-              addToast({
-                title: "Acceso denegado",
-                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+                    timeout: 3000,
+                    color: "danger"
+                });
             } else {
-              addToast({
-                title: "Error",
-                description: "Error al registrar el insumo",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Error",
+                    description: "Error al registrar el insumo",
+                    timeout: 3000,
+                    color: "danger"
+                });
             }
-          },
-        });
-      };
-  
+        },
+    });
+};
+
 interface ActualizarInsumoParams {
     id: number;
-    insumo: Omit<Insumo, "unidad_medida" | "tipo_insumo" | "componentes"> & {
+    insumo: Omit<Insumo, "unidad_medida" | "tipo_insumo"> & {
         unidad_medida_id?: number;
         tipo_insumo_id?: number;
-        componentes_data?: { insumo_componente: number; cantidad: number }[];
     };
 }
 
@@ -135,26 +134,24 @@ export const useActualizarInsumo = () => {
             addToast({ title: "Éxito", description: "Insumo actualizado con éxito", timeout: 3000, color: "success" });
         },
         onError: (error: any) => {
-          if (error.response?.status === 403) {
-            addToast({
-              title: "Acceso denegado",
-              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-              timeout: 3000,
-              color: "danger"
-            });
-          } else {
-            addToast({
-              title: "Error",
-              description: "Error al actualizar el insumo",
-              timeout: 3000,
-              color: "danger"
-            });
-          }
+            if (error.response?.status === 403) {
+                addToast({
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+                    timeout: 3000,
+                    color: "danger"
+                });
+            } else {
+                addToast({
+                    title: "Error",
+                    description: "Error al actualizar el insumo",
+                    timeout: 3000,
+                    color: "danger"
+                });
+            }
         },
-      });
-    };
-
-
+    });
+};
 
 const eliminarInsumo = async (id: number) => {
     const token = localStorage.getItem("access_token");
@@ -181,24 +178,24 @@ export const useEliminarInsumo = () => {
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
-              addToast({
-                title: "Acceso denegado",
-                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+                    timeout: 3000,
+                    color: "danger"
+                });
             } else {
-              addToast({
-                title: "Error",
-                description: "Error al eliminar el insumo",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Error",
+                    description: "Error al eliminar el insumo",
+                    timeout: 3000,
+                    color: "danger"
+                });
             }
-          },
-        });
-      };
-  
+        },
+    });
+};
+
 const crearUnidadMedida = async (unidad: Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -258,24 +255,24 @@ export const useCrearTipoInsumo = () => {
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
-              addToast({
-                title: "Acceso denegado",
-                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+                    timeout: 3000,
+                    color: "danger"
+                });
             } else {
-              addToast({
-                title: "Error",
-                description: "Error al crear el insumo",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Error",
+                    description: "Error al crear el insumo",
+                    timeout: 3000,
+                    color: "danger"
+                });
             }
-          },
-        });
-      };
-  
+        },
+    });
+};
+
 const usarEnActividad = async (id: number, data: { cantidad_usada: number; actividad_id?: number }) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -301,20 +298,20 @@ export const useUsarEnActividad = () => {
         },
         onError: (error: any) => {
             if (error.response?.status === 403) {
-              addToast({
-                title: "Acceso denegado",
-                description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Acceso denegado",
+                    description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+                    timeout: 3000,
+                    color: "danger"
+                });
             } else {
-              addToast({
-                title: "Error",
-                description: "Error al usar el insumo en la actividad",
-                timeout: 3000,
-                color: "danger"
-              });
+                addToast({
+                    title: "Error",
+                    description: "Error al usar el insumo en la actividad",
+                    timeout: 3000,
+                    color: "danger"
+                });
             }
-          },
-        });
-      };
+        },
+    });
+};

@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                 ('nombre', models.CharField(max_length=30)),
                 ('apellido', models.CharField(max_length=30)),
                 ('email', models.EmailField(max_length=254, unique=True)),
+                ('numero_documento', models.IntegerField(null=True, unique=True)),
                 ('is_active', models.BooleanField(default=True)),
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
                 ('rol', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='roles.roles')),

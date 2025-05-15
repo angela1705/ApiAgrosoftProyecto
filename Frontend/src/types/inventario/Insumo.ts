@@ -14,11 +14,6 @@ export interface TipoInsumo {
     fecha_creacion: string;
 }
 
-export interface InsumoCompuesto {
-    insumo_componente: number;
-    cantidad: number;
-}
-
 export interface Insumo {
     id: number;
     nombre: string;
@@ -31,6 +26,4 @@ export interface Insumo {
     fecha_registro: string;
     fecha_caducidad: string | null;
     precio_insumo: number;
-    es_compuesto: boolean;
-    componentes: InsumoCompuesto[];
 }
