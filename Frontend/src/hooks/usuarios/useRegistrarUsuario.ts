@@ -8,6 +8,7 @@ export interface NuevoUsuario {
   nombre: string;
   apellido: string;
   email: string;
+  numero_documento: number;
   username?: string;
   password: string;
 }

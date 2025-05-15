@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include",
+        
       });
 
       if (!response.ok) {
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           Authorization: `Bearer ${data.access}`,
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        
 
       });
 

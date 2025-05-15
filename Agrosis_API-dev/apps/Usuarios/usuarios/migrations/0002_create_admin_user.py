@@ -16,6 +16,7 @@ def create_admin_user(apps, schema_editor):
             'username': '@admin#',
             'nombre': 'Administer',
             'apellido': 'Userauth',
+            'numero_documento':166600666,
             'password': make_password('admin'),  
             'rol': admin_role,
             'is_staff': True,
@@ -26,7 +27,7 @@ def create_admin_user(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ('usuarios', '0001_initial'),
-        ('roles', '0002_auto_20250312_1419'),  
+        ('roles', '0002_auto_20250312_1419'), 
     ]
 
     operations = [
