@@ -9,6 +9,9 @@ import Tabla from "@/components/globales/Tabla";
 import { Trash2 } from 'lucide-react';
 import { PagoModal } from "@/components/finanzas/PagoModal";
 import { TiqueteModal } from "@/components/finanzas/TiqueteModal";
+import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
+import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
+import { Plus } from 'lucide-react';
 
 const VentaPage: React.FC = () => {
   const [venta, setVenta] = useState<Venta>({
@@ -19,7 +22,7 @@ const VentaPage: React.FC = () => {
     fecha: '',
     monto_entregado: 0,
     cambio: 0,
-    unidades_de_medida: 1,
+    unidades_de_medida: 0,
   });
 
   const [productosAgregados, setProductosAgregados] = useState<Venta[]>([]);
@@ -30,6 +33,8 @@ const VentaPage: React.FC = () => {
   const { registrarVenta, isRegistrando } = useVenta();
   const { data: precio_producto, isLoading: precioProductoLoading } = usePreciosProductos();
   const navigate = useNavigate();
+  const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
+  const [openUnidadesMedidaModal, setOpenUnidadesMedidaModal] = useState(false);
   
   const handleChange = (field: keyof Venta) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { value } = e.target;
@@ -44,12 +49,14 @@ const VentaPage: React.FC = () => {
   const agregarProducto = () => {
     const productoSeleccionado = precio_producto?.find(p => p.id === venta.producto);
     if (!productoSeleccionado) return;
+    const unidadMedida = venta.unidades_de_medida || productoSeleccionado.unidad_medida?.id || 0;
+
 
     const nuevoProducto = {
       ...venta,
       precio: productoSeleccionado.precio,
       total: venta.cantidad * productoSeleccionado.precio,
-      unidades_de_medida: productoSeleccionado.unidad_medida?.id ?? 1, // o cualquier ID válido por defecto
+    unidades_de_medida: unidadMedida,
     };
 
     if (editIndex !== null) {
@@ -69,7 +76,7 @@ const VentaPage: React.FC = () => {
       fecha: venta.fecha,
       monto_entregado: 0,
       cambio: 0,
-      unidades_de_medida: 1,
+      unidades_de_medida: venta.unidades_de_medida,
     });
   };
 
@@ -88,7 +95,7 @@ const VentaPage: React.FC = () => {
   ];
   
   const transformedData = productosAgregados.map((venta, index) => {
-    const productoNombre = precio_producto?.find(p => p.id === venta.producto)?.cultivo || "Desconocido";
+    const productoNombre = precio_producto?.find(p => p.id === venta.producto)?.cosecha || "Desconocido";
     const unidadNombre = precio_producto?.find(p => p.id === venta.producto)?.unidad_medida?.nombre || "unidad";
     const precio = Number(venta.precio) || 0;
     const total = Number(venta.total) || 0;
@@ -123,7 +130,7 @@ const VentaPage: React.FC = () => {
     }));
 
     registrarVenta(
-      ventasConMonto[0], // Solo registramos uno como ejemplo
+      ventasConMonto[0], 
       {
         onSuccess: (ventaRegistrada) => {
           setProductosAgregados([]);
@@ -135,12 +142,11 @@ const VentaPage: React.FC = () => {
             fecha: new Date().toISOString().split("T")[0],
             monto_entregado: 0,
             cambio: 0,
-            unidades_de_medida: 1,
+            unidades_de_medida: 0,
           });
           setIsModalOpen(false);
           
-          // Abrir modal de tiquete con el ID de la venta
-          setVentaIdForTiquete(ventaRegistrada.id);
+          setVentaIdForTiquete(ventaRegistrada.id ?? null);
           setIsTiqueteModalOpen(true);
         },
       }
@@ -149,18 +155,22 @@ const VentaPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Venta</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+     <ModalUnidadMedida 
+        isOpen={openUnidadesMedidaModal} 
+        onOpenChange={setOpenUnidadesMedidaModal} 
+      />
+        <div className="w-full flex flex-col items-center min-h-screen p-6">
+      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Venta</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Producto</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
               <select
                 name="producto"
                 value={venta.producto || ""}
                 onChange={handleChange("producto")}
-                className="w-full mb-4 p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={precioProductoLoading}
               >
                 <option value="0">Seleccione un producto</option>
@@ -170,82 +180,110 @@ const VentaPage: React.FC = () => {
                   </option>
                 ))}
               </select>
-
-              <ReuInput
-                label="Cantidad"
-                placeholder="Ingrese la cantidad"
-                type="number"
-                value={String(venta.cantidad)}
-                onChange={handleChange("cantidad")}
-              />
             </div>
 
-            <div>
-              <ReuInput
-                label="Fecha"
-                placeholder="Seleccione la fecha"
-                type="date"
-                value={venta.fecha}
-                onChange={handleChange("fecha")}
-              />
-
-              <div className="mt-6">
-                <button
-                  className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    agregarProducto();
-                  }}
-                  disabled={venta.producto === 0 || venta.cantidad <= 0}
-                >
-                  {editIndex !== null ? "Actualizar Producto" : "Agregar Producto"}
-                </button>
-              </div>
-            </div>
+            <ReuInput
+              label="Cantidad"
+              placeholder="Ingrese la cantidad"
+              type="number"
+              value={String(venta.cantidad)}
+              onChange={handleChange("cantidad")}
+            />
           </div>
 
-          {productosAgregados.length > 0 && (
-            <>
-              <div className="mb-4">
-                <Tabla columns={columns} data={transformedData} />
-              </div>
-
-              <div className="flex justify-between items-center mt-4">
-                <div className="text-lg font-semibold">
-                  Total Venta: ${calcularTotalVenta().toFixed(2)}
-                </div>
-
-                <button
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                  disabled={isRegistrando || productosAgregados.length === 0}
-                  onClick={() => setIsModalOpen(true)}
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+                <button 
+                  className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  onClick={() => setOpenUnidadesMedidaModal(true)}
+                  type="button"
                 >
-                  {isRegistrando ? "Registrando..." : "Finalizar Venta"}
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
-            </>
-          )}
+              <select
+                value={venta.unidades_de_medida}
+                onChange={handleChange("unidades_de_medida")}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                disabled={loadingUnidadesMedida}
+              >
+                <option value="">Seleccione una unidad</option>
+                {unidadesMedida?.map((unidad) => (
+                  <option key={unidad.id} value={unidad.id}>
+                    {unidad.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <button
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-colors"
-            onClick={() => navigate("/finanzas/listarventas/")}
-          >
-            Listar Ventas
-          </button>
+            <ReuInput
+              label="Fecha"
+              placeholder="Seleccione la fecha"
+              type="date"
+              value={venta.fecha}
+              onChange={handleChange("fecha")}
+            />
+
+            <div className="pt-2">
+              <button
+                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                onClick={(e) => {
+                  e.preventDefault();
+                  agregarProducto();
+                }}
+                disabled={venta.producto === 0 || venta.cantidad <= 0}
+              >
+                {editIndex !== null ? "Actualizar Producto" : "Agregar Producto"}
+              </button>
+            </div>
+          </div>
         </div>
 
-        <PagoModal
-          isOpen={isModalOpen}
-          onOpenChange={setIsModalOpen}
-          total={calcularTotalVenta()}
-          onConfirm={handleFinalizarVenta}
-        />
-        <TiqueteModal
+        {productosAgregados.length > 0 && (
+          <div className="space-y-4">
+            <div className="mb-4">
+              <Tabla columns={columns} data={transformedData} />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="text-lg font-semibold">
+                Total Venta: ${calcularTotalVenta().toFixed(2)}
+              </div>
+
+              <button
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                disabled={isRegistrando || productosAgregados.length === 0}
+                onClick={() => setIsModalOpen(true)}
+              >
+                {isRegistrando ? "Registrando..." : "Finalizar Venta"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        <button
+          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-colors"
+          onClick={() => navigate("/finanzas/listarventas/")}
+        >
+          Listar Ventas
+        </button>
+      </div>
+
+      <PagoModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        total={calcularTotalVenta()}
+        onConfirm={handleFinalizarVenta}
+      />
+      
+      <TiqueteModal
         isOpen={isTiqueteModalOpen}
         onOpenChange={setIsTiqueteModalOpen}
         ventaId={ventaIdForTiquete}
       />
-      </div>
+    </div>
     </DefaultLayout>
   );
 };
