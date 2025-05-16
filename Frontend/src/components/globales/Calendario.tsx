@@ -5,7 +5,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import esLocale from '@fullcalendar/core/locales/es';
 import ReuModal from './ReuModal';
-
+import { addToast } from "@heroui/react";
 
 type EventType = 'timed' | 'allDay';
 
@@ -61,21 +61,71 @@ const Calendario = () => {
     localStorage.setItem('calendarEvents', JSON.stringify(events));
   }, [events]);
 
+  const showToast = (options: {
+    title: string;
+    description?: string;
+    color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+    timeout?: number;
+  }) => {
+    addToast({
+      title: options.title,
+      description: options.description,
+      color: options.color || "default",
+      timeout: options.timeout || 3000,
+    });
+  };
+
   const handleDateClick = (arg: DateClickArg) => {
     setSelectedDate(arg);
     setIsModalVisible(true);
   };
 
   const handleEventClick = (clickInfo: EventClickArg) => {
-    if (confirm(`¿Eliminar recordatorio "${clickInfo.event.title}"?`)) {
-      setEvents(events.filter(event => event.id !== parseInt(clickInfo.event.id)));
-      alert('Recordatorio eliminado');
-    }
+    addToast({
+      title: `¿Eliminar recordatorio "${clickInfo.event.title}"?`,
+      color: "danger",
+      timeout: 5000,
+      description: (
+        <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
+          <button
+            onClick={() => {
+              setEvents(events.filter(event => event.id !== parseInt(clickInfo.event.id)));
+              showToast({ title: 'Recordatorio eliminado', color: 'success' });
+            }}
+            style={{
+              padding: '6px 12px',
+              backgroundColor: '#52c41a',
+              border: 'none',
+              borderRadius: '4px',
+              color: 'white',
+              cursor: 'pointer',
+            }}
+          >
+            Sí
+          </button>
+          <button
+            onClick={() => {
+              showToast({ title: 'Operación cancelada', color: 'secondary' });
+            }}
+            style={{
+              padding: '6px 12px',
+              backgroundColor: '#f0f0f0',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            No
+          </button>
+        </div>
+      ),
+      hideIcon: false,
+    });
   };
 
   const handleModalConfirm = () => {
     if (!selectedDate || !title.trim() || (eventType === 'timed' && !time)) {
-      alert('Por favor llena todos los campos obligatorios.');
+      showToast({ title: 'Por favor llena todos los campos obligatorios.', color: 'danger' });
       return;
     }
 
@@ -97,9 +147,9 @@ const Calendario = () => {
     setTime('');
     setDescription('');
     setIsModalVisible(false);
-    alert('Recordatorio agregado');
-  };
 
+    showToast({ title: 'Recordatorio agregado', color: 'success' });
+  };
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Calendario de Recordatorios</h1>

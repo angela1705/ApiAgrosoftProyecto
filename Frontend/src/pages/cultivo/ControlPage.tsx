@@ -6,10 +6,9 @@ import Formulario from "@/components/globales/Formulario";
 import { useCrearControl } from "@/hooks/cultivo/useControl";
 import { useAfecciones } from "@/hooks/cultivo/useAfecciones";
 import { useTipoControl } from "@/hooks/cultivo/usetipocontrol";
-import { useProductoControl } from "@/hooks/cultivo/useproductoscontrol";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
 import { Control } from "@/types/cultivo/Control";
-
+import { useInsumos } from "@/hooks/cultivo/useActividad";
 const ControlPage: React.FC = () => {
   const [control, setControl] = useState<Omit<Control, 'id'>>({
     afeccion_id: 0,
@@ -24,7 +23,7 @@ const ControlPage: React.FC = () => {
 
   const { data: afecciones } = useAfecciones();
   const { data: tipoControles } = useTipoControl();
-  const { data: productos } = useProductoControl();
+  const { data: insumos } = useInsumos();
   const { data: usuarios } = useUsuarios();
   const mutation = useCrearControl();
   const navigate = useNavigate();
@@ -87,7 +86,7 @@ const ControlPage: React.FC = () => {
             required
           >
             <option value="">Seleccione un producto</option>
-            {productos?.map(p => (
+            {insumos?.map(p => (
               <option key={p.id} value={p.id}>{p.nombre}</option>
             ))}
           </select>
