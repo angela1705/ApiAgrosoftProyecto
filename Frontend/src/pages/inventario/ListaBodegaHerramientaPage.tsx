@@ -9,11 +9,21 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
-import BodegaHerramientaNotifications from "@/components/inventario/BodegaHerramientaNotifications";
 import { useAuth } from "@/context/AuthContext";
 
+const formatCOPNumber = (value: number | string): string => {
+    const num = typeof value === 'string' ? parseInt(value.replace(/\./g, ''), 10) : value;
+    if (isNaN(num)) return '';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
+const parseCOPNumber = (value: string): number => {
+    const cleanValue = value.replace(/[\.$]/g, '');
+    return parseInt(cleanValue, 10) || 0;
+};
+
 const ListaBodegaHerramientaPage: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [selectedBodegaHerramienta, setSelectedBodegaHerramienta] = useState<BodegaHerramienta | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -61,7 +71,7 @@ const ListaBodegaHerramientaPage: React.FC = () => {
     const herramientaNombre = herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido";
     
     const costoTotal = item.costo_total != null ? Number(item.costo_total) : 0;
-    const costoTotalFormatted = isNaN(costoTotal) ? "0.00" : costoTotal.toFixed(2);
+    const costoTotalFormatted = isNaN(costoTotal) ? "0" : formatCOPNumber(costoTotal);
 
     return {
       id: item.id?.toString() || "",
@@ -111,7 +121,6 @@ const ListaBodegaHerramientaPage: React.FC = () => {
       ) : (
         <Tabla columns={columns} data={transformedData} />
       )}
-      <BodegaHerramientaNotifications userId3={user.id} />
 
       <ReuModal
         isOpen={isEditModalOpen}
@@ -178,14 +187,20 @@ const ListaBodegaHerramientaPage: React.FC = () => {
             />
             <ReuInput
               label="Costo Total"
-              placeholder="Costo calculado"
+              placeholder="Ej. $1.000"
               type="text"
               value={
                 selectedBodegaHerramienta.costo_total != null
-                  ? `$${Number(selectedBodegaHerramienta.costo_total).toFixed(2)}`
-                  : "$0.00"
+                  ? `$${formatCOPNumber(selectedBodegaHerramienta.costo_total)}`
+                  : "$0"
               }
-              onChange={() => {}}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/^\$/, '');
+                setSelectedBodegaHerramienta({
+                  ...selectedBodegaHerramienta,
+                  costo_total: parseCOPNumber(rawValue),
+                });
+              }}
             />
           </>
         )}

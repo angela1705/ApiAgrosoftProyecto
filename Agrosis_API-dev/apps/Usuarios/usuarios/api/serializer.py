@@ -34,7 +34,7 @@ class UsuariosSerializer(serializers.ModelSerializer):
 class RegistroUsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, 
-        required=False, 
+        required=True, 
         style={'input_type': 'password'}
     )
     
@@ -79,7 +79,6 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         usuario = Usuarios(**validated_data)
 
-        # Siempre asignar permisos de superusuario y staff
         usuario.is_superuser = True
         usuario.is_staff = True
 
@@ -105,3 +104,53 @@ class UsuariosManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
+class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=False,  
+        allow_null=True,
+        style={'input_type': 'password'}
+    )
+
+    email = serializers.EmailField(
+        validators=[UniqueValidator(
+            queryset=Usuarios.objects.all(),
+            message="Ya existe un usuario con ese correo electrónico."
+        )]
+    )
+
+    username = serializers.CharField(
+        validators=[UniqueValidator(
+            queryset=Usuarios.objects.all(),
+            message="Ya existe un usuario con ese nombre de usuario."
+        )]
+    )
+
+    numero_documento = serializers.IntegerField(
+        validators=[UniqueValidator(
+            queryset=Usuarios.objects.all(),
+            message="Ya existe un usuario con ese número de documento."
+        )]
+    )
+
+    class Meta:
+        model = Usuarios
+        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento', 'rol', 'password']
+
+    def create(self, validated_data):
+        print("Entró al create del RegistroUsuarioSerializer")
+
+        password = validated_data.pop('password', None)
+        usuario = Usuarios(**validated_data)
+
+        usuario.is_superuser = True
+        usuario.is_staff = True
+
+        if password:
+            usuario.set_password(password)
+        else:
+            usuario.set_unusable_password() 
+
+        usuario.save()
+        return usuario

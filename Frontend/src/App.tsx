@@ -62,6 +62,8 @@ import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
 import ListaBodegaHerramientaPage from './pages/inventario/ListaBodegaHerramientaPage';
 import BodegaPage from './pages/inventario/BodegaPage';
 import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
+//import BodegaPrecioProductoPage from "./pages/inventario/BodegaPrecioProductoPage";
+//import ListaBodegaPrecioProductoPage from "./pages/inventario/ListaBodegaPrecioProductoPage";
 
 // IoT
 import SensoresPage from "./pages/iot/SensoresPage";
@@ -225,6 +227,8 @@ const App: React.FC = () => {
               <Route path="/inventario/listarbodegainsumos" element={<ListaBodegaInsumoPage />} />
               <Route path="/inventario/bodega" element={<BodegaPage />} />
               <Route path="/inventario/listarbodega" element={<ListaBodegaPage />} />
+              {/*<Route path="/inventario/bodegapreciosproductos" element={<BodegaPrecioProductoPage />} />/*}
+              {/*<Route path="/inventario/listarbodegapreciosproductos" element={<ListaBodegaPrecioProductoPage />} />/*}
 
               {/* Finanzas */}
               <Route path="/finanzas/salario" element={<SalarioPage />} />

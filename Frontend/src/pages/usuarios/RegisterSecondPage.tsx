@@ -4,7 +4,6 @@ import DefaultLayout from "@/layouts/default";
 import { useRegistrarUsuario } from "@/hooks/usuarios/useRegistrarUsuario";
 import Formulario from "@/components/globales/Formulario";
 import { ReuInput } from "@/components/globales/ReuInput";
-import { Eye, EyeOff } from "lucide-react";
 import { addToast } from "@heroui/react";
 
 
@@ -14,11 +13,9 @@ const UsuariosSecondPage: React.FC = () => {
     apellido: "",
     email: "",
     username: "",
-    password: "", 
     numero_documento: 0
   });
 
-  const [mostrarPassword, setMostrarPassword] = useState(false);
   const { registrarUsuario, isLoading, error } = useRegistrarUsuario();
   const navigate = useNavigate();
 
@@ -40,7 +37,7 @@ const UsuariosSecondPage: React.FC = () => {
   }
     try {
       await registrarUsuario(usuario);
-      setUsuario({ nombre: "", apellido: "", email: "",  username: "", password: "",numero_documento:0  });
+      setUsuario({ nombre: "", apellido: "", email: "",  username: "",numero_documento:0  });
     } catch (error) {
       console.error("Error al registrar usuario:", error);
     }
@@ -92,22 +89,6 @@ const UsuariosSecondPage: React.FC = () => {
           value={usuario.username}
           onChange={(e) => setUsuario({ ...usuario, username: e.target.value })}
         />
-        <div className="relative">
-          <ReuInput
-            label="Contraseña"
-            placeholder="Ingrese la contraseña"
-            type={mostrarPassword ? "text" : "password"}
-            value={usuario.password}
-            onChange={(e) => setUsuario({ ...usuario, password: e.target.value })}
-          />
-          <button
-            type="button"
-            onClick={() => setMostrarPassword(!mostrarPassword)}
-            className="absolute right-3 top-9 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-          >
-            {mostrarPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        </div>
         {error && <p className="text-red-500">{error}</p>}
         <div className="col-span-1 md:col-span-2 flex justify-center">
           <button

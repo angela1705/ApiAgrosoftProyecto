@@ -6,7 +6,6 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
-import InsumoNotifications from "@/components/inventario/InsumoNotifications";
 import { useAuth } from "@/context/AuthContext";
 import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 import { addToast } from "@heroui/react";
@@ -22,7 +21,7 @@ const parseCOPNumber = (value: string): number => {
 };
 
 const ListaInsumoPage: React.FC = () => {
-    const { user } = useAuth();
+    const {} = useAuth();
     const [selectedInsumo, setSelectedInsumo] = useState<Insumo | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -78,7 +77,7 @@ const ListaInsumoPage: React.FC = () => {
         tipo_insumo: insumo.tipo_insumo ? insumo.tipo_insumo.nombre : "Sin asignar",
         activo: insumo.activo ? "Sí" : "No",
         tipo_empacado: insumo.tipo_empacado || "No especificado",
-        fecha_registro: insumo.fecha_registro.slice(0, 10), // Extract only YYYY-MM-DD
+        fecha_registro: insumo.fecha_registro.slice(0, 10),
         fecha_caducidad: insumo.fecha_caducidad || "No especificada",
         precio_insumo: insumo.precio_insumo !== null && insumo.precio_insumo !== undefined 
             ? formatCOPNumber(insumo.precio_insumo)
@@ -413,8 +412,6 @@ const ListaInsumoPage: React.FC = () => {
             >
                 <p>Esta acción es irreversible.</p>
             </ReuModal>
-
-            {user && <InsumoNotifications userId1={user.id} />}
         </DefaultLayout>
     );
 };
