@@ -5,6 +5,8 @@ import { useRegistrarUsuario } from "@/hooks/usuarios/useRegistrarUsuario";
 import Formulario from "@/components/globales/Formulario";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { Eye, EyeOff } from "lucide-react";
+import { addToast } from "@heroui/react";
+
 
 const UsuariosSecondPage: React.FC = () => {
   const [usuario, setUsuario] = useState({
@@ -12,7 +14,8 @@ const UsuariosSecondPage: React.FC = () => {
     apellido: "",
     email: "",
     username: "",
-    password: "",  
+    password: "", 
+    numero_documento: 0
   });
 
   const [mostrarPassword, setMostrarPassword] = useState(false);
@@ -20,9 +23,24 @@ const UsuariosSecondPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+    const numeroStr = usuario.numero_documento.toString();
+
+  if (
+    usuario.numero_documento <= 0 ||
+    numeroStr.length < 7 ||
+    numeroStr.length > 10
+  ) {
+    addToast({
+      title: "Error",
+      description: error?.response?.data?.detail || "El número de documento debe tener entre 7 y 10 dígitos.",
+      timeout: 3000,
+      color: "danger",
+    });
+    return;
+  }
     try {
       await registrarUsuario(usuario);
-      setUsuario({ nombre: "", apellido: "", email: "", username: "", password: "" });
+      setUsuario({ nombre: "", apellido: "", email: "",  username: "", password: "",numero_documento:0  });
     } catch (error) {
       console.error("Error al registrar usuario:", error);
     }
@@ -56,7 +74,17 @@ const UsuariosSecondPage: React.FC = () => {
           type="email"
           value={usuario.email}
           onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
+          
         />
+
+        <ReuInput
+                  label="Numero de documento"
+                  placeholder="Ingrese el numero de documento"
+                  type="number"
+                  value={usuario.numero_documento}
+                  onChange={(e) => setUsuario({ ...usuario, numero_documento: Number(e.target.value) })}
+                />
+
         <ReuInput
           label="Username"
           placeholder="Ingrese el username"
