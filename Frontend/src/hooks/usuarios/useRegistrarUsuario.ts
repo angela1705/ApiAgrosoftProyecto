@@ -8,6 +8,7 @@ export interface NuevoUsuario {
   nombre: string;
   apellido: string;
   email: string;
+  numero_documento: number;
   username?: string;
   password: string;
 }
@@ -38,7 +39,6 @@ export const useRegistrarUsuario = () => {
       if (api.isAxiosError(error) && error.response?.data) {
         const data = error.response.data;
 
-        // Mostrar errores específicos
         if (data.username) {
           addToast({
             title: "Nombre de usuario inválido",
@@ -57,7 +57,6 @@ export const useRegistrarUsuario = () => {
           });
         }
 
-        // Otros errores generales
         if (!data.username && !data.email) {
           addToast({
             title: "Error",

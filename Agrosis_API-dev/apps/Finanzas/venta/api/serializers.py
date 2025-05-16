@@ -1,27 +1,45 @@
 from rest_framework import serializers
-from ..models import Venta
-from apps.Inventario.precio_producto.models import PrecioProducto
+from ..models import Venta, DetalleVenta
 
-class VentaSerializer(serializers.ModelSerializer):
-    producto = serializers.PrimaryKeyRelatedField(
-        queryset=PrecioProducto.objects.all(),
-        allow_null=False
-    )
+class DetalleVentaSerializer(serializers.ModelSerializer):
+    producto_nombre = serializers.CharField(source='producto.Producto.id_cultivo.nombre', read_only=True)
+    unidad_medida = serializers.CharField(source='unidades_de_medida.nombre', read_only=True)
+    precio_unitario = serializers.DecimalField(source='producto.precio', max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
-        model = Venta
-        fields = ['id', 'producto', 'cantidad', 'total', 'fecha']
-        read_only_fields = ['total']
+        model = DetalleVenta
+        fields = ['id', 'producto', 'producto_nombre', 'cantidad', 'precio_unitario', 
+                 'total', 'unidades_de_medida', 'unidad_medida']
+        extra_kwargs = {
+            'producto': {'required': True},
+            'cantidad': {'required': True},
+            'unidades_de_medida': {'required': True}
+        }
 
-    def validate(self, data):
-        producto = data.get('producto')
-        cantidad = data.get('cantidad')
+class VentaSerializer(serializers.ModelSerializer):
+    detalles = DetalleVentaSerializer(many=True)
+    
+    class Meta:
+        model = Venta
+        fields = ['id', 'fecha', 'monto_entregado', 'cambio', 'detalles']
+        read_only_fields = ['fecha', 'cambio']
+    
+    def create(self, validated_data):
+        detalles_data = validated_data.pop('detalles')
+        venta = Venta.objects.create(**validated_data)
         
-        if cantidad <= 0:
-            raise serializers.ValidationError("La cantidad debe ser mayor a cero.")
-        if producto and cantidad > producto.stock:
-            raise serializers.ValidationError(
-                f"Stock insuficiente. Disponible: {producto.stock}"
-            )
+        for detalle_data in detalles_data:
+            producto = detalle_data['producto']
+            cantidad = detalle_data['cantidad']
+            
+            detalle_data['total'] = producto.precio * cantidad
+            
+            DetalleVenta.objects.create(venta=venta, **detalle_data)
+            
+            producto.stock -= cantidad
+            producto.save()
         
-        return data
+        venta.cambio = venta.monto_entregado - sum(d.total for d in venta.detalles.all())
+        venta.save()
+        
+        return venta

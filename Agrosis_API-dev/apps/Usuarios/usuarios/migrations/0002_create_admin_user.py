@@ -6,18 +6,17 @@ def create_admin_user(apps, schema_editor):
     Roles = apps.get_model('roles', 'Roles')
     admin_role = Roles.objects.get(id=4)
 
-    # Obtener el rol de administrador
     admin_role = Roles.objects.filter(nombre='Administrador').first()
     if not admin_role:
-        return  # Si no existe el rol, salir
+        return  
     
-    # Crear el usuario administrador si no existe
     Usuarios.objects.get_or_create(
         email='admin01@gmail.com',
         defaults={
             'username': '@admin#',
             'nombre': 'Administer',
             'apellido': 'Userauth',
+            'numero_documento':166600666,
             'password': make_password('admin'),  
             'rol': admin_role,
             'is_staff': True,
@@ -28,7 +27,7 @@ def create_admin_user(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ('usuarios', '0001_initial'),
-        ('roles', '0002_auto_20250312_1419'),  # Ajusta esto según el nombre real de la migración de roles
+        ('roles', '0002_auto_20250312_1419'), 
     ]
 
     operations = [
