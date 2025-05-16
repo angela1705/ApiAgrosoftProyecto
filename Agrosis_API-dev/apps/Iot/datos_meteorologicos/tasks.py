@@ -66,11 +66,7 @@ async def process_historical_data():
         except Exception as e:
             logger.error(f"Error en process_historical_data: {str(e)}", exc_info=True)
 
-        await asyncio.sleep(120)  # Procesar cada 2 minutos
+        await asyncio.sleep(120) 
 
-def start_background_task():
-    loop = asyncio.get_event_loop()
-    if loop.is_running():
-        asyncio.create_task(process_historical_data())
-    else:
-        loop.run_until_complete(process_historical_data())
+def start_background_task(): 
+    return process_historical_data()
