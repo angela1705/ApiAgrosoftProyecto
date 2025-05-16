@@ -17,7 +17,7 @@ export const useRegistrarUsuario = () => {
   const queryClient = useQueryClient();
 
   const registrarUsuario = async (usuario: NuevoUsuario) => {
-    const response = await api.post(`${API_URL}registro/`, {
+    const response = await api.post(`${API_URL}registroSecundario/`, {
       ...usuario,
       rol_id: 1, 
     });
