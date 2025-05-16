@@ -36,7 +36,7 @@ const ListaInsumoPage: React.FC = () => {
         descripcion: "",
     });
 
-    const { data: insumos, isLoading, error, refetch } = useInsumos();
+    const { data: insumos, isLoading, error } = useInsumos();
     const { data: unidadesMedida, isLoading: isLoadingUnidades } = useUnidadesMedida();
     const { data: tiposInsumo, isLoading: isLoadingTipos } = useTiposInsumo();
     const actualizarMutation = useActualizarInsumo();
@@ -176,21 +176,6 @@ const ListaInsumoPage: React.FC = () => {
                                 unidad_medida_id: selectedInsumo.unidad_medida?.id || undefined,
                                 tipo_insumo_id: selectedInsumo.tipo_insumo?.id || undefined,
                             }
-                        }, {
-                            onSuccess: () => {
-                                setIsEditModalOpen(false);
-                                refetch();
-                                addToast({ 
-                                    title: "Éxito",
-                                    description: "Insumo actualizado exitosamente"
-                                });
-                            },
-                            onError: () => {
-                                addToast({ 
-                                    title: "Error",
-                                    description: "Error al actualizar el insumo"
-                                });
-                            },
                         });
                     }
                 }}
@@ -390,23 +375,7 @@ const ListaInsumoPage: React.FC = () => {
                 title="¿Estás seguro de eliminar este insumo?"
                 onConfirm={() => {
                     if (selectedInsumo && selectedInsumo.id !== undefined) {
-                        eliminarMutation.mutate(selectedInsumo.id, {
-                            onSuccess: () => {
-                                setIsDeleteModalOpen(false);
-                                setSelectedInsumo(null);
-                                refetch();
-                                addToast({ 
-                                    title: "Éxito",
-                                    description: "Insumo eliminado exitosamente"
-                                });
-                            },
-                            onError: () => {
-                                addToast({ 
-                                    title: "Error",
-                                    description: "Error al eliminar el insumo"
-                                });
-                            },
-                        });
+                        eliminarMutation.mutate(selectedInsumo.id, );
                     }
                 }}
             >

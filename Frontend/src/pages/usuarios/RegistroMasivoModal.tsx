@@ -10,8 +10,8 @@ interface RegistroMasivoModalProps {
 
 const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({ isOpen, onOpenChange }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const [usuarios, setUsuarios] = useState([
-    { nombre: '', apellido: '', username: '', email: '', password: '' }
+  const [usuarios] = useState([
+    { nombre: '', apellido: '', username: '', email: '', numero_documento:'' }
   ]);
 
   const handleSeleccionarArchivo = () => {
@@ -56,12 +56,12 @@ const handleArchivoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
 const exportarAExcel = () => {
   try {
-    const hoja = usuarios.map(({ nombre, apellido, username, email, password }) => ({
+    const hoja = usuarios.map(({ nombre, apellido, username, email, numero_documento  }) => ({
       nombre,
       apellido,
       username,
       email,
-      password,
+      numero_documento,
     }));
 
     const libro = XLSX.utils.book_new();

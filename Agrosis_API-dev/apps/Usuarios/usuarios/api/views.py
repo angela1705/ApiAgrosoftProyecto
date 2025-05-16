@@ -146,7 +146,6 @@ class RegistroSecundarioUsuarioView(APIView):
         serializer = RegistroSecundarioUsuarioSerializer(data=request.data)
 
         if serializer.is_valid():
-            print("🟢🟢🟢🟢🟢🟢🟢🔴")
             usuario = serializer.save()
 
             try:
@@ -192,7 +191,7 @@ class RegistroMasivoUsuariosView(APIView):
         for index, row in df.iterrows():
             fila = index + 2  
 
-            campos_requeridos = ['nombre', 'apellido', 'email', 'username', 'password']
+            campos_requeridos = ['nombre', 'apellido', 'email','numero_documento','username']
             faltantes = [campo for campo in campos_requeridos if not row.get(campo)]
 
             if faltantes:
@@ -206,11 +205,11 @@ class RegistroMasivoUsuariosView(APIView):
                 'nombre': row.get('nombre'),
                 'apellido': row.get('apellido'),
                 'email': row.get('email'),
+                'numero_documento': row.get('numero_documento'),
                 'username': row.get('username'),
-                'password': row.get('password'),
             }
 
-            serializer = RegistroUsuarioSerializer(data=data)
+            serializer = RegistroSecundarioUsuarioSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
             else:

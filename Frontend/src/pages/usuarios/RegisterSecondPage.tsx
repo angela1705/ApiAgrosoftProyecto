@@ -25,7 +25,7 @@ const UsuariosSecondPage: React.FC = () => {
   if (
     usuario.numero_documento <= 0 ||
     numeroStr.length < 7 ||
-    numeroStr.length > 10
+    numeroStr.length > 15
   ) {
     addToast({
       title: "Error",

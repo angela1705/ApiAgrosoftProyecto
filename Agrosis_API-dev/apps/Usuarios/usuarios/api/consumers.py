@@ -3,7 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from apps.Usuarios.usuarios.models import Usuarios
 
-class ActividadNotificacionConsumer(AsyncWebsocketConsumer):
+class SolicitudNotificacionConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs'].get('user_id')
         if not self.user_id:
