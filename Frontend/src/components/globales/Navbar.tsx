@@ -5,8 +5,7 @@ import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 import {
   FaHome,
   FaUser,
-  FaCalendarAlt,
-  FaMapMarkerAlt,
+  FaCalendarAlt, 
   FaLeaf,
   FaDollarSign,
   FaBug,
@@ -25,8 +24,7 @@ import Sena from "../../assets/logo sena.png";
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
   { id: 3, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
-  { id: 3, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> },
-  { id: 4, label: "Mapa", path: "/mapa", icon: <FaMapMarkerAlt /> },
+  { id: 4, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> }, 
   {
     id: 5,
     label: "Cultivos",
