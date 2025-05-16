@@ -56,7 +56,6 @@ const ListaHerramientaPage: React.FC = () => {
         return numericValue ? Number(numericValue) : 0;
     };
 
-    
     const totalValor = (herramientas ?? []).reduce((sum, herramienta) => {
         return sum + herramienta.cantidad * herramienta.precio;
     }, 0);
@@ -69,7 +68,7 @@ const ListaHerramientaPage: React.FC = () => {
             cantidad: herramienta.cantidad,
             estado: herramienta.estado,
             activo: herramienta.activo ? "Sí" : "No",
-            fecha_registro: herramienta.fecha_registro,
+            fecha_registro: new Date(herramienta.fecha_registro).toISOString().split("T")[0],
             precio: `$${Number(herramienta.precio).toLocaleString("es-CO")}`,
             acciones: (
                 <>
@@ -82,7 +81,6 @@ const ListaHerramientaPage: React.FC = () => {
                 </>
             ),
         })),
-        
         {
             id: "total",
             nombre: "Total",

@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
+{/*
+  import React, { useEffect, useState, useRef } from "react";
 import { addToast } from "@heroui/toast";
 
 interface Notification {
@@ -195,3 +196,4 @@ const BodegaHerramientaNotifications: React.FC<BodegaHerramientaNotificationsPro
 };
 
 export default BodegaHerramientaNotifications;
+*/}

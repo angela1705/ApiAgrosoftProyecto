@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { IconButton, Badge, Menu, MenuItem, Typography, Box } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useActivityNotifications } from "@/hooks/websocket/useActividadNotificacions";
-//import { useBodegaNotifications } from "@/hooks/websocket/useBodegaNotification";
-import { Notification } from "@/types/notificacion";
+import React, { useState, useCallback } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { IconButton, Badge, Menu, MenuItem, Typography, Box } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { useActivityNotifications } from '@/hooks/websocket/useActividadNotificacions';
+import { useBodegaNotifications } from '@/hooks/websocket/useBodegaNotification';
+import { Notification } from '@/types/notificacion';
 
 const Notificacion: React.FC = () => {
   const { user } = useAuth();
@@ -13,20 +13,22 @@ const Notificacion: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-const addNotification = useCallback((notification: Notification) => {
-  setNotifications(prev => {
-    // Verificar si la notificación ya existe
-    const exists = prev.some(n => n.id === notification.id);
-    if (!exists) {
-      return [notification, ...prev.slice(0, 49)];
-    }
-    return prev;
-  });
-  setUnreadCount(prev => open ? prev : prev + 1);
-}, [open]);
+  const addNotification = useCallback(
+    (notification: Notification) => {
+      setNotifications((prev) => {
+        const exists = prev.some((n) => n.id === notification.id);
+        if (!exists) { // Corregido: Eliminado "!10 !exists"
+          return [notification, ...prev.slice(0, 49)];
+        }
+        return prev;
+      });
+      setUnreadCount((prev) => (open ? prev : prev + 1));
+    },
+    [open]
+  );
 
   useActivityNotifications(user?.id, addNotification);
-  //useBodegaNotifications(user?.id, addNotification);
+  useBodegaNotifications(user?.id, addNotification);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -39,11 +41,17 @@ const addNotification = useCallback((notification: Notification) => {
 
   const getNotificationColor = (type: string) => {
     switch (type) {
-      case 'error': return 'error.main';
-      case 'warning': return 'warning.main';
-      case 'success': return 'success.main';
-      case 'low_stock': return 'orange';
-      default: return 'text.primary';
+      case 'error':
+        return 'error.main';
+      case 'warning':
+      case 'expiring':
+        return 'warning.main';
+      case 'success':
+        return 'success.main';
+      case 'low_stock':
+        return 'orange';
+      default:
+        return 'text.primary';
     }
   };
 
@@ -70,8 +78,8 @@ const addNotification = useCallback((notification: Notification) => {
     } else {
       return (
         <>
-          <Typography 
-            variant="subtitle2" 
+          <Typography
+            variant="subtitle2"
             fontWeight="bold"
             sx={{ color: getNotificationColor(notification.type) }}
           >
@@ -108,8 +116,8 @@ const addNotification = useCallback((notification: Notification) => {
             width: 350,
             maxHeight: 400,
             overflow: 'auto',
-            mt: 1
-          }
+            mt: 1,
+          },
         }}
       >
         {notifications.length === 0 ? (
@@ -118,13 +126,13 @@ const addNotification = useCallback((notification: Notification) => {
           </MenuItem>
         ) : (
           notifications.map((notification) => (
-            <MenuItem 
-              key={notification.id} 
+            <MenuItem
+              key={notification.id}
               dense
               onClick={handleClose}
               sx={{
                 borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                '&:last-child': { borderBottom: 'none' }
+                '&:last-child': { borderBottom: 'none' },
               }}
             >
               <Box sx={{ py: 1, width: '100%' }}>

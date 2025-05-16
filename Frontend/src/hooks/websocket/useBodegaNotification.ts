@@ -1,74 +1,105 @@
-{/*import { useEffect, useCallback } from "react";
-import { Notification } from "@/types/notificacion";
+import { useEffect, useCallback, useRef } from 'react';
+import { Notification } from '@/types/notificacion';
 
 export const useBodegaNotifications = (
   userId: string | undefined,
   addNotification: (notification: Notification) => void
 ) => {
-  const setupWebSocket = useCallback(() => {
-    if (!userId) return;
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const maxReconnectAttempts = 5;
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const notificationIdsRef = useRef<Set<string>>(new Set());
 
-    const token = localStorage.getItem("access_token");
-    const socketUrl = `ws://${window.location.hostname}:8000/ws/inventario/bodega_insumo/?token=${token}`;
+  const setupWebSocket = useCallback(() => {
+    if (!userId) {
+      console.log('No userId provided, skipping WebSocket setup');
+      return;
+    }
+
+    
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      console.log('WebSocket ya está abierto, omitiendo reconexión');
+      return;
+    }
+
+    
+    if (wsRef.current) {
+      console.log('Cerrando WebSocket existente');
+      wsRef.current.close();
+    }
+
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const socketUrl = `${protocol}://${window.location.hostname}:8000/ws/insumo/${userId}/`;
+    console.log(`Conectando a WebSocket: ${socketUrl}`);
     const ws = new WebSocket(socketUrl);
+    wsRef.current = ws;
 
     ws.onopen = () => {
-      ws.send(JSON.stringify({ action: "sync" }));
+      reconnectAttemptsRef.current = 0;
+      console.log('WebSocket de insumos conectado');
     };
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        const messageId = data.message_id || (data.id ? `${data.type}-${data.id}` : `${data.type}-${Date.now()}`);
+        console.log('Mensaje WebSocket recibido:', data);
 
-        let message = "";
-        if (data.type === "initial_state" && data.message) {
-          message = data.message
-            .map((item: any) => `${item.bodega || "Desconocido"} - ${item.insumo || "Desconocido"}: ${item.cantidad || 0} unidades`)
-            .join(", ");
-        } else if (["create", "update", "delete", "low_stock"].includes(data.type)) {
-          message = data.type === "delete" 
-            ? `Registro ID ${data.id || "Desconocido"} eliminado`
-            : `${data.bodega || "Desconocido"} - ${data.insumo || "Desconocido"}: ${data.cantidad || 0} unidades` +
-              (data.type === "low_stock" ? " (bajo stock)" : "");
-        } else {
+        
+        if (notificationIdsRef.current.has(data.id)) {
+          console.log('Notificación duplicada ignorada:', data.id);
           return;
         }
 
+        notificationIdsRef.current.add(data.id);
         const newNotification: Notification = {
-          id: messageId,
-          type: data.type === "low_stock" ? "low_stock" : 
-               data.type === "create" ? "success" :
-               data.type === "update" ? "warning" :
-               data.type === "delete" ? "error" : "info",
-          message,
-          timestamp: data.timestamp ? parseInt(data.timestamp) : Date.now(),
-          insumoId: data.id,
-          source: 'bodega'
+          id: data.id || `notif-${Date.now()}-${data.insumo_id || 'insumo'}`,
+          type: data.type,
+          message: data.message,
+          timestamp: new Date().toISOString(),
+          source: 'bodega',
+          insumoId: data.insumo_id,
         };
-
         addNotification(newNotification);
       } catch (error) {
-        console.error('Error procesando notificación de bodega:', error);
+        console.error('Error procesando notificación de insumos:', error);
       }
     };
 
     ws.onerror = (error) => {
-      console.error('Error en WebSocket de bodega:', error);
+      console.error('Error en WebSocket de insumos:', error);
     };
 
-    ws.onclose = () => {
-      console.log('WebSocket bodega cerrado. Reconectando...');
-      setTimeout(setupWebSocket, 3000);
+    ws.onclose = (event) => {
+      console.log(`WebSocket cerrado, code: ${event.code}, reason: ${event.reason}`);
+      if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+        const delay = Math.min(3000 * (reconnectAttemptsRef.current + 1), 15000);
+        console.log(`Reconectando en ${delay}ms (intento ${reconnectAttemptsRef.current + 1})`);
+        reconnectTimeoutRef.current = setTimeout(() => {
+          reconnectAttemptsRef.current++;
+          setupWebSocket();
+        }, delay);
+      } else {
+        console.log('Máximo de intentos de reconexión alcanzado');
+      }
     };
-
-    return ws;
   }, [userId, addNotification]);
 
   useEffect(() => {
-    const ws = setupWebSocket();
+    setupWebSocket();
+
     return () => {
-      ws?.close();
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
     };
   }, [setupWebSocket]);
-}; */}
+
+  
+  const resetNotifications = useCallback(() => {
+    notificationIdsRef.current.clear();
+    console.log('Notificaciones reiniciadas');
+  }, []);
+
+  return { resetNotifications };
+};

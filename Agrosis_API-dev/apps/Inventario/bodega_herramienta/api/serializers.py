@@ -10,6 +10,29 @@ class BodegaHerramientaSerializer(serializers.ModelSerializer):
     herramienta = serializers.PrimaryKeyRelatedField(queryset=Herramienta.objects.all())
     creador = serializers.PrimaryKeyRelatedField(queryset=Usuarios.objects.all(), allow_null=True)
 
+    def validate(self, data):
+        """
+        Valida soap que la cantidad ingresada no exceda la cantidad disponible de la herramienta.
+        """
+        herramienta = data.get('herramienta')
+        cantidad = data.get('cantidad')
+        instance = self.instance  
+
+        
+        cantidad_disponible = herramienta.cantidad  
+
+        
+        if instance:
+            cantidad_disponible += instance.cantidad
+
+        
+        if cantidad > cantidad_disponible:
+            raise serializers.ValidationError({
+                'cantidad': f'La cantidad ingresada ({cantidad}) excede la cantidad disponible ({cantidad_disponible}) para la herramienta {herramienta.nombre}.'
+            })
+
+        return data
+
     class Meta:
         model = BodegaHerramienta
         fields = ['id', 'bodega', 'herramienta', 'cantidad', 'creador', 'costo_total', 'cantidad_prestada']

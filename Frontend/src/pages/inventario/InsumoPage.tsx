@@ -6,13 +6,12 @@ import { ReuInput } from "@/components/globales/ReuInput";
 import Formulario from "@/components/globales/Formulario";
 import ReuModal from "@/components/globales/ReuModal";
 import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
-import InsumoNotifications from "@/components/inventario/InsumoNotifications";
 import { useAuth } from "@/context/AuthContext";
 import { addToast } from "@heroui/react";
 import { Plus } from 'lucide-react';
 
 const InsumoPage: React.FC = () => {
-    const { user } = useAuth();
+    const {} = useAuth();
     const navigate = useNavigate();
     const { data: unidadesMedida, isLoading: isLoadingUnidades } = useUnidadesMedida();
     const { data: tiposInsumo, isLoading: isLoadingTipos } = useTiposInsumo();
@@ -313,8 +312,6 @@ const InsumoPage: React.FC = () => {
                     onChange={(e) => setNuevoTipo({ ...nuevoTipo, descripcion: e.target.value })}
                 />
             </ReuModal>
-
-            {user && <InsumoNotifications userId1={user.id} />}
         </DefaultLayout>
     );
 };
