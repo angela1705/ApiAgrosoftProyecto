@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+{/*import React, { useEffect } from "react";
 import { addToast } from "@heroui/react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -47,4 +47,4 @@ const ActividadNotifications: React.FC = () => {
   return null;
 };
 
-export default ActividadNotifications;
+export default ActividadNotifications;*/}

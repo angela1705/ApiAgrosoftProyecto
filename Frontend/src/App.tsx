@@ -41,7 +41,6 @@ import ListaTipoControlPage from "./pages/cultivo/ListaTipoControlPage";
 import ProductosControlPage from "./pages/cultivo/ProductosControlPage";
 import ListaProductoControlPage from "./pages/cultivo/ListaProductosControlPage";
 import CosechaGraficasPage from "./pages/cultivo/CosechasGraficasPage";
-import ActividadNotifications from "./components/cultivo/ActividadNotifications";
 import RegistroReportePlaga from "./pages/cultivo/ReportePlaga";
 import ListaReportePlaga from "./pages/cultivo/ListaReportePlaga";
 import DetalleReportePlaga from "./pages/cultivo/DetalleReportePlaga";
@@ -145,7 +144,6 @@ const App: React.FC = () => {
           <Toaster position="top-right" reverseOrder={false} />
 
           {/* Otros componentes */}
-          <ActividadNotifications />
           {/* Más componentes */}
           
           <Routes>
