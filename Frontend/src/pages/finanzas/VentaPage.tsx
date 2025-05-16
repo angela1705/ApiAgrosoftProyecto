@@ -3,29 +3,24 @@ import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
 import { useVenta } from "@/hooks/finanzas/useVenta";
 import { ReuInput } from "@/components/globales/ReuInput";
-import { Venta } from "@/types/finanzas/Venta";
+import { DetalleVenta } from "@/types/finanzas/Venta";
 import { usePreciosProductos } from "@/hooks/inventario/usePrecio_Producto";
 import Tabla from "@/components/globales/Tabla";
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit, Plus } from 'lucide-react';
 import { PagoModal } from "@/components/finanzas/PagoModal";
 import { TiqueteModal } from "@/components/finanzas/TiqueteModal";
 import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
-import { Plus } from 'lucide-react';
 
 const VentaPage: React.FC = () => {
-  const [venta, setVenta] = useState<Venta>({
+  const [detalle, setDetalle] = useState<DetalleVenta>({
     producto: 0,
     cantidad: 0,
-    precio: 0,
-    total: 0,
-    fecha: '',
-    monto_entregado: 0,
-    cambio: 0,
     unidades_de_medida: 0,
+    total: 0,
   });
 
-  const [productosAgregados, setProductosAgregados] = useState<Venta[]>([]);
+  const [detallesAgregados, setDetallesAgregados] = useState<DetalleVenta[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTiqueteModalOpen, setIsTiqueteModalOpen] = useState(false);
@@ -36,53 +31,52 @@ const VentaPage: React.FC = () => {
   const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
   const [openUnidadesMedidaModal, setOpenUnidadesMedidaModal] = useState(false);
   
-  const handleChange = (field: keyof Venta) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (field: keyof DetalleVenta) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { value } = e.target;
-    setVenta((prev) => ({
+    setDetalle((prev) => ({
       ...prev,
-      [field]: field === "cantidad" || field === "precio" || field === "producto" || field === "unidades_de_medida" 
+      [field]: field === "cantidad" || field === "producto" || field === "unidades_de_medida" 
         ? Number(value) 
         : value,
     }));
   };
 
-  const agregarProducto = () => {
-    const productoSeleccionado = precio_producto?.find(p => p.id === venta.producto);
+  const agregarDetalle = () => {
+    const productoSeleccionado = precio_producto?.find(p => p.id === detalle.producto);
     if (!productoSeleccionado) return;
-    const unidadMedida = venta.unidades_de_medida || productoSeleccionado.unidad_medida?.id || 0;
 
-
-    const nuevoProducto = {
-      ...venta,
-      precio: productoSeleccionado.precio,
-      total: venta.cantidad * productoSeleccionado.precio,
-    unidades_de_medida: unidadMedida,
+    const nuevoDetalle = {
+      ...detalle,
+      total: detalle.cantidad * productoSeleccionado.precio,
+      unidades_de_medida: detalle.unidades_de_medida || productoSeleccionado.unidad_medida?.id || 0,
     };
 
     if (editIndex !== null) {
-      const nuevosProductos = [...productosAgregados];
-      nuevosProductos[editIndex] = nuevoProducto;
-      setProductosAgregados(nuevosProductos);
+      const nuevosDetalles = [...detallesAgregados];
+      nuevosDetalles[editIndex] = nuevoDetalle;
+      setDetallesAgregados(nuevosDetalles);
       setEditIndex(null);
     } else {
-      setProductosAgregados([...productosAgregados, nuevoProducto]);
+      setDetallesAgregados([...detallesAgregados, nuevoDetalle]);
     }
 
-    setVenta({
+    setDetalle({
       producto: 0,
       cantidad: 0,
-      precio: 0,
+      unidades_de_medida: 0,
       total: 0,
-      fecha: venta.fecha,
-      monto_entregado: 0,
-      cambio: 0,
-      unidades_de_medida: venta.unidades_de_medida,
     });
   };
 
+  const handleEdit = (index: number) => {
+    const detalleAEditar = detallesAgregados[index];
+    setDetalle(detalleAEditar);
+    setEditIndex(index);
+  };
+
   const handleDelete = (index: number) => {
-    const nuevosProductos = productosAgregados.filter((_, i) => i !== index);
-    setProductosAgregados(nuevosProductos);
+    const nuevosDetalles = detallesAgregados.filter((_, i) => i !== index);
+    setDetallesAgregados(nuevosDetalles);
   };
 
   const columns = [
@@ -91,58 +85,64 @@ const VentaPage: React.FC = () => {
     { name: "Unidad", uid: "unidad" },
     { name: "Precio Unitario", uid: "precio" },
     { name: "Total", uid: "total" },
-    { name: "Quitar", uid: "acciones" },
+    { name: "Acciones", uid: "acciones" },
   ];
   
-  const transformedData = productosAgregados.map((venta, index) => {
-    const productoNombre = precio_producto?.find(p => p.id === venta.producto)?.cosecha || "Desconocido";
-    const unidadNombre = precio_producto?.find(p => p.id === venta.producto)?.unidad_medida?.nombre || "unidad";
-    const precio = Number(venta.precio) || 0;
-    const total = Number(venta.total) || 0;
+  const transformedData = detallesAgregados.map((detalle, index) => {
+    const productoSeleccionado = precio_producto?.find(p => p.id === detalle.producto);
+    const productoNombre = productoSeleccionado?.Producto?.id_cultivo?.nombre || "Desconocido";
+    const unidadNombre = unidadesMedida?.find(u => u.id === detalle.unidades_de_medida)?.nombre || "unidad";
+    const precio = productoSeleccionado?.precio || 0;
+    const total = detalle.total || 0;
     
     return {
       id: index.toString(),
       producto: productoNombre,
-      cantidad: venta.cantidad,
+      cantidad: detalle.cantidad,
       unidad: unidadNombre,
       precio: `${precio.toFixed(2)}`,
       total: `${total.toFixed(2)}`,
       acciones: (
-        <button
-          className="text-red-500 hover:underline"
-          onClick={() => handleDelete(index)}
-        >
-          <Trash2 size={22} color='red'/>
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="text-blue-500 hover:text-blue-700"
+            onClick={() => handleEdit(index)}
+          >
+            <Edit size={20} />
+          </button>
+          <button
+            className="text-red-500 hover:text-red-700"
+            onClick={() => handleDelete(index)}
+          >
+            <Trash2 size={20} />
+          </button>
+        </div>
       ),
     };
   });
 
   const calcularTotalVenta = () => {
-    return productosAgregados.reduce((sum, item) => sum + item.total, 0);
+    return detallesAgregados.reduce((sum, item) => sum + item.total, 0);
   };
 
   const handleFinalizarVenta = (montoEntregado: number) => {
-    const ventasConMonto = productosAgregados.map(producto => ({
-      ...producto,
-      monto_entregado: montoEntregado,
-      fecha: venta.fecha || new Date().toISOString().split("T")[0],
-    }));
-
+    const fechaActual = new Date().toISOString();
+    
     registrarVenta(
-      ventasConMonto[0], 
+      {
+        fecha: fechaActual,
+        monto_entregado: montoEntregado,
+        cambio: montoEntregado - calcularTotalVenta(),
+        detalles: detallesAgregados
+      }, 
       {
         onSuccess: (ventaRegistrada) => {
-          setProductosAgregados([]);
-          setVenta({
+          setDetallesAgregados([]);
+          setDetalle({
             producto: 0,
             cantidad: 0,
-            precio: 0,
-            total: 0,
-            fecha: new Date().toISOString().split("T")[0],
-            monto_entregado: 0,
-            cambio: 0,
             unidades_de_medida: 0,
+            total: 0,
           });
           setIsModalOpen(false);
           
@@ -155,135 +155,128 @@ const VentaPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-     <ModalUnidadMedida 
+      <ModalUnidadMedida 
         isOpen={openUnidadesMedidaModal} 
         onOpenChange={setOpenUnidadesMedidaModal} 
       />
-        <div className="w-full flex flex-col items-center min-h-screen p-6">
-      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Venta</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
-              <select
-                name="producto"
-                value={venta.producto || ""}
-                onChange={handleChange("producto")}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={precioProductoLoading}
-              >
-                <option value="0">Seleccione un producto</option>
-                {precio_producto?.map((precioProducto) => (
-                  <option key={precioProducto.id} value={precioProducto.id}>
-                    {precioProducto.cosecha} - {precioProducto.unidad_medida?.nombre || 'unidad'}
-                  </option>
-                ))}
-              </select>
+      <div className="w-full flex flex-col items-center min-h-screen p-6">
+        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Venta</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+                <select
+                  name="producto"
+                  value={detalle.producto || ""}
+                  onChange={handleChange("producto")}
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  disabled={precioProductoLoading}
+                >
+                  <option value="0">Seleccione un producto</option>
+                  {precio_producto?.map((producto) => (
+                    <option key={producto.id} value={producto.id}>
+                      {producto.Producto?.id_cultivo?.nombre || 'Producto'} - ${producto.precio}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <ReuInput
+                label="Cantidad"
+                placeholder="Ingrese la cantidad"
+                type="number"
+                value={String(detalle.cantidad)}
+                onChange={handleChange("cantidad")}
+              />
             </div>
 
-            <ReuInput
-              label="Cantidad"
-              placeholder="Ingrese la cantidad"
-              type="number"
-              value={String(venta.cantidad)}
-              onChange={handleChange("cantidad")}
-            />
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
-                <button 
-                  className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  onClick={() => setOpenUnidadesMedidaModal(true)}
-                  type="button"
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+                  <button 
+                    className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    onClick={() => setOpenUnidadesMedidaModal(true)}
+                    type="button"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+                <select
+                  value={detalle.unidades_de_medida}
+                  onChange={handleChange("unidades_de_medida")}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                  disabled={loadingUnidadesMedida}
                 >
-                  <Plus className="h-4 w-4" />
+                  <option value="0">Seleccione una unidad</option>
+                  {unidadesMedida?.map((unidad) => (
+                    <option key={unidad.id} value={unidad.id}>
+                      {unidad.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    agregarDetalle();
+                  }}
+                  disabled={detalle.producto === 0 || detalle.cantidad <= 0}
+                >
+                  {editIndex !== null ? "Actualizar Producto" : "Agregar Producto"}
                 </button>
               </div>
-              <select
-                value={venta.unidades_de_medida}
-                onChange={handleChange("unidades_de_medida")}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
-                disabled={loadingUnidadesMedida}
-              >
-                <option value="">Seleccione una unidad</option>
-                {unidadesMedida?.map((unidad) => (
-                  <option key={unidad.id} value={unidad.id}>
-                    {unidad.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <ReuInput
-              label="Fecha"
-              placeholder="Seleccione la fecha"
-              type="date"
-              value={venta.fecha}
-              onChange={handleChange("fecha")}
-            />
-
-            <div className="pt-2">
-              <button
-                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                onClick={(e) => {
-                  e.preventDefault();
-                  agregarProducto();
-                }}
-                disabled={venta.producto === 0 || venta.cantidad <= 0}
-              >
-                {editIndex !== null ? "Actualizar Producto" : "Agregar Producto"}
-              </button>
             </div>
           </div>
-        </div>
 
-        {productosAgregados.length > 0 && (
-          <div className="space-y-4">
-            <div className="mb-4">
-              <Tabla columns={columns} data={transformedData} />
-            </div>
-
-            <div className="flex justify-between items-center">
-              <div className="text-lg font-semibold">
-                Total Venta: ${calcularTotalVenta().toFixed(2)}
+          {detallesAgregados.length > 0 && (
+            <div className="space-y-4">
+              <div className="mb-4">
+                <Tabla columns={columns} data={transformedData} />
               </div>
 
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                disabled={isRegistrando || productosAgregados.length === 0}
-                onClick={() => setIsModalOpen(true)}
-              >
-                {isRegistrando ? "Registrando..." : "Finalizar Venta"}
-              </button>
+              <div className="flex justify-between items-center">
+                <div className="text-lg font-semibold">
+                  Total Venta: ${calcularTotalVenta().toFixed(2)}
+                </div>
+
+                <button
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                  disabled={isRegistrando || detallesAgregados.length === 0}
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  {isRegistrando ? "Registrando..." : "Finalizar Venta"}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <button
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-colors"
-          onClick={() => navigate("/finanzas/listarventas/")}
-        >
-          Listar Ventas
-        </button>
+          <button
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-colors"
+            onClick={() => navigate("/finanzas/listarventas/")}
+          >
+            Listar Ventas
+          </button>
+        </div>
+
+        <PagoModal
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          total={calcularTotalVenta()}
+          onConfirm={handleFinalizarVenta}
+        />
+        
+        <TiqueteModal
+          isOpen={isTiqueteModalOpen}
+          onOpenChange={setIsTiqueteModalOpen}
+          ventaId={ventaIdForTiquete}
+        />
       </div>
-
-      <PagoModal
-        isOpen={isModalOpen}
-        onOpenChange={setIsModalOpen}
-        total={calcularTotalVenta()}
-        onConfirm={handleFinalizarVenta}
-      />
-      
-      <TiqueteModal
-        isOpen={isTiqueteModalOpen}
-        onOpenChange={setIsTiqueteModalOpen}
-        ventaId={ventaIdForTiquete}
-      />
-    </div>
     </DefaultLayout>
   );
 };
