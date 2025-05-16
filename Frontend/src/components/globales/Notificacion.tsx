@@ -1,20 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { IconButton, Badge, Menu, MenuItem, Typography, Box } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-
-interface Notification {
-  id: string;
-  type: string;
-  message: string;
-  actividad: {
-    id: number;
-    tipo_actividad_nombre: string;
-    prioridad: string;
-    descripcion: string;
-  };
-  timestamp: string;
-}
+import { useActivityNotifications } from "@/hooks/websocket/useActividadNotificacions";
+//import { useBodegaNotifications } from "@/hooks/websocket/useBodegaNotification";
+import { Notification } from "@/types/notificacion";
 
 const Notificacion: React.FC = () => {
   const { user } = useAuth();
@@ -22,48 +12,21 @@ const Notificacion: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const wsRef = React.useRef<WebSocket | null>(null);
 
-  useEffect(() => {
-    if (!user?.id) return;
+const addNotification = useCallback((notification: Notification) => {
+  setNotifications(prev => {
+    // Verificar si la notificación ya existe
+    const exists = prev.some(n => n.id === notification.id);
+    if (!exists) {
+      return [notification, ...prev.slice(0, 49)];
+    }
+    return prev;
+  });
+  setUnreadCount(prev => open ? prev : prev + 1);
+}, [open]);
 
-    const socketUrl = `ws://${window.location.hostname}:8000/ws/actividades/notificaciones/${user.id}/`;
-    wsRef.current = new WebSocket(socketUrl);
-
-    wsRef.current.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log('Notificación recibida:', data);
-
-        const newNotification: Notification = {
-          id: `notif-${Date.now()}-${data.actividad.id}`,
-          type: data.type,
-          message: data.message,
-          actividad: {
-            id: data.actividad.id,
-            tipo_actividad_nombre: data.actividad.tipo_actividad_nombre,
-            prioridad: data.actividad.prioridad,
-            descripcion: data.actividad.descripcion
-          },
-          timestamp: new Date().toISOString()
-        };
-
-        setNotifications(prev => [newNotification, ...prev]);
-        setUnreadCount(prev => open ? prev : prev + 1);
-
-     
-
-      } catch (error) {
-        console.error('Error procesando notificación:', error);
-      }
-    };
-
-    return () => {
-      if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.close();
-      }
-    };
-  }, [user?.id, open]);
+  useActivityNotifications(user?.id, addNotification);
+  //useBodegaNotifications(user?.id, addNotification);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -72,6 +35,54 @@ const Notificacion: React.FC = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const getNotificationColor = (type: string) => {
+    switch (type) {
+      case 'error': return 'error.main';
+      case 'warning': return 'warning.main';
+      case 'success': return 'success.main';
+      case 'low_stock': return 'orange';
+      default: return 'text.primary';
+    }
+  };
+
+  const renderNotificationContent = (notification: Notification) => {
+    if (notification.source === 'activities') {
+      return (
+        <>
+          <Typography variant="subtitle2" fontWeight="bold">
+            {notification.message}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Tipo:</strong> {notification.actividad.tipo_actividad_nombre}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Prioridad:</strong> {notification.actividad.prioridad}
+          </Typography>
+          {notification.actividad.descripcion && (
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              {notification.actividad.descripcion}
+            </Typography>
+          )}
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Typography 
+            variant="subtitle2" 
+            fontWeight="bold"
+            sx={{ color: getNotificationColor(notification.type) }}
+          >
+            Bodega: {notification.message}
+          </Typography>
+          <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+            {new Date(notification.timestamp).toLocaleString()}
+          </Typography>
+        </>
+      );
+    }
   };
 
   return (
@@ -117,20 +128,7 @@ const Notificacion: React.FC = () => {
               }}
             >
               <Box sx={{ py: 1, width: '100%' }}>
-                <Typography variant="subtitle2" fontWeight="bold">
-                  {notification.message}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Tipo:</strong> {notification.actividad.tipo_actividad_nombre}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Prioridad:</strong> {notification.actividad.prioridad}
-                </Typography>
-                {notification.actividad.descripcion && (
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    {notification.actividad.descripcion}
-                  </Typography>
-                )}
+                {renderNotificationContent(notification)}
               </Box>
             </MenuItem>
           ))

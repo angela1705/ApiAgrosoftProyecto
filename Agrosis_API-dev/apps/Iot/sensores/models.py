@@ -15,6 +15,10 @@ class Sensor(models.Model):
     tipo_sensor = models.CharField(max_length=50)
     unidad_medida = models.CharField(max_length=10)
     descripcion = models.TextField(blank=True)
-
+    estado = models.CharField(
+        max_length=10,
+        choices=[('activo', 'Activo'), ('inactivo', 'Inactivo')],
+        default='inactivo'
+    )
     def __str__(self):
         return self.nombre

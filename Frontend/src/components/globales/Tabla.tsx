@@ -28,27 +28,29 @@ interface TablaProps {
   data: any[];
   initialVisibleColumns?: string[];
   renderCell?: (item: any, columnKey: string) => React.ReactNode;
+  onRowClick?: (row: any) => void;
 }
 
 const statusOptions = [
-  {name: "Activo", uid: "activo"},
-  {name: "Pausado", uid: "pausado"},
-  {name: "Cancelado", uid: "cancelado"},
+  { name: "Activo", uid: "activo" },
+  { name: "Pausado", uid: "pausado" },
+  { name: "Cancelado", uid: "cancelado" },
 ];
 
 export function capitalize(str: string) {
   return str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
 }
 
-const Tabla: React.FC<TablaProps> = ({ 
-  columns, 
-  data, 
+const Tabla: React.FC<TablaProps> = ({
+  columns,
+  data,
   initialVisibleColumns,
-  renderCell 
+  renderCell,
+  onRowClick,
 }) => {
   const [filterValue, setFilterValue] = useState("");
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
-    new Set(initialVisibleColumns || columns.map(c => c.uid))
+    new Set(initialVisibleColumns || columns.map((c) => c.uid))
   );
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -65,7 +67,9 @@ const Tabla: React.FC<TablaProps> = ({
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
 
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return columns.filter((column) =>
+      Array.from(visibleColumns).includes(column.uid)
+    );
   }, [visibleColumns, columns]);
 
   const filteredItems = useMemo(() => {
@@ -81,7 +85,10 @@ const Tabla: React.FC<TablaProps> = ({
       );
     }
 
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+    if (
+      statusFilter !== "all" &&
+      Array.from(statusFilter).length !== statusOptions.length
+    ) {
       filteredData = filteredData.filter((item) =>
         item.status && Array.from(statusFilter).includes(item.status)
       );
@@ -107,10 +114,13 @@ const Tabla: React.FC<TablaProps> = ({
     });
   }, [sortDescriptor, items]);
 
-  const onRowsPerPageChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  }, []);
+  const onRowsPerPageChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setRowsPerPage(Number(e.target.value));
+      setPage(1);
+    },
+    []
+  );
 
   const onSearchChange = useCallback((value?: string) => {
     if (value) {
@@ -143,7 +153,7 @@ const Tabla: React.FC<TablaProps> = ({
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
+                  endContent={<ChevronDownIcon/>}
                   size="sm"
                   variant="flat"
                 >
@@ -168,7 +178,7 @@ const Tabla: React.FC<TablaProps> = ({
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
+                  endContent={<ChevronDownIcon/>}
                   size="sm"
                   variant="flat"
                 >
@@ -231,10 +241,9 @@ const Tabla: React.FC<TablaProps> = ({
           total={pages}
           onChange={setPage}
         />
-        
       </div>
     );
-  }, [ items.length, page, pages, hasSearchFilter]);
+  }, [items.length, page, pages, hasSearchFilter]);
 
   const defaultRenderCell = useCallback((item: any, columnKey: string) => {
     const cellValue = item[columnKey];
@@ -249,7 +258,6 @@ const Tabla: React.FC<TablaProps> = ({
         aria-label="Tabla con selección, paginación y ordenamiento"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
-
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -268,7 +276,10 @@ const Tabla: React.FC<TablaProps> = ({
         </TableHeader>
         <TableBody items={sortedItems}>
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow
+              key={item.id}
+              onClick={() => onRowClick && onRowClick(item)}
+            >
               {(columnKey) => (
                 <TableCell>{renderCellToUse(item, columnKey as string)}</TableCell>
               )}
@@ -307,7 +318,7 @@ const SearchIcon = () => (
   </svg>
 );
 
-const ChevronDownIcon = ({ strokeWidth = 1.5, ...props }) => (
+const ChevronDownIcon = ({ strokeWidth = 1.5, ...props }: { strokeWidth?: number }) => (
   <svg
     aria-hidden="true"
     fill="none"
