@@ -78,7 +78,7 @@ const ListaInsumoPage: React.FC = () => {
         tipo_insumo: insumo.tipo_insumo ? insumo.tipo_insumo.nombre : "Sin asignar",
         activo: insumo.activo ? "Sí" : "No",
         tipo_empacado: insumo.tipo_empacado || "No especificado",
-        fecha_registro: insumo.fecha_registro.slice(0, 10), // Extract only YYYY-MM-DD
+        fecha_registro: insumo.fecha_registro.slice(0, 10),
         fecha_caducidad: insumo.fecha_caducidad || "No especificada",
         precio_insumo: insumo.precio_insumo !== null && insumo.precio_insumo !== undefined 
             ? formatCOPNumber(insumo.precio_insumo)

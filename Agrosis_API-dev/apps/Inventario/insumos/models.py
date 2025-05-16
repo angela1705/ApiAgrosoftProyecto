@@ -38,7 +38,7 @@ class Insumo(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField()
-    cantidad = models.IntegerField()
+    cantidad = models.PositiveIntegerField(default=1)
     unidad_medida = models.ForeignKey(
         UnidadMedida,
         on_delete=models.PROTECT,

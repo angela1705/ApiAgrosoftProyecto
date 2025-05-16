@@ -111,12 +111,22 @@ const ListaBodegaInsumoPage: React.FC = () => {
         title="Editar Bodega Insumo"
         onConfirm={() => {
           if (selectedBodegaInsumo && selectedBodegaInsumo.id !== undefined) {
-            updateMutation.mutate(selectedBodegaInsumo, {
-              onSuccess: () => {
-                setIsEditModalOpen(false);
-                refetch();
+            updateMutation.mutate(
+              {
+                id: selectedBodegaInsumo.id!,
+                bodegaInsumo: {
+                  bodega: selectedBodegaInsumo.bodega,
+                  insumo: selectedBodegaInsumo.insumo,
+                  cantidad: selectedBodegaInsumo.cantidad,
+                },
               },
-            });
+              {
+                onSuccess: () => {
+                  setIsEditModalOpen(false);
+                  refetch();
+                },
+              }
+            );
           }
         }}
       >

@@ -36,6 +36,7 @@ from apps.Inventario.precio_producto.api.routers import precioProductoRouter
 from apps.Inventario.bodega.api.routers import bodegaRouter
 from apps.Inventario.bodega_insumo.api.routers import bodegaInsumoRouter
 from apps.Inventario.bodega_herramienta.api.routers import bodegaHerramientaRouter
+from apps.Inventario.bodega_precio_producto.api.routers import bodegaPrecioProductoRouter
 from apps.Iot.datos_meteorologicos.api.routers import DatosMeteorologicosRouter  
 from apps.Iot.sensores.api.routers import SensoresRouter
 from apps.Iot.evapotranspiracion.api.routers import evapotranspiracionrouter
@@ -96,6 +97,7 @@ routerInventario.registry.extend(precioProductoRouter.registry)
 routerInventario.registry.extend(bodegaRouter.registry)
 routerInventario.registry.extend(bodegaInsumoRouter.registry)
 routerInventario.registry.extend(bodegaHerramientaRouter.registry)
+routerInventario.registry.extend(bodegaPrecioProductoRouter.registry)
 
 # IOT
 routerIOT.registry.extend(DatosMeteorologicosRouter.registry) 

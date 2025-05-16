@@ -12,6 +12,17 @@ import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto
 import { addToast } from "@heroui/react";
 import { Plus } from 'lucide-react';
 
+const formatCOPNumber = (value: number | string): string => {
+    const num = typeof value === 'string' ? parseInt(value.replace(/\./g, ''), 10) : value;
+    if (isNaN(num)) return '';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
+const parseCOPNumber = (value: string): number => {
+    const cleanValue = value.replace(/\./g, '');
+    return parseInt(cleanValue, 10) || 0;
+};
+
 const PrecioProductoPage: React.FC = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -150,16 +161,15 @@ const PrecioProductoPage: React.FC = () => {
                 </div>
                 <ReuInput
                     label="Precio"
-                    placeholder="Ingrese el precio"
-                    type="number"
+                    placeholder="Ej. 1.000"
+                    type="text"
                     variant="bordered"
                     radius="md"
-                    step="0.01"
-                    value={precioProducto.precio.toString()}
+                    value={formatCOPNumber(precioProducto.precio)}
                     onChange={(e) =>
                         setPrecioProducto({
                             ...precioProducto,
-                            precio: Number(e.target.value),
+                            precio: parseCOPNumber(e.target.value),
                         })
                     }
                 />

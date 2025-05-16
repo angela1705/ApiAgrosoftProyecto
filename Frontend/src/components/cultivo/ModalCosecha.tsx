@@ -18,6 +18,7 @@ export const ModalCosecha = ({ isOpen, onOpenChange, onSuccess }: ModalCosechaPr
     cantidad: 0,
     unidades_de_medida: 0,
     fecha: "",
+    cultivo_nombre: "",
   });
 
   const { data: cultivos } = useCultivos();
@@ -41,6 +42,7 @@ export const ModalCosecha = ({ isOpen, onOpenChange, onSuccess }: ModalCosechaPr
           cantidad: 0,
           unidades_de_medida: 0,
           fecha: "",
+          cultivo_nombre: "",
         });
         onSuccess?.();
       },

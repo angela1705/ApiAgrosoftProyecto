@@ -14,8 +14,17 @@ const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
     console.log("Datos de la API (preciosProductos):", response.data);
     return response.data.map((item: any) => ({
         id: item.id,
-        cosecha: item.Producto || `Cosecha ${item.Producto_id}`,
-        unidad_medida: item.unidad_medida?.nombre || null,
+        cosecha: item.Producto_id || null,
+        nombre_cultivo: item.nombre_cultivo || "",
+        unidad_medida: item.unidad_medida
+            ? {
+                  id: item.unidad_medida.id,
+                  nombre: item.unidad_medida.nombre,
+                  descripcion: item.unidad_medida.descripcion || null,
+                  creada_por_usuario: item.unidad_medida.creada_por_usuario || false,
+                  fecha_creacion: item.unidad_medida.fecha_creacion,
+              }
+            : null,
         precio: Number(item.precio),
         fecha_registro: item.fecha_registro,
         stock: Number(item.stock),
@@ -55,10 +64,13 @@ const registrarPrecioProducto = async (
 ) => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");
+    if (!precioProducto.unidad_medida_id) {
+        throw new Error("Debe seleccionar una unidad de medida válida.");
+    }
     try {
         const payload = {
             Producto_id: precioProducto.cosecha || null,
-            unidad_medida_id: precioProducto.unidad_medida_id || null,
+            unidad_medida_id: precioProducto.unidad_medida_id,
             precio: precioProducto.precio,
             fecha_registro: precioProducto.fecha_registro,
             stock: precioProducto.stock,
