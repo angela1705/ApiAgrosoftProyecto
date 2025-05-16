@@ -11,7 +11,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.units import inch
 from datetime import datetime, timedelta
 from django.utils import timezone
-from apps.Finanzas.venta.models import Venta
+from apps.Finanzas.venta.models import Venta, DetalleVenta
 from apps.Finanzas.venta.api.serializers import VentaSerializer
 from apps.Usuarios.usuarios.api.permissions import IsAdminOrRead 
 from django.db.models import Sum
@@ -19,6 +19,7 @@ from django.db.models.functions import TruncMonth, ExtractWeekDay
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 from apps.Finanzas.venta.models import Venta
+from django.db.models import Avg
 
 class VentaViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -34,19 +35,31 @@ class VentaViewSet(ModelViewSet):
         if not fecha_inicio or not fecha_fin:
             return HttpResponse("Error: Debes proporcionar 'fecha_inicio' y 'fecha_fin'", status=400)
 
-        fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-        fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
+        try:
+            fecha_inicio_dt = timezone.make_aware(datetime.strptime(fecha_inicio, "%Y-%m-%d"))
+            fecha_fin_dt = timezone.make_aware(datetime.strptime(fecha_fin, "%Y-%m-%d") + timedelta(days=1))
+        except ValueError:
+            return HttpResponse("Error: Formato de fecha inválido. Use YYYY-MM-DD", status=400)
 
-        ventas = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_fin])
-        
+        # Obtenemos las ventas en el rango de fechas con sus detalles
+        ventas = Venta.objects.filter(fecha__range=[fecha_inicio_dt, fecha_fin_dt]).prefetch_related('detalles')
+
+        # Cálculo de estadísticas generales
         total_ventas = ventas.count()
-        ingresos_totales = sum(v.total for v in ventas)
+        detalles_ventas = DetalleVenta.objects.filter(venta__in=ventas)
+        
+        ingresos_totales = detalles_ventas.aggregate(total=Sum('total'))['total'] or 0
         promedio_venta = ingresos_totales / total_ventas if total_ventas > 0 else 0
 
+        # Estadísticas por cultivo
         ventas_por_cultivo = (
-            ventas
-            .values('producto_Productoid_cultivo_nombre')
-            .annotate(total_ingresos=Sum('total'), total_ventas=Sum('cantidad'))
+            DetalleVenta.objects.filter(venta__in=ventas)
+            .values('producto__Producto__id_cultivo__nombre')
+            .annotate(
+                total_ingresos=Sum('total'), 
+                total_ventas=Sum('cantidad'),
+                precio_promedio=Avg('producto__precio')
+            )
             .order_by('-total_ingresos')
         )
 
@@ -60,9 +73,11 @@ class VentaViewSet(ModelViewSet):
 
         styles = getSampleStyleSheet()
         
+        # Logo (ajusta la ruta según tu configuración)
         logo_path = "media/logo/def_AGROSIS_LOGOTIC.png" 
         logo = Image(logo_path, width=50, height=35)
 
+        # Encabezado
         encabezado_data = [
             [logo, Paragraph("<b>Centro de gestión y desarrollo sostenible surcolombiano<br/>SENA - YAMBORÓ</b>", styles['Normal']), ""],
             ["", Paragraph("<b>Informe de Ventas</b>", styles['Heading2']), Paragraph(f"{datetime.today().strftime('%Y-%m-%d')}", styles['Normal'])],
@@ -79,28 +94,36 @@ class VentaViewSet(ModelViewSet):
         ]))
 
         elementos.append(tabla_encabezado)
+        elementos.append(Spacer(1, 20))
 
-        subtitulo = Paragraph("Informe de ventas", styles['Heading2'])
+        # Subtítulo
+        subtitulo = Paragraph(f"Informe de ventas del {fecha_inicio} al {fecha_fin}", styles['Heading2'])
         elementos.append(subtitulo)
-        elementos.append(Spacer(1, 10))
+        elementos.append(Spacer(1, 15))
 
+        # Objetivo
         objetivo_texto = "Este documento presenta un resumen detallado de las ventas registradas en el sistema, incluyendo información sobre productos, cantidades vendidas, montos totales y fechas de venta. El objetivo es proporcionar una visión general del desempeño comercial para facilitar el análisis financiero y la toma de decisiones."
         objetivo = Paragraph("<b>1. Objetivo</b><br/>" + objetivo_texto, styles['Normal'])
         elementos.append(objetivo)
         elementos.append(Spacer(1, 15))
 
+        # Detalle de ventas
         elementos.append(Paragraph("<b>2. Detalle de ventas</b>", styles['Heading3']))
         elementos.append(Spacer(1, 5))
 
-        data_ventas = [["Producto", "Cantidad", "Precio Unitario", "Total", "Fecha"]]
+        data_ventas = [["Producto", "Cantidad", "P. Unitario", "Total", "Fecha"]]
+        
+        # Agrupamos detalles por venta para mostrar en la tabla
         for venta in ventas:
-            data_ventas.append([
-                venta.producto.Producto.id_cultivo.nombre,
-                venta.cantidad,
-                f"${venta.producto.precio}",
-                f"${venta.total}",
-                venta.fecha.strftime("%Y-%m-%d")
-            ])
+            for detalle in venta.detalles.all():
+                producto_nombre = detalle.producto.Producto.id_cultivo.nombre if detalle.producto.Producto else "Producto sin nombre"
+                data_ventas.append([
+                    producto_nombre,
+                    str(detalle.cantidad),
+                    f"${detalle.producto.precio:,.2f}",
+                    f"${detalle.total:,.2f}",
+                    venta.fecha.strftime("%Y-%m-%d")
+                ])
 
         tabla_ventas = Table(data_ventas, colWidths=[150, 60, 80, 80, 80])
         tabla_ventas.setStyle(TableStyle([
@@ -113,23 +136,28 @@ class VentaViewSet(ModelViewSet):
         elementos.append(tabla_ventas)
         elementos.append(Spacer(1, 15))
 
+        # Resumen General
         elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading3']))
         resumen_texto = f"""
-        Durante el período del {fecha_inicio.strftime('%Y-%m-%d')} al {fecha_fin.strftime('%Y-%m-%d')}, se registraron {total_ventas} ventas. 
-        Los ingresos totales fueron de ${ingresos_totales:.2f}, con un promedio de ${promedio_venta:.2f} por venta.
+        <b>Período analizado:</b> {fecha_inicio} al {fecha_fin}<br/>
+        <b>Total de transacciones:</b> {total_ventas}<br/>
+        <b>Ingresos totales:</b> ${ingresos_totales:,.2f}<br/>
+        <b>Promedio por venta:</b> ${promedio_venta:,.2f}<br/>
         """
         elementos.append(Paragraph(resumen_texto, styles['Normal']))
         elementos.append(Spacer(1, 15))
 
+        # Cultivo más rentable
         elementos.append(Paragraph("<b>4. Cultivo Más Rentable</b>", styles['Heading3']))
         if cultivo_mas_rentable:
             cultivo_texto = f"""
-            El cultivo más rentable en el período fue <b>{cultivo_mas_rentable['producto_Productoid_cultivo_nombre']}</b>, 
-            con ingresos totales de <b>${cultivo_mas_rentable['total_ingresos']:.2f}</b> 
-            y un total de <b>{cultivo_mas_rentable['total_ventas']}</b> unidades vendidas.
+            <b>Cultivo:</b> {cultivo_mas_rentable['producto__Producto__id_cultivo__nombre']}<br/>
+            <b>Ingresos totales:</b> ${cultivo_mas_rentable['total_ingresos']:,.2f}<br/>
+            <b>Unidades vendidas:</b> {cultivo_mas_rentable['total_ventas']}<br/>
+            <b>Precio promedio:</b> ${cultivo_mas_rentable['precio_promedio']:,.2f}<br/>
             """
         else:
-            cultivo_texto = "No se encontraron ventas registradas en el período seleccionado, por lo que no se pudo determinar el cultivo más rentable."
+            cultivo_texto = "No se encontraron ventas registradas en el período seleccionado."
         elementos.append(Paragraph(cultivo_texto, styles['Normal']))
 
         doc.build(elementos)
@@ -150,31 +178,36 @@ class VentaViewSet(ModelViewSet):
         except ValueError:
             return Response({"error": "Formato de fecha inválido. Use YYYY-MM-DD"}, status=400)
 
+        # Obtenemos las ventas en el rango de fechas
         ventas = Venta.objects.filter(fecha__range=[fecha_inicio_dt, fecha_fin_dt])
 
+        # Estadísticas por mes
         ventas_por_mes = (
             ventas
             .annotate(mes=TruncMonth('fecha'))
             .values('mes')
-            .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
+            .annotate(total=Sum('detalles__total'), cantidad=Sum('detalles__cantidad'))
             .order_by('mes')
         )
 
+        # Estadísticas por producto (cultivo)
         ventas_por_producto = (
-            ventas
-            .values('producto__Producto')
+            DetalleVenta.objects.filter(venta__in=ventas)
+            .values('producto__Producto__id_cultivo__nombre')
             .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
             .order_by('-total')
         )
 
+        # Estadísticas por día de la semana
         ventas_por_dia_semana = (
             ventas
             .annotate(dia_semana=ExtractWeekDay('fecha'))
             .values('dia_semana')
-            .annotate(total=Sum('total'), cantidad=Sum('cantidad'))
+            .annotate(total=Sum('detalles__total'), cantidad=Sum('detalles__cantidad'))
             .order_by('dia_semana')
         )
 
+        # Mapeo de nombres de días
         dias_nombres = {
             1: 'Domingo',
             2: 'Lunes',
@@ -185,6 +218,7 @@ class VentaViewSet(ModelViewSet):
             7: 'Sábado'
         }
 
+        # Completamos los días que no tengan ventas
         dias_completos = []
         for dia_num in range(1, 8):
             dia_data = next((item for item in ventas_por_dia_semana if item['dia_semana'] == dia_num), None)
@@ -194,14 +228,19 @@ class VentaViewSet(ModelViewSet):
                 'cantidad': dia_data['cantidad'] if dia_data else 0
             })
 
+        # Cálculo de totales generales
+        total_ingresos = ventas.aggregate(total=Sum('detalles__total'))['total'] or 0
+        total_cantidad = ventas.aggregate(cantidad=Sum('detalles__cantidad'))['cantidad'] or 0
+
         resumen = {
             'fecha_inicio': fecha_inicio,
             'fecha_fin': fecha_fin,
-            'total_ingresos': ventas.aggregate(Sum('total'))['total__sum'] or 0,
-            'total_cantidad': ventas.aggregate(Sum('cantidad'))['cantidad__sum'] or 0,
+            'total_ingresos': float(total_ingresos),
+            'total_cantidad': float(total_cantidad),
             'total_transacciones': ventas.count()
         }
 
+        # Preparación de los datos para la respuesta
         data = {
             'resumen': resumen,
             'por_mes': {
@@ -210,7 +249,7 @@ class VentaViewSet(ModelViewSet):
                 'cantidades': [float(v['cantidad']) for v in ventas_por_mes],
             },
             'por_producto': {
-                'productos': [v['producto__Producto'] for v in ventas_por_producto],
+                'productos': [v['producto__Producto__id_cultivo__nombre'] for v in ventas_por_producto],
                 'ingresos': [float(v['total']) for v in ventas_por_producto],
                 'cantidades': [float(v['cantidad']) for v in ventas_por_producto],
             },
@@ -232,20 +271,11 @@ class VentaViewSet(ModelViewSet):
         - Fecha y hora actual del sistema
         """
         try:
-            venta = Venta.objects.select_related(
-                    'producto',                      
-                    'producto__Producto',           
-                    'producto__Producto__id_cultivo',
-                    'producto__unidad_medida',    
-                    'unidades_de_medida'
+            # Obtenemos la venta con todos sus detalles y relaciones
+            venta = Venta.objects.prefetch_related(
+                'detalles__producto__Producto__id_cultivo',
+                'detalles__unidades_de_medida'
             ).get(id=pk)
-            
-            producto = venta.producto
-            cultivo = producto.Producto.id_cultivo if producto.Producto else None
-            
-            # Obtenemos el nombre del producto
-            nombre_producto = cultivo.nombre if cultivo else "Producto sin nombre"
-            unidad_medida = producto.unidad_medida.nombre if producto.unidad_medida else "unidad"
             
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="factura_{venta.id}.pdf"'
@@ -306,25 +336,33 @@ class VentaViewSet(ModelViewSet):
                 c.drawCentredString(width / 2, y, line)
                 y -= 4 * mm
 
-            # Detalle del producto vendido
-            descripcion = nombre_producto[:15].ljust(15)
-            cantidad = str(venta.cantidad).rjust(3)
-            valor_unit = f"{producto.precio:,.2f}".rjust(7)
-            total = f"{venta.total:,.2f}".rjust(7)
-            linea_producto = f"{descripcion} {cantidad} {valor_unit} {total}"
+            # Detalle de los productos vendidos
+            total_venta = 0
+            for detalle in venta.detalles.all():
+                producto_nombre = detalle.producto.Producto.id_cultivo.nombre if detalle.producto.Producto else "Producto sin nombre"
+                unidad_medida = detalle.unidades_de_medida.nombre if detalle.unidades_de_medida else "unidad"
+                
+                descripcion = f"{producto_nombre[:15]} ({unidad_medida[:3]})".ljust(20)
+                cantidad = str(detalle.cantidad).rjust(3)
+                valor_unit = f"{detalle.producto.precio:,.2f}".rjust(7)
+                total = f"{detalle.total:,.2f}".rjust(7)
+                linea_producto = f"{descripcion} {cantidad} {valor_unit} {total}"
 
-            c.drawCentredString(width / 2, y, linea_producto)
-            y -= 6 * mm
+                c.drawCentredString(width / 2, y, linea_producto)
+                y -= 5 * mm
+                total_venta += float(detalle.total)
+
+            y -= 2 * mm  # Espacio adicional después de los productos
 
             # Totales y pagos
-            subtotal = float(venta.total) / 1.19
-            impuesto = float(venta.total) - subtotal
+            subtotal = total_venta / 1.19
+            impuesto = total_venta - subtotal
 
             totales = [
                 "--------------------------------------",
                 f"SUBTOTAL: ${subtotal:,.2f}",
                 f"IVA (19%): ${impuesto:,.2f}",
-                f"TOTAL: ${venta.total:,.2f}",
+                f"TOTAL: ${total_venta:,.2f}",
                 "--------------------------------------",
                 f"EFECTIVO: ${venta.monto_entregado:,.2f}",
                 f"CAMBIO: ${venta.cambio:,.2f}",
