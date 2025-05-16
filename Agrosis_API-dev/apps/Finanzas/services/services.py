@@ -3,7 +3,7 @@ from decimal import Decimal
 from collections import defaultdict
 from apps.Cultivo.actividades.models import Actividad, PrestamoInsumo
 from apps.Finanzas.pagos.models import Pago
-from apps.Finanzas.venta.models import Venta
+from apps.Finanzas.venta.models import Venta, DetalleVenta
 from apps.Inventario.precio_producto.models import PrecioProducto
 
 
@@ -39,12 +39,12 @@ class AnalisisCostoBeneficio:
             resultados['costos']['insumos'] += cantidad_consumida * prestamo.insumo.precio_insumo
 
         
-        ventas = Venta.objects.filter(
+        ventas = DetalleVenta.objects.filter(
         producto__Producto=cosecha
         )
         
         for venta in ventas:
-            resultados['ingresos']['ventas'] += venta.cantidad * venta.producto.precio
+            resultados['ingresos']['ventas'] += DetalleVenta.cantidad * DetalleVenta.producto.precio
 
         precio_actual = PrecioProducto.objects.filter(
             Producto=cosecha

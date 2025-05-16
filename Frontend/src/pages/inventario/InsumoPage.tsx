@@ -61,16 +61,6 @@ const InsumoPage: React.FC = () => {
                     unidad_medida_id: undefined,
                     tipo_insumo_id: undefined,
                 });
-                addToast({ 
-                    title: "Éxito",
-                    description: "Insumo registrado exitosamente"
-                });
-            },
-            onError: () => {
-                addToast({ 
-                    title: "Error",
-                    description: "Error al registrar el insumo"
-                });
             },
         });
     };
