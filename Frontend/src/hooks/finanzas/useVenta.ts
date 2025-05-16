@@ -6,11 +6,11 @@ import { Venta, DetalleVenta } from "@/types/finanzas/Venta";
 
 const API_URL = "http://127.0.0.1:8000/finanzas/venta/";
 
-// Tipo para la creación de ventas
 interface CreateVentaData {
   fecha?: string;
   monto_entregado: number;
   detalles: Omit<DetalleVenta, 'id' | 'venta'>[];
+  cambio? : number
 }
 
 const fetchVentas = async (): Promise<Venta[]> => {
@@ -26,7 +26,6 @@ const registrarVenta = async (ventaData: CreateVentaData): Promise<Venta> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("Token no encontrado");
 
-  // Calcular cambio automáticamente si no se proporciona
   const totalVenta = ventaData.detalles.reduce((sum, detalle) => sum + detalle.total, 0);
   const cambio = ventaData.monto_entregado - totalVenta;
 
@@ -62,7 +61,6 @@ const actualizarVenta = async (venta: Venta): Promise<Venta> => {
     fecha: venta.fecha,
     monto_entregado: venta.monto_entregado,
     cambio: venta.cambio,
-    // Nota: Para actualizar detalles, considera un endpoint específico
   };
 
   const response = await api.put(`${API_URL}${venta.id}/`, payload, {
@@ -84,7 +82,6 @@ const eliminarVenta = async (id: number): Promise<void> => {
   });
 };
 
-// Función adicional para obtener detalles de una venta
 const fetchDetallesVenta = async (ventaId: number): Promise<DetalleVenta[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("Token no encontrado");
@@ -112,7 +109,7 @@ export const useVenta = () => {
         description: "Venta registrada con éxito",
         color: "success",
       });
-      return data; // Devuelve los datos para poder acceder al ID en el onSuccess del componente
+      return data; 
     },
     onError: (error: any) => {
       console.error("Error detalle:", error.response?.data);
@@ -164,7 +161,6 @@ export const useVenta = () => {
     },
   });
 
-  // Hook para obtener detalles de una venta específica
   const useDetallesVenta = (ventaId: number) => {
     return useQuery<DetalleVenta[], Error>({
       queryKey: ["ventas", ventaId, "detalles"],
@@ -178,12 +174,12 @@ export const useVenta = () => {
     isLoading: ventasQuery.isLoading,
     isError: ventasQuery.isError,
     error: ventasQuery.error,
-    registrarVenta: registrarMutation.mutateAsync, // Cambiado a mutateAsync para poder esperar la respuesta
+    registrarVenta: registrarMutation.mutateAsync,
     isRegistrando: registrarMutation.isPending,
     actualizarVenta: actualizarMutation.mutate,
     isActualizando: actualizarMutation.isPending,
     eliminarVenta: eliminarMutation.mutate,
     isEliminando: eliminarMutation.isPending,
-    useDetallesVenta, // Nuevo hook para detalles
+    useDetallesVenta, 
   };
 };

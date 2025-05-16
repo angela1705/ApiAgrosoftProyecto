@@ -177,7 +177,7 @@ const VentaPage: React.FC = () => {
                   <option value="0">Seleccione un producto</option>
                   {precio_producto?.map((producto) => (
                     <option key={producto.id} value={producto.id}>
-                      {producto.Producto?.id_cultivo?.nombre || 'Producto'} - ${producto.precio}
+                      {producto.cosecha|| 'Producto'} - ${producto.precio}
                     </option>
                   ))}
                 </select>
@@ -188,7 +188,7 @@ const VentaPage: React.FC = () => {
                 placeholder="Ingrese la cantidad"
                 type="number"
                 value={String(detalle.cantidad)}
-                onChange={handleChange("cantidad")}
+                onChange={(e) => setDetalle({...detalle, cantidad: parseInt(e.target.value)})}
               />
             </div>
 
