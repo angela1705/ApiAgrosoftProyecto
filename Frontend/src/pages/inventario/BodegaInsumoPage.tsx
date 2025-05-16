@@ -10,13 +10,12 @@ import Formulario from "@/components/globales/Formulario";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { ModalBodega } from "@/components/cultivo/ModalBodega";
 import { ModalInsumo } from "@/components/inventario/ModalInsumo";
-import BodegaInsumoNotifications from "@/components/inventario/BodegaInsumoNotifications";
 import { useAuth } from "@/context/AuthContext";
 import { Plus } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const BodegaInsumoPage: React.FC = () => {
-  const { user } = useAuth();
+  useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: bodegas } = useBodegas();
@@ -156,7 +155,7 @@ const BodegaInsumoPage: React.FC = () => {
         onOpenChange={setIsInsumoModalOpen}
         onSuccess={handleInsumoSuccess}
       />
-      {user && <BodegaInsumoNotifications userId2={user.id} />}
+      
     </DefaultLayout>
   );
 };

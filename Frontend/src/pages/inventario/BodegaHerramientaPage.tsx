@@ -7,7 +7,6 @@ import { useRegistrarBodegaHerramienta } from "@/hooks/inventario/useBodegaHerra
 import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useHerramientas } from "@/hooks/inventario/useHerramientas";
 import Formulario from "@/components/globales/Formulario";
-import BodegaHerramientaNotifications from "@/components/inventario/BodegaHerramientaNotifications";
 import { useAuth } from "@/context/AuthContext";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { ModalBodega } from "@/components/cultivo/ModalBodega";
@@ -130,7 +129,6 @@ const BodegaHerramientaPage: React.FC = () => {
           </button>
         </div>
       </Formulario>
-      {user && <BodegaHerramientaNotifications userId3={user.id} />}
       <ModalBodega
         isOpen={isBodegaModalOpen}
         onOpenChange={setIsBodegaModalOpen}

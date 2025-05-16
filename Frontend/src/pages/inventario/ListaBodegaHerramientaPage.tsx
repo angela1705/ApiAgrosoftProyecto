@@ -9,7 +9,6 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from 'lucide-react';
-import BodegaHerramientaNotifications from "@/components/inventario/BodegaHerramientaNotifications";
 import { useAuth } from "@/context/AuthContext";
 
 const formatCOPNumber = (value: number | string): string => {
@@ -24,7 +23,7 @@ const parseCOPNumber = (value: string): number => {
 };
 
 const ListaBodegaHerramientaPage: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [selectedBodegaHerramienta, setSelectedBodegaHerramienta] = useState<BodegaHerramienta | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -122,7 +121,6 @@ const ListaBodegaHerramientaPage: React.FC = () => {
       ) : (
         <Tabla columns={columns} data={transformedData} />
       )}
-      <BodegaHerramientaNotifications userId3={user.id} />
 
       <ReuModal
         isOpen={isEditModalOpen}
