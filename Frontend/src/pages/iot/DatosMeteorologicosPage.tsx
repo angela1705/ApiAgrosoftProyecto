@@ -12,7 +12,8 @@ import CustomSpinner from "@/components/globales/Spinner";
 import { motion } from "framer-motion";
 
 export default function DatosMeteorologicosPage() {
-  const [selectedDataType, setSelectedDataType] = useState<string | null>(null);
+  const [selectedDataType, setSelectedDataType] = useState<string | null>("humedad_ambiente");
+  const [selectedDataId, setSelectedDataId] = useState<string | null>(null);
   const { data: historicos = [], isLoading, error } = useDatosMeteorologicosHistoricos();
   const { sensores = [], isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function DatosMeteorologicosPage() {
     { name: "Fecha de Medición", uid: "fecha_medicion" },
   ];
 
-  // Datos para la tabla (sin filtrar por rango de tiempo)
+  // Datos para la tabla
   const tableData = useMemo(() => {
     let filtered = historicos;
     if (selectedDataType) {
@@ -46,39 +47,48 @@ export default function DatosMeteorologicosPage() {
     }
     return filtered.map((dato: SensorData) => ({
       id: dato.id || "N/A",
-      sensor: sensores.find((s: Sensor) => s.id === dato.sensor)?.nombre || dato.sensor || "N/A",
+      sensor: sensores.find((s: Sensor) => s.id === dato.fk_sensor_id)?.nombre || dato.fk_sensor_id || "N/A",
       value: selectedDataType ? dato[selectedDataType as keyof SensorData] ?? "N/A" : "N/A",
       fecha_medicion: dato.fecha_medicion ? new Date(dato.fecha_medicion).toLocaleString() : "N/A",
     }));
   }, [historicos, selectedDataType, sensores]);
 
-  // Datos para la gráfica (agrupados por hora)
+  // Datos para la gráfica (20 datos, centrados en el dato seleccionado)
   const chartData = useMemo(() => {
-    if (!selectedDataType) return null;
-    const groupedData = historicos
+    if (!selectedDataType) return [];
+    const filteredData = historicos
       .filter((dato: SensorData) => {
         const value = dato[selectedDataType as keyof SensorData];
         return value !== null && value !== undefined;
       })
-      .reduce((acc: { [key: string]: { sum: number; count: number } }, dato: SensorData) => {
-        const date = new Date(dato.fecha_medicion);
-        const hourKey = date.toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-        const value = dato[selectedDataType as keyof SensorData] as number;
-        if (!acc[hourKey]) {
-          acc[hourKey] = { sum: 0, count: 0 };
-        }
-        acc[hourKey].sum += value;
-        acc[hourKey].count += 1;
-        return acc;
-      }, {});
+      .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime());
 
-    return Object.entries(groupedData)
-      .map(([hour, { sum, count }]) => ({
-        fecha: hour,
-        value: (sum / count).toFixed(2),
-      }))
-      .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
-  }, [historicos, selectedDataType]);
+    if (!filteredData.length) return [];
+
+    let selectedIndex = 0;
+    if (selectedDataId) {
+      selectedIndex = filteredData.findIndex(dato => dato.id === selectedDataId) || 0;
+    }
+
+    const startIndex = Math.max(0, selectedIndex - 10);
+    const endIndex = Math.min(filteredData.length, startIndex + 20);
+    const slicedData = filteredData.slice(startIndex, endIndex);
+
+    return slicedData.map((dato: SensorData, index: number) => ({
+      id: `${dato.id}-${index}`,
+      fecha: new Date(dato.fecha_medicion).toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }),
+      value: dato[selectedDataType as keyof SensorData] ?? 0,
+    }));
+  }, [historicos, selectedDataType, selectedDataId]);
+
+  const handleDataTypeClick = (type: { key: string; sensorId: number }) => {
+    setSelectedDataType(type.key);
+    setSelectedDataId(null);
+  };
+
+  const handleRowClick = (row: any) => {
+    setSelectedDataId(row.id);
+  };
 
   if (isLoading || sensoresLoading) {
     return (
@@ -118,75 +128,66 @@ export default function DatosMeteorologicosPage() {
           </motion.button>
         </div>
 
-        {selectedDataType ? (
-          <div className="space-y-6">
-            <motion.button
-              className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition duration-300"
-              onClick={() => setSelectedDataType(null)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArrowLeft className="mr-2" size={16} />
-              Volver a Tipos de Datos
-            </motion.button>
-
-            {tableData.length === 0 ? (
-              <p className="text-gray-600 text-center text-lg">
-                No hay datos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label}.
-              </p>
-            ) : (
-              <>
-                <div className="bg-white p-6 rounded-lg shadow-lg">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-4">Tabla de Datos</h3>
-                  <Tabla columns={columns} data={tableData} />
-                </div>
-
-                {chartData && (
-                  <motion.div
-                    className="bg-white p-6 rounded-lg shadow-lg"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                      Gráfica Histórica - {dataTypes.find(dt => dt.key === selectedDataType)?.label}
-                    </h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={chartData}>
-                        <XAxis dataKey="fecha" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </motion.div>
-                )}
-              </>
-            )}
+        <motion.div
+          className="bg-white p-6 rounded-lg shadow-md mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Seleccionar Tipo de Dato</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {dataTypes.map((type) => (
+              <motion.button
+                key={type.sensorId}
+                className={`flex items-center gap-2 px-4 py-2 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg ${
+                  selectedDataType === type.key ? "bg-blue-700" : "bg-blue-500"
+                }`}
+                onClick={() => handleDataTypeClick(type)}
+                whileHover={{ scale: 1.05, backgroundColor: "#3b82f6" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {type.icon}
+                <span>{type.label}</span>
+              </motion.button>
+            ))}
           </div>
+        </motion.div>
+
+        {tableData.length === 0 ? (
+          <p className="text-gray-600 text-center text-lg">
+            No hay datos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label || "el tipo seleccionado"}.
+          </p>
         ) : (
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">Seleccionar Tipo de Dato</h3>
-            <div className="bg-white rounded-lg shadow-lg p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {dataTypes.map((type) => (
-                <motion.button
-                  key={type.sensorId}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
-                  onClick={() => setSelectedDataType(type.key)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {type.icon}
-                  <span>{type.label}</span>
-                </motion.button>
-              ))}
+          <>
+            <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">Tabla de Datos</h3>
+              <Tabla columns={columns} data={tableData} onRowClick={handleRowClick} />
             </div>
-          </motion.div>
+
+            <motion.div
+              className="bg-white p-6 rounded-lg shadow-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                Gráfica Histórica - {dataTypes.find(dt => dt.key === selectedDataType)?.label || "Dato"}
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={chartData}>
+                  <XAxis dataKey="fecha" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+              {chartData.length === 0 && (
+                <p className="text-gray-600 text-center mt-4">
+                  No hay datos históricos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label || "el tipo seleccionado"}.
+                </p>
+              )}
+            </motion.div>
+          </>
         )}
       </div>
     </DefaultLayout>

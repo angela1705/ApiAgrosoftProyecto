@@ -1,168 +1,176 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
 from rest_framework.decorators import action
-from django_filters.rest_framework import DjangoFilterBackend
-from apps.Iot.sensores.models import Sensor
+from rest_framework.response import Response
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.units import inch
+from datetime import datetime, timedelta
 from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
-from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicos
-from apps.Iot.sensores.api.serializers import SensorSerializer
-
-from django.core.cache import cache
-from django.utils import timezone
+from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+import os
 import logging
 
 logger = logging.getLogger(__name__)
 
-class SensorViewSet(viewsets.ModelViewSet):
-    queryset = Sensor.objects.all()
-    serializer_class = SensorSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def partial_update(self, request, *args, **kwargs):
-        try:
-            sensor = self.get_object()
-            serializer = self.get_serializer(sensor, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            logger.info(f"Sensor {sensor.id} actualizado a estado: {serializer.data['estado']}")
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.error(f"Error al actualizar sensor {kwargs.get('pk')}: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
     queryset = Datos_metereologicos.objects.all()
-    serializer_class = Datos_metereologicos
+    serializer_class = Datos_metereologicosSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['fk_sensor', 'fk_bancal', 'fecha_medicion']
+    filterset_fields = ['fk_sensor_id', 'fk_bancal_id', 'fecha_medicion']
 
     def get_permissions(self):
-        if self.action in ['create', 'realtime']:
+        if self.action == 'create':
             return [AllowAny()]
         return [IsAuthenticated()]
 
-    def create(self, request, *args, **kwargs):
-        """Guarda datos históricos en la base de datos."""
+    def get_queryset(self):
         try:
-            logger.info(f"Recibiendo datos históricos: {request.data}")
-            fk_sensor_id = request.data.get('fk_sensor')
-            value = request.data.get('value')
-            fk_bancal_id = request.data.get('fk_bancal', None)
-            fecha_medicion = request.data.get('fecha_medicion', timezone.now().isoformat())
+            logger.info("Ejecutando get_queryset")
+            queryset = super().get_queryset()
+            logger.info(f"Total de registros en queryset: {queryset.count()}")
 
-            if not fk_sensor_id or value is None:
-                logger.error("Faltan fk_sensor o value")
-                return Response({"error": "fk_sensor y value son requeridos"}, status=status.HTTP_400_BAD_REQUEST)
+            fecha_medicion = self.request.query_params.get('fecha_medicion', None)
+            if fecha_medicion:
+                try:
+                    logger.info(f"Filtrando por fecha_medicion: {fecha_medicion}")
+                    fecha = datetime.strptime(fecha_medicion, '%Y-%m-%d')
+                    fecha_inicio = fecha
+                    fecha_fin = fecha + timedelta(days=1)
+                    queryset = queryset.filter(
+                        fecha_medicion__gte=fecha_inicio,
+                        fecha_medicion__lt=fecha_fin
+                    )
+                    logger.info(f"Registros después de filtrar por fecha: {queryset.count()}")
+                except ValueError as e:
+                    logger.error(f"Formato de fecha inválido: {fecha_medicion}, error: {str(e)}")
+                    pass
 
-            sensor = Sensor.objects.filter(id=fk_sensor_id).first()
-            if not sensor:
-                logger.error(f"Sensor {fk_sensor_id} no encontrado")
-                return Response({"error": "Sensor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-            if sensor.estado != 'activo':
-                logger.warning(f"Sensor {fk_sensor_id} inactivo")
-                return Response({"error": "Sensor inactivo"}, status=status.HTTP_400_BAD_REQUEST)
+            fk_bancal_id = self.request.query_params.get('fk_bancal_id', None)
+            if fk_bancal_id:
+                logger.info(f"Filtrando por fk_bancal_id: {fk_bancal_id}")
+                queryset = queryset.filter(fk_bancal_id=fk_bancal_id)
+                logger.info(f"Registros después de filtrar por bancal: {queryset.count()}")
 
-            data = {
-                'fk_sensor': fk_sensor_id,
-                'fk_bancal': fk_bancal_id,
-                'fecha_medicion': fecha_medicion,
-                'temperatura': None,
-                'humedad_ambiente': None,
-                'luminosidad': None,
-                'lluvia': None,
-                'velocidad_viento': None,
-                'direccion_viento': None,
-                'humedad_suelo': None,
-                'ph_suelo': None,
-            }
-
-            if sensor.tipo_sensor == 'temperatura':
-                data['temperatura'] = value
-            elif sensor.tipo_sensor == 'ambient_humidity':
-                data['humedad_ambiente'] = value
-            elif sensor.tipo_sensor == 'soil_humidity':
-                data['humedad_suelo'] = value
-            elif sensor.tipo_sensor == 'luminosity':
-                data['luminosidad'] = value
-            elif sensor.tipo_sensor == 'rainfall':
-                data['lluvia'] = value
-            elif sensor.tipo_sensor == 'wind_speed':
-                data['velocidad_viento'] = value
-            elif sensor.tipo_sensor == 'wind_direction':
-                data['direccion_viento'] = value
-            elif sensor.tipo_sensor == 'soil_ph':
-                data['ph_suelo'] = value
-            else:
-                logger.error(f"Tipo de sensor no soportado: {sensor.tipo_sensor}")
-                return Response({"error": "Tipo de sensor no soportado"}, status=status.HTTP_400_BAD_REQUEST)
-
-            serializer = self.get_serializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            logger.info(f"Datos históricos guardados: {serializer.data}")
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return queryset.order_by('-fecha_medicion')
         except Exception as e:
-            logger.error(f"Error en create: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Error en get_queryset: {str(e)}")
+            raise
 
-    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
-    def realtime(self, request):
-        """Almacena datos en tiempo real en caché."""
+    def list(self, request, *args, **kwargs):
         try:
-            logger.info(f"Recibiendo datos en tiempo real: {request.data}")
-            fk_sensor_id = request.data.get('fk_sensor')
-            value = request.data.get('value')
-            fecha_medicion = request.data.get('fecha_medicion', timezone.now().isoformat())
-
-            if not fk_sensor_id or value is None:
-                logger.error("Faltan fk_sensor o value")
-                return Response({"error": "fk_sensor y value son requeridos"}, status=status.HTTP_400_BAD_REQUEST)
-
-            sensor = Sensor.objects.filter(id=fk_sensor_id).first()
-            if not sensor:
-                logger.error(f"Sensor {fk_sensor_id} no encontrado")
-                return Response({"error": "Sensor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-            if sensor.estado != 'activo':
-                logger.warning(f"Sensor {fk_sensor_id} inactivo")
-                return Response({"error": "Sensor inactivo"}, status=status.HTTP_400_BAD_REQUEST)
-
-            cache_key = f"realtime_data_{fk_sensor_id}"
-            existing_data = cache.get(cache_key, [])
-            data = {
-                'id': len(existing_data) + 1,
-                'sensor': fk_sensor_id,
-                'tipo_sensor': sensor.tipo_sensor,
-                'value': float(value),
-                'fecha_medicion': fecha_medicion,
-            }
-            existing_data.append(data)
-            cache.set(cache_key, existing_data[-50:], timeout=3600)
-            logger.info(f"Datos en tiempo real almacenados en caché: {cache_key}")
-            return Response(data, status=status.HTTP_201_CREATED)
-        except ValueError as ve:
-            logger.error(f"Error de valor en realtime: {str(ve)}")
-            return Response({"error": "El valor debe ser numérico"}, status=status.HTTP_400_BAD_REQUEST)
+            logger.info("Ejecutando list")
+            return super().list(request, *args, **kwargs)
         except Exception as e:
-            logger.error(f"Error en realtime POST: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Error en list: {str(e)}")
+            raise
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
-    def realtime_get(self, request):
-        """Obtiene datos en tiempo real desde el caché."""
+    @action(detail=False, methods=['get'])
+    def reporte_pdf(self, request):
         try:
-            sensor_id = request.query_params.get('sensor_id')
-            if not sensor_id:
-                logger.error("Falta sensor_id")
-                return Response({"error": "sensor_id es requerido"}, status=status.HTTP_400_BAD_REQUEST)
-            cache_key = f"realtime_data_{sensor_id}"
-            data = cache.get(cache_key, [])
-            logger.info(f"Datos en tiempo real obtenidos: {cache_key}, count: {len(data)}")
-            return Response(data, status=status.HTTP_200_OK)
+            logger.info("Ejecutando reporte_pdf")
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="reporte_datos_meteorologicos.pdf"'
+
+            doc = SimpleDocTemplate(response, pagesize=letter)
+            elementos = []
+            styles = getSampleStyleSheet()
+
+            logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
+            if not os.path.exists(logo_path):
+                logger.error(f"Logo no encontrado en {logo_path}")
+                return Response({"error": "Logo no encontrado"}, status=500)
+
+            logo = Image(logo_path, width=50, height=35)
+            encabezado_data = [
+                [logo, Paragraph("<b>Agrosoft</b><br/>Reporte de Datos Meteorológicos", styles['Normal']), ""],
+                ["", Paragraph(f"Fecha: {datetime.today().strftime('%Y-%m-%d')}", styles['Normal']), "Página 1"],
+            ]
+
+            tabla_encabezado = Table(encabezado_data, colWidths=[60, 350, 100])
+            tabla_encabezado.setStyle(TableStyle([
+                ('SPAN', (0, 0), (0, 1)),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ]))
+            elementos.append(tabla_encabezado)
+            elementos.append(Spacer(1, 10))
+
+            elementos.append(Paragraph("<b>1. Objetivo</b>", styles['Heading2']))
+            elementos.append(Paragraph(
+                "Este documento detalla los datos meteorológicos históricos registrados en el sistema, "
+                "facilitando el análisis de las condiciones ambientales para la gestión de cultivos.",
+                styles['Normal']
+            ))
+            elementos.append(Spacer(1, 15))
+
+            elementos.append(Paragraph("<b>2. Registro de Datos Meteorológicos</b>", styles['Heading2']))
+            elementos.append(Spacer(1, 5))
+
+            datos = self.get_queryset()
+            total_datos = datos.count()
+            logger.info(f"Total de datos para el reporte: {total_datos}")
+
+            data_datos = [
+                [
+                    "ID", "Sensor", "Bancal", "Temp (°C)", "Humedad (%)", "Luz (lux)",
+                    "Lluvia (mm/h)", "V. Viento (m/s)", "D. Viento (°)",
+                    "H. Suelo (%)", "pH Suelo", "Fecha"
+                ]
+            ]
+            for dato in datos:
+                try:
+                    fecha = dato.fecha_medicion.strftime('%Y-%m-%d %H:%M') if dato.fecha_medicion else "N/A"
+                    sensor_nombre = dato.fk_sensor.nombre if dato.fk_sensor and hasattr(dato.fk_sensor, 'nombre') else "N/A"
+                    bancal_nombre = dato.fk_bancal.nombre if dato.fk_bancal and hasattr(dato.fk_bancal, 'nombre') else "N/A"
+                    data_datos.append([
+                        str(dato.id),
+                        sensor_nombre,
+                        bancal_nombre,
+                        str(dato.temperatura) if dato.temperatura is not None else "N/A",
+                        str(dato.humedad_ambiente) if dato.humedad_ambiente is not None else "N/A",
+                        str(dato.luminosidad) if dato.luminosidad is not None else "N/A",
+                        str(dato.lluvia) if dato.lluvia is not None else "N/A",
+                        str(dato.velocidad_viento) if dato.velocidad_viento is not None else "N/A",
+                        str(dato.direccion_viento) if dato.direccion_viento is not None else "N/A",
+                        str(dato.humedad_suelo) if dato.humedad_suelo is not None else "N/A",
+                        str(dato.ph_suelo) if dato.ph_suelo is not None else "N/A",
+                        fecha
+                    ])
+                except Exception as e:
+                    logger.error(f"Error al procesar dato {dato.id}: {str(e)}")
+                    continue
+
+            tabla_datos = Table(data_datos, colWidths=[30, 60, 60, 40, 40, 40, 40, 40, 40, 40, 40, 80])
+            tabla_datos.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 7),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('VALIGN', (0, 1), (-1, -1), 'MIDDLE'),
+                ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),
+            ]))
+            elementos.append(tabla_datos)
+            elementos.append(Spacer(1, 15))
+
+            elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading2']))
+            resumen_texto = f"""
+            Se registraron {total_datos} mediciones meteorológicas en el sistema.
+            """
+            elementos.append(Paragraph(resumen_texto, styles['Normal']))
+
+            doc.build(elementos)
+            return response
         except Exception as e:
-            logger.error(f"Error en realtime GET: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Error en reporte_pdf: {str(e)}")
+            return Response({"error": str(e)}, status=500)
