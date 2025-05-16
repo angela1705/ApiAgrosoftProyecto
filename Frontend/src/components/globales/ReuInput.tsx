@@ -9,9 +9,13 @@ interface ReusableInputProps {
   radius?: "full" | "lg" | "md" | "sm" | "none";
   value: string | number;
   step?: string;
-  min?: number;  
-  max?:number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  min?: string | number;
+  max?: string | number;
+  name?: string;
+  required?: boolean; 
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => void;
 }
 
 export const ReuInput: React.FC<ReusableInputProps> = ({
@@ -22,6 +26,10 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
   radius = "md",
   value,
   step,
+  min,
+  max,
+  name,
+  required,
   onChange,
 }) => {
   return (
@@ -35,6 +43,10 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
         value={value.toString()}
         onChange={onChange}
         step={step}
+        min={min?.toString()}
+        max={max?.toString()}
+        name={name}
+        required={required}  
       />
     </div>
   );

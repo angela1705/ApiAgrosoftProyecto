@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .permissions import PermisoPorRol
 from apps.Usuarios.usuarios.models import Usuarios, PasswordResetToken
-from apps.Usuarios.usuarios.api.serializer import UsuariosSerializer, RegistroUsuarioSerializer
+from apps.Usuarios.usuarios.api.serializer import UsuariosSerializer, RegistroUsuarioSerializer, RegistroSecundarioUsuarioSerializer
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from rest_framework.decorators import action
@@ -141,6 +141,36 @@ class RegistroUsuarioView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+class RegistroSecundarioUsuarioView(APIView):
+    def post(self, request):
+        serializer = RegistroSecundarioUsuarioSerializer(data=request.data)
+
+        if serializer.is_valid():
+            print("🟢🟢🟢🟢🟢🟢🟢🔴")
+            usuario = serializer.save()
+
+            try:
+                token = get_random_string(length=32)
+                PasswordResetToken.objects.create(user=usuario, token=token)
+
+                reset_link = f"http://localhost:5173/reset-password/{token}/"
+                send_mail(
+                    'Definir tu Contraseña',
+                    f'Haz clic en el siguiente enlace para definir tu contraseña: {reset_link}',
+                    'agrosoftadso2024@gmail.com',
+                    [usuario.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                print(f"Error al enviar correo de definición de contraseña: {e}")
+
+            return Response({
+                'mensaje': 'Usuario registrado correctamente. Se envió un enlace para definir la contraseña.',
+                'usuario': RegistroSecundarioUsuarioSerializer(usuario).data
+            }, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class RegistroMasivoUsuariosView(APIView):
     parser_classes = [MultiPartParser]
     permission_classes = [AllowAny]
@@ -170,7 +200,7 @@ class RegistroMasivoUsuariosView(APIView):
                     'fila': fila,
                     'errores': f"Campos vacíos: {', '.join(faltantes)}"
                 })
-                continue  # saltamos al siguiente
+                continue  
 
             data = {
                 'nombre': row.get('nombre'),

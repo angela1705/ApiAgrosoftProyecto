@@ -10,13 +10,12 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime, timedelta
-from apps.Iot.datos_meteorologicos.models import Datos_metereologicos   
-from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer   
+from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
+from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 import os
 import logging
 
-# Configurar logging para depuración
 logger = logging.getLogger(__name__)
 
 class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
@@ -38,7 +37,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             queryset = super().get_queryset()
             logger.info(f"Total de registros en queryset: {queryset.count()}")
 
-            # Filtro por fecha_medicion (en formato YYYY-MM-DD)
             fecha_medicion = self.request.query_params.get('fecha_medicion', None)
             if fecha_medicion:
                 try:
@@ -123,8 +121,8 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
 
             data_datos = [
                 [
-                    "ID", "Sensor", "Bancal", "Temp (°C)", "Humedad (%)", "Luz (lux)", 
-                    "Lluvia (mm/h)", "V. Viento (m/s)", "D. Viento (°)", 
+                    "ID", "Sensor", "Bancal", "Temp (°C)", "Humedad (%)", "Luz (lux)",
+                    "Lluvia (mm/h)", "V. Viento (m/s)", "D. Viento (°)",
                     "H. Suelo (%)", "pH Suelo", "Fecha"
                 ]
             ]

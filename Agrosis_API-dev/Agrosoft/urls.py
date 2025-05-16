@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from apps.Usuarios.usuarios.api.views import (
-    RegistroUsuarioView, CurrentUserView, PasswordResetRequestView, PasswordResetConfirmView, ChangePasswordView, RegistroMasivoUsuariosView)
+    RegistroUsuarioView, RegistroSecundarioUsuarioView, CurrentUserView, PasswordResetRequestView, PasswordResetConfirmView, ChangePasswordView, RegistroMasivoUsuariosView)
 from apps.Usuarios.usuarios.api.routers import UsuariosRouter
 from apps.Usuarios.roles.api.routers import RolesRouter
 from apps.Cultivo.actividades.api.router import actividadRouter 
@@ -115,6 +115,7 @@ urlpatterns = [
     path('finanzas/', include(routerFinanzas.urls)),  
     path('inventario/', include(routerInventario.urls)),
     path('usuarios/registro/', RegistroUsuarioView.as_view(), name='registro_usuario'),
+    path('usuarios/registroSecundario/', RegistroSecundarioUsuarioView.as_view(), name='registro_Secundario_usuario'),
     path('registro_usuarios_masivo/', RegistroMasivoUsuariosView.as_view(), name='registro_masivo_usuarios'),
     path('usuarios/me/', CurrentUserView.as_view(), name='current_user'),
     path('usuarios/password_reset/', PasswordResetRequestView.as_view(), name='password_reset'),

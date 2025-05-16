@@ -7,6 +7,7 @@ import AgrosisLogotic from "../../assets/def_AGROSIS_LOGOTIC.png";
 import LogoSena from "../../assets/logo2.png";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { addToast } from "@heroui/react";
 
 const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState("");
@@ -16,30 +17,52 @@ const ResetPasswordPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("Las contraseñas no coinciden.");
-      return;
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (password !== confirmPassword) {
+    addToast({
+      title: "Error",
+      description: "Las contraseñas no coinciden.",
+      timeout: 3000,
+      color: "danger",
+    });
+    return;
     }
-    try {
-      const response = await fetch(`http://localhost:8000/usuarios/password_reset_confirm/${token}/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        toast.success("Contraseña restablecida con éxito.");
-        navigate("/login");
-      } else {
-        toast.error(data.error || "Token inválido o expirado.");
-      }
-    } catch (error) {
-      toast.error("Error al conectar con el servidor.");
-    }
+try {
+  const response = await fetch(`http://localhost:8000/usuarios/password_reset_confirm/${token}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ password }),
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    addToast({
+      title: "Éxito",
+      description: "Contraseña restablecida con éxito.",
+      timeout: 3000,
+      color: "success",
+    });
+    navigate("/login");
+  } else {
+    addToast({
+      title: "Error",
+      description: data.error || "Token inválido o expirado.",
+      timeout: 3000,
+      color: "warning",
+    });
+  }
+} catch (error) {
+  addToast({
+    title: "Error",
+    description: "Error al conectar con el servidor.",
+    timeout: 3000,
+    color: "danger",
+  });
+}
   };
 
   const textFieldStyles = {

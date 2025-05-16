@@ -1,23 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios";
 import { SensorData } from "@/types/iot/type";
 
 const API_URL = "http://127.0.0.1:8000/iot/datosmeteorologicos/";
 
-// Obtener datos meteorológicos
-const fetchDatosMeteorologicos = async (): Promise<SensorData[]> => {
-  const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
-  const response = await axios.get(API_URL, {
-    headers: { Authorization: `Bearer ${token}` },
+const fetchDatosMeteorologicos = async (sensorId: number): Promise<SensorData[]> => {
+  console.log(`Fetching data for sensor ${sensorId}`);
+  const response = await api.get(API_URL, {
+    params: { fk_sensor_id: sensorId },
   });
-  return response.data;
+  console.log("Response from /iot/datosmeteorologicos/:", response.data);
+  return response.data.map((item: any) => ({
+    id: item.id,
+    fk_sensor_id: item.fk_sensor_id,
+    temperatura: item.temperatura || null,
+    humedad_ambiente: item.humedad_ambiente || null,
+    humedad_suelo: item.humedad_suelo || null,
+    luminosidad: item.luminosidad || null,
+    lluvia: item.lluvia || null,
+    velocidad_viento: item.velocidad_viento || null,
+    direccion_viento: item.direccion_viento || null,
+    ph_suelo: item.ph_suelo || null,
+    fecha_medicion: item.fecha_medicion,
+  }));
 };
 
-// Hook principal
-export const useDatosMeteorologicos = () => {
+export const useDatosMeteorologicos = (sensorId: number) => {
   return useQuery<SensorData[], Error>({
-    queryKey: ["datosMeteorologicos"],
-    queryFn: fetchDatosMeteorologicos,
+    queryKey: ["datosMeteorologicos", sensorId],
+    queryFn: () => fetchDatosMeteorologicos(sensorId),
+    enabled: !!sensorId,
   });
 };
