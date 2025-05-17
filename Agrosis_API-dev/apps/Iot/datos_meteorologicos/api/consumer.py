@@ -4,11 +4,12 @@ from decimal import Decimal
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
+from apps.Iot.datos_meteorologicos.models import DatosHistoricos  
 from apps.Iot.sensores.models import Sensor
 
 logger = logging.getLogger(__name__)
 
-# Lista en memoria para datos en tiempo real (usada por tasks.py)
+# Lista en memoria para datos en tiempo real
 realtime_data_buffer = []
 
 class DatosMeteorologicosConsumer(AsyncWebsocketConsumer):
@@ -29,6 +30,15 @@ class DatosMeteorologicosConsumer(AsyncWebsocketConsumer):
             logger.error(f"Sensor {sensor_id} no existe")
             return False
 
+    @database_sync_to_async
+    def save_data(self, data):
+        serializer = Datos_metereologicosSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return True
+        logger.error(f"Error al guardar datos: {serializer.errors}")
+        return False
+
     async def receive(self, text_data):
         global realtime_data_buffer
         try:
@@ -40,7 +50,6 @@ class DatosMeteorologicosConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({"error": "fk_sensor requerido"}))
                 return
 
-            # Verificar estado del sensor
             is_active = await self.check_sensor_state(sensor_id)
             if not is_active:
                 logger.info(f"Sensor inactivo: {sensor_id}")
@@ -51,15 +60,12 @@ class DatosMeteorologicosConsumer(AsyncWebsocketConsumer):
             is_valid = await database_sync_to_async(serializer.is_valid)()
             if is_valid:
                 validated_data = await database_sync_to_async(lambda: serializer.validated_data)()
-                # Logs específicos para humedad
                 if 'humedad_ambiente' in validated_data and validated_data['humedad_ambiente'] is not None:
                     logger.info(f"Humedad ambiente validada para sensor {sensor_id}: {validated_data['humedad_ambiente']}")
-                if 'humedad_suelo' in validated_data and validated_data['humedad_suelo'] is not None:
-                    logger.info(f"Humedad suelo validada para sensor {sensor_id}: {validated_data['humedad_suelo']}")
                 logger.info(f"Datos validados para sensor {sensor_id}: {validated_data}")
+                await self.save_data(data)  # Guardar en la base de datos
                 await self.send(text_data=json.dumps({"status": "Datos recibidos"}))
 
-                # Preparar datos serializables
                 cleaned_data = {}
                 for k, v in validated_data.items():
                     if k == 'fk_sensor' and v is not None:
@@ -73,24 +79,16 @@ class DatosMeteorologicosConsumer(AsyncWebsocketConsumer):
                     elif v is not None:
                         cleaned_data[k] = v
 
-                # Agregar al buffer para históricos
-                logger.debug(f"Agregando a buffer (sensor {sensor_id}): {cleaned_data}")
                 realtime_data_buffer.append(cleaned_data.copy())
                 realtime_data_buffer = realtime_data_buffer[-1000:]
-
-                # Enviar al grupo
-                try:
-                    logger.info(f"Enviando al grupo (sensor {sensor_id}): {cleaned_data}")
-                    await self.channel_layer.group_send(
-                        "weather_group",
-                        {
-                            "type": "weather_data",
-                            "data": cleaned_data
-                        }
-                    )
-                except Exception as e:
-                    logger.error(f"Error al enviar al grupo (sensor {sensor_id}): {str(e)}")
-                    await self.send(text_data=json.dumps({"warning": f"Error al enviar al grupo: {str(e)}"}))
+                logger.info(f"Enviando al grupo (sensor {sensor_id}): {cleaned_data}")
+                await self.channel_layer.group_send(
+                    "weather_group",
+                    {
+                        "type": "weather_data",
+                        "data": cleaned_data
+                    }
+                )
             else:
                 errors = await database_sync_to_async(lambda: serializer.errors)()
                 logger.error(f"Error de validación para sensor {sensor_id}: {errors}")
