@@ -5,16 +5,25 @@ export interface ActivityData {
   descripcion: string;
 }
 
+export interface PlagaData {
+  id: number;
+  plaga_nombre: string;
+  bancal_nombre: string;
+  observaciones: string;
+  estado: string;
+  fecha_reporte: string;
+}
+
 export type NotificationType = 
   | "info" | "warning" | "success" | "error" | "low_stock" 
-  | string; 
+  | "reporte_plaga" | string; 
 
 export interface NotificationBase {
   id: string;
   type: NotificationType;
   message: string;
   timestamp: string | number;
-  source: 'activities' | 'bodega';
+  source: 'activities' | 'bodega' | 'plagas';
 }
 
 export interface ActivityNotification extends NotificationBase {
@@ -27,4 +36,9 @@ export interface BodegaNotification extends NotificationBase {
   insumoId?: number;
 }
 
-export type Notification = ActivityNotification | BodegaNotification;
+export interface PlagaNotification extends NotificationBase {
+  source: 'plagas';
+  plaga: PlagaData;
+}
+
+export type Notification = ActivityNotification | BodegaNotification | PlagaNotification;
