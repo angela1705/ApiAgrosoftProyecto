@@ -43,9 +43,8 @@ class AnalisisCostoBeneficio:
         producto__Producto=cosecha
         )
         
-        for venta in ventas:
-            resultados['ingresos']['ventas'] += venta.cantidad * venta.producto.precio
-
+        for detalle in ventas:
+            resultados['ingresos']['ventas'] += detalle.cantidad * detalle.producto.precio
         precio_actual = PrecioProducto.objects.filter(
             Producto=cosecha
         ).order_by('-fecha_registro').first()
