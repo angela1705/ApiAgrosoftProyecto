@@ -24,7 +24,7 @@ const TipoResiduoPage: React.FC = () => {
   return (
     <DefaultLayout>
       <Formulario
-        title="Registro de Tipo de Especie"
+        title="Registro de Tipo de Residuo"
         onSubmit={handleSubmit}
         isSubmitting={mutation.isPending}
         buttonText="Guardar"
