@@ -3,8 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 export const useRegistrarSensor = () => {
   const token = localStorage.getItem("access_token");
   return useMutation({
-    mutationFn: async (sensor: { fk_sensor: number; temperature: number; humidity: number }) => {
-      const response = await fetch("http://127.0.0.1:8000/iot/datosmetereologicos/", {
+    mutationFn: async (sensor: { fk_sensor: number; temperature: number }) => {
+      const response = await fetch("http://192.168.1.12:8000/iot/datosmeteorologicos/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -17,4 +17,3 @@ export const useRegistrarSensor = () => {
     },
   });
 };
-//---------------------------------------------------------------//

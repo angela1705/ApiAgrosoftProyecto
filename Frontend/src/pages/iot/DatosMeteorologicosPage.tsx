@@ -12,11 +12,14 @@ import CustomSpinner from "@/components/globales/Spinner";
 import { motion } from "framer-motion";
 
 export default function DatosMeteorologicosPage() {
-  const [selectedDataType, setSelectedDataType] = useState<string | null>("humedad_ambiente");
+  const [selectedDataType, setSelectedDataType] = useState<string>("humedad_ambiente");
   const [selectedDataId, setSelectedDataId] = useState<string | null>(null);
   const { data: historicos = [], isLoading, error } = useDatosMeteorologicosHistoricos();
   const { sensores = [], isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
   const navigate = useNavigate();
+
+  console.log("Historical data received:", historicos);
+  console.log("Sensors:", sensores);
 
   const dataTypes = [
     { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" />, sensorId: 1 },
@@ -32,28 +35,30 @@ export default function DatosMeteorologicosPage() {
   const columns = [
     { name: "ID", uid: "id" },
     { name: "Sensor", uid: "sensor" },
-    { name: selectedDataType ? dataTypes.find(dt => dt.key === selectedDataType)?.label || "Dato" : "Dato", uid: "value" },
+    { name: dataTypes.find(dt => dt.key === selectedDataType)?.label || "Dato", uid: "value" },
     { name: "Fecha de Medición", uid: "fecha_medicion" },
   ];
 
-  // Datos para la tabla
   const tableData = useMemo(() => {
     let filtered = historicos;
+    console.log("Selected data type:", selectedDataType);
+    console.log("Filtered data before mapping:", filtered);
     if (selectedDataType) {
       filtered = filtered.filter((dato: SensorData) => {
         const value = dato[selectedDataType as keyof SensorData];
         return value !== null && value !== undefined;
       });
     }
-    return filtered.map((dato: SensorData) => ({
+    const result = filtered.map((dato: SensorData) => ({
       id: dato.id || "N/A",
-      sensor: sensores.find((s: Sensor) => s.id === dato.fk_sensor_id)?.nombre || dato.fk_sensor_id || "N/A",
-      value: selectedDataType ? dato[selectedDataType as keyof SensorData] ?? "N/A" : "N/A",
+      sensor: sensores.find((s: Sensor) => s.id === (dato.fk_sensor || dato.fk_sensor))?.nombre || (dato.fk_sensor || dato.fk_sensor) || "N/A",
+      value: selectedDataType ? (dato[selectedDataType as keyof SensorData] ?? "N/A") : "N/A",
       fecha_medicion: dato.fecha_medicion ? new Date(dato.fecha_medicion).toLocaleString() : "N/A",
     }));
+    console.log("Table data:", result);
+    return result;
   }, [historicos, selectedDataType, sensores]);
 
-  // Datos para la gráfica (20 datos, centrados en el dato seleccionado)
   const chartData = useMemo(() => {
     if (!selectedDataType) return [];
     const filteredData = historicos
@@ -67,18 +72,20 @@ export default function DatosMeteorologicosPage() {
 
     let selectedIndex = 0;
     if (selectedDataId) {
-      selectedIndex = filteredData.findIndex(dato => dato.id === selectedDataId) || 0;
+      selectedIndex = filteredData.findIndex(dato => String(dato.id) === selectedDataId) || 0;
     }
 
     const startIndex = Math.max(0, selectedIndex - 10);
     const endIndex = Math.min(filteredData.length, startIndex + 20);
     const slicedData = filteredData.slice(startIndex, endIndex);
 
-    return slicedData.map((dato: SensorData, index: number) => ({
+    const result = slicedData.map((dato: SensorData, index: number) => ({
       id: `${dato.id}-${index}`,
       fecha: new Date(dato.fecha_medicion).toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }),
       value: dato[selectedDataType as keyof SensorData] ?? 0,
     }));
+    console.log("Chart data:", result);
+    return result;
   }, [historicos, selectedDataType, selectedDataId]);
 
   const handleDataTypeClick = (type: { key: string; sensorId: number }) => {

@@ -1,15 +1,18 @@
 export interface SensorData {
   id?: number | string;
-  fk_sensor_id: number;
-  temperatura?: number | null;
-  humedad_ambiente?: number | null;
+  fk_sensor: number;   
+  sensor_nombre?: string;   
+  fk_bancal?: number;   
+  bancal_nombre?: string; 
+  temperatura?: number | null;  
+  humedad_ambiente?: number | null;  
   humedad_suelo?: number | null;
   luminosidad?: number | null;
   lluvia?: number | null;
   velocidad_viento?: number | null;
   direccion_viento?: number | null;
   ph_suelo?: number | null;
-  fecha_medicion: string;
+  fecha_medicion: string;  
 }
 
 export interface Sensor {
@@ -19,21 +22,23 @@ export interface Sensor {
   unidad_medida: string;
   descripcion?: string;
   estado: 'activo' | 'inactivo';
+  medida_minima: number;   
+  medida_maxima: number;  
 }
 
 export interface Cultivo {
   id: number;
   nombre: string;
   latitud: number;
-  bancal: number;
+  Bancal: number; 
 }
 
 export interface EvapotranspiracionData {
   id: number;
-  fk_bancal: number;  
+  fk_bancal: number;
   fecha: string;
-  valor: number; 
-  creado: string;  
+  valor: number;
+  creado: string;
 }
 
 export interface AnalisisCostoBeneficio {

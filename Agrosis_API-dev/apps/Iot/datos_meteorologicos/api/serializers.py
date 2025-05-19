@@ -13,4 +13,3 @@ class Datos_metereologicosSerializer(serializers.ModelSerializer):
             'velocidad_viento', 'direccion_viento', 'humedad_suelo', 'ph_suelo', 
             'fecha_medicion'
         ]
- 

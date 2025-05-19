@@ -4,7 +4,7 @@ import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
 import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorologicosHistoricos";
 import { useNavigate } from "react-router-dom";
 import { Sensor, SensorData } from "@/types/iot/type";
-import { FaTemperatureHigh, FaTint, FaSun, FaCloudRain, FaWind, FaCompass, FaVial } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
@@ -26,48 +26,6 @@ const dataTypes = [
     sensorId: 2,
     tipo_sensor: "ambient_humidity",
   },
-  {
-    label: "Humedad Suelo (%)",
-    key: "humedad_suelo",
-    icon: <FaTint className="text-blue-700" />,
-    sensorId: 3,
-    tipo_sensor: "soil_humidity",
-  },
-  {
-    label: "Luminosidad (lux)",
-    key: "luminosidad",
-    icon: <FaSun className="text-yellow-500" />,
-    sensorId: 4,
-    tipo_sensor: "luminosidad",
-  },
-  {
-    label: "Lluvia (mm)",
-    key: "lluvia",
-    icon: <FaCloudRain className="text-gray-500" />,
-    sensorId: 5,
-    tipo_sensor: "lluvia",
-  },
-  {
-    label: "Velocidad Viento (m/s)",
-    key: "velocidad_viento",
-    icon: <FaWind className="text-teal-500" />,
-    sensorId: 6,
-    tipo_sensor: "velocidad_viento",
-  },
-  {
-    label: "Dirección Viento (grados)",
-    key: "direccion_viento",
-    icon: <FaCompass className="text-green-500" />,
-    sensorId: 7,
-    tipo_sensor: "direccion_viento",
-  },
-  {
-    label: "pH Suelo",
-    key: "ph_suelo",
-    icon: <FaVial className="text-purple-500" />,
-    sensorId: 8,
-    tipo_sensor: "ph_suelo",
-  },
 ];
 
 export default function SensoresPage() {
@@ -77,44 +35,42 @@ export default function SensoresPage() {
   const { sensores = [], isLoading: sensoresLoading, error: sensoresError } =
     useSensoresRegistrados();
   const { isLoading: historicosLoading, error: historicosError } =
-    useDatosMeteorologicosHistoricos(); // Eliminado 'historicos'
+    useDatosMeteorologicosHistoricos();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const ws = new WebSocket("ws://127.0.0.1:8000/ws/realtime/");
+    const ws = new WebSocket("ws://192.168.1.12:8000/ws/realtime/");
     ws.onopen = () => {
       console.log("Conexión WebSocket establecida");
     };
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("Datos en tiempo real recibidos:", message);
-      if (message.type === "weather_data" && message.data.fk_sensor) {
-        const sensor = sensores.find((s: Sensor) => s.id === message.data.fk_sensor);
-        if (sensor && sensor.estado === "activo") {
-          const newData: SensorData = {
-            id: message.data.id || Date.now(),
-            fk_sensor_id: message.data.fk_sensor,
-            temperatura: message.data.temperatura || null,
-            humedad_ambiente: message.data.humedad_ambiente || null,
-            humedad_suelo: message.data.humedad_suelo || null,
-            luminosidad: message.data.luminosidad || null,
-            lluvia: message.data.lluvia || null,
-            velocidad_viento: message.data.velocidad_viento || null,
-            direccion_viento: message.data.direccion_viento || null,
-            ph_suelo: message.data.ph_suelo || null,
-            fecha_medicion: message.data.fecha_medicion,
-          };
-          setRealTimeData((prev) => {
-            const updated = [...prev, newData].slice(-50);
-            console.log(`Datos actualizados para sensor ${newData.fk_sensor_id}:`, newData);
-            return updated;
-          });
-        } else {
-          console.log(
-            `Datos ignorados para sensor ${message.data.fk_sensor} (inactivo o no encontrado)`
-          );
+      console.log("Mensaje recibido del WebSocket:", event.data);
+      try {
+        const message = JSON.parse(event.data);
+        if (message.type === "weather_data") {
+          const sensor = sensores.find((s: Sensor) => s.id === message.data.fk_sensor);
+          if (sensor && sensor.estado === "activo") {
+            const newData: SensorData = {
+              id: message.data.id || Date.now(),
+              fk_sensor: message.data.fk_sensor,
+              temperatura: message.data.temperatura || null,
+              humedad_ambiente: message.data.humedad_ambiente || null,
+              fecha_medicion: message.data.fecha_medicion || new Date().toISOString(),
+            };
+            setRealTimeData((prev) => {
+              const updated = [...prev, newData].slice(-50);
+              console.log(`Datos actualizados para sensor ${newData.fk_sensor}:`, newData);
+              return updated;
+            });
+          } else {
+            console.log(
+              `Datos ignorados para sensor ${message.data.fk_sensor} (inactivo o no encontrado)`
+            );
+          }
         }
+      } catch (error) {
+        console.error("Error al parsear mensaje WebSocket:", error);
       }
     };
     ws.onerror = (error) => {
@@ -166,10 +122,9 @@ export default function SensoresPage() {
     setSelectedSensorId(type.sensorId);
   };
 
-  // Datos para la gráfica de barras (tiempo real)
   const filteredData = realTimeData.filter((dato: SensorData) => {
     const value = dato[selectedDataType as keyof SensorData];
-    return value != null && dato.fk_sensor_id === selectedSensorId;
+    return value != null && dato.fk_sensor === selectedSensorId;
   });
 
   const barChartData = filteredData
@@ -187,7 +142,6 @@ export default function SensoresPage() {
       value: dato[selectedDataType as keyof SensorData] ?? 0,
     }));
 
-  // Datos para la gráfica de líneas (tiempo real, no históricos)
   const lineChartData = filteredData
     .sort((a: SensorData, b: SensorData) =>
       new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime()
@@ -259,7 +213,7 @@ export default function SensoresPage() {
               const latestData =
                 sensor && sensor.estado === "activo"
                   ? realTimeData
-                      .filter((d) => d.fk_sensor_id === type.sensorId)
+                      .filter((d) => d.fk_sensor === type.sensorId)
                       .sort(
                         (a, b) =>
                           new Date(b.fecha_medicion).getTime() -
@@ -276,20 +230,7 @@ export default function SensoresPage() {
                 >
                   <h3 className="text-lg font-semibold">{type.label}</h3>
                   <p className="text-2xl">
-                    {latestData?.[type.key as keyof SensorData] ?? "N/A"}{" "}
-                    {type.label.includes("(%)")
-                      ? "%"
-                      : type.label.includes("°C")
-                      ? "°C"
-                      : type.label.includes("(lux)")
-                      ? "lux"
-                      : type.label.includes("(mm)")
-                      ? "mm"
-                      : type.label.includes("(m/s)")
-                      ? "m/s"
-                      : type.label.includes("(grados)")
-                      ? "°"
-                      : ""}
+                    {latestData?.[type.key as keyof SensorData] ?? "N/A"} {type.key === "temperatura" ? "°C" : "%"}
                   </p>
                 </motion.div>
               );
@@ -371,8 +312,7 @@ export default function SensoresPage() {
             transition={{ duration: 0.5 }}
           >
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
-              Gráfica en Tiempo Real -{" "}
-              {dataTypes.find((dt) => dt.key === selectedDataType)?.label}
+              Gráfica en Tiempo Real - {selectedDataType === "temperatura" ? "Temperatura" : "Humedad"}
             </h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barChartData}>
@@ -384,9 +324,7 @@ export default function SensoresPage() {
             </ResponsiveContainer>
             {barChartData.length === 0 && (
               <p className="text-gray-600 text-center mt-4">
-                No hay datos disponibles para{" "}
-                {dataTypes.find((dt) => dt.key === selectedDataType)?.label}. Verifica si
-                el sensor está activo.
+                No hay datos disponibles para {selectedDataType === "temperatura" ? "Temperatura" : "Humedad"}. Verifica si el sensor está activo.
               </p>
             )}
           </motion.div>
@@ -398,8 +336,7 @@ export default function SensoresPage() {
             transition={{ duration: 0.5 }}
           >
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
-              Gráfica en Tiempo Real (Líneas) -{" "}
-              {dataTypes.find((dt) => dt.key === selectedDataType)?.label}
+              Gráfica en Tiempo Real (Líneas) - {selectedDataType === "temperatura" ? "Temperatura" : "Humedad"}
             </h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={lineChartData}>
@@ -411,8 +348,7 @@ export default function SensoresPage() {
             </ResponsiveContainer>
             {lineChartData.length === 0 && (
               <p className="text-gray-600 text-center mt-4">
-                No hay datos en tiempo real disponibles para{" "}
-                {dataTypes.find((dt) => dt.key === selectedDataType)?.label}.
+                No hay datos en tiempo real disponibles para {selectedDataType === "temperatura" ? "Temperatura" : "Humedad"}.
               </p>
             )}
           </motion.div>
