@@ -4,7 +4,8 @@ import { useRegistrarBancal } from "@/hooks/cultivo/usebancal";
 import { useLotes } from "@/hooks/cultivo/uselotes";
 import { Bancal } from "@/types/cultivo/Bancal";
 import { useState } from "react";
-
+import { ModalLote } from "./ModalLote";
+import { Plus } from "lucide-react";
 interface ModalBancalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -23,6 +24,7 @@ export const ModalBancal = ({ isOpen, onOpenChange, onSuccess }: ModalBancalProp
 
   const { data: lotes } = useLotes();
   const mutation = useRegistrarBancal();
+  const [openLote, setOpenLote] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -58,6 +60,10 @@ export const ModalBancal = ({ isOpen, onOpenChange, onSuccess }: ModalBancalProp
       confirmText="Guardar"
       cancelText="Cancelar"
     >
+      <ModalLote
+      isOpen={openLote}
+      onOpenChange={setOpenLote}
+      />
       <div className="space-y-4">
         <ReuInput
           label="Nombre"
@@ -104,7 +110,16 @@ export const ModalBancal = ({ isOpen, onOpenChange, onSuccess }: ModalBancalProp
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Lote</label>
+           <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Lote</label>
+            <button 
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setOpenLote(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
           <select
             name="lote"
             value={nuevoBancal.lote || ""}

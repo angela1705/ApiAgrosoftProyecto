@@ -6,6 +6,9 @@ import { useBancales } from "@/hooks/cultivo/usebancal";
 import { Cultivo } from "@/types/cultivo/Cultivo";
 import { useState } from "react";
 import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
+import { ModalBancal } from "./ModalBancal";
+import { Plus } from 'lucide-react';
+import { ModalEspecie } from "./ModalEspecie";
 
 interface ModalCultivoProps {
   isOpen: boolean;
@@ -27,6 +30,8 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
   const { data: bancales } = useBancales();
   const mutation = useRegistrarCultivo();
   const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
+  const [openBancal, setOpenBancal] = useState(false);
+  const [openEspecie, setOpenEspecie] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -65,6 +70,14 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
       confirmText="Guardar"
       cancelText="Cancelar"
     >
+    <ModalBancal
+    isOpen={openBancal}
+    onOpenChange={setOpenBancal}
+    />
+    <ModalEspecie
+    isOpen={openEspecie}
+    onOpenChange={setOpenEspecie}
+    />
       <div className="space-y-4">
         <ReuInput
           label="Nombre"
@@ -110,7 +123,17 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
         </label>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Especie</label>
+           <div className="flex items-center gap-2 mb-1">
+                      <label className="block text-sm font-medium text-gray-700">Especie</label>
+                      <button 
+                        className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                        onClick={() => setOpenEspecie(true)}
+                        type="button"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+          
           <select
             name="Especie"
             value={nuevoCultivo.Especie || ""}
@@ -125,7 +148,16 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Bancal</label>
+           <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Bancal</label>
+            <button 
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setOpenBancal(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
           <select
             name="Bancal"
             value={nuevoCultivo.Bancal || ""}
