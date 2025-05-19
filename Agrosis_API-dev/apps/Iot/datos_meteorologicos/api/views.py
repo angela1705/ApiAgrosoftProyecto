@@ -10,8 +10,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime, timedelta
-from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
-from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
+from apps.Iot.datos_meteorologicos.models import Datos_metereologicos   
+from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer   
 from django_filters.rest_framework import DjangoFilterBackend
 import os
 import logging
@@ -120,11 +120,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             logger.info(f"Total de datos para el reporte: {total_datos}")
 
             data_datos = [
-                [
-                    "ID", "Sensor", "Bancal", "Temp (°C)", "Humedad (%)", "Luz (lux)",
-                    "Lluvia (mm/h)", "V. Viento (m/s)", "D. Viento (°)",
-                    "H. Suelo (%)", "pH Suelo", "Fecha"
-                ]
+                ["ID", "Sensor", "Bancal", "Temp (°C)", "Hum (%)", "Fecha"]
             ]
             for dato in datos:
                 try:
@@ -137,19 +133,13 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
                         bancal_nombre,
                         str(dato.temperatura) if dato.temperatura is not None else "N/A",
                         str(dato.humedad_ambiente) if dato.humedad_ambiente is not None else "N/A",
-                        str(dato.luminosidad) if dato.luminosidad is not None else "N/A",
-                        str(dato.lluvia) if dato.lluvia is not None else "N/A",
-                        str(dato.velocidad_viento) if dato.velocidad_viento is not None else "N/A",
-                        str(dato.direccion_viento) if dato.direccion_viento is not None else "N/A",
-                        str(dato.humedad_suelo) if dato.humedad_suelo is not None else "N/A",
-                        str(dato.ph_suelo) if dato.ph_suelo is not None else "N/A",
                         fecha
                     ])
                 except Exception as e:
                     logger.error(f"Error al procesar dato {dato.id}: {str(e)}")
                     continue
 
-            tabla_datos = Table(data_datos, colWidths=[30, 60, 60, 40, 40, 40, 40, 40, 40, 40, 40, 80])
+            tabla_datos = Table(data_datos, colWidths=[30, 60, 60, 40, 40, 80])
             tabla_datos.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), colors.black),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
