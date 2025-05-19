@@ -126,7 +126,6 @@ const Dashboard = () => {
 
   return (
     <DefaultLayout>
-      <div className="p-4 sm:p-6 bg-gray-100 min-h-screen">
         <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Dashboard</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -159,7 +158,7 @@ const Dashboard = () => {
           </motion.div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow mb-6">
+        <div className="bg-white p-4 rounded-lg shadow-xl mb-6">
           <h2 className="text-lg font-semibold mb-2">Clima Actual</h2>
           {weather ? (
             <div className="grid grid-cols-2 gap-2 text-sm">
@@ -177,7 +176,7 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="bg-white p-4 rounded-lg shadow">
+            <div className="bg-white p-4 rounded-lg shadow-xl">
               <h2 className="text-lg font-semibold mb-2">Ganancias y Costos</h2>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={barChartData}>
@@ -189,7 +188,7 @@ const Dashboard = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow">
+            <div className="bg-white p-4 rounded-lg shadow-xl">
               <h2 className="text-lg font-semibold mb-2">Datos Meteorológicos (Últimos 7 Días)</h2>
               <div className="flex flex-wrap gap-2 mb-4">
                 {dataTypes.map((type) => (
@@ -219,7 +218,7 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white p-4 rounded-lg shadow-xl">
             <h2 className="text-lg font-semibold mb-2">Progreso de Actividades</h2>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
@@ -248,7 +247,7 @@ const Dashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white p-4 rounded-lg shadow-xl">
             <h2 className="text-lg font-semibold mb-2">Actividades Futuras</h2>
             <ul className="list-disc list-inside text-gray-700 space-y-2 text-sm">
               {futureActivities.slice(0, 3).map((activity) => (
@@ -261,7 +260,7 @@ const Dashboard = () => {
               )}
             </ul>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white p-4 rounded-lg shadow-xl">
             <h2 className="text-lg font-semibold mb-2">Actividades Vencidas</h2>
             <ul className="list-disc list-inside text-gray-700 space-y-2 text-sm">
               {pastActivities.slice(0, 3).map((activity) => (
@@ -278,7 +277,6 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-      </div>
     </DefaultLayout>
   );
 };
