@@ -51,6 +51,8 @@ import ListaControlPage from "./pages/cultivo/ListaControlPage";
 import { TrazabilidadCosecha } from "./pages/cultivo/TrazabilidadCosecha";
 import TipoResiduoPage from "./pages/cultivo/TipoResiduoPage";
 import ResiduoPage from "./pages/cultivo/ResiduosPage";
+import ListaResiduoPage from "./pages/cultivo/ListaResiduosPage";
+
 // Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
 import ListaHerramientaPage from "./pages/inventario/ListaHerramientaPage";
@@ -98,6 +100,7 @@ import CostoBeneficioPage from "./pages/finanzas/CostoBeneficioPage";
 import Reportes from "./pages/reportes/Reportes";
 import GraficaIngreso from "./pages/reportes/GraficaIngreso";
 import { useAuth } from "./context/AuthContext";
+import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";
 
 const queryClient = new QueryClient();
 
@@ -209,6 +212,8 @@ const App: React.FC = () => {
               <Route path="/cultivo/cultivo/" element={<CultivoPage />} />
               <Route path="/cultivo/tiporesiduo/" element={<TipoResiduoPage />} />
               <Route path="/cultivo/residuo/" element={<ResiduoPage />} />
+              <Route path="/cultivo/listatiporesiduo/" element={<ListaTipoResiduoPage />} />
+              <Route path="/cultivo/listaresiduo/" element={<ListaResiduoPage />} />
 
               <Route path="/cultivo/cosecha" element={<CosechaPage />} />
               <Route path="/cultivo/listarcosechas" element={<ListaCosechasPage />} />
