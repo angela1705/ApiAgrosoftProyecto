@@ -44,7 +44,7 @@ class AnalisisCostoBeneficio:
         )
         
         for venta in ventas:
-            resultados['ingresos']['ventas'] += DetalleVenta.cantidad * DetalleVenta.producto.precio
+            resultados['ingresos']['ventas'] += venta.cantidad * venta.producto.precio
 
         precio_actual = PrecioProducto.objects.filter(
             Producto=cosecha

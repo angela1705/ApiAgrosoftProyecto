@@ -4,7 +4,8 @@ import { useRegistrarEspecie } from "@/hooks/cultivo/useEspecie";
 import { useTipoEspecies } from "@/hooks/cultivo/usetipoespecie";
 import { Especie } from "@/types/cultivo/Especie";
 import { useState } from "react";
-
+import { ModalTipoEspecie } from "./ModalTipoEspecie";
+import { Plus } from "lucide-react";
 interface ModalEspecieProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -22,6 +23,7 @@ export const ModalEspecie = ({ isOpen, onOpenChange, onSuccess }: ModalEspeciePr
 
   const { data: tiposEspecie } = useTipoEspecies();
   const mutation = useRegistrarEspecie();
+  const [openTipoEspecie, setOpenTipoEspecie] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -71,6 +73,10 @@ export const ModalEspecie = ({ isOpen, onOpenChange, onSuccess }: ModalEspeciePr
       confirmText="Guardar"
       cancelText="Cancelar"
     >
+      <ModalTipoEspecie
+      isOpen={openTipoEspecie}
+      onOpenChange={setOpenTipoEspecie}
+      />
       <div className="space-y-4">
         <ReuInput
           label="Nombre"
@@ -97,7 +103,16 @@ export const ModalEspecie = ({ isOpen, onOpenChange, onSuccess }: ModalEspeciePr
         />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Tipo de Especie</label>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Tipo de especie</label>
+            <button 
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setOpenTipoEspecie(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
           <select
             name="fk_tipo_especie"
             value={nuevaEspecie.fk_tipo_especie || ""}
