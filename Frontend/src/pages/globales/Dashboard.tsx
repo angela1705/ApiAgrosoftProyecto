@@ -103,7 +103,7 @@ const Dashboard = () => {
       });
   }, []);
 
-  if (loadingAnalisis || loadingHistoricos || loadingActividades || loadingSensores || loadingInsumos) {
+  {/*if (loadingAnalisis || loadingHistoricos || loadingActividades || loadingSensores || loadingInsumos) {
     return (
       <DefaultLayout>
         <div className="flex justify-center items-center h-screen">
@@ -111,7 +111,7 @@ const Dashboard = () => {
         </div>
       </DefaultLayout>
     );
-  }
+  } */}
 
   if (errorAnalisis || errorHistoricos || errorActividades || errorSensores || errorInsumos) {
     return (
