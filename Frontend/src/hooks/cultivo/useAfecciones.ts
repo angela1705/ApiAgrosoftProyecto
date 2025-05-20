@@ -34,14 +34,33 @@ const actualizarAfeccion = async (id: number, afeccion: Partial<Afeccion>) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
-
-const cambiarEstadoAfeccion = async (id: number, estado: 'ST' | 'EC' | 'EL') => {
+const eliminarAfeccion = async (id: number) => {
   const token = localStorage.getItem("access_token");
-  return api.post(`${API_URL}${id}/cambiar_estado/`, { estado }, {
+  return api.delete(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
+
+const cambiarEstadoAfeccion = async (id: number, estado: 'ST' | 'EC' | 'EL') => {
+  const token = localStorage.getItem("access_token");
+  
+  const url = `${API_URL}${id}/cambiar_estado/`;
+  console.log("URL de la petición:", url);
+  
+  try {
+    const response = await api.post(url, { estado }, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error en la petición:", error);
+    throw error;
+  }
+};
 export const useAfecciones = () => {
   return useQuery<AfeccionDetalle[], Error>({
     queryKey: ["afecciones"],
@@ -157,3 +176,38 @@ export const useCambiarEstadoAfeccion = () => {
         },
       });
     };
+
+
+export const useEliminarAfeccion = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => eliminarAfeccion(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["afecciones"] });
+      addToast({
+        title: "Éxito",
+        description: "Afección eliminada correctamente",
+        timeout: 3000,
+        color: "success",
+      });
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description:
+            "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "warning",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al eliminar la afección",
+          timeout: 3000,
+          color: "danger",
+        });
+      }
+    },
+  });
+};
