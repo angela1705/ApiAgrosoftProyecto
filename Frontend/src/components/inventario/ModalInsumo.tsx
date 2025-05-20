@@ -83,6 +83,7 @@ export const ModalInsumo = ({ isOpen, onOpenChange, onSuccess }: ModalInsumoProp
       onConfirm={handleSubmit}
       confirmText="Guardar"
       cancelText="Cancelar"
+      size="2xl"
     >
       <div className="space-y-4">
         <ReuInput

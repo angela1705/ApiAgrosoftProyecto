@@ -37,8 +37,10 @@ const menuItems = [
       { id: 10, label: "Lotes", path: "/cultivo/listarlotes/" },
       { id: 11, label: "Tipo Actividad", path: "/cultivo/listartipoactividad/" },
       { id: 12, label: "Actividades", path: "/cultivo/listaractividad/" },
-      { id: 14, label: "Cosecha", path: "/cultivo/listaresiduo/" },
+      { id: 14, label: "Cosecha", path: "/cultivo/listarcosechas/" },
       { id: 99, label: "Trazabilidad", path: "/cultivo/trazabilidad/" },
+      { id: 100, label: "Residuos", path: "/cultivo/listaresiduo/" },
+
 
     ],
   },

@@ -8,7 +8,7 @@ import ReuModal from "@/components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
 import { useNavigate } from "react-router-dom";
 import { EditIcon, Trash2, CheckCircleIcon } from 'lucide-react';
-
+import { useHerramientas } from "@/hooks/inventario/useHerramientas";
 const ListaActividadPage: React.FC = () => {
     
     const [actividad, setActividad] = useState({
@@ -22,7 +22,11 @@ const ListaActividadPage: React.FC = () => {
         prioridad: "MEDIA",
         instrucciones_adicionales: "",
         insumos: [] as Array<{insumo: number, cantidad_usada: number}>,
-        herramientas: [] as Array<{herramienta: number, entregada: boolean}>
+       herramientas: [] as Array<{
+        herramienta: number;
+        cantidad_entregada: number;
+        devuelta: boolean;
+}>
     });
 
     const [selectedActividad, setSelectedActividad] = useState<any>(null);
@@ -37,6 +41,8 @@ const ListaActividadPage: React.FC = () => {
     const { data: usuarios } = useUsuarios();
     const { data: cultivos } = useCultivos();
     const { data: insumos } = useInsumos();
+    const { data: herramientas } = useHerramientas();
+
     const navigate = useNavigate();
     const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState(false);
     const [finalizeData, setFinalizeData] = useState({
@@ -100,33 +106,36 @@ const ListaActividadPage: React.FC = () => {
         setIsDeleteModalOpen(true);
     };
 
-    const handleFinalize = (actividad: any) => {
-        setSelectedActividad(actividad);
-        
-        const herramientasData = actividad.prestamos_herramientas?.map((h: any) => ({
-            id: h.id,
-            herramienta_id: h.herramienta?.id,
-            nombre: h.herramienta?.nombre,
-            devuelta: h.devuelta || false,
-            fecha_devolucion: h.fecha_devolucion || new Date().toISOString().slice(0, 16)
-        })) || [];
-      
-        const insumosData = actividad.prestamos_insumos?.map((i: any) => ({
-            id: i.id,
-            insumo_id: i.insumo?.id,
-            nombre: i.insumo?.nombre,
-            cantidad_usada: i.cantidad_usada || 0,
-            cantidad_devuelta: i.cantidad_devuelta || 0
-        })) || [];
-      
-        setFinalizeData({
-            fecha_fin: actividad.fecha_fin || new Date().toISOString().slice(0, 16),
-            herramientas: herramientasData,
-            insumos: insumosData
-        });
-      
-        setIsFinalizeModalOpen(true);
-    };
+   const handleFinalize = (actividad: any) => {
+    setSelectedActividad(actividad);
+    
+    const herramientasData = actividad.prestamos_herramientas?.map((h: any) => ({
+        id: h.id,
+        herramienta_id: h.herramienta?.id,
+        nombre: h.herramienta?.nombre,
+        cantidad_entregada: h.cantidad_entregada || 1,
+        cantidad_devuelta: h.cantidad_devuelta || 0,
+        devuelta: h.devuelta || false,
+        fecha_devolucion: h.fecha_devolucion || new Date().toISOString().slice(0, 16)
+    })) || [];
+  
+    const insumosData = actividad.prestamos_insumos?.map((i: any) => ({
+        id: i.id,
+        insumo_id: i.insumo?.id,
+        nombre: i.insumo?.nombre,
+        cantidad_usada: i.cantidad_usada || 0,
+        cantidad_devuelta: i.cantidad_devuelta || 0
+    })) || [];
+  
+    setFinalizeData({
+        fecha_fin: actividad.fecha_fin || new Date().toISOString().slice(0, 16),
+        herramientas: herramientasData,
+        insumos: insumosData
+    });
+  
+    setIsFinalizeModalOpen(true);
+};
+
 
     const handleConfirmDelete = () => {
         if (selectedActividad && selectedActividad.id !== undefined) {
@@ -141,9 +150,10 @@ const ListaActividadPage: React.FC = () => {
 
     const transformedData = (actividades ?? []).map((actividad) => {
       const usuariosInfo = actividad.usuarios_data?.map((u: any) => u.nombre).join(', ') || 'Sin asignar';
-       const herramientasInfo = actividad.prestamos_herramientas?.map((ph: any) => 
-        `${ph.herramienta_nombre || ph.herramienta?.nombre || 'Herramienta'}${ph.devuelta ? ' (devuelta)' : ''}`
-    ).join(', ') || 'No se usaron herramientas';
+      const herramientasInfo = actividad.prestamos_herramientas?.map((ph: any) => 
+            `${ph.herramienta_nombre || ph.herramienta?.nombre || 'Herramienta'} ` +
+            `(${ph.cantidad_entregada || 1} ${ph.devuelta ? 'devueltas' : 'prestadas'})`
+        ).join(', ') || 'No se usaron herramientas';
 
     const insumosInfo = actividad.prestamos_insumos?.map((pi: any) => 
         `${pi.insumo_nombre || pi.insumo?.nombre || 'Insumo'} (${pi.cantidad_usada || 0}${pi.unidad_medida || pi.insumo?.unidad_medida?.abreviatura || ''})`
@@ -405,61 +415,77 @@ const ListaActividadPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700">Herramientas</label>
-                        <div className="space-y-2">
-                            {actividad.herramientas.map((herramienta, index) => (
-                                <div key={index} className="flex gap-2 items-center">
-                                    <select
-                                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
-                                        value={herramienta.herramienta}
-                                        onChange={(e) => {
-                                            const newHerramientas = [...actividad.herramientas];
-                                            newHerramientas[index].herramienta = parseInt(e.target.value);
-                                            setActividad({ ...actividad, herramientas: newHerramientas });
-                                        }}
-                                    >
-                                        <option value="">Seleccione una herramienta</option>
-                                        {insumos?.map((her) => (
-                                            <option key={her.id} value={her.id}>{her.nombre}</option>
-                                        ))}
-                                    </select>
-                                    <label className="flex items-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={herramienta.entregada}
-                                            onChange={(e) => {
-                                                const newHerramientas = [...actividad.herramientas];
-                                                newHerramientas[index].entregada = e.target.checked;
-                                                setActividad({ ...actividad, herramientas: newHerramientas });
-                                            }}
-                                            className="mr-2"
-                                        />
-                                        Entregada
-                                    </label>
-                                    <button
-                                        onClick={() => {
-                                            const newHerramientas = [...actividad.herramientas];
-                                            newHerramientas.splice(index, 1);
-                                            setActividad({ ...actividad, herramientas: newHerramientas });
-                                        }}
-                                        className="text-red-500"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                            ))}
-                            <button
-                                onClick={() => setActividad({
-                                    ...actividad,
-                                    herramientas: [...actividad.herramientas, { herramienta: 0, entregada: true }]
-                                })}
-                                className="text-blue-500 text-sm"
-                            >
-                                + Agregar herramienta
-                            </button>
-                        </div>
-                    </div>
+                   <div className="md:col-span-2">
+    <label className="block text-sm font-medium text-gray-700">Herramientas</label>
+    <div className="space-y-2">
+        {actividad.herramientas.map((herramienta, index) => (
+            <div key={index} className="flex gap-2 items-center">
+                <select
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                    value={herramienta.herramienta}
+                    onChange={(e) => {
+                        const newHerramientas = [...actividad.herramientas];
+                        newHerramientas[index].herramienta = parseInt(e.target.value);
+                        setActividad({ ...actividad, herramientas: newHerramientas });
+                    }}
+                >
+                    <option value="">Seleccione una herramienta</option>
+                    {herramientas?.map((her) => (
+                        <option key={her.id} value={her.id}>{her.nombre}</option>
+                    ))}
+                </select>
+                <ReuInput
+                    label="Cantidad"
+                    type="number"
+                    value={herramienta.cantidad_entregada}
+                    onChange={(e) => {
+                        const newHerramientas = [...actividad.herramientas];
+                        newHerramientas[index].cantidad_entregada = Number(e.target.value);
+                        setActividad({ ...actividad, herramientas: newHerramientas });
+                    }}
+                    min="1"
+                    placeholder="Cantidad"
+                />
+                <label className="flex items-center">
+                    <input
+                        type="checkbox"
+                        checked={herramienta.devuelta}
+                        onChange={(e) => {
+                            const newHerramientas = [...actividad.herramientas];
+                            newHerramientas[index].devuelta = e.target.checked;
+                            setActividad({ ...actividad, herramientas: newHerramientas });
+                        }}
+                        className="mr-2"
+                    />
+                    Devuelta
+                </label>
+                <button
+                    onClick={() => {
+                        const newHerramientas = [...actividad.herramientas];
+                        newHerramientas.splice(index, 1);
+                        setActividad({ ...actividad, herramientas: newHerramientas });
+                    }}
+                    className="text-red-500"
+                >
+                    <Trash2 size={18} />
+                </button>
+            </div>
+        ))}
+        <button
+            onClick={() => setActividad({
+                ...actividad,
+                herramientas: [...actividad.herramientas, { 
+                    herramienta: 0, 
+                    cantidad_entregada: 1,
+                    devuelta: false 
+                }]
+            })}
+            className="text-blue-500 text-sm"
+        >
+            + Agregar herramienta
+        </button>
+    </div>
+</div>
 
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700">Instrucciones Adicionales</label>
@@ -528,44 +554,65 @@ const ListaActividadPage: React.FC = () => {
                     </div>
 
                     <div className="border rounded-lg p-4">
-                        <h3 className="font-medium text-lg mb-3">Herramientas Utilizadas</h3>
-                        <div className="space-y-3">
-                            {finalizeData.herramientas.map((herramienta) => (
-                                <div key={herramienta.id} className="flex items-center justify-between p-2 border-b">
-                                    <span>{herramienta.nombre}</span>
-                                    <div className="flex items-center space-x-4">
-                                        <label className="flex items-center space-x-2">
-                                            <input
-                                                type="checkbox"
-                                                checked={herramienta.devuelta}
-                                                onChange={(e) => {
-                                                    const updatedHerramientas = finalizeData.herramientas.map(h => 
-                                                        h.id === herramienta.id ? {...h, devuelta: e.target.checked} : h
-                                                    );
-                                                    setFinalizeData({...finalizeData, herramientas: updatedHerramientas});
-                                                }}
-                                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                            />
-                                            <span>Devuelta</span>
-                                        </label>
-                                        {herramienta.devuelta && (
-                                            <ReuInput
-                                                label="Fecha Devolución"
-                                                type="datetime-local"
-                                                value={herramienta.fecha_devolucion}
-                                                onChange={(e) => {
-                                                    const updatedHerramientas = finalizeData.herramientas.map(h => 
-                                                        h.id === herramienta.id ? {...h, fecha_devolucion: e.target.value} : h
-                                                    );
-                                                    setFinalizeData({...finalizeData, herramientas: updatedHerramientas});
-                                                }}
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+    <h3 className="font-medium text-lg mb-3">Herramientas Utilizadas</h3>
+    <div className="space-y-3">
+        {finalizeData.herramientas.map((herramienta) => (
+            <div key={herramienta.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border-b">
+                <div>
+                    <span className="font-medium">{herramienta.nombre}</span>
+                    <p className="text-sm text-gray-600">Entregadas: {herramienta.cantidad_entregada}</p>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                    <label className="flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            checked={herramienta.devuelta}
+                            onChange={(e) => {
+                                const updatedHerramientas = finalizeData.herramientas.map(h => 
+                                    h.id === herramienta.id ? {...h, devuelta: e.target.checked} : h
+                                );
+                                setFinalizeData({...finalizeData, herramientas: updatedHerramientas});
+                            }}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span>Devuelta</span>
+                    </label>
+                </div>
+                
+                {herramienta.devuelta && (
+                    <div>
+                        <ReuInput
+                            label="Cantidad Devuelta"
+                            type="number"
+                            value={herramienta.cantidad_devuelta}
+                            onChange={(e) => {
+                                const value = Math.min(Number(e.target.value), herramienta.cantidad_entregada);
+                                const updatedHerramientas = finalizeData.herramientas.map(h => 
+                                    h.id === herramienta.id ? {...h, cantidad_devuelta: value} : h
+                                );
+                                setFinalizeData({...finalizeData, herramientas: updatedHerramientas});
+                            }}
+                            min="0"
+                            max={herramienta.cantidad_entregada}
+                        />
+                        <ReuInput
+                            label="Fecha Devolución"
+                            type="datetime-local"
+                            value={herramienta.fecha_devolucion}
+                            onChange={(e) => {
+                                const updatedHerramientas = finalizeData.herramientas.map(h => 
+                                    h.id === herramienta.id ? {...h, fecha_devolucion: e.target.value} : h
+                                );
+                                setFinalizeData({...finalizeData, herramientas: updatedHerramientas});
+                            }}
+                        />
                     </div>
+                )}
+            </div>
+        ))}
+    </div>
+</div>
 
                     <div className="border rounded-lg p-4">
                         <h3 className="font-medium text-lg mb-3">Insumos Utilizados</h3>
