@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'apps.Finanzas.pagos',
     'apps.Finanzas.venta',
     'apps.Finanzas.salario',
+    'apps.Finanzas.costo_beneficio',
     'apps.Inventario.herramientas',
     'apps.Inventario.insumos',
     'apps.Inventario.precio_producto',
@@ -133,9 +134,9 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testdb7',
+        'NAME': 'agrosoft3',
         'USER': 'postgres',
-        'PASSWORD': 'adso2024',
+        'PASSWORD': 'pass',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
