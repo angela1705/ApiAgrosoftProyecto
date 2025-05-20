@@ -78,16 +78,10 @@ const ListaControlPage: React.FC = () => {
     acciones: (
       <div className="flex gap-2">
         <button
-          onClick={() => navigate(`/cultivo/controles/${control.id}`)}
-          className="text-blue-500 hover:underline"
-        >
-          <Eye size={18} />
-        </button>
-        <button
           className="text-green-500 hover:underline"
           onClick={() => handleEdit(control)}
         >
-          <EditIcon size={18} />
+          <EditIcon size={18} color="black" />
         </button>
         <button
           onClick={() => handleDelete(control)}

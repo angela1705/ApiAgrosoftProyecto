@@ -17,50 +17,45 @@ export const usePlagaNotifications = (
       wsRef.current.close();
     }
 
-    const socketUrl = `ws://${window.location.hostname}:8000/ws/plagas/notificaciones/${userId}/`;
+    const socketUrl = `ws://${window.location.hostname}:8000/ws/reportes-plagas/notificaciones/${userId}/`;
     const ws = new WebSocket(socketUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
       reconnectAttemptsRef.current = 0;
-      console.log('WebSocket de plagas conectado');
+      console.log('WebSocket de reporte de plagas conectado');
     };
 
-   ws.onmessage = (event) => {
-  console.log('Mensaje recibido de WebSocket de plagas:', event.data); // <-- Añade este log
-  try {
-    const data = JSON.parse(event.data);
-    console.log('Datos parseados:', data); // <-- Añade este log
-    
-    const newNotification: Notification = {
-      id: `notif-plaga-${Date.now()}-${data.reporte.id}`,
-      type: data.type,
-      message: data.message,
-      plaga: {
-        id: data.reporte.id,
-        plaga_nombre: data.reporte.plaga?.nombre || 'Plaga desconocida',
-        bancal_nombre: data.reporte.bancal?.nombre || 'Bancal desconocido',
-        observaciones: data.reporte.observaciones,
-        estado: data.reporte.estado,
-        fecha_reporte: data.reporte.fecha_reporte
-      },
-      timestamp: new Date().toISOString(),
-      source: 'plagas'
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        const newNotification: Notification = {
+          id: `plaga-${Date.now()}-${data.reporte.id}`,
+          type: data.type === 'cambio_estado_plaga' ? 'info' : 'reporte_plaga',
+          message: data.message,
+          plaga: {
+            id: data.reporte.id,
+            plaga_nombre: data.reporte.plaga.nombre,
+            bancal_nombre: data.reporte.bancal.nombre,
+            estado: data.reporte.estado,
+            observaciones: data.reporte.observaciones,
+            fecha_reporte: data.reporte.fecha_reporte
+          },
+          timestamp: new Date().toISOString(),
+          source: 'plagas'
+        };
+        addNotification(newNotification);
+      } catch (error) {
+        console.error('Error procesando notificación de reporte de plagas:', error);
+      }
     };
-    
-    console.log('Notificación creada:', newNotification); // <-- Añade este log
-    addNotification(newNotification);
-  } catch (error) {
-    console.error('Error procesando notificación de plagas:', error);
-  }
-};
 
     ws.onerror = (error) => {
-      console.error('Error en WebSocket de plagas:', error);
+      console.error('Error en WebSocket de reporte de plagas:', error);
     };
 
     ws.onclose = () => {
-      console.log('WebSocket plagas cerrado');
+      console.log('WebSocket reporte de plagas cerrado');
       if (reconnectAttemptsRef.current < maxReconnectAttempts) {
         const delay = Math.min(3000 * (reconnectAttemptsRef.current + 1), 15000);
         reconnectTimeoutRef.current = setTimeout(() => {

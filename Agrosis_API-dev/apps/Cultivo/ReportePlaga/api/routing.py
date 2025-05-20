@@ -1,6 +1,7 @@
 from django.urls import re_path
-from apps.Cultivo.ReportePlaga.api.consumer import PlagaNotificacionConsumer
+from apps.Cultivo.ReportePlaga.api.consumer import ReportePlagaNotificacionConsumer
 
 websocket_urlpatterns = [
-    re_path(r'ws/plagas/notificaciones/(?P<user_id>\d+)/$', PlagaNotificacionConsumer.as_asgi()),
+    re_path(r'ws/reportes-plagas/notificaciones/(?P<user_id>\d+)/$', 
+            ReportePlagaNotificacionConsumer.as_asgi()),
 ]

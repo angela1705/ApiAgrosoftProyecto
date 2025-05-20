@@ -18,7 +18,6 @@ class AfeccionViewSet(viewsets.ModelViewSet):
         afeccion = self.get_object()
         nuevo_estado = request.data.get('estado')
 
-        # Verifica si el estado es válido
         estados_validos = dict(Afeccion._meta.get_field('estado').choices).keys()
         if nuevo_estado not in estados_validos:
             return Response(

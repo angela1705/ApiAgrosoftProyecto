@@ -4,7 +4,7 @@ from channels.db import database_sync_to_async
 from apps.Usuarios.usuarios.models import Usuarios
 from .serializers import ReportePlagaSerializer
 
-class PlagaNotificacionConsumer(AsyncWebsocketConsumer):
+class ReportePlagaNotificacionConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs'].get('user_id')
         if not self.user_id:
@@ -16,7 +16,7 @@ class PlagaNotificacionConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        self.room_group_name = f'user_plaga_{self.user_id}'
+        self.room_group_name = f'plaga_user_{self.user_id}'
 
         await self.channel_layer.group_add(
             self.room_group_name,
