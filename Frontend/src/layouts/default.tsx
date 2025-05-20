@@ -22,12 +22,22 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
     }
   }, [isAuthenticated]);
 
-  return (
+ return (
     <div className="relative flex h-screen">
       <Navbar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className="flex flex-col flex-grow transition-all duration-300" style={{ marginLeft: isSidebarOpen ? "250px" : "70px" }}>
+      <div
+  className={`
+    flex flex-col flex-grow transition-all duration-300 
+    ml-[250px] ${!isSidebarOpen ? 'ml-[70px]' : ''} 
+    sm:ml-[${isSidebarOpen ? '250px' : '70px'}] 
+    max-sm:ml-0
+  `}
+>
+
         <Header isSidebarOpen={isSidebarOpen} />
-        <main className="container mx-auto max-w-7xl px-6 flex-grow pt-20">{children}</main>
+        <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 flex-grow pt-16 sm:pt-20">
+          {children}
+        </main>
       </div>
     </div>
   );
