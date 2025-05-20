@@ -53,24 +53,24 @@ const Notificacion: React.FC = () => {
       case 'low_stock':
         return 'orange';
       case 'reporte_plaga':
-        return 'error.dark'; // Rojo más oscuro para plagas
+        return 'error.dark'; 
       default:
         return 'text.primary';
     }
   };
 
   const renderEstadoPlaga = (estado: string) => {
-    switch (estado) {
-      case 'PE':
-        return <Chip label="Pendiente" color="warning" size="small" />;
-      case 'RE':
-        return <Chip label="Revisado" color="info" size="small" />;
-      case 'AT':
-        return <Chip label="Atendido" color="success" size="small" />;
-      default:
-        return <Chip label={estado} size="small" />;
-    }
-  };
+  switch (estado) {
+    case 'PE':
+      return <Chip label="Pendiente" color="warning" size="small" />;
+    case 'RE':
+      return <Chip label="Revisado" color="info" size="small" />;
+    case 'AT':
+      return <Chip label="Atendido" color="success" size="small" />;
+    default:
+      return <Chip label={estado} size="small" />;
+  }
+};
 
   const renderNotificationContent = (notification: Notification) => {
     if (notification.source === 'activities') {
@@ -93,38 +93,38 @@ const Notificacion: React.FC = () => {
         </>
       );
     } else if (notification.source === 'plagas') {
-      return (
-        <>
-          <Typography
-            variant="subtitle2"
-            fontWeight="bold"
-            sx={{ color: getNotificationColor(notification.type) }}
-          >
-            {notification.message}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Plaga:</strong> {notification.plaga.plaga_nombre}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Bancal:</strong> {notification.plaga.bancal_nombre}
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-            <Typography variant="body2">
-              <strong>Estado:</strong>
-            </Typography>
-            {renderEstadoPlaga(notification.plaga.estado)}
-          </Box>
-          {notification.plaga.observaciones && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>Observaciones:</strong> {notification.plaga.observaciones}
-            </Typography>
-          )}
-          <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-            {new Date(notification.plaga.fecha_reporte).toLocaleString()}
-          </Typography>
-        </>
-      );
-    } else {
+  return (
+    <>
+      <Typography
+        variant="subtitle2"
+        fontWeight="bold"
+        sx={{ color: getNotificationColor(notification.type) }}
+      >
+        {notification.message}
+      </Typography>
+      <Typography variant="body2">
+        <strong>Plaga:</strong> {notification.plaga.plaga_nombre}
+      </Typography>
+      <Typography variant="body2">
+        <strong>Bancal:</strong> {notification.plaga.bancal_nombre}
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+        <Typography variant="body2">
+          <strong>Estado:</strong>
+        </Typography>
+        {renderEstadoPlaga(notification.plaga.estado)}
+      </Box>
+      {notification.plaga.observaciones && (
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          <strong>Observaciones:</strong> {notification.plaga.observaciones}
+        </Typography>
+      )}
+      <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+        {new Date(notification.plaga.fecha_reporte).toLocaleString()}
+      </Typography>
+    </>
+  );
+}else {
       return (
         <>
           <Typography

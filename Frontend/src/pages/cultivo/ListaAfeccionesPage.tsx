@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '@/layouts/default';
-import { useAfecciones, useActualizarAfeccion, useCambiarEstadoAfeccion } from '@/hooks/cultivo/useAfecciones';
+import { useAfecciones, useActualizarAfeccion, useCambiarEstadoAfeccion, useEliminarAfeccion } from '@/hooks/cultivo/useAfecciones';
 import ReuModal from '@/components/globales/ReuModal';
 import { ReuInput } from '@/components/globales/ReuInput';
 import Tabla from '@/components/globales/Tabla'; 
 import { EditIcon, Trash2, Eye, CircleAlert, CircleCheck, CircleDot, CircleX } from 'lucide-react';
 import { AfeccionDetalle } from '@/types/cultivo/Afeccion';
 import { ModalDetalleAfeccion } from './DetalleAfeccion';
+import { useQueryClient } from '@tanstack/react-query';
+import { addToast } from '@heroui/react';
 const ListaAfecciones: React.FC = () => {
   const [selectedAfeccion, setSelectedAfeccion] = useState<AfeccionDetalle | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -15,11 +17,12 @@ const ListaAfecciones: React.FC = () => {
   const [isEstadoModalOpen, setIsEstadoModalOpen] = useState(false);
   const [nuevoEstado, setNuevoEstado] = useState<'ST' | 'EC' | 'EL'>('ST');
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
-
+  const queryClient = useQueryClient();
   const { data: afecciones, isLoading, refetch } = useAfecciones();
   const actualizarMutation = useActualizarAfeccion();
   const estadoMutation = useCambiarEstadoAfeccion();
+  const eliminarMutation = useEliminarAfeccion();
+
   const navigate = useNavigate();
 
   const columns = [
@@ -48,19 +51,37 @@ const ListaAfecciones: React.FC = () => {
   };
 
  
-  const handleConfirmEstado = () => {
-    if (selectedAfeccion) {
-      estadoMutation.mutate(
-        { id: selectedAfeccion.id, estado: nuevoEstado },
-        {
-          onSuccess: () => {
-            setIsEstadoModalOpen(false);
-            refetch();
-          },
+const handleConfirmEstado = () => {
+  if (selectedAfeccion) {
+    estadoMutation.mutate(
+      { id: selectedAfeccion.id, estado: nuevoEstado },
+      {
+        onSuccess: (data) => {
+          console.log("Estado cambiado exitosamente:", data);
+          setIsEstadoModalOpen(false);
+          // Actualiza específicamente la afección modificada
+          queryClient.setQueryData(['afecciones'], (old: AfeccionDetalle[] | undefined) => {
+            if (!old) return old;
+            return old.map(afeccion => 
+              afeccion.id === selectedAfeccion.id 
+                ? { ...afeccion, estado: nuevoEstado }
+                : afeccion
+            );
+          });
+        },
+        onError: (error) => {
+          console.error("Error al cambiar estado:", error);
+          addToast({
+            title: "Error",
+            description: error.message || "No se pudo cambiar el estado",
+            timeout: 3000,
+            color: "danger"
+          });
         }
-      );
-    }
-  };
+      }
+    );
+  }
+};
 
   const getEstadoIcon = (estado: string) => {
     switch (estado) {
@@ -134,6 +155,17 @@ const ListaAfecciones: React.FC = () => {
       </div>
     ),
   }));
+
+     const handleConfirmDelete = () => {
+      if (selectedAfeccion && selectedAfeccion.id !== undefined) {
+        eliminarMutation.mutate(selectedAfeccion.id, {
+          onSuccess: () => {
+            setIsDeleteModalOpen(false);
+            refetch();
+          },
+        });
+      }
+    };
 
   return (
     <DefaultLayout>
@@ -236,6 +268,16 @@ const ListaAfecciones: React.FC = () => {
         onOpenChange={setIsDetailModalOpen}
         afeccion={selectedAfeccion}
       />
+      <ReuModal
+      isOpen={isDeleteModalOpen}
+      onOpenChange={setIsDeleteModalOpen}
+      title="¿Estás seguro de eliminar esta afección?"
+      onConfirm={handleConfirmDelete}
+    >
+      ¿Estás seguro de que deseas eliminar esta afección?
+    </ReuModal>
+
+      
     </DefaultLayout>
   );
 };
