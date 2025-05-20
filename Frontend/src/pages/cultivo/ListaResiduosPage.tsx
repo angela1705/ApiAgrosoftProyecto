@@ -7,6 +7,8 @@ import ReuModal from '../../components/globales/ReuModal';
 import { ReuInput } from '@/components/globales/ReuInput';
 import Tabla from '@/components/globales/Tabla'; 
 import { EditIcon, Trash2 } from 'lucide-react';
+import { useCosechas } from '@/hooks/cultivo/usecosecha';
+import { useTipoResiduos } from '@/hooks/cultivo/useTipoResiduo';
 
 
 
@@ -16,20 +18,21 @@ const ListaResiduoPage: React.FC = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   
     const { data: residuos, isLoading, refetch } = useResiduos();
+    const { data: cosechas } = useCosechas();
+    const { data: tiposResiduos } = useTipoResiduos();
     const actualizarMutation = useActualizarResiduo();
     const eliminarMutation = useEliminarResiduo();
     const navigate = useNavigate();
   
-    const columns = [
-      { name: 'Nombre', uid: 'nombre' },
-      { name: 'Descripción', uid: 'descripcion' },
-      { name: 'Cantidad', uid: 'cantidad' },
-      { name: 'Fecha', uid: 'fecha' },
-      { name: 'Tipo Residuo', uid: 'tipo residuo' },
-      { name: 'Cosecha', uid: 'cosecha' },
-
-      { name: 'Acciones', uid: 'acciones' },
-    ];
+const columns = [
+    { name: 'Nombre', uid: 'nombre' },
+    { name: 'Descripción', uid: 'descripcion' },
+    { name: 'Cantidad', uid: 'cantidad' },
+    { name: 'Fecha', uid: 'fecha' },
+    { name: 'Tipo Residuo', uid: 'tipoResiduo' },
+    { name: 'Cosecha', uid: 'cosecha' },       
+    { name: 'Acciones', uid: 'acciones' },
+];
   
     const handleEdit = (residuo: Residuo) => {
       setSelectedResiduo(residuo);
@@ -52,31 +55,37 @@ const ListaResiduoPage: React.FC = () => {
       }
     };
   
-    const transformedData = (residuos ?? []).map((residuos) => ({
-      id: residuos.id?.toString() || '',
-      nombre: residuos.nombre,
-      descripcion: residuos.descripcion,
-      cosecha: residuos.id_cosecha,
-      cantidad: residuos.cantidad,
-      fecha: residuos.fecha,
-      tipoResiduo: residuos.id_tipo_residuo,
-      acciones: (
-        <>
-          <button
-            className="text-green-500 hover:underline mr-2"
-            onClick={() => handleEdit(residuos)}
-          >
-            <EditIcon size={22} color='black'/>
-          </button>
-          <button
-            className="text-red-500 hover:underline"
-            onClick={() => handleDelete(residuos)}
-          >
-          <Trash2   size={22} color='red'/>
-        </button>
-        </>
-      ),
-    }));
+const transformedData = (residuos ?? []).map((residuo) => {
+    const cosechaNombre = cosechas?.find(c => c.id === residuo.id_cosecha)?.cultivo_nombre || 'Desconocido';
+    
+    const tipoResiduoNombre = tiposResiduos?.find(t => t.id === residuo.id_tipo_residuo)?.nombre || 'Desconocido';
+
+    return {
+        id: residuo.id?.toString() || '',
+        nombre: residuo.nombre,
+        descripcion: residuo.descripcion,
+        cosecha: cosechaNombre, 
+        cantidad: residuo.cantidad,
+        fecha: residuo.fecha,
+        tipoResiduo: tipoResiduoNombre, 
+        acciones: (
+            <>
+                <button
+                    className="text-green-500 hover:underline mr-2"
+                    onClick={() => handleEdit(residuo)}
+                >
+                    <EditIcon size={22} color='black'/>
+                </button>
+                <button
+                    className="text-red-500 hover:underline"
+                    onClick={() => handleDelete(residuo)}
+                >
+                    <Trash2 size={22} color='red'/>
+                </button>
+            </>
+        ),
+    };
+});
 
 
 
@@ -88,7 +97,7 @@ const ListaResiduoPage: React.FC = () => {
               className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
                          hover:bg-green-700 transition-all duration-300 ease-in-out 
                          shadow-md hover:shadow-lg transform hover:scale-105"
-              onClick={() => navigate('/cultivo/tipoespecie')} 
+              onClick={() => navigate('/cultivo/residuo/')} 
             >
               + Registrar
             </button>

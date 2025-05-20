@@ -13,12 +13,14 @@ import ReuModal from "@/components/globales/ReuModal";
 import { Plus } from 'lucide-react';
 import { ModalCultivo } from "@/components/cultivo/ModalCultivo";
 import { ModalHerramienta } from "@/components/cultivo/ModalHerramienta";
+import { ModalInsumo } from "@/components/inventario/ModalInsumo";
 const animatedComponents = makeAnimated();
 
 interface SelectedOption {
   value: number;
   label: string;
   cantidad?: number;
+  cantidad_entregada?: number;
   devuelta?: boolean;
 }
 
@@ -53,6 +55,7 @@ const ActividadPage: React.FC = () => {
     const [openTipoActividadModal, setOpenTipoActividadModal] = useState(false);
     const [openCultivoModal, setOpenCultivoModal] = useState(false);
     const [openHerramientaModal, setOpenHerramientaModal] = useState(false);
+    const [openInsumoModal, setOpenInsumoModal] = useState(false);
 
 
     const [nuevoTipoActividad, setNuevoTipoActividad] = useState({
@@ -77,7 +80,8 @@ const ActividadPage: React.FC = () => {
     })) || [];
     const herramientaOptions = herramientas?.map(h => ({ 
         value: h.id, 
-        label: h.nombre,
+        label: `${h.nombre}`,
+        cantidad_entregada: 1,
         devuelta: false
     })) || [];
 
@@ -103,7 +107,7 @@ const ActividadPage: React.FC = () => {
             })),
             herramientas: actividad.herramientas.map(h => ({
                 herramienta: h.value,
-                entregada: true,
+                cantidad_entregada: h.cantidad_entregada || 1,
                 devuelta: false
             }))
         };
@@ -116,6 +120,14 @@ const ActividadPage: React.FC = () => {
         updatedInsumos[index] = { ...updatedInsumos[index], cantidad: value };
         setActividad({ ...actividad, insumos: updatedInsumos });
     };
+    const handleHerramientaCantidadChange = (value: number, index: number) => {
+        const updatedHerramientas = [...actividad.herramientas];
+        updatedHerramientas[index] = { 
+            ...updatedHerramientas[index], 
+            cantidad_entregada: value 
+        };
+        setActividad({ ...actividad, herramientas: updatedHerramientas });
+    };
 
     return (
         <DefaultLayout>
@@ -126,6 +138,11 @@ const ActividadPage: React.FC = () => {
              <ModalCultivo 
                     isOpen={openCultivoModal}
                     onOpenChange={setOpenCultivoModal}
+             />
+
+             <ModalInsumo
+             isOpen={openInsumoModal}
+             onOpenChange={setOpenInsumoModal}
              />
              <ReuModal
                 isOpen={openTipoActividadModal}
@@ -278,7 +295,16 @@ const ActividadPage: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Insumos Requeridos</label>
+                             <div className="flex items-center gap-2 mb-1">
+                                <label className="block text-sm font-medium text-gray-700">Insumos Requeridos</label>
+                                <button 
+                                    className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    onClick={() => setOpenInsumoModal(true)}
+                                    type="button"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                </button>
+                            </div>
                             <Select
                                 isMulti
                                 options={filteredInsumos}
@@ -311,30 +337,50 @@ const ActividadPage: React.FC = () => {
                             )}
                         </div>
 
-                        <div>
-                        <div className="flex items-center gap-2 mb-1">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
                         <label className="block text-sm font-medium text-gray-700">Herramientas</label>
-                            <button 
-                                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                onClick={() => setOpenHerramientaModal(true)}
-                                type="button"
-                            >
-                                <Plus className="h-4 w-4" />
-                            </button>
-                        </div>
-                            <Select
-                                isMulti
-                                options={filteredHerramientas}
-                                value={actividad.herramientas}
-                                onChange={(selected) => setActividad({ ...actividad, herramientas: selected as SelectedOption[] })}
-                                onInputChange={setSearchHerramienta}
-                                placeholder="Buscar herramientas..."
-                                components={animatedComponents}
-                                className="basic-multi-select"
-                                classNamePrefix="select"
-                                noOptionsMessage={() => "No hay herramientas disponibles"}
-                            />
-                        </div>
+                        <button 
+                            className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            onClick={() => setOpenHerramientaModal(true)}
+                            type="button"
+                        >
+                            <Plus className="h-4 w-4" />
+                        </button>
+                </div>
+                <Select
+                    isMulti
+                    options={filteredHerramientas}
+                    value={actividad.herramientas}
+                    onChange={(selected) => setActividad({ ...actividad, herramientas: selected as SelectedOption[] })}
+                    onInputChange={setSearchHerramienta}
+                    placeholder="Buscar herramientas..."
+                    components={animatedComponents}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    noOptionsMessage={() => "No hay herramientas disponibles"}
+                />
+
+                {actividad.herramientas.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                        {actividad.herramientas.map((herramienta, index) => (
+                            <div key={herramienta.value} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                <span className="text-sm">{herramienta.label.split('(')[0]}</span>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={herramienta.cantidad_entregada || 1}
+                                        onChange={(e) => handleHerramientaCantidadChange(Number(e.target.value), index)}
+                                        className="w-20 px-2 py-1 border rounded text-sm"
+                                        placeholder="Cantidad"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Instrucciones Adicionales</label>
