@@ -9,6 +9,10 @@ import { useTipoControl } from "@/hooks/cultivo/usetipocontrol";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
 import { Control } from "@/types/cultivo/Control";
 import { useInsumos } from "@/hooks/cultivo/useActividad";
+import { ModalInsumo } from "@/components/inventario/ModalInsumo";
+import { ModalTipoControl } from "@/components/cultivo/ModalTipoControl";
+import { ModalAfeccion } from "@/components/cultivo/ModalAfeccion";
+import { Plus } from "lucide-react";
 const ControlPage: React.FC = () => {
   const [control, setControl] = useState<Omit<Control, 'id'>>({
     afeccion_id: 0,
@@ -27,7 +31,9 @@ const ControlPage: React.FC = () => {
   const { data: usuarios } = useUsuarios();
   const mutation = useCrearControl();
   const navigate = useNavigate();
-
+  const [openInsumo, setOpenInsumo] = useState(false)
+  const [openTipoControl, setOpenTipoControl] = useState(false)
+  const [openAfeccion, setOpenAfeccion] = useState(false)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate(control);
@@ -38,6 +44,19 @@ const ControlPage: React.FC = () => {
 
   return (
     <DefaultLayout>
+      <ModalInsumo
+      isOpen={openInsumo}
+      onOpenChange={setOpenInsumo}
+      />
+      <ModalTipoControl
+      isOpen={openTipoControl}
+      onOpenChange={setOpenTipoControl}
+      />
+      <ModalAfeccion
+      isOpen={openAfeccion}
+      onOpenChange={setOpenAfeccion}
+      />
+
       <Formulario
         title="Registrar Control"
         onSubmit={handleSubmit}
@@ -45,7 +64,16 @@ const ControlPage: React.FC = () => {
         buttonText="Guardar"
       >
         <div className="col-span-1 sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Afección</label>
+           <div className="flex items-center gap-2 mb-1">
+              <label className="block text-sm font-medium text-gray-700">Afección</label>
+                  <button 
+                    className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    onClick={() => setOpenAfeccion(true)}
+                    type="button"
+                                >
+                    <Plus className="h-4 w-4" />
+                  </button>
+             </div>
           <select
             name="afeccion_id"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -61,7 +89,16 @@ const ControlPage: React.FC = () => {
         </div>
 
         <div className="col-span-1 sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Control</label>
+          <div className="flex items-center gap-2 mb-1">
+              <label className="block text-sm font-medium text-gray-700">Tipo de Control</label>
+                  <button 
+                    className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    onClick={() => setOpenTipoControl(true)}
+                    type="button"
+                                >
+                    <Plus className="h-4 w-4" />
+                  </button>
+             </div>
           <select
             name="tipo_control_id"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -77,7 +114,16 @@ const ControlPage: React.FC = () => {
         </div>
 
         <div className="col-span-1 sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+          <div className="flex items-center gap-2 mb-1">
+              <label className="block text-sm font-medium text-gray-700">Insumos Requeridos</label>
+                  <button 
+                    className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    onClick={() => setOpenInsumo(true)}
+                    type="button"
+                                >
+                    <Plus className="h-4 w-4" />
+                  </button>
+             </div>
           <select
             name="producto_id"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
