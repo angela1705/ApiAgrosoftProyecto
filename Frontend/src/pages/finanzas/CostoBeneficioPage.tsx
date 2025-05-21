@@ -3,8 +3,7 @@ import DefaultLayout from "@/layouts/default";
 import CustomSpinner from "@/components/globales/Spinner";
 import CustomCard from "@/components/globales/Card";
 import ReuModal from "@/components/globales/ReuModal";
-import { useCosechas } from "@/hooks/cultivo/usecosecha";
-import { useAnalisisPorCosecha } from "@/hooks/finanzas/useCostoBeneficio";
+import { useAnalisisPorCosecha, useAnalisisFiltrado } from "@/hooks/finanzas/useCostoBeneficio";
 import { Cosecha } from "@/types/cultivo/Cosecha";
 
 const formatNumber = (value: number | undefined): string => {
@@ -13,19 +12,18 @@ const formatNumber = (value: number | undefined): string => {
 };
 
 const CostoBeneficioPage: React.FC = () => {
-  const { 
-    data: cosechas, 
-    isLoading: loadingCosechas, 
-    error: errorCosechas 
-  } = useCosechas();
-  
   const [selectedCosecha, setSelectedCosecha] = useState<Cosecha | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  
-  const { 
-    data: analisis, 
-    isLoading: loadingAnalisis, 
-    error: errorAnalisis 
+  const [nombre, setNombre] = useState("");
+  const [fecha, setFecha] = useState("");
+
+  // Hook que filtra por nombre y fecha
+  const { data: cosechas = [], refetch, isLoading: loading, error } = useAnalisisFiltrado(nombre, fecha);
+
+  const {
+    data: analisis,
+    isLoading: loadingAnalisis,
+    error: errorAnalisis
   } = useAnalisisPorCosecha(selectedCosecha?.id || 0);
 
   const handleCardClick = (cosecha: Cosecha) => {
@@ -33,46 +31,49 @@ const CostoBeneficioPage: React.FC = () => {
     setModalOpen(true);
   };
 
-  if (loadingCosechas) {
-    return (
-      <DefaultLayout>
-        <div className="flex justify-center items-center h-screen">
-          <CustomSpinner
-            label="Cargando cosechas..."
-            color="primary"
-            variant="wave"
-            className="text-primary"
-          />
-        </div>
-      </DefaultLayout>
-    );
-  }
-
-  if (errorCosechas) {
-    return (
-      <DefaultLayout>
-        <div className="text-center py-12 text-red-500">
-          <p className="text-xl">Error al cargar las cosechas</p>
-          <p>{errorCosechas.message}</p>
-        </div>
-      </DefaultLayout>
-    );
-  }
-
   return (
     <DefaultLayout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-8">Listado de Cosechas</h1>
-        
-        {cosechas?.length === 0 ? (
+
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <input
+            type="text"
+            placeholder="Buscar por nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            className="border rounded px-3 py-2 w-full md:w-1/3"
+          />
+          <input
+            type="date"
+            value={fecha}
+            onChange={(e) => setFecha(e.target.value)}
+            className="border rounded px-3 py-2 w-full md:w-1/3"
+          />
+          <button
+            onClick={() => refetch()}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Buscar
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center">
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500">
+            Error al buscar las cosechas
+          </div>
+        ) : cosechas.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-xl text-gray-500">No hay cosechas registradas</p>
+            <p className="text-xl text-gray-500">No hay cosechas para mostrar</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {cosechas?.map((cosecha) => (
-              <div 
-                key={cosecha.id} 
+            {cosechas.map((cosecha) => (
+              <div
+                key={cosecha.id}
                 onClick={() => handleCardClick(cosecha)}
                 className="cursor-pointer hover:scale-105 transition-transform duration-200"
               >
@@ -152,21 +153,13 @@ const CostoBeneficioPage: React.FC = () => {
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-gray-600">Rentabilidad</p>
-                    <p className={`text-xl font-bold ${
-                      (analisis?.metricas.rentabilidad || 0) >= 0 
-                        ? 'text-green-600' 
-                        : 'text-red-600'
-                    }`}>
+                    <p className={`text-xl font-bold ${(analisis?.metricas.rentabilidad || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       COP {formatNumber(analisis?.metricas.rentabilidad)}
                     </p>
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-gray-600">ROI</p>
-                    <p className={`text-xl font-bold ${
-                      (analisis?.metricas.roi || 0) >= 0 
-                        ? 'text-green-600' 
-                        : 'text-red-600'
-                    }`}>
+                    <p className={`text-xl font-bold ${(analisis?.metricas.roi || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {formatNumber(analisis?.metricas.roi)}%
                     </p>
                   </div>

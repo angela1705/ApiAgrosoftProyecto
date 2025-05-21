@@ -34,7 +34,7 @@ class CostoBeneficioViewSet(viewsets.ViewSet):
         except Cosecha.DoesNotExist:
             return Response({'error': 'Cosecha no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=['get'], url_path='listar')
+    @action(detail=False, methods=['get','post'], url_path='listar')
     def listar_analisis(self, request):
         fecha = request.query_params.get('fecha')
         nombre = request.query_params.get('nombre')

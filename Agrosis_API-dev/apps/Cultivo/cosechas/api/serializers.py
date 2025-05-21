@@ -6,4 +6,4 @@ class CosechaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cosecha
-        fields = ['id', 'fecha', 'cultivo_nombre', 'unidades_de_medida']  
+        fields = '__all__'  
