@@ -1,8 +1,8 @@
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from ..models import Insumo
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 import hashlib
 from django.utils import timezone
 import json
@@ -18,7 +18,7 @@ def notify_stock_change(sender, instance, **kwargs):
 
     if instance.activo:
         if instance.cantidad <= umbral_cantidad:
-            insumo_hash = hashlib.md5(f"{instance.id}low_stock{timestamp}".encode()).hexdigest()
+            insumo_hash = hashlib.md5(f"{instance.id}low_stock".encode()).hexdigest()
             notifications.append({
                 'id': insumo_hash,
                 'type': 'low_stock',
@@ -28,7 +28,7 @@ def notify_stock_change(sender, instance, **kwargs):
                 'source': 'bodega'
             })
         if instance.fecha_caducidad and (instance.fecha_caducidad - today).days <= umbral_dias:
-            insumo_hash = hashlib.md5(f"{instance.id}expiring{timestamp}".encode()).hexdigest()
+            insumo_hash = hashlib.md5(f"{instance.id}expiring".encode()).hexdigest()
             notifications.append({
                 'id': insumo_hash,
                 'type': 'expiring',
@@ -39,9 +39,8 @@ def notify_stock_change(sender, instance, **kwargs):
             })
 
     for notif in notifications:
-        
         async_to_sync(channel_layer.group_send)(
-            f'insumo_user_{instance.created_by_id}',  
+            f'insumo_user_{instance.created_by_id}',
             {
                 'type': 'send_notification',
                 'data': notif
