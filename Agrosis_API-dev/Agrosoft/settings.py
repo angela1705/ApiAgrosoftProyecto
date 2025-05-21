@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'apps.Finanzas.salario',
     'apps.Inventario.herramientas',
     'apps.Inventario.insumos',
+    'apps.Finanzas.costo_beneficio',
     'apps.Inventario.precio_producto',
     'apps.Inventario.bodega',
     'apps.Inventario.bodega_insumo',
