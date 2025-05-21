@@ -3,8 +3,9 @@ import { ReuInput } from "../globales/ReuInput";
 import { useRegistrarPlaga } from "@/hooks/cultivo/useplaga";
 import { useTipoPlagas } from "@/hooks/cultivo/usetipoplaga";
 import { Plaga } from "@/types/cultivo/Plaga";
+import { ModalTipoPlaga } from "./ModalTipoPlaga";
 import { useState, ChangeEvent } from "react";
-
+import { Plus } from "lucide-react";
 interface ModalPlagaProps {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
@@ -22,7 +23,7 @@ interface ModalPlagaProps {
   
     const { data: tiposPlaga } = useTipoPlagas();
     const registrarPlaga = useRegistrarPlaga();
-
+    const [openTipoPlaga, setOpenTipoPlaga] = useState(false)
    
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files.length > 0) {
@@ -56,6 +57,7 @@ interface ModalPlagaProps {
 
 
     return (
+      
           <ReuModal
             title="Registrar Plaga"
             isOpen={isOpen}
@@ -64,6 +66,10 @@ interface ModalPlagaProps {
             confirmText="Guardar"
             cancelText="Cancelar"
             >
+            <ModalTipoPlaga
+              isOpen={openTipoPlaga}
+              onOpenChange={setOpenTipoPlaga}
+            />
 
           <ReuInput
             label="Nombre"
@@ -93,22 +99,30 @@ interface ModalPlagaProps {
             
           </div>
 
-          <div className="mb-4">
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-1">
             <label className="block text-sm font-medium text-gray-700">Tipo de Plaga</label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={nuevaPlaga.fk_tipo_plaga}
-              onChange={handleChange}
+            <button 
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setOpenTipoPlaga(true)}
+              type="button"
             >
-              <option value="">Seleccione un tipo de plaga</option>
-            
-              {tiposPlaga?.map((tipo) => (
-                <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
-              ))} 
-            </select>
+              <Plus className="h-4 w-4" />
+            </button>
           </div>
+          <select
+            name="fk_tipo_plaga"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={nuevaPlaga.fk_tipo_plaga}
+            onChange={handleChange}
+          >
+            <option value={0}>Seleccione un tipo de plaga</option>
+            {tiposPlaga?.map((tipo) => (
+              <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+            ))}
+          </select>
+        </div>
 
-              
           </ReuModal>    
 
     )} 
