@@ -12,26 +12,19 @@ export const useBodegaNotifications = (
   const notificationIdsRef = useRef<Set<string>>(new Set());
 
   const setupWebSocket = useCallback(() => {
-    if (!userId) {
-      console.log('No userId provided, skipping WebSocket setup');
-      return;
-    }
+    if (!userId) return;
 
     
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      console.log('WebSocket ya está abierto, omitiendo reconexión');
       return;
     }
 
-    
     if (wsRef.current) {
-      console.log('Cerrando WebSocket existente');
       wsRef.current.close();
     }
 
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const socketUrl = `${protocol}://${window.location.hostname}:8000/ws/insumo/${userId}/`;
-    console.log(`Conectando a WebSocket: ${socketUrl}`);
     const ws = new WebSocket(socketUrl);
     wsRef.current = ws;
 
@@ -43,21 +36,17 @@ export const useBodegaNotifications = (
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log('Mensaje WebSocket recibido:', data);
-
-        
         if (notificationIdsRef.current.has(data.id)) {
-          console.log('Notificación duplicada ignorada:', data.id);
           return;
         }
 
         notificationIdsRef.current.add(data.id);
         const newNotification: Notification = {
-          id: data.id || `notif-${Date.now()}-${data.insumo_id || 'insumo'}`,
+          id: data.id,
           type: data.type,
           message: data.message,
-          timestamp: new Date().toISOString(),
-          source: 'bodega',
+          timestamp: new Date(parseInt(data.timestamp)).toISOString(),
+          source: data.source,
           insumoId: data.insumo_id,
         };
         addNotification(newNotification);
@@ -70,17 +59,14 @@ export const useBodegaNotifications = (
       console.error('Error en WebSocket de insumos:', error);
     };
 
-    ws.onclose = (event) => {
-      console.log(`WebSocket cerrado, code: ${event.code}, reason: ${event.reason}`);
+    ws.onclose = () => {
+      console.log('WebSocket de insumos cerrado');
       if (reconnectAttemptsRef.current < maxReconnectAttempts) {
         const delay = Math.min(3000 * (reconnectAttemptsRef.current + 1), 15000);
-        console.log(`Reconectando en ${delay}ms (intento ${reconnectAttemptsRef.current + 1})`);
         reconnectTimeoutRef.current = setTimeout(() => {
           reconnectAttemptsRef.current++;
           setupWebSocket();
         }, delay);
-      } else {
-        console.log('Máximo de intentos de reconexión alcanzado');
       }
     };
   }, [userId, addNotification]);
@@ -96,10 +82,9 @@ export const useBodegaNotifications = (
   }, [setupWebSocket]);
 
   
-  const resetNotifications = useCallback(() => {
+  const resetNotifications = () => {
     notificationIdsRef.current.clear();
-    console.log('Notificaciones reiniciadas');
-  }, []);
+  };
 
   return { resetNotifications };
 };
