@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/button";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
@@ -113,6 +113,21 @@ const menuItems = [
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   const { expandedItems, setExpandedItems, navScrollPosition, setNavScrollPosition } = useNavbar();
   const navRef = useRef<HTMLElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar si es móvil
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   // Restaurar posición del scroll
   useEffect(() => {
@@ -149,38 +164,54 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
   };
 
   return (
-    <aside
-      className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50 ${
-        isOpen ? "w-64 p-4" : "w-20 p-2"
-      } rounded-r-2xl`}
-    >
-      {/* Header con logos y barra vertical */}
-      <div className="flex flex-col items-center gap-4">
-        <Button isIconOnly variant="light" className="mb-4" onClick={toggleSidebar}>
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </Button>
-        <div className={`flex items-center justify-center gap-4 ${!isOpen ? "hidden" : ""}`}>
-          <img src={LogoSena} alt="Logo Agrosis" className="w-28" />
-          <span className="text-gray-400 text-2xl font-light">|</span>
-          <img src={Sena} alt="Logo Sena" className="w-12" />
-        </div>
-      </div>
+    <>
+      {/* Botón de hamburguesa solo en móvil */}
+      {isMobile && (
+        <button 
+          onClick={toggleSidebar}
+          className="fixed top-4 left-4 z-50 p-2 bg-white rounded-full shadow-lg md:hidden"
+        >
+          <Menu size={24} />
+        </button>
+      )}
 
-      {/* Menú */}
-      <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
-        <div className="flex flex-col gap-6">
-          {menuItems.map((item) => (
-            <SidebarItem
-              key={item.id}
-              item={item}
-              isOpen={isOpen}
-              isExpanded={!!expandedItems[item.id]}
-              toggleExpanded={() => toggleExpanded(item.id)}
-            />
-          ))}
+      <aside
+        className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50 // Cambiado de z-40 a z-50
+          ${isOpen ? "w-64 p-4" : "w-20 p-2"}
+          ${isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : ""}
+          rounded-r-2xl`}
+        style={isMobile ? { top: '64px', height: 'calc(100vh - 64px)' } : {}}
+      >
+        {/* Header con logos y barra vertical */}
+        <div className="flex flex-col items-center gap-4">
+          {!isMobile && (
+            <Button isIconOnly variant="light" className="mb-4" onClick={toggleSidebar}>
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </Button>
+          )}
+          <div className={`flex items-center justify-center gap-4 ${!isOpen ? "hidden" : ""}`}>
+            <img src={LogoSena} alt="Logo Agrosis" className="w-28" />
+            <span className="text-gray-400 text-2xl font-light">|</span>
+            <img src={Sena} alt="Logo Sena" className="w-12" />
+          </div>
         </div>
-      </nav>
-    </aside>
+
+        {/* Menú */}
+        <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
+          <div className="flex flex-col gap-6">
+            {menuItems.map((item) => (
+              <SidebarItem
+                key={item.id}
+                item={item}
+                isOpen={isOpen}
+                isExpanded={!!expandedItems[item.id]}
+                toggleExpanded={() => toggleExpanded(item.id)}
+              />
+            ))}
+          </div>
+        </nav>
+      </aside>
+    </>
   );
 }
 

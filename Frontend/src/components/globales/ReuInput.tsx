@@ -12,7 +12,7 @@ interface ReusableInputProps {
   min?: string | number;
   max?: string | number;
   name?: string;
-  required?: boolean; 
+  required?: boolean;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => void;
@@ -33,7 +33,7 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
   onChange,
 }) => {
   return (
-    <div className="w-full">
+    <div className="w-full px-1 sm:px-0">
       <Input
         label={label}
         type={type}
@@ -46,7 +46,9 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
         min={min?.toString()}
         max={max?.toString()}
         name={name}
-        required={required}  
+        required={required}
+        className="text-sm sm:text-base"
+        labelPlacement="outside"
       />
     </div>
   );
