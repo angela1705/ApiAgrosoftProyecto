@@ -32,7 +32,7 @@ export default function SensoresPage() {
   const [selectedDataType, setSelectedDataType] = useState<string>("temperatura");
   const [selectedSensorId, setSelectedSensorId] = useState<number>(1);
   const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
-  const { sensores = [], isLoading: sensoresLoading, error: sensoresError } =
+  const { sensores, isLoading: sensoresLoading, error: sensoresError } =
     useSensoresRegistrados();
   const { isLoading: historicosLoading, error: historicosError } =
     useDatosMeteorologicosHistoricos();
@@ -43,6 +43,12 @@ export default function SensoresPage() {
     const ws = new WebSocket("ws://192.168.1.12:8000/ws/realtime/");
     ws.onopen = () => {
       console.log("Conexión WebSocket establecida");
+      addToast({
+        title: "Éxito",
+        description: "Conexión WebSocket establecida",
+        timeout: 3000,
+        color: "success",
+      });
     };
     ws.onmessage = (event) => {
       console.log("Mensaje recibido del WebSocket:", event.data);
@@ -71,6 +77,12 @@ export default function SensoresPage() {
         }
       } catch (error) {
         console.error("Error al parsear mensaje WebSocket:", error);
+        addToast({
+          title: "Error",
+          description: "Error al procesar datos en tiempo real",
+          timeout: 3000,
+          color: "danger",
+        });
       }
     };
     ws.onerror = (error) => {
@@ -78,14 +90,16 @@ export default function SensoresPage() {
       addToast({
         title: "Error",
         description: "Error en la conexión WebSocket",
+        timeout: 3000,
         color: "danger",
       });
     };
     ws.onclose = () => {
       console.log("Conexión WebSocket cerrada");
       addToast({
-        title: "Info",
+        title: "Advertencia",
         description: "Conexión WebSocket cerrada, intentando reconectar...",
+        timeout: 3000,
         color: "warning",
       });
     };
@@ -102,17 +116,25 @@ export default function SensoresPage() {
       addToast({
         title: "Éxito",
         description: `Sensor ${sensorId} ${newEnabled ? "activado" : "desactivado"} con éxito`,
+        timeout: 3000,
         color: "success",
       });
     } catch (err: any) {
       console.error("Error en toggleSensor:", err.response || err);
-      addToast({
-        title: "Error",
-        description: err.response?.data?.error || "Error al cambiar el estado del sensor",
-        color: "danger",
-      });
-      if (err.response?.status === 401) {
-        navigate("/login");
+      if (err.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "danger",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: err.response?.data?.message || "Error al cambiar el estado del sensor",
+          timeout: 3000,
+          color: "danger",
+        });
       }
     }
   };
@@ -179,9 +201,9 @@ export default function SensoresPage() {
           </p>
           <button
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            onClick={() => navigate("/login")}
+            onClick={() => window.location.reload()}
           >
-            Iniciar Sesión
+            Reintentar
           </button>
         </div>
       </DefaultLayout>
