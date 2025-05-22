@@ -12,7 +12,7 @@ from rest_framework.decorators import action
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from django.http import HttpResponse
-from datetime import datetime
+from datetime import datetime, timedelta
 from reportlab.platypus import SimpleDocTemplate
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib import colors
@@ -31,8 +31,9 @@ inicio_año = datetime(hoy.year, 1, 1)
 
 class UsuariosViewSet(ModelViewSet):
     serializer_class = UsuariosSerializer
-    queryset = Usuarios.objects.all()
-    
+    def get_queryset(self):
+        return Usuarios.objects.all()   
+     
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
 
@@ -40,13 +41,11 @@ class UsuariosViewSet(ModelViewSet):
          fecha_fin = request.GET.get('fecha_fin')
  
          if not fecha_inicio or not fecha_fin:
-             return HttpResponse("Error: Debes proporcionar 'fecha_inicio' y 'fecha_fin'", status=400)
- 
-         fecha_inicio = make_aware(inicio_año)
-         fecha_fin = make_aware(hoy)
- 
-         usuarios = Usuarios.objects.filter(date_joined__range=[fecha_inicio, fecha_fin])  
+            return HttpResponse("Error: Debes proporcionar 'fecha_inicio' y 'fecha_fin'", status=400)
 
+         fecha_inicio = make_aware(datetime.strptime(fecha_inicio, "%Y-%m-%d"))
+         fecha_fin = make_aware(datetime.strptime(fecha_fin, "%Y-%m-%d") + timedelta(days=1))
+         usuarios = self.get_queryset().filter(date_joined__range=[fecha_inicio, fecha_fin])
 
          total_usuarios = usuarios.count()
          promedio_usuarios = total_usuarios  

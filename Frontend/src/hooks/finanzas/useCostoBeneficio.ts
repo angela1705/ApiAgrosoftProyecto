@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 import {
   AnalisisCostoBeneficio,
   ResumenCosecha,
@@ -28,7 +28,7 @@ export const useAnalisisFiltrado = (nombre?: string, fecha?: string) => {
       if (nombre) params.append("nombre", nombre);
       if (fecha) params.append("fecha", fecha);
 
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `${API_URL}/costos-beneficio/listar/?${params.toString()}`,
         getTokenHeaders()
       );
@@ -43,7 +43,7 @@ export const useResumenCosechas = () => {
   return useQuery<ResumenCosecha[]>({
     queryKey: ["resumen-cosechas"],
     queryFn: async () => {
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `${API_URL}/costo-beneficio/resumen-financiero/`,
         getTokenHeaders()
       );
@@ -64,7 +64,7 @@ export const useAnalisisPorCosecha = (cosechaId: number) => {
   return useQuery<AnalisisCostoBeneficio>({
     queryKey: ["analisis-cosecha", cosechaId],
     queryFn: async () => {
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `${API_URL}/costo-beneficio/por-cosecha/${cosechaId}/`,
         getTokenHeaders()
       );
