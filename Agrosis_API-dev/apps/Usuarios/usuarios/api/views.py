@@ -190,7 +190,7 @@ class RegistroMasivoUsuariosView(APIView):
         for index, row in df.iterrows():
             fila = index + 2  
 
-            campos_requeridos = ['nombre', 'apellido', 'email','numero_documento','username']
+            campos_requeridos = ['nombre', 'apellido', 'email', 'numero_documento']
             faltantes = [campo for campo in campos_requeridos if not row.get(campo)]
 
             if faltantes:
@@ -198,14 +198,13 @@ class RegistroMasivoUsuariosView(APIView):
                     'fila': fila,
                     'errores': f"Campos vacíos: {', '.join(faltantes)}"
                 })
-                continue  
+                continue
 
             data = {
                 'nombre': row.get('nombre'),
                 'apellido': row.get('apellido'),
                 'email': row.get('email'),
                 'numero_documento': row.get('numero_documento'),
-                'username': row.get('username'),
             }
 
             serializer = RegistroSecundarioUsuarioSerializer(data=data)

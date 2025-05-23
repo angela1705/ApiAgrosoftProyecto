@@ -4,7 +4,8 @@ from apps.Usuarios.roles.models import Roles
 from apps.Usuarios.roles.api.serializer import RolSerializer
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.base_user import BaseUserManager
-
+import random
+from django.utils.text import slugify
 
 class UsuariosSerializer(serializers.ModelSerializer):
     rol = RolSerializer(read_only=True)
@@ -68,7 +69,7 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento','rol', 'password']
+        fields = ['id', 'nombre', 'apellido', 'email', 'numero_documento','rol', 'password']
 
     def create(self, validated_data):
         print("Entró al create del RegistroUsuarioSerializer")
@@ -103,6 +104,18 @@ class UsuariosManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+def generar_username_unico(base_username):
+    contador = 1
+    username_final = base_username
+
+    while Usuarios.objects.filter(username=username_final).exists():
+        username_final = f"{base_username}{contador}"
+        contador += 1
+        if contador > 999:
+            raise serializers.ValidationError("No se pudo generar un username único.")
+
+    return username_final
 
 
 class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
@@ -120,12 +133,12 @@ class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
         )]
     )
 
-    username = serializers.CharField(
-        validators=[UniqueValidator(
-            queryset=Usuarios.objects.all(),
-            message="Ya existe un usuario con ese nombre de usuario."
-        )]
-    )
+    # username = serializers.CharField(
+    #     validators=[UniqueValidator(
+    #         queryset=Usuarios.objects.all(),
+    #         message="Ya existe un usuario con ese nombre de usuario."
+    #     )]
+    # )
 
     numero_documento = serializers.IntegerField(
         validators=[UniqueValidator(
@@ -136,11 +149,17 @@ class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento', 'rol', 'password']
+        fields = ['id', 'nombre', 'apellido', 'email', 'numero_documento', 'rol', 'password']
 
     def create(self, validated_data):
-        print("Entró al create del RegistroUsuarioSerializer")
+        print("Entró al create del RegistroSecundarioUsuarioSerializer")
 
+        nombre = validated_data.get("nombre", "")
+        apellido = validated_data.get("apellido", "")
+        base_username = slugify(f"{nombre}{apellido}")  
+
+        username_generado = generar_username_unico(base_username)
+        validated_data["username"] = username_generado
         password = validated_data.pop('password', None)
         usuario = Usuarios(**validated_data)
 
@@ -150,7 +169,7 @@ class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
         if password:
             usuario.set_password(password)
         else:
-            usuario.set_unusable_password() 
+            usuario.set_unusable_password()
 
         usuario.save()
         return usuario

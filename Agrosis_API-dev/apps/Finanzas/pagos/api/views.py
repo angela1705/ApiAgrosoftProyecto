@@ -50,6 +50,8 @@ class PagoViewSet(viewsets.ModelViewSet):
             ["", Paragraph("<b>Informe de Pagos por Usuario</b>", styles['Heading2']), Paragraph(f"{datetime.today().strftime('%Y-%m-%d')}", styles['Normal'])],
             ["", "", Paragraph("Página 1 de 1", styles['Normal'])]
         ], colWidths=[60, 350, 100])
+
+        
         encabezado.setStyle(TableStyle([
             ('SPAN', (0, 0), (0, 2)),
             ('SPAN', (1, 0), (1, 1)),
@@ -59,6 +61,13 @@ class PagoViewSet(viewsets.ModelViewSet):
         ]))
         elementos.append(encabezado)
         elementos.append(Spacer(1, 15))
+
+                # Objetivo
+        objetivo_texto = "Este documento presenta un resumen detallado de los pagos registrados en el sistema, incluyendo el nombre de quien realizó el trabajo. El objetivo es proporcionar una visión general de los pagos para facilitar el análisis financiero y la toma de decisiones."
+        objetivo = Paragraph("<b>1. Objetivo</b><br/>" + objetivo_texto, styles['Normal'])
+        elementos.append(objetivo)
+        elementos.append(Spacer(1, 15))
+
 
         pagos_por_mes = (
             Pago.objects
@@ -98,6 +107,20 @@ class PagoViewSet(viewsets.ModelViewSet):
             else:
                 elementos.append(Paragraph("No hay pagos registrados en este mes.", styles['Normal']))
             elementos.append(Spacer(1, 20))
+            # Obtener datos para el resumen general
+        pagos_totales = Pago.objects.filter(fecha_calculo__range=[fecha_inicio, fecha_fin])
+        total_transacciones = pagos_totales.count()
+        ingresos_totales = pagos_totales.aggregate(suma=Sum('total_pago'))['suma'] or 0
+
+        # Agregar sección de Resumen General
+        elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading3']))
+        resumen_texto = f"""
+        <b>Período analizado:</b> {fecha_inicio.strftime('%Y-%m-%d')} al {fecha_fin.strftime('%Y-%m-%d')}<br/>
+        <b>Total de transacciones:</b> {total_transacciones}<br/>
+        <b>Ingresos totales:</b> ${ingresos_totales:,.2f}<br/>
+        """
+        elementos.append(Paragraph(resumen_texto, styles['Normal']))
+        elementos.append(Spacer(1, 15))
 
         doc.build(elementos)
         return response

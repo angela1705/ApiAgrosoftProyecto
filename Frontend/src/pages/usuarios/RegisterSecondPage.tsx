@@ -6,14 +6,12 @@ import Formulario from "@/components/globales/Formulario";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { addToast } from "@heroui/react";
 
-
 const UsuariosSecondPage: React.FC = () => {
   const [usuario, setUsuario] = useState({
     nombre: "",
     apellido: "",
     email: "",
-    username: "",
-    numero_documento: 0
+    numero_documento: 0,
   });
 
   const { registrarUsuario, isLoading, error } = useRegistrarUsuario();
@@ -22,22 +20,24 @@ const UsuariosSecondPage: React.FC = () => {
   const handleSubmit = async () => {
     const numeroStr = usuario.numero_documento.toString();
 
-  if (
-    usuario.numero_documento <= 0 ||
-    numeroStr.length < 7 ||
-    numeroStr.length > 15
-  ) {
-    addToast({
-      title: "Error",
-      description: error?.response?.data?.detail || "El número de documento debe tener entre 7 y 10 dígitos.",
-      timeout: 3000,
-      color: "danger",
-    });
-    return;
-  }
+    if (
+      usuario.numero_documento <= 0 ||
+      numeroStr.length < 7 ||
+      numeroStr.length > 15
+    ) {
+      addToast({
+        title: "Error",
+        description:
+          error?.response?.data?.detail ||
+          "El número de documento debe tener entre 7 y 10 dígitos.",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
+    }
     try {
       await registrarUsuario(usuario);
-      setUsuario({ nombre: "", apellido: "", email: "",  username: "",numero_documento:0  });
+      setUsuario({ nombre: "", apellido: "", email: "", numero_documento: 0 });
     } catch (error) {
       console.error("Error al registrar usuario:", error);
     }
@@ -71,24 +71,18 @@ const UsuariosSecondPage: React.FC = () => {
           type="email"
           value={usuario.email}
           onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
-          
         />
 
         <ReuInput
-                  label="Numero de documento"
-                  placeholder="Ingrese el numero de documento"
-                  type="number"
-                  value={usuario.numero_documento}
-                  onChange={(e) => setUsuario({ ...usuario, numero_documento: Number(e.target.value) })}
-                />
-
-        <ReuInput
-          label="Username"
-          placeholder="Ingrese el username"
-          type="text"
-          value={usuario.username}
-          onChange={(e) => setUsuario({ ...usuario, username: e.target.value })}
+          label="Número de documento"
+          placeholder="Ingrese el número de documento"
+          type="number"
+          value={usuario.numero_documento}
+          onChange={(e) =>
+            setUsuario({ ...usuario, numero_documento: Number(e.target.value) })
+          }
         />
+
         {error && <p className="text-red-500">{error}</p>}
         <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
