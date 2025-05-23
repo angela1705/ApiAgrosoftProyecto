@@ -121,6 +121,8 @@ const eliminarActividad = async (id: number) => {
     }
   
     try {
+      console.log("Actividad enviada para actualizar:", actividad);
+
       const response = await api.put(`${API_URL}${id}/`, actividad, {
         headers: { Authorization: `Bearer ${token}` },
       });

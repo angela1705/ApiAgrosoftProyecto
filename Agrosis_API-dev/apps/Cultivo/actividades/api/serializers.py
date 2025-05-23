@@ -216,3 +216,23 @@ class FinalizarActividadSerializer(serializers.ModelSerializer):
                 prestamo.save()
 
             return instance
+        
+class ActividadCostosSerializer(serializers.ModelSerializer):
+    tipo_actividad = serializers.CharField(source='tipo_actividad.nombre')
+    costo_total = serializers.SerializerMethodField()
+    desglose = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Actividad
+        fields = ['id', 'tipo_actividad', 'fecha_inicio', 'fecha_fin', 'costo_total', 'desglose']
+
+    def get_costo_total(self, obj):
+        insumos = sum(p.insumo.precio_insumo * p.cantidad_usada for p in obj.prestamos_insumos.all())
+        herramientas = sum(p.herramienta.precio * p.cantidad_entregada for p in obj.prestamos_herramientas.all())
+        return insumos + herramientas
+
+    def get_desglose(self, obj):
+        return {
+            'insumos': sum(p.insumo.precio_insumo * p.cantidad_usada for p in obj.prestamos_insumos.all()),
+            'herramientas': sum(p.herramienta.precio * p.cantidad_entregada for p in obj.prestamos_herramientas.all())
+        }
