@@ -15,13 +15,21 @@ from apps.Usuarios.usuarios.api.permissions import PermisoPorRol
 from ..models import Insumo, UnidadMedida, TipoInsumo
 from apps.Cultivo.actividades.models import Actividad
 from .serializers import InsumoSerializer, UnidadMedidaSerializer, TipoInsumoSerializer
-
+from .consumers import NOTIFICATION_CACHE
 
 class InsumoViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, PermisoPorRol]
     queryset = Insumo.objects.all()
     serializer_class = InsumoSerializer
+
+    def perform_create(self, serializer):
+        # Guardar el insumo con el usuario autenticado
+        serializer.save(_user_id=self.request.user.id)
+
+    def perform_update(self, serializer):
+        # Guardar el insumo con el usuario autenticado
+        serializer.save(_user_id=self.request.user.id)
 
     @action(detail=True, methods=["post"])
     def usar_en_actividad(self, request, pk=None):
@@ -45,6 +53,7 @@ class InsumoViewSet(ModelViewSet):
                 )
 
             insumo.cantidad -= cantidad_usada
+            insumo._user_id = request.user.id  # Pasar user_id para la señal
             insumo.save()
 
             if actividad_id:
@@ -77,6 +86,17 @@ class InsumoViewSet(ModelViewSet):
             return Response(
                 {"error": "Cantidad inválida."}, status=status.HTTP_400_BAD_REQUEST
             )
+
+    @action(detail=False, methods=["post"])
+    def mark_notification_read(self, request):
+        notification_id = request.data.get('id')
+        user_id = str(request.user.id)
+        if user_id in NOTIFICATION_CACHE and notification_id in NOTIFICATION_CACHE[user_id]:
+            del NOTIFICATION_CACHE[user_id][notification_id]
+            if not NOTIFICATION_CACHE[user_id]:
+                del NOTIFICATION_CACHE[user_id]
+            return Response({'status': 'success'})
+        return Response({'status': 'error', 'message': 'Notificación no encontrada'}, status=404)
 
     @action(detail=False, methods=["get"])
     def reporte_pdf(self, request):
