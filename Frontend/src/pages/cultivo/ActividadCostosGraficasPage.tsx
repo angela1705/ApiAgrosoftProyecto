@@ -34,20 +34,25 @@ const ActividadCostosGraficasPage: React.FC = () => {
     });
   };
 
+  // Validar que data.data existe y sea array, y filtrar elementos inválidos
+  const validItems: ActividadCosto[] = data && Array.isArray(data.data)
+    ? data.data.filter(item => item && item.actividad && item.desglose)
+    : [];
+
   const prepareBarData = (): PlotData[] => {
-    if (!data) return [];
+    if (!validItems.length) return [];
     
     return [
       {
-        x: data.data.map((item: ActividadCosto) => item.actividad),
-        y: data.data.map((item: ActividadCosto) => item.desglose.insumos),
+        x: validItems.map((item) => item.actividad),
+        y: validItems.map((item) => item.desglose.insumos),
         name: "Insumos",
         type: "bar",
         marker: { color: "rgb(55, 128, 191)" }
       },
       {
-        x: data.data.map((item: ActividadCosto) => item.actividad),
-        y: data.data.map((item: ActividadCosto) => item.desglose.herramientas),
+        x: validItems.map((item) => item.actividad),
+        y: validItems.map((item) => item.desglose.herramientas),
         name: "Herramientas",
         type: "bar",
         marker: { color: "rgb(219, 64, 82)" }
@@ -56,10 +61,10 @@ const ActividadCostosGraficasPage: React.FC = () => {
   };
 
   const preparePieData = (): PlotData[] => {
-    if (!data) return [];
+    if (!validItems.length) return [];
     
-    const actividades = data.data.map((item: ActividadCosto) => item.actividad);
-    const costosTotales = data.data.map((item: ActividadCosto) => item.costo_total);
+    const actividades = validItems.map(item => item.actividad);
+    const costosTotales = validItems.map(item => item.costo_total);
     
     return [{
       labels: actividades,
@@ -127,7 +132,8 @@ const ActividadCostosGraficasPage: React.FC = () => {
           </div>
         )}
 
-        {data && (
+        {/* Solo renderiza contenido si hay datos válidos */}
+        {validItems.length > 0 ? (
           <div className="space-y-6">
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">
@@ -167,7 +173,7 @@ const ActividadCostosGraficasPage: React.FC = () => {
               <h2 className="text-xl font-semibold mb-4">Resumen de Costos por Actividad</h2>
               
               {(() => {
-                const actividadesConsolidadas = data.data.reduce((acc: Record<string, ActividadConsolidada>, item: ActividadCosto) => {
+                const actividadesConsolidadas = validItems.reduce((acc: Record<string, ActividadConsolidada>, item: ActividadCosto) => {
                   if (!acc[item.actividad]) {
                     acc[item.actividad] = {
                       actividad: item.actividad,
@@ -186,11 +192,14 @@ const ActividadCostosGraficasPage: React.FC = () => {
 
                 const actividadesArray: ActividadConsolidada[] = Object.values(actividadesConsolidadas);
                 const totalGeneral: number = actividadesArray.reduce((sum: number, item: ActividadConsolidada) => sum + item.total, 0);
-                const actividadMasCostosa: ActividadConsolidada = actividadesArray.reduce(
-                  (max: ActividadConsolidada, item: ActividadConsolidada) => 
-                    item.total > max.total ? item : max, 
-                  actividadesArray[0]
-                );
+
+                // Manejar caso en que no haya actividades para evitar error
+                const actividadMasCostosa: ActividadConsolidada | null = actividadesArray.length > 0 
+                  ? actividadesArray.reduce(
+                      (max, item) => item.total > max.total ? item : max,
+                      actividadesArray[0]
+                    )
+                  : null;
 
                 return (
                   <>
@@ -210,8 +219,8 @@ const ActividadCostosGraficasPage: React.FC = () => {
                         insumos: item.insumos,
                         herramientas: item.herramientas,
                         total: item.total,
-                        porcentaje: ((item.total / totalGeneral) * 100).toFixed(1) + '%',
-                        esMasCostosa: item.actividad === actividadMasCostosa.actividad
+                        porcentaje: totalGeneral > 0 ? ((item.total / totalGeneral) * 100).toFixed(1) + '%' : '0%',
+                        esMasCostosa: actividadMasCostosa ? item.actividad === actividadMasCostosa.actividad : false
                       }))}
                       initialVisibleColumns={["actividad", "operaciones", "insumos", "herramientas", "total", "porcentaje"]}
                       renderCell={(item: any, columnKey: string) => {
@@ -260,15 +269,17 @@ const ActividadCostosGraficasPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="bg-red-50 p-4 rounded-lg border border-red-100">
-                        <div className="text-sm text-gray-500 mb-1">Actividad con mayor costo</div>
-                        <div className="font-bold text-red-600">
-                          {actividadMasCostosa.actividad}
+                      {actividadMasCostosa && (
+                        <div className="bg-red-50 p-4 rounded-lg border border-red-100">
+                          <div className="text-sm text-gray-500 mb-1">Actividad con mayor costo</div>
+                          <div className="font-bold text-red-600">
+                            {actividadMasCostosa.actividad}
+                          </div>
+                          <div className="text-lg">
+                            ${actividadMasCostosa.total.toLocaleString()} ({totalGeneral > 0 ? ((actividadMasCostosa.total / totalGeneral) * 100).toFixed(1) : 0}%)
+                          </div>
                         </div>
-                        <div className="text-lg">
-                          ${actividadMasCostosa.total.toLocaleString()} ({((actividadMasCostosa.total / totalGeneral) * 100).toFixed(1)}%)
-                        </div>
-                      </div>
+                      )}
 
                       <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                         <div className="text-sm text-gray-500 mb-1">Total Insumos</div>
@@ -289,6 +300,8 @@ const ActividadCostosGraficasPage: React.FC = () => {
               })()}
             </div>
           </div>
+        ) : (
+          <div className="text-center text-gray-500">No hay datos disponibles para mostrar.</div>
         )}
       </div>
     </DefaultLayout>

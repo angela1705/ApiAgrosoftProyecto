@@ -44,11 +44,7 @@ def calcular_evapotranspiracion_diaria(bancal_id, fecha, latitud=0):
         t_min=Min("temperatura")
     )
     logger.info(f"Datos agregados: {datos}")
-    logger.info(f"Registros crudos: {list(Datos_metereologicos.objects.filter(
-        fk_bancal_id=bancal_id,
-        fecha_medicion__gte=fecha_inicio,
-        fecha_medicion__lt=fecha_fin
-    ).values('temperatura', 'fecha_medicion'))}")
+    logger.info(f"Registros crudos: {list(Datos_metereologicos.objects.filter(fk_bancal_id=bancal_id, fecha_medicion__gte=fecha_inicio, fecha_medicion__lt=fecha_fin).values('temperatura', 'fecha_medicion'))}")
     if not all(datos.values()):
         missing_fields = [k for k, v in datos.items() if v is None]
         logger.warning(f"Datos incompletos: {missing_fields}")
