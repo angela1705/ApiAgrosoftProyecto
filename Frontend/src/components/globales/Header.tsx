@@ -8,8 +8,7 @@ interface HeaderProps {
   toggleSidebar: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ isSidebarOpen }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+export const Header: React.FC<HeaderProps> = ({ isSidebarOpen }) => { 
   const [isMobile, setIsMobile] = useState(false);
 
   // Detectar si es móvil
@@ -50,20 +49,6 @@ export const Header: React.FC<HeaderProps> = ({ isSidebarOpen }) => {
      
     
 
-      {/* Barra de búsqueda - se oculta en móvil cuando el sidebar está abierto */}
-      {(!isMobile || !isSidebarOpen) && (
-        <div className={`bg-white rounded-full px-4 py-2 flex items-center shadow-md ${
-          isMobile ? "w-48" : "w-72"
-        }`}>
-          <input
-            type="text"
-            className="w-full border-none outline-none text-lg px-2"
-            placeholder="Buscar..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      )}
 
       {/* Espacio flexible para empujar el UserMenu a la derecha */}
       <div className="flex-grow" />

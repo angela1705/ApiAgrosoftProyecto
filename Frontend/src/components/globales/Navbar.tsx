@@ -65,8 +65,7 @@ const menuItems = [
       { id: 22, label: "Plaga", path: "/cultivo/listarplaga/" },
       { id: 23, label: "Control", path: "/cultivo/listacontrol/" },
       { id: 24, label: "Tipo Control", path: "/cultivo/listartipocontrol/" },
-      { id: 25, label: "Afecciones", path: "/cultivo/listafecciones/" },
-      { id: 26, label: "Productos Control", path: "/cultivo/listarproductoscontrol/" },
+      { id: 25, label: "Afecciones", path: "/cultivo/listafecciones/" }, 
       { id: 27, label: "Reportar plaga", path: "/cultivo/listareporteplaga/" },
 
     ],
@@ -106,8 +105,6 @@ const menuItems = [
       { id: 43, label: "Cosechas", path: "/graficas/cosechas" },
       { id: 44, label: "Egresos", path: "/graficas/egresos" },
       { id: 45, label: "Costo actividad", path: "/graficas/actividadcosto" },
-
-
     ],
   },
 ];
@@ -167,7 +164,7 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
 
   return (
     <>
-      {/* Botón de hamburguesa solo en móvil */}
+      {/* Botón de  solo en móvil */}
       {isMobile && (
         <button 
           onClick={toggleSidebar}

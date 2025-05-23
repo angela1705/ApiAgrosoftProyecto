@@ -37,20 +37,20 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             queryset = super().get_queryset()
             logger.info(f"Total de registros en queryset: {queryset.count()}")
 
-            fecha_medicion = self.request.query_params.get('fecha_medicion', None)
-            if fecha_medicion:
+            fecha_inicio = self.request.query_params.get('fecha_inicio', None)
+            fecha_fin = self.request.query_params.get('fecha_fin', None)
+            if fecha_inicio and fecha_fin:
                 try:
-                    logger.info(f"Filtrando por fecha_medicion: {fecha_medicion}")
-                    fecha = datetime.strptime(fecha_medicion, '%Y-%m-%d')
-                    fecha_inicio = fecha
-                    fecha_fin = fecha + timedelta(days=1)
+                    logger.info(f"Filtrando por rango de fechas: {fecha_inicio} a {fecha_fin}")
+                    fecha_inicio_dt = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+                    fecha_fin_dt = datetime.strptime(fecha_fin, '%Y-%m-%d') + timedelta(days=1)
                     queryset = queryset.filter(
-                        fecha_medicion__gte=fecha_inicio,
-                        fecha_medicion__lt=fecha_fin
+                        fecha_medicion__gte=fecha_inicio_dt,
+                        fecha_medicion__lt=fecha_fin_dt
                     )
-                    logger.info(f"Registros después de filtrar por fecha: {queryset.count()}")
+                    logger.info(f"Registros después de filtrar por fechas: {queryset.count()}")
                 except ValueError as e:
-                    logger.error(f"Formato de fecha inválido: {fecha_medicion}, error: {str(e)}")
+                    logger.error(f"Formato de fecha inválido: {fecha_inicio} o {fecha_fin}, error: {str(e)}")
                     pass
 
             fk_bancal_id = self.request.query_params.get('fk_bancal_id', None)

@@ -7,6 +7,8 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { Sensor } from "@/types/iot/type";
 import { EditIcon, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { addToast } from "@heroui/react";
 
 const sensorTypes = [
   { value: "temperatura", label: "Temperatura (°C)" },
@@ -31,7 +33,7 @@ const sensorConfigurations: { [key: string]: { unidad_medida: string; medida_min
 };
 
 export default function ListarSensores() {
-  const { sensores, isLoading, error, updateSensor, deleteSensor } = useSensoresRegistrados();
+  const { sensores, isLoading, error, updateSensor, deleteSensor, toggleSensor } = useSensoresRegistrados();
   const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -42,6 +44,7 @@ export default function ListarSensores() {
     { name: "Nombre", uid: "nombre" },
     { name: "Tipo", uid: "tipo_sensor" },
     { name: "Unidad", uid: "unidad_medida" },
+    { name: "Estado", uid: "estado" },
     { name: "Acciones", uid: "acciones" },
   ];
 
@@ -51,15 +54,51 @@ export default function ListarSensores() {
       nombre: sensor.nombre,
       tipo_sensor: sensorTypes.find((type) => type.value === sensor.tipo_sensor)?.label || sensor.tipo_sensor,
       unidad_medida: sensor.unidad_medida,
+      estado: (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            sensor.estado === "activo"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {sensor.estado === "activo" ? "Activo" : "Inactivo"}
+        </span>
+      ),
       acciones: (
-        <>
-          <button className="mr-2" onClick={() => handleEdit(sensor)}>
-            <EditIcon size={22} color="black" />
-          </button>
-          <button onClick={() => handleDelete(sensor)}>
-            <Trash2 size={22} color="red" />
-          </button>
-        </>
+        <div className="flex items-center gap-2">
+          <motion.button
+            onClick={() => handleEdit(sensor)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <EditIcon size={20} color="black" />
+          </motion.button>
+          <motion.button
+            onClick={() => handleDelete(sensor)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Trash2 size={20} color="red" />
+          </motion.button>
+          <motion.label
+            className="flex items-center cursor-pointer"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <input
+              type="checkbox"
+              checked={sensor.estado === "activo"}
+              onChange={() =>
+                handleToggleSensor(
+                  sensor.id,
+                  sensor.estado === "activo" ? "inactivo" : "activo"
+                )
+              }
+              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+          </motion.label>
+        </div>
       ),
     }));
   }, [sensores]);
@@ -72,6 +111,39 @@ export default function ListarSensores() {
   const handleDelete = (sensor: Sensor) => {
     setSelectedSensor(sensor);
     setIsDeleteModalOpen(true);
+  };
+
+  const handleToggleSensor = (sensorId: number, newEstado: string) => {
+    toggleSensor.mutate(
+      { sensorId, newEstado },
+      {
+        onSuccess: () => {
+          addToast({
+            title: "Éxito",
+            description: `Sensor ${sensorId} ${newEstado === "activo" ? "activado" : "desactivado"} con éxito`,
+            timeout: 3000,
+            color: "success",
+          });
+        },
+        onError: (err: any) => {
+          if (err.response?.status === 403) {
+            addToast({
+              title: "Acceso denegado",
+              description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+              timeout: 3000,
+              color: "warning",
+            });
+          } else {
+            addToast({
+              title: "Error",
+              description: err.response?.data?.message || "Error al cambiar el estado del sensor",
+              timeout: 3000,
+              color: "danger",
+            });
+          }
+        },
+      }
+    );
   };
 
   const handleConfirmDelete = () => {
@@ -133,7 +205,7 @@ export default function ListarSensores() {
             <p className="text-red-500 text-center">Error: {error.message}</p>
           ) : (
             <>
-              <Tabla columns={columns} data={formattedData} />
+              <Tabla columns={columns} data={formattedData} responsiveColumns={["nombre", "estado"]} />
               {sensores.length === 0 && (
                 <p className="text-gray-600 text-center mt-4">No hay sensores registrados</p>
               )}
