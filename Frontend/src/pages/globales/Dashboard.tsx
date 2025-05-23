@@ -3,13 +3,13 @@ import DefaultLayout from "@/layouts/default";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import CustomSpinner from "@/components/globales/Spinner";
-import { useVenta } from "@/hooks/finanzas/useVenta"; // Usamos useVenta para calcular ganancias
+import { useVenta } from "@/hooks/finanzas/useVenta"; 
 import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorologicosHistoricos";
 import { useActividades } from "@/hooks/cultivo/useActividad";
 import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
 import { useInsumos } from "@/hooks/inventario/useInsumo";
 import { FaTemperatureHigh, FaTint, FaSun, FaCloudRain, FaWind, FaCompass, FaVial } from "react-icons/fa";
-import { SensorData } from "@/types/iot/type"; // Importamos directamente desde los tipos
+import { SensorData } from "@/types/iot/type";  
 import { Sensor } from "@/types/iot/type";
 
 // Tipos de datos para los gráficos

@@ -6,8 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { Sensor, SensorData } from "@/types/iot/type";
 import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useQueryClient } from "@tanstack/react-query";
-import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 
@@ -32,12 +30,9 @@ export default function SensoresPage() {
   const [selectedDataType, setSelectedDataType] = useState<string>("temperatura");
   const [selectedSensorId, setSelectedSensorId] = useState<number>(1);
   const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
-  const { sensores, isLoading: sensoresLoading, error: sensoresError } =
-    useSensoresRegistrados();
-  const { isLoading: historicosLoading, error: historicosError } =
-    useDatosMeteorologicosHistoricos();
+  const { sensores, isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
+  const { isLoading: historicosLoading, error: historicosError } = useDatosMeteorologicosHistoricos();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     const ws = new WebSocket("ws://192.168.1.12:8000/ws/realtime/");
@@ -106,39 +101,6 @@ export default function SensoresPage() {
     return () => ws.close();
   }, [sensores]);
 
-  const toggleSensor = async (sensorId: number, currentEnabled: boolean) => {
-    try {
-      const newEnabled = !currentEnabled;
-      await api.patch(`/iot/sensores/${sensorId}/`, {
-        estado: newEnabled ? "activo" : "inactivo",
-      });
-      await queryClient.invalidateQueries({ queryKey: ["sensores"] });
-      addToast({
-        title: "Éxito",
-        description: `Sensor ${sensorId} ${newEnabled ? "activado" : "desactivado"} con éxito`,
-        timeout: 3000,
-        color: "success",
-      });
-    } catch (err: any) {
-      console.error("Error en toggleSensor:", err.response || err);
-      if (err.response?.status === 403) {
-        addToast({
-          title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
-          timeout: 3000,
-          color: "danger",
-        });
-      } else {
-        addToast({
-          title: "Error",
-          description: err.response?.data?.message || "Error al cambiar el estado del sensor",
-          timeout: 3000,
-          color: "danger",
-        });
-      }
-    }
-  };
-
   const handleDataTypeClick = (type: { key: string; sensorId: number }) => {
     setSelectedDataType(type.key);
     setSelectedSensorId(type.sensorId);
@@ -179,8 +141,6 @@ export default function SensoresPage() {
       }),
       value: dato[selectedDataType as keyof SensorData] ?? 0,
     }));
-
-  const selectedSensor = sensores.find((s: Sensor) => s.id === selectedSensorId);
 
   if (sensoresLoading || historicosLoading) {
     return (
@@ -229,6 +189,15 @@ export default function SensoresPage() {
             </motion.button>
           </div>
 
+          {sensores.every((s: Sensor) => s.estado === "inactivo") && (
+            <p className="text-gray-600 text-center mb-6">
+              No hay sensores activos. Actívalos en la{" "}
+              <a href="/iot/listar-sensores" className="text-blue-500 underline">
+                lista de sensores
+              </a>.
+            </p>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {dataTypes.map((type, index) => {
               const sensor = sensores.find((s: Sensor) => s.id === type.sensorId);
@@ -252,7 +221,8 @@ export default function SensoresPage() {
                 >
                   <h3 className="text-lg font-semibold">{type.label}</h3>
                   <p className="text-2xl">
-                    {latestData?.[type.key as keyof SensorData] ?? "N/A"} {type.key === "temperatura" ? "°C" : "%"}
+                    {latestData?.[type.key as keyof SensorData] ?? "N/A"}{" "}
+                    {type.key === "temperatura" ? "°C" : "%"}
                   </p>
                 </motion.div>
               );
@@ -295,37 +265,6 @@ export default function SensoresPage() {
               ))}
             </div>
           </motion.div>
-
-          {selectedSensor && (
-            <motion.div
-              className="bg-white p-6 rounded-lg shadow-md mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                Control de Sensor - {selectedSensor.nombre}
-              </h3>
-              <motion.button
-                className={`px-4 py-2 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg ${
-                  selectedSensor.estado === "activo" ? "bg-red-600" : "bg-green-600"
-                }`}
-                onClick={() =>
-                  toggleSensor(selectedSensor.id, selectedSensor.estado === "activo")
-                }
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor:
-                    selectedSensor.estado === "activo" ? "#dc2626" : "#059669",
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {selectedSensor.estado === "activo"
-                  ? "Deshabilitar Sensor"
-                  : "Habilitar Sensor"}
-              </motion.button>
-            </motion.div>
-          )}
 
           <motion.div
             className="bg-white p-6 rounded-lg shadow-md mb-6"
