@@ -8,29 +8,29 @@ import hashlib
 
 User = get_user_model()
 
+# Caché en memoria para notificaciones
+NOTIFICATION_CACHE = {}  # {user_id: {notification_id: notification_data}}
+
 class InsumoConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs'].get('user_id')
         if not self.user_id:
-            print("No user_id provided, closing connection")
+            print("No se proporcionó user_id, cerrando conexión")
             await self.close()
             return
 
-        if self.user_id == 'admin':
-            self.room_group_name = 'insumo_admin_group'
-        else:
-            try:
-                self.user_id = int(self.user_id)
-                user_exists = await self.check_user_exists(self.user_id)
-                if not user_exists:
-                    print(f"User {self.user_id} does not exist, closing connection")
-                    await self.close()
-                    return
-                self.room_group_name = f'insumo_user_{self.user_id}'
-            except (ValueError, TypeError) as e:
-                print(f"Invalid user_id: {e}, closing connection")
+        try:
+            self.user_id = int(self.user_id)
+            user_exists = await self.check_user_exists(self.user_id)
+            if not user_exists:
+                print(f"El usuario {self.user_id} no existe, cerrando conexión")
                 await self.close()
                 return
+            self.room_group_name = f'insumo_user_{self.user_id}'
+        except (ValueError, TypeError) as e:
+            print(f"user_id inválido: {e}, cerrando conexión")
+            await self.close()
+            return
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
@@ -79,17 +79,28 @@ class InsumoConsumer(AsyncWebsocketConsumer):
                 })
         return notifications
 
+    def get_existing_notifications(self):
+        return NOTIFICATION_CACHE.get(self.user_id, {})
+
+    def save_notification(self, notification):
+        if self.user_id not in NOTIFICATION_CACHE:
+            NOTIFICATION_CACHE[self.user_id] = {}
+        NOTIFICATION_CACHE[self.user_id][notification['id']] = notification
+
     async def send_initial_notifications(self):
         try:
             notifications = await self.check_insumos()
+            existing_notifications = self.get_existing_notifications()
             for notif in notifications:
-                await self.send_notification({'data': notif})
+                if notif['id'] not in existing_notifications:
+                    self.save_notification(notif)
+                    await self.send_notification({'data': notif})
         except Exception as e:
-            print(f"Error in send_initial_notifications: {e}")
+            print(f"Error en send_initial_notifications: {e}")
 
     async def send_notification(self, event):
         try:
             await self.send(text_data=json.dumps(event['data']))
             print(f"Notificación enviada: {event['data']}")
         except Exception as e:
-            print(f"Error sending notification: {e}")
+            print(f"Error enviando notificación: {e}")
