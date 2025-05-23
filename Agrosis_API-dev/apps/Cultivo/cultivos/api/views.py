@@ -32,7 +32,7 @@ class CultivoViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(activo=True)
         return queryset
     
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'],url_path='reporte_pdf')
     def reporte_cultivos_activos(self, request):
         fecha_inicio = request.GET.get('fecha_inicio')
         fecha_fin = request.GET.get('fecha_fin')
