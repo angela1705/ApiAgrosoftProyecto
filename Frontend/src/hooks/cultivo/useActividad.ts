@@ -170,7 +170,7 @@ export const useActualizarActividad = () => {
         mutationFn: ({ id, actividad }: { id: number; actividad: Actividad }) => actualizarActividad(id, actividad),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["actividades"] });
-            addToast({ title: "Éxito", description: "Actividad actualizada con éxito", timeout: 3000 });
+            addToast({ title: "Éxito", description: "Actividad actualizada con éxito", color:"success", timeout: 3000 });
         },
       onError: (error: any) => {
         if (error.response?.status === 403) {

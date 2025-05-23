@@ -104,7 +104,7 @@ const menuItems = [
       { id: 42, label: "Ingresos", path: "/graficas/ingresos" },
       { id: 43, label: "Cosechas", path: "/graficas/cosechas" },
       { id: 44, label: "Egresos", path: "/graficas/egresos" },
-
+      { id: 45, label: "Costo actividad", path: "/graficas/actividadcosto" },
     ],
   },
 ];

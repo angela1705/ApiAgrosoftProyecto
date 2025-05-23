@@ -84,21 +84,31 @@ const Notificacion: React.FC = () => {
     setUnreadCount(0);
   }, []);
 
-  const deleteNotification = useCallback((id: string) => {
-    setNotifications(prev => {
-      const notificationToDelete = prev.find(n => n.id === id);
-      const updatedNotifications = prev.filter(n => n.id !== id);
-      if (notificationToDelete && !notificationToDelete.read) {
-        setUnreadCount(prevUnread => Math.max(0, prevUnread - 1));
-      }
-      return updatedNotifications;
-    });
-  }, []);
+ const deleteNotification = useCallback((id: string) => {
+  setNotifications(prev => {
+    const notificationToDelete = prev.find(n => n.id === id);
+    const updatedNotifications = prev.filter(n => n.id !== id);
+    
+    if (notificationToDelete && !notificationToDelete.read) {
+      setUnreadCount(prevUnread => Math.max(0, prevUnread - 1));
+    }
+    
+    if (user?.id) {
+      localStorage.setItem(`notifications_${user.id}`, JSON.stringify(updatedNotifications));
+    }
+    
+    return updatedNotifications;
+  });
+}, [user?.id]);  
 
-  const clearAllNotifications = useCallback(() => {
-    setNotifications([]);
-    setUnreadCount(0);
-  }, []);
+const clearAllNotifications = useCallback(() => {
+  setNotifications([]);
+  setUnreadCount(0);
+  
+  if (user?.id) {
+    localStorage.removeItem(`notifications_${user.id}`);
+  }
+}, [user?.id]); 
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
