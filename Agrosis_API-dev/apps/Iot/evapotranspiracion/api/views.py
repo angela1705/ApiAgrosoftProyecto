@@ -1,3 +1,4 @@
+# apps/Iot/evapotranspiracion/api/views.py
 from rest_framework import viewsets, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -5,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime, timedelta
-from django.db.models import Avg
+from django.db.models import Max, Min
 import logging
 
 from apps.Iot.evapotranspiracion.models import Evapotranspiracion
@@ -27,7 +28,7 @@ class EvapotranspiracionViewSet(viewsets.ModelViewSet):
     def calcular(self, request):
         """
         POST /api/iot/evapotranspiracion/calcular/
-        body: { fk_bancal_id, fecha: 'YYYY-MM-DD', latitud?, altitud? }
+        body: { fk_bancal_id, fecha: 'YYYY-MM-DD', latitud? }
         """
         bancal_id = request.data.get("fk_bancal_id")
         if not bancal_id:
@@ -48,29 +49,34 @@ class EvapotranspiracionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        latitud = request.data.get("latitud", 0)
-        altitud = request.data.get("altitud", 0)
+        latitud = float(request.data.get("latitud", 0))
         
-        ETo = calcular_evapotranspiracion_diaria(bancal_id, fecha_dt, latitud, altitud)
+        ETo = calcular_evapotranspiracion_diaria(bancal_id, fecha_dt, latitud)
         if ETo is None:
             datos = Datos_metereologicos.objects.filter(
                 fk_bancal_id=bancal_id,
                 fecha_medicion__gte=datetime.combine(fecha_dt, datetime.min.time()),
                 fecha_medicion__lt=datetime.combine(fecha_dt, datetime.min.time()) + timedelta(days=1)
             ).aggregate(
-                temperatura=Avg("temperatura"),
-                humedad_ambiente=Avg("humedad_ambiente"),
-                luminosidad=Avg("luminosidad"),
-                velocidad_viento=Avg("velocidad_viento")
+                t_max=Max("temperatura"),
+                t_min=Min("temperatura")
             )
-            missing_fields = [k for k, v in datos.items() if v is None]
-            logger.warning(f"Datos insuficientes para bancal_id={bancal_id}, fecha={fecha_dt}, faltan: {missing_fields}")
+            missing_fields = []
+            if datos["t_max"] is None:
+                missing_fields.append("t_max")
+            if datos["t_min"] is None:
+                missing_fields.append("t_min")
+            error_message = (
+                f"No hay datos suficientes para calcular la evapotranspiración. Campos faltantes: {missing_fields}"
+                if missing_fields
+                else "Error en el cálculo de evapotranspiración. Revise los datos meteorológicos."
+            )
+            logger.warning(f"Datos insuficientes para bancal_id={bancal_id}, fecha={fecha_dt}, mensaje: {error_message}")
             return Response(
-                {"error": f"No hay datos suficientes para calcular la evapotranspiración. Campos faltantes: {missing_fields}"},
+                {"error": error_message},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Guardar o actualizar en la tabla Evapotranspiracion
         try:
             evap, created = Evapotranspiracion.objects.update_or_create(
                 fk_bancal_id=bancal_id,

@@ -8,7 +8,7 @@ import { addToast } from "@heroui/react";
 import api from "@/components/utils/axios";
 import CustomSpinner from "@/components/globales/Spinner";
 import { motion } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, RefreshCw } from "lucide-react";
 
 interface Bancal {
   id: number;
@@ -21,7 +21,7 @@ interface EvapotranspiracionData {
   id: number;
   fk_bancal: number;
   fecha: string;
-  valor: number;
+  valor: string; // El backend devuelve string, por ejemplo "7.13"
   creado: string;
 }
 
@@ -31,6 +31,7 @@ const fetchBancales = async (): Promise<Bancal[]> => {
   const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
     headers: { Authorization: `Bearer ${token}` },
   });
+  console.log("Bancales recibidos:", response.data);
   return response.data;
 };
 
@@ -40,6 +41,7 @@ const fetchEvapotranspiracion = async (): Promise<EvapotranspiracionData[]> => {
   const response = await api.get("http://127.0.0.1:8000/iot/evapotranspiracion/", {
     headers: { Authorization: `Bearer ${token}` },
   });
+  console.log("Datos de evapotranspiración recibidos:", response.data);
   return response.data;
 };
 
@@ -47,7 +49,6 @@ const calcularEvapotranspiracion = async (data: {
   fk_bancal_id: number;
   fecha: string;
   latitud: number;
-  altitud: number;
 }) => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
@@ -66,13 +67,11 @@ export default function EvapotranspiracionPage() {
     fk_bancal_id: "",
     fecha: "",
     latitud: "",
-    altitud: "",
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Consulta para obtener bancales
   const {
     data: bancales = [],
     isPending: isPendingBancales,
@@ -82,21 +81,22 @@ export default function EvapotranspiracionPage() {
     queryFn: fetchBancales,
   });
 
-  // Consulta para obtener datos de evapotranspiración registrados
   const {
     data: evapotranspiracionData = [],
     isPending: isPendingEvapotranspiracion,
     error: errorEvapotranspiracion,
+    refetch,
   } = useQuery<EvapotranspiracionData[], Error>({
     queryKey: ["evapotranspiracion"],
     queryFn: fetchEvapotranspiracion,
   });
 
-  // Mutación para calcular evapotranspiración
   const mutation = useMutation({
     mutationFn: calcularEvapotranspiracion,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["evapotranspiracion"] });
+    onSuccess: async (data) => {
+      console.log("Mutación exitosa, datos:", data);
+      await queryClient.invalidateQueries({ queryKey: ["evapotranspiracion"] });
+      await refetch(); // Forzar recarga de datos
       addToast({
         title: "Éxito",
         description: "Evapotranspiración calculada con éxito",
@@ -104,6 +104,7 @@ export default function EvapotranspiracionPage() {
       });
     },
     onError: (err: any) => {
+      console.error("Error en mutación:", err);
       if (err.response?.status === 401) {
         addToast({
           title: "Sesión expirada",
@@ -122,7 +123,6 @@ export default function EvapotranspiracionPage() {
     },
   });
 
-  // Manejar cambio de bancal (autocompletar latitud/altitud)
   const handleBancalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const bancalId = e.target.value;
     const selectedBancal = bancales.find((bancal) => bancal.id === Number(bancalId));
@@ -132,13 +132,9 @@ export default function EvapotranspiracionPage() {
       latitud: selectedBancal?.posY
         ? selectedBancal.posY.toString()
         : prev.latitud || "0",
-      altitud: selectedBancal?.posX
-        ? selectedBancal.posX.toString()
-        : prev.altitud || "0",
     }));
   };
 
-  // Manejar cambios en inputs
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -150,7 +146,6 @@ export default function EvapotranspiracionPage() {
     }));
   };
 
-  // Enviar formulario
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Formulario enviado:", formData);
@@ -166,16 +161,13 @@ export default function EvapotranspiracionPage() {
       fk_bancal_id: Number(formData.fk_bancal_id),
       fecha: formData.fecha,
       latitud: Number(formData.latitud) || 0,
-      altitud: Number(formData.altitud) || 0,
     });
   };
 
-  // Alternar visibilidad del formulario
   const toggleForm = () => {
     setIsFormOpen((prev) => !prev);
   };
 
-  // Columnas para la tabla
   const columns = [
     { name: "ID", uid: "id" },
     { name: "Bancal", uid: "fk_bancal" },
@@ -184,16 +176,21 @@ export default function EvapotranspiracionPage() {
     { name: "Creado", uid: "creado" },
   ];
 
-  // Datos formateados para la tabla
   const tableData = useMemo(() => {
-    return evapotranspiracionData.map((dato: EvapotranspiracionData, index) => ({
-      id: `${dato.id}-${index}`,
-      fk_bancal:
-        bancales.find((b) => b.id === dato.fk_bancal)?.nombre || dato.fk_bancal,
-      fecha: dato.fecha,
-      valor: dato.valor,
-      creado: new Date(dato.creado).toLocaleString(),
-    }));
+    const result = evapotranspiracionData.map((dato: EvapotranspiracionData, index) => {
+      const mappedData = {
+        id: `${dato.id}-${index}`,
+        fk_bancal:
+          bancales.find((b) => b.id === dato.fk_bancal)?.nombre || `Bancal ${dato.fk_bancal}`,
+        fecha: dato.fecha,
+        valor: parseFloat(dato.valor).toFixed(2), // Convertir string a número
+        creado: new Date(dato.creado).toLocaleString(),
+      };
+      console.log("Dato mapeado:", mappedData);
+      return mappedData;
+    });
+    console.log("tableData generado:", result);
+    return result;
   }, [evapotranspiracionData, bancales]);
 
   if (isPendingBancales || isPendingEvapotranspiracion) {
@@ -229,7 +226,7 @@ export default function EvapotranspiracionPage() {
           Evapotranspiración
         </h1>
 
-        <div className="mb-6 flex justify-start">
+        <div className="mb-6 flex justify-start space-x-4">
           <motion.button
             className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
             onClick={toggleForm}
@@ -247,6 +244,15 @@ export default function EvapotranspiracionPage() {
                 Nuevo Cálculo
               </>
             )}
+          </motion.button>
+          <motion.button
+            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition duration-300"
+            onClick={() => refetch()}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <RefreshCw className="mr-2" size={16} />
+            Recargar Datos
           </motion.button>
         </div>
 
@@ -304,7 +310,6 @@ export default function EvapotranspiracionPage() {
                 onChange={handleChange}
                 required
                 min="2000-01-01"
-                max="2025-05-15"
               />
               <ReuInput
                 label="Latitud"
@@ -314,14 +319,6 @@ export default function EvapotranspiracionPage() {
                 value={formData.latitud}
                 onChange={handleChange}
                 placeholder="Ej: 4.61"
-              />
-              <ReuInput
-                label="Altitud (metros)"
-                type="number"
-                name="altitud"
-                value={formData.altitud}
-                onChange={handleChange}
-                placeholder="Ej: 2600"
               />
               <motion.button
                 type="submit"
