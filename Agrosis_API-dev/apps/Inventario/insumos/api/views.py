@@ -23,13 +23,13 @@ class InsumoViewSet(ModelViewSet):
     queryset = Insumo.objects.all()
     serializer_class = InsumoSerializer
 
-    def perform_create(self, serializer):
+    # def perform_create(self, serializer):
         # Guardar el insumo con el usuario autenticado
-        serializer.save(_user_id=self.request.user.id)
+        # serializer.save(_user_id=self.request.user.id)
 
-    def perform_update(self, serializer):
+    # def perform_update(self, serializer):
         # Guardar el insumo con el usuario autenticado
-        serializer.save(_user_id=self.request.user.id)
+        # serializer.save(_user_id=self.request.user.id)
 
     @action(detail=True, methods=["post"])
     def usar_en_actividad(self, request, pk=None):
