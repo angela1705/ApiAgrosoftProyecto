@@ -40,7 +40,7 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
         placeholder={placeholder}
         variant={variant}
         radius={radius}
-        value={value.toString()}
+        value={value != null ? value.toString() : ""}
         onChange={onChange}
         step={step}
         min={min?.toString()}
