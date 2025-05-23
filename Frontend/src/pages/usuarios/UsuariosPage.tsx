@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
 import { Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom"; // Importar useNavigate
+import { useNavigate } from "react-router-dom"; 
 import Tabla from "@/components/globales/Tabla";
 import { useAuth } from "@/context/AuthContext";
 import ReuModal from "@/components/globales/ReuModal";
@@ -46,10 +46,13 @@ const UsuariosPage: React.FC = () => {
     { name: "Acciones", uid: "acciones" },
   ];
 
-  const handleEdit = (usuario: any) => {
-    setSelectedUsuario(usuario);
-    setIsEditModalOpen(true);
-  };
+const handleEdit = (usuario: any) => {
+  setSelectedUsuario({
+    ...usuario,
+    rol_id: usuario.rol?.id || "", // Extraemos el ID del rol para que lo tome el select
+  });
+  setIsEditModalOpen(true);
+};
 
   const handleDelete = (usuario: any) => {
     setSelectedUsuario(usuario);
@@ -78,6 +81,7 @@ const UsuariosPage: React.FC = () => {
       numero_documento: usuario.numero_documento,
       username: usuario.username || "N/A",
       rol: usuario.rol?.rol || "Sin rol",
+      
       acciones: (
         <>
           <button className="mr-2" onClick={() => handleEdit(usuario)}>

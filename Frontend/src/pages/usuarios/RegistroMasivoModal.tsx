@@ -11,7 +11,7 @@ interface RegistroMasivoModalProps {
 const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({ isOpen, onOpenChange }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [usuarios] = useState([
-    { nombre: '', apellido: '', username: '', email: '', numero_documento:'' }
+    { nombre: '', apellido: '',  email: '', numero_documento:'' }
   ]);
 
   const handleSeleccionarArchivo = () => {
@@ -56,10 +56,9 @@ const handleArchivoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
 const exportarAExcel = () => {
   try {
-    const hoja = usuarios.map(({ nombre, apellido, username, email, numero_documento  }) => ({
+    const hoja = usuarios.map(({ nombre, apellido,  email, numero_documento  }) => ({
       nombre,
       apellido,
-      username,
       email,
       numero_documento,
     }));
