@@ -18,7 +18,7 @@ from apps.Cultivo.actividades.models import Actividad, PrestamoHerramienta, Pres
 from rest_framework.response import Response
 from rest_framework import status  
 from apps.Cultivo.actividades.api.serializers import FinalizarActividadSerializer
-from django.db.models import F
+from django.db.models import F, Prefetch
 
 class ActividadViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -56,11 +56,22 @@ class ActividadViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
     def get_queryset(self):
+        queryset = Actividad.objects.all()
+        
+        # Optimización para reporte PDF
         if self.action == 'reporte_pdf':
-            return Actividad.objects.filter(estado='COMPLETADA').order_by('-fecha_fin')
-        return Actividad.objects.all().order_by('-fecha_fin')
+            queryset = queryset.filter(estado='COMPLETADA')
+        
+        # Optimización para gráficos de costos
+        elif self.action == 'grafico_costos':
+            queryset = queryset.select_related('tipo_actividad', 'cultivo').prefetch_related(
+                Prefetch('prestamos_insumos', queryset=PrestamoInsumo.objects.select_related('insumo')),
+                Prefetch('prestamos_herramientas', queryset=PrestamoHerramienta.objects.select_related('herramienta'))
+            )
+        
+        # Ordenamiento por defecto
+        return queryset.order_by('-fecha_fin')
     
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
@@ -167,3 +178,53 @@ class ActividadViewSet(viewsets.ModelViewSet):
 
         doc.build(elementos)
         return response
+    
+    @action(detail=False, methods=['get'])
+    def grafico_costos(self, request):
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_fin = request.query_params.get('fecha_fin')
+        tipo_grafico = request.query_params.get('tipo_grafico', 'barra')
+        
+        queryset = Actividad.objects.all()
+        
+        if fecha_inicio and fecha_fin:
+            queryset = queryset.filter(
+                fecha_inicio__gte=fecha_inicio,
+                fecha_fin__lte=fecha_fin
+            )
+        
+        data = []
+        for actividad in queryset:
+            # Calcular costos de insumos
+            costo_insumos = sum(
+                prestamo.insumo.precio_insumo * prestamo.cantidad_usada 
+                for prestamo in actividad.prestamos_insumos.all()
+            )
+            
+            # Calcular costos de herramientas (usando precio como costo de uso)
+            costo_herramientas = sum(
+                prestamo.herramienta.precio * prestamo.cantidad_entregada
+                for prestamo in actividad.prestamos_herramientas.all()
+            )
+            
+            total = costo_insumos + costo_herramientas
+            
+            data.append({
+                'actividad': actividad.tipo_actividad.nombre,
+                'costo_total': float(total),
+                'desglose': {
+                    'insumos': float(costo_insumos),
+                    'herramientas': float(costo_herramientas)
+                },
+                'fecha_inicio': actividad.fecha_inicio.strftime('%Y-%m-%d'),
+                'fecha_fin': actividad.fecha_fin.strftime('%Y-%m-%d')
+            })
+        
+        return Response({
+            'tipo_grafico': tipo_grafico,
+            'periodo': {
+                'fecha_inicio': fecha_inicio,
+                'fecha_fin': fecha_fin
+            },
+            'data': data
+        })

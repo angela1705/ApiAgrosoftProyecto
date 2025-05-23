@@ -14,9 +14,14 @@ export interface PlagaData {
   fecha_reporte: string;
 }
 
-export type NotificationType = 
-  | "info" | "warning" | "success" | "error" | "low_stock" 
-  | "reporte_plaga" | string; 
+export type NotificationType =
+  | 'info'
+  | 'warning'
+  | 'success'
+  | 'error'
+  | 'low_stock'
+  | 'reporte_plaga'
+  | string;
 
 export interface NotificationBase {
   id: string;
@@ -24,6 +29,7 @@ export interface NotificationBase {
   message: string;
   timestamp: string | number;
   source: 'activities' | 'bodega' | 'plagas';
+  read?: boolean; // Added to support tracking read/unread status
 }
 
 export interface ActivityNotification extends NotificationBase {
