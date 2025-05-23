@@ -52,6 +52,7 @@ import { TrazabilidadCosecha } from "./pages/cultivo/TrazabilidadCosecha";
 import TipoResiduoPage from "./pages/cultivo/TipoResiduoPage";
 import ResiduoPage from "./pages/cultivo/ResiduosPage";
 import ListaResiduoPage from "./pages/cultivo/ListaResiduosPage";
+import ActividadCostosGraficasPage from "./pages/cultivo/ActividadCostosGraficasPage";
 
 // Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
@@ -214,6 +215,7 @@ const App: React.FC = () => {
               <Route path="/cultivo/residuo/" element={<ResiduoPage />} />
               <Route path="/cultivo/listatiporesiduo/" element={<ListaTipoResiduoPage />} />
               <Route path="/cultivo/listaresiduo/" element={<ListaResiduoPage />} />
+              <Route path="/graficas/actividadcosto" element={<ActividadCostosGraficasPage />} />
 
               <Route path="/cultivo/cosecha" element={<CosechaPage />} />
               <Route path="/cultivo/listarcosechas" element={<ListaCosechasPage />} />

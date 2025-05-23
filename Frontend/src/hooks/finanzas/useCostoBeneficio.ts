@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { AnalisisCostoBeneficio, ResumenCosecha } from "../../types/finanzas/CostoBeneficio";
+import api from "@/components/utils/axios"; 
+import {
+  AnalisisCostoBeneficio,
+  ResumenCosecha,
+} from "../../types/finanzas/CostoBeneficio";
 
 const API_URL = "http://127.0.0.1:8000/finanzas";
 
@@ -16,11 +19,52 @@ const getTokenHeaders = () => {
   };
 };
 
+// 🔍 Filtro por nombre y/o fecha
+export const useAnalisisFiltrado = (nombre?: string, fecha?: string) => {
+  return useQuery<AnalisisCostoBeneficio[]>({
+    queryKey: ["analisis-filtrado", nombre, fecha],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (nombre) params.append("nombre", nombre);
+      if (fecha) params.append("fecha", fecha);
+
+      const { data } = await api.get(
+        `${API_URL}/costos-beneficio/listar/?${params.toString()}`,
+        getTokenHeaders()
+      );
+      return data;
+    },
+    enabled: !!nombre || !!fecha, // Solo corre si hay algún filtro activo
+  });
+};
+
+// 📊 Resumen financiero general
+export const useResumenCosechas = () => {
+  return useQuery<ResumenCosecha[]>({
+    queryKey: ["resumen-cosechas"],
+    queryFn: async () => {
+      const { data } = await api.get(
+        `${API_URL}/costo-beneficio/resumen-financiero/`,
+        getTokenHeaders()
+      );
+
+      console.log("Respuesta del resumen financiero:", data);
+
+      if (!data || !data.ultimos_analisis) {
+        throw new Error("La respuesta no contiene 'ultimos_analisis'");
+      }
+
+      return data.ultimos_analisis;
+    },
+  });
+};
+
+// 📋 Detalle por cosecha específica
 export const useAnalisisPorCosecha = (cosechaId: number) => {
   return useQuery<AnalisisCostoBeneficio>({
     queryKey: ["analisis-cosecha", cosechaId],
     queryFn: async () => {
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `${API_URL}/costo-beneficio/por-cosecha/${cosechaId}/`,
         getTokenHeaders()
       );
@@ -29,25 +73,3 @@ export const useAnalisisPorCosecha = (cosechaId: number) => {
     enabled: !!cosechaId,
   });
 };
-
-export const useResumenCosechas = () => {
-    return useQuery<ResumenCosecha[]>({
-      queryKey: ["resumen-cosechas"],
-      queryFn: async () => {
-        const { data } = await axios.get(
-          `${API_URL}/costo-beneficio/resumen-financiero/`,
-          getTokenHeaders()
-        );
-  
-        console.log("Respuesta del resumen financiero:", data);
-  
-        // Asegúrate de que ultimos_analisis exista
-        if (!data || !data.ultimos_analisis) {
-          throw new Error("La respuesta no contiene 'ultimos_analisis'");
-        }
-  
-        return data.ultimos_analisis;
-      },
-    });
-  };
-  

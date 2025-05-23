@@ -3,6 +3,10 @@ import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { useNavigate } from "react-router-dom";
 import { Sensor } from "@/types/iot/type";
+import api from "@/components/utils/axios";
+import { addToast } from "@heroui/react";
+import { useQueryClient } from "@tanstack/react-query";
+import { obtenerNuevoToken } from "@/components/utils/refresh";
 
 const sensorTypes = [
   { value: "temperatura", label: "Temperatura (°C)" },
@@ -35,8 +39,8 @@ const RegistrarSensorPage: React.FC = () => {
     medida_minima: 0,
     medida_maxima: 0,
   });
-
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -59,43 +63,111 @@ const RegistrarSensorPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("access_token") || "";
-    try {
-      const response = await fetch("http://127.0.0.1:8000/iot/sensores/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(sensor),
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      addToast({
+        title: "Sesión expirada",
+        description: "No se encontró el token de autenticación, por favor inicia sesión nuevamente.",
+        timeout: 3000,
+        color: "danger",
       });
-      if (!response.ok) throw new Error("Error al registrar el sensor");
+      return;
+    }
+
+    try {
+      const response = await api.post("http://127.0.0.1:8000/iot/sensores/", sensor, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      queryClient.invalidateQueries({ queryKey: ["sensores"] });
+      addToast({
+        title: "Éxito",
+        description: "Sensor registrado con éxito",
+        timeout: 3000,
+        color: "success",
+      });
       navigate("/iot/listar-sensores");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error al registrar el sensor");
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        const refreshToken = localStorage.getItem("refresh_token");
+        if (!refreshToken) {
+          addToast({
+            title: "Sesión expirada",
+            description: "No se encontró el refresh token, por favor inicia sesión nuevamente.",
+            timeout: 3000,
+            color: "danger",
+          });
+          return;
+        }
+        try {
+          const newToken = await obtenerNuevoToken(refreshToken);
+          localStorage.setItem("access_token", newToken);
+          const response = await api.post("http://127.0.0.1:8000/iot/sensores/", sensor, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${newToken}`,
+            },
+          });
+          queryClient.invalidateQueries({ queryKey: ["sensores"] });
+          addToast({
+            title: "Éxito",
+            description: "Sensor registrado con éxito",
+            timeout: 3000,
+            color: "success",
+          });
+          navigate("/iot/listar-sensores");
+          return response.data;
+        } catch (refreshError) {
+          addToast({
+            title: "Sesión expirada",
+            description: "No se pudo refrescar el token, por favor inicia sesión nuevamente.",
+            timeout: 3000,
+            color: "danger",
+          });
+          return;
+        }
+      } else if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
+          timeout: 3000,
+          color: "danger",
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: error.response?.data?.message || "Error al registrar el sensor",
+          timeout: 3000,
+          color: "danger",
+        });
+      }
     }
   };
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">Registro de Sensor</h2>
+      <div className="w-full flex flex-col items-center min-h-screen p-3 sm:p-4">
+        <div className="w-full max-w-md bg-white p-3 sm:p-4 rounded-lg shadow-md mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 text-center">Registro de Sensor</h2>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <ReuInput
-              label="Nombre"
-              placeholder="Ingrese el nombre del sensor"
-              type="text"
-              value={sensor.nombre || ""}
-              onChange={(e) => setSensor({ ...sensor, nombre: e.target.value })}
-            />
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="text-sm">
+              <ReuInput
+                label="Nombre"
+                placeholder="Ingrese el nombre del sensor"
+                type="text"
+                value={sensor.nombre || ""}
+                onChange={(e) => setSensor({ ...sensor, nombre: e.target.value })}
+              />
+            </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700">Tipo de Sensor</label>
+            <div className="mb-3">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">Tipo de Sensor</label>
               <select
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 name="tipo_sensor"
                 value={sensor.tipo_sensor || ""}
                 onChange={handleChange}
@@ -109,49 +181,56 @@ const RegistrarSensorPage: React.FC = () => {
               </select>
             </div>
 
-            <ReuInput
-              label="Unidad de Medida"
-              placeholder="Ej: °C, %, lux"
-              type="text"
-              value={sensor.unidad_medida || ""}
-              onChange={(e) => setSensor({ ...sensor, unidad_medida: e.target.value })}
-              // readOnly eliminado
-            />
-
-            <ReuInput
-              label="Descripción"
-              placeholder="Descripción del sensor"
-              type="text"
-              value={sensor.descripcion || ""}
-              onChange={(e) => setSensor({ ...sensor, descripcion: e.target.value })}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
+            <div className="text-sm">
               <ReuInput
-                label="Medida Mínima"
-                placeholder="Valor mínimo"
-                type="number"
-                value={sensor.medida_minima?.toString() || "0"}
-                onChange={(e) => setSensor({ ...sensor, medida_minima: Number(e.target.value) })}
-              />
-
-              <ReuInput
-                label="Medida Máxima"
-                placeholder="Valor máximo"
-                type="number"
-                value={sensor.medida_maxima?.toString() || "0"}
-                onChange={(e) => setSensor({ ...sensor, medida_maxima: Number(e.target.value) })}
+                label="Unidad de Medida"
+                placeholder="Ej: °C, %, lux"
+                type="text"
+                value={sensor.unidad_medida || ""}
+                onChange={(e) => setSensor({ ...sensor, unidad_medida: e.target.value })}
               />
             </div>
 
+            <div className="text-sm">
+              <ReuInput
+                label="Descripción"
+                placeholder="Descripción del sensor"
+                type="text"
+                value={sensor.descripcion || ""}
+                onChange={(e) => setSensor({ ...sensor, descripcion: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="text-sm">
+                <ReuInput
+                  label="Medida Mínima"
+                  placeholder="Valor mínimo"
+                  type="number"
+                  value={sensor.medida_minima?.toString() || "0"}
+                  onChange={(e) => setSensor({ ...sensor, medida_minima: Number(e.target.value) })}
+                />
+              </div>
+
+              <div className="text-sm">
+                <ReuInput
+                  label="Medida Máxima"
+                  placeholder="Valor máximo"
+                  type="number"
+                  value={sensor.medida_maxima?.toString() || "0"}
+                  onChange={(e) => setSensor({ ...sensor, medida_maxima: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+
             <button
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+              className="w-full px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg text-sm"
               type="submit"
             >
               Guardar
             </button>
             <button
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+              className="w-full px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg text-sm"
               type="button"
               onClick={() => navigate("/iot/listar-sensores")}
             >
