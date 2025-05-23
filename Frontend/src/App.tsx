@@ -103,12 +103,15 @@ import GraficaIngreso from "./pages/reportes/GraficaIngreso";
 import { useAuth } from "./context/AuthContext";
 import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";
 
+
 const queryClient = new QueryClient();
 
 const AuthenticatedLayout: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(() => {
     if (!isAuthenticated) return false;
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) return false;
     const savedState = localStorage.getItem("sidebarOpen");
     // Si el sidebar estaba abierto al recargar, lo cerramos para evitar duplicados
     return savedState ? false : true;
@@ -134,7 +137,7 @@ const AuthenticatedLayout: React.FC = () => {
       {isAuthenticated && <Navbar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
       <div
         className={`flex-1 transition-all duration-300 ${
-          isSidebarOpen && isAuthenticated ? "ml-64" : "ml-20"
+          isAuthenticated ? (isSidebarOpen ? "md:ml-64" : "md:ml-20") : ""
         }`}
       >
         <Outlet />
