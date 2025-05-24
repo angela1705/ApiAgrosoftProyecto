@@ -15,6 +15,7 @@ import {
   FaWarehouse,
   FaFileAlt,
   FaChartBar,
+  FaMap,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
 import { useNavbar } from "../../context/NavbarContext";  
@@ -23,6 +24,7 @@ import Sena from "../../assets/logo sena.png";
 
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
+  { id: 46, label: "mapa", path: "/mapa", icon: <FaMap/> },
   { id: 3, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
   { id: 4, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> }, 
   {

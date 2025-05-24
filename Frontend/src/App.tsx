@@ -11,7 +11,7 @@ import BlogPage from "./pages/globales/blog";
 import Calendar from "./pages/globales/Calendar";
 import AboutPage from "./pages/globales/about";
 import DashboardPage from "./pages/globales/Dashboard";
-//import Mapa from "./pages/globales/Mapa";
+import Mapa from "./pages/globales/Mapa";
 
 // Cultivo
 import TipoEspeciePage from "./pages/cultivo/TipoEspeciePage";
@@ -219,7 +219,7 @@ const App: React.FC = () => {
               <Route path="/cultivo/listatiporesiduo/" element={<ListaTipoResiduoPage />} />
               <Route path="/cultivo/listaresiduo/" element={<ListaResiduoPage />} />
               <Route path="/graficas/actividadcosto" element={<ActividadCostosGraficasPage />} />
-
+              <Route path="/mapa" element={<Mapa />} />
               <Route path="/cultivo/cosecha" element={<CosechaPage />} />
               <Route path="/cultivo/listarcosechas" element={<ListaCosechasPage />} />
               <Route path="/cultivo/tipo_control" element={<TipoControlPage />} />
