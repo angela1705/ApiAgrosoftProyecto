@@ -42,6 +42,7 @@ export const useUsuarios = () => {
     return response.data;
   };
 
+  
   const fetchRoles = async (): Promise<Rol[]> => {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("No se encontró el token de autenticación.");

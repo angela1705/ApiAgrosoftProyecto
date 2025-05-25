@@ -26,8 +26,11 @@ export const useRegistrarUsuario = () => {
 
   const mutation = useMutation({
     mutationFn: registrarUsuario,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+    onSuccess: (nuevoUsuario) => {
+      queryClient.setQueryData(["usuarios"], (oldData: any) =>
+        oldData ? [...oldData, nuevoUsuario] : [nuevoUsuario]
+      );
+
       addToast({
         title: "Éxito",
         description: "Usuario registrado con éxito.",

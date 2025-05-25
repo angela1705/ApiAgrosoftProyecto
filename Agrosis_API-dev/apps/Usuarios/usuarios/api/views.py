@@ -187,8 +187,10 @@ class RegistroMasivoUsuariosView(APIView):
             return Response({'error': 'El archivo no contiene datos.'}, status=status.HTTP_400_BAD_REQUEST)
 
         errores = []
+        usuarios_creados = []
+
         for index, row in df.iterrows():
-            fila = index + 2  
+            fila = index + 2  # Para que coincida con el número de fila en Excel
 
             campos_requeridos = ['nombre', 'apellido', 'email', 'numero_documento']
             faltantes = [campo for campo in campos_requeridos if not row.get(campo)]
@@ -209,17 +211,23 @@ class RegistroMasivoUsuariosView(APIView):
 
             serializer = RegistroSecundarioUsuarioSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
+                usuario = serializer.save()
+                usuarios_creados.append(UsuariosSerializer(usuario).data)  # ⭐ importante
             else:
                 errores.append({'fila': fila, 'errores': serializer.errors})
 
         if errores:
-            return Response({'mensaje': 'Algunos usuarios no se pudieron registrar.', 'errores': errores}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'mensaje': 'Todos los usuarios se registraron exitosamente.'}, status=status.HTTP_201_CREATED)
-       
+            return Response({
+                'mensaje': 'Algunos usuarios no se pudieron registrar.',
+                'errores': errores,
+                'usuarios': usuarios_creados
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-
+        return Response({
+            'mensaje': 'Todos los usuarios se registraron exitosamente.',
+            'usuarios': usuarios_creados
+        }, status=status.HTTP_201_CREATED)
+    
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
