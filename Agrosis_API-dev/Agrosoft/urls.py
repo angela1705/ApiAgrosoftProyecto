@@ -41,6 +41,7 @@ from apps.Inventario.bodega_precio_producto.api.routers import bodegaPrecioProdu
 from apps.Iot.datos_meteorologicos.api.routers import DatosMeteorologicosRouter  
 from apps.Iot.sensores.api.routers import SensoresRouter
 from apps.Iot.evapotranspiracion.api.routers import evapotranspiracionrouter
+from apps.mapa.api.routers import maparouter
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -107,6 +108,10 @@ routerIOT.registry.extend(DatosMeteorologicosRouter.registry)
 routerIOT.registry.extend(SensoresRouter.registry)
 routerIOT.registry.extend(evapotranspiracionrouter.registry)
 
+#mapa
+routermapa = DefaultRouter()
+routermapa.registry.extend(maparouter.registry)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
@@ -126,4 +131,6 @@ urlpatterns = [
     path('usuarios/password_reset_confirm/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('mapa/', include(routermapa.urls)),
+
 ]
