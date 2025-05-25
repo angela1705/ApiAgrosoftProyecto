@@ -13,9 +13,8 @@ interface ReusableInputProps {
   max?: string | number;
   name?: string;
   required?: boolean;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => void;
+  disabled?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
 export const ReuInput: React.FC<ReusableInputProps> = ({
