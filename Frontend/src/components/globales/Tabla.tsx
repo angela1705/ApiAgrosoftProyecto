@@ -25,13 +25,18 @@ interface Column {
   className?: string;
 }
 
+interface TableData {
+  id: string;
+  [key: string]: string | React.ReactNode; 
+}
+
 interface TablaProps {
   columns: Column[];
-  data: any[];
+  data: TableData[];
   initialVisibleColumns?: string[];
   responsiveColumns?: string[];
-  renderCell?: (item: any, columnKey: string) => React.ReactNode;
-  onRowClick?: (row: any) => void;
+  renderCell?: (item: TableData, columnKey: string) => React.ReactNode;
+  onRowClick?: (row: TableData) => void;
 }
 
 const statusOptions = [
@@ -84,8 +89,10 @@ const Tabla: React.FC<TablaProps> = ({
 
     if (hasSearchFilter) {
       filteredData = filteredData.filter((item) =>
-        Object.values(item).some((value) =>
-          value?.toString().toLowerCase().includes(filterValue.toLowerCase())
+        Object.values(item).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(filterValue.toLowerCase())
         )
       );
     }
@@ -94,8 +101,10 @@ const Tabla: React.FC<TablaProps> = ({
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredData = filteredData.filter((item) =>
-        item.status && Array.from(statusFilter).includes(item.status)
+      filteredData = filteredData.filter(
+        (item) =>
+          typeof item.status === "string" &&
+          Array.from(statusFilter).includes(item.status)
       );
     }
 
@@ -112,8 +121,14 @@ const Tabla: React.FC<TablaProps> = ({
     return [...items].sort((a, b) => {
       const first = a[sortDescriptor.column as string];
       const second = b[sortDescriptor.column as string];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      if (first == null || second == null) return 0;
+      if (typeof first === "string" && typeof second === "string") {
+        return first.localeCompare(second);
+      }
+      if (typeof first === "number" && typeof second === "number") {
+        return first - second;
+      }
+      return 0;
     });
   }, [sortDescriptor, items]);
 
@@ -198,7 +213,7 @@ const Tabla: React.FC<TablaProps> = ({
                 onSelectionChange={setStatusFilter}
               >
                 {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize text-sm">
+                  <DropdownItem key={status.uid} className="capitalize(text-sm)">
                     {capitalize(status.name)}
                   </DropdownItem>
                 ))}
@@ -224,7 +239,7 @@ const Tabla: React.FC<TablaProps> = ({
                 onSelectionChange={setVisibleColumns}
               >
                 {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize text-sm">
+                  <DropdownItem key={column.uid} className="capitalize(text-sm)">
                     {capitalize(column.name)}
                   </DropdownItem>
                 ))}
@@ -278,8 +293,8 @@ const Tabla: React.FC<TablaProps> = ({
           onChange={setPage}
           classNames={{
             item: "text-sm px-2 py-1",
-            prev: "text-sm px-2 py-1",
-            next: "text-sm px-2 py-1",
+            prev: "text-sm py-1",
+            next: "text-sm py-1",
           }}
         />
       </motion.div>
@@ -287,7 +302,7 @@ const Tabla: React.FC<TablaProps> = ({
     [page, pages, hasSearchFilter]
   );
 
-  const defaultRenderCell = useCallback((item: any, columnKey: string) => {
+  const defaultRenderCell = useCallback((item: TableData, columnKey: string) => {
     const cellValue = item[columnKey];
     return (
       <span
@@ -321,7 +336,7 @@ const Tabla: React.FC<TablaProps> = ({
               <TableColumn
                 key={column.uid}
                 allowsSorting={column.sortable}
-                align={column.uid === "actions" ? "center" : "start"}
+                align={column.uid === "acciones" ? "center" : "start"}
                 className={column.className}
               >
                 {column.name}
@@ -356,7 +371,9 @@ const Tabla: React.FC<TablaProps> = ({
               <div
                 key={col.uid}
                 className="flex justify-between py-1 text-ellipsis overflow-hidden whitespace-nowrap max-w-[90vw]"
-                title={typeof item[col.uid] === "string" ? item[col.uid] : undefined}
+                title={
+                  typeof item[col.uid] === "string" ? (item[col.uid] as string) : undefined
+                }
               >
                 <span
                   className={`${
