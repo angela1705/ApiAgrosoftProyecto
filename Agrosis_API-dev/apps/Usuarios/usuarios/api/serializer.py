@@ -46,12 +46,6 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
         )]
     )
     
-    username = serializers.CharField(
-        validators=[UniqueValidator(
-            queryset=Usuarios.objects.all(),
-            message="Ya existe un usuario con ese nombre de usuario."
-        )]
-    )
 
     numero_documento = serializers.IntegerField(
     min_value=1000000,  
@@ -78,11 +72,15 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password": "Este campo es obligatorio."})
 
         password = validated_data.pop('password')
-        usuario = Usuarios(**validated_data)
 
+        nombre = validated_data.get("nombre", "")
+        apellido = validated_data.get("apellido", "")
+        base_username = slugify(f"{nombre}{apellido}")
+        username_generado = generar_username_unico(base_username)
+
+        usuario = Usuarios(username=username_generado, **validated_data)
         usuario.is_superuser = True
         usuario.is_staff = True
-
         usuario.set_password(password)
         usuario.save()
         return usuario
@@ -133,12 +131,6 @@ class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
         )]
     )
 
-    # username = serializers.CharField(
-    #     validators=[UniqueValidator(
-    #         queryset=Usuarios.objects.all(),
-    #         message="Ya existe un usuario con ese nombre de usuario."
-    #     )]
-    # )
 
     numero_documento = serializers.IntegerField(
         validators=[UniqueValidator(
