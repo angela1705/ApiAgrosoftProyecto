@@ -67,7 +67,9 @@ function ClickHandler({
       if (poly.getBounds().contains(point)) {
         setClickPosition([e.latlng.lat, e.latlng.lng]);
       } else {
+
         alert("No puedes registrar un punto fuera del area delimitada.");
+
       }
     },
   });
@@ -145,6 +147,7 @@ const MapaPage: React.FC = () => {
     eliminarMutation.mutate(selectedPunto.id, {
       onSuccess: () => {
         console.log("Punto eliminado con exito");
+        console.log("Punto eliminado con éxito");
         setIsDeleteModalOpen(false);
         setSelectedPunto(null);
         refetch();
@@ -171,7 +174,7 @@ const MapaPage: React.FC = () => {
     <DefaultLayout>
       <div className="container mx-auto p-6 flex flex-col gap-6">
         <h2 className="text-2xl font-bold text-gray-800 text-center">
-          Gestion de Puntos de Interes
+          Gestión de Puntos de Interés
         </h2>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg">
