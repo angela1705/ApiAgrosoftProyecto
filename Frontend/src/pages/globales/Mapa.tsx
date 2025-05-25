@@ -3,10 +3,10 @@ import {
   MapContainer,
   TileLayer,
   Polygon,
-  Popup,
   LayersControl,
   useMapEvents,
   Marker,
+  Popup,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import DefaultLayout from "@/layouts/default";
@@ -67,9 +67,7 @@ function ClickHandler({
       if (poly.getBounds().contains(point)) {
         setClickPosition([e.latlng.lat, e.latlng.lng]);
       } else {
-
         alert("No puedes registrar un punto fuera del area delimitada.");
-
       }
     },
   });
@@ -81,7 +79,9 @@ const MapaPage: React.FC = () => {
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false); 
   const [selectedPunto, setSelectedPunto] = useState<PuntoMapa | null>(null);
+  const [infoPunto, setInfoPunto] = useState<PuntoMapa | null>(null); 
 
   const { data: puntos, isLoading, error, refetch } = usePuntosMapa();
   const eliminarMutation = useEliminarPuntoMapa();
@@ -106,8 +106,8 @@ const MapaPage: React.FC = () => {
     id: punto.id?.toString() || "",
     nombre: punto.nombre || "",
     descripcion: punto.descripcion || "Sin descripcion",
-    latitud: `${(punto.latitud || 0).toFixed(6)}`,
-    longitud: `${(punto.longitud || 0).toFixed(6)}`,
+    latitud: `${(punto.latitud || 0).toFixed(6)}`, 
+    longitud: `${(punto.longitud || 0).toFixed(6)}`,  
     acciones: (
       <div className="flex gap-2">
         <button
@@ -137,6 +137,11 @@ const MapaPage: React.FC = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleShowInfo = (punto: PuntoMapa) => {
+    setInfoPunto(punto);
+    setIsInfoModalOpen(true);
+  };
+
   const handleConfirmDelete = () => {
     if (!selectedPunto?.id) {
       console.error("No hay ID de punto seleccionado para eliminar");
@@ -147,7 +152,6 @@ const MapaPage: React.FC = () => {
     eliminarMutation.mutate(selectedPunto.id, {
       onSuccess: () => {
         console.log("Punto eliminado con exito");
-        console.log("Punto eliminado con éxito");
         setIsDeleteModalOpen(false);
         setSelectedPunto(null);
         refetch();
@@ -174,7 +178,7 @@ const MapaPage: React.FC = () => {
     <DefaultLayout>
       <div className="container mx-auto p-6 flex flex-col gap-6">
         <h2 className="text-2xl font-bold text-gray-800 text-center">
-          Gestión de Puntos de Interés
+          Gestion de Puntos de Interes
         </h2>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg">
@@ -236,19 +240,10 @@ const MapaPage: React.FC = () => {
                   key={punto.id}
                   position={[lat, lng]}
                   icon={customIcon}
-                >
-                  <Popup>
-                    <div>
-                      <b>{punto.nombre}</b>
-                      <br />
-                      <span>{punto.descripcion || "Sin descripcion"}</span>
-                      <br />
-                      Lat: {`${(lat || 0).toFixed(6)}`} // Linea 219
-                      <br />
-                      Lng: {`${(lng || 0).toFixed(6)}`} // Linea 220
-                    </div>
-                  </Popup>
-                </Marker>
+                  eventHandlers={{
+                    click: () => handleShowInfo(punto),
+                  }}
+                />
               );
             })}
           </MapContainer>
@@ -297,6 +292,23 @@ const MapaPage: React.FC = () => {
           onConfirm={handleConfirmDelete}
         >
           <p>¿Estas seguro de eliminar este punto? Esta accion es irreversible.</p>
+        </ReuModal>
+
+        <ReuModal
+          isOpen={isInfoModalOpen}
+          onOpenChange={setIsInfoModalOpen}
+          title="Informacion del Punto"
+          onConfirm={() => setIsInfoModalOpen(false)}
+          confirmText="Cerrar"
+        >
+          {infoPunto && (
+            <div className="flex flex-col gap-2">
+              <p><strong>Nombre:</strong> {infoPunto.nombre}</p>
+              <p><strong>Descripcion:</strong> {infoPunto.descripcion || "Sin descripcion"}</p>
+              <p><strong>Latitud:</strong> {`${(infoPunto.latitud || 0).toFixed(6)}`}</p>
+              <p><strong>Longitud:</strong> {`${(infoPunto.longitud || 0).toFixed(6)}`}</p>
+            </div>
+          )}
         </ReuModal>
       </div>
     </DefaultLayout>
