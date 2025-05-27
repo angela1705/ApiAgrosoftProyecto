@@ -8,21 +8,15 @@ import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorolog
 import { useActividades } from "@/hooks/cultivo/useActividad";
 import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
 import { useInsumos } from "@/hooks/inventario/useInsumo";
-import { FaTemperatureHigh, FaTint, FaSun, FaCloudRain, FaWind, FaCompass, FaVial } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint} from "react-icons/fa";
 import { SensorData } from "@/types/iot/type";  
 import { Sensor } from "@/types/iot/type";
-
+import { Listbox } from "@headlessui/react";
 // Tipos de datos para los gráficos
 const dataTypes = [
   { label: "Temperatura (°C)", key: "temperatura" as keyof SensorData, icon: <FaTemperatureHigh className="text-red-500" />, sensorId: 1 },
   { label: "Humedad (%)", key: "humedad_ambiente" as keyof SensorData, icon: <FaTint className="text-blue-500" />, sensorId: 2 },
-  { label: "Humedad Suelo (%)", key: "humedad_suelo" as keyof SensorData, icon: <FaTint className="text-blue-700" />, sensorId: 3 },
-  { label: "Luminosidad (lux)", key: "luminosidad" as keyof SensorData, icon: <FaSun className="text-yellow-500" />, sensorId: 4 },
-  { label: "Lluvia (mm)", key: "lluvia" as keyof SensorData, icon: <FaCloudRain className="text-gray-500" />, sensorId: 5 },
-  { label: "Velocidad Viento (m/s)", key: "velocidad_viento" as keyof SensorData, icon: <FaWind className="text-teal-500" />, sensorId: 6 },
-  { label: "Dirección Viento (grados)", key: "direccion_viento" as keyof SensorData, icon: <FaCompass className="text-green-500" />, sensorId: 7 },
-  { label: "pH Suelo", key: "ph_suelo" as keyof SensorData, icon: <FaVial className="text-purple-500" />, sensorId: 8 },
-];
+ ];
 
 // Definimos una interfaz para los datos mensuales (simulados)
 interface MonthlyData {
@@ -174,18 +168,32 @@ const Dashboard = () => {
           </div>
           <div className="bg-white p-4 rounded-lg shadow-xl">
             <h2 className="text-lg font-semibold mb-2">Datos Meteorológicos (Últimos 7 Días)</h2>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {dataTypes.map((type) => (
-                <button
-                  key={type.sensorId}
-                  className={`px-3 py-1 text-sm rounded-lg ${
-                    selectedDataType === type.key ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  } transition-all duration-300`}
-                  onClick={() => setSelectedDataType(type.key)}
-                >
-                  {type.label}
-                </button>
-              ))}
+            <div className="mb-4">
+              <Listbox value={selectedDataType} onChange={setSelectedDataType}>
+                <div className="relative">
+                  <Listbox.Button className="w-full rounded-lg bg-gray-200 text-gray-800 px-4 py-2 text-left cursor-pointer hover:bg-gray-300">
+                    {dataTypes.find(dt => dt.key === selectedDataType)?.label}
+                  </Listbox.Button>
+                  <Listbox.Options className="absolute z-10 mt-1 w-full rounded-lg bg-white shadow-lg max-h-60 overflow-auto focus:outline-none text-sm">
+                    {dataTypes.map((type) => (
+                      <Listbox.Option
+                        key={type.sensorId}
+                        value={type.key}
+                        className={({ active, selected }) =>
+                          `cursor-pointer px-4 py-2 ${
+                            active ? 'bg-blue-100 text-blue-800' : 'text-gray-700'
+                          } ${selected ? 'font-medium' : ''}`
+                        }
+                      >
+                        <div className="flex items-center gap-2">
+                          {type.icon}
+                          <span>{type.label}</span>
+                        </div>
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={lineChartData}>
