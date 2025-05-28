@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
-import { Navigate } from "react-router-dom";
+import { useToggleStaff } from "@/hooks/usuarios/useUsuarios";
+import { Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"; 
 import Tabla from "@/components/globales/Tabla";
 import { useAuth } from "@/context/AuthContext";
@@ -9,7 +10,7 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { EditIcon, Trash2 } from "lucide-react";
 import RegistroMasivoModal from "@/pages/usuarios/RegistroMasivoModal";
-
+import Switcher from "@/components/switch";
 const UsuariosPage: React.FC = () => {
   const { user } = useAuth();
   const {
@@ -23,8 +24,8 @@ const UsuariosPage: React.FC = () => {
   } = useUsuarios();
 
   const navigate = useNavigate();
+  const toggleStaff = useToggleStaff();
 
-  // Estado local para usuarios que incluye usuarios de API + usuarios masivos registrados
   const [usuariosLocal, setUsuariosLocal] = useState<any[]>([]);
 
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
@@ -58,6 +59,7 @@ const UsuariosPage: React.FC = () => {
     { name: "Número de documento", uid: "numero_documento" },
     { name: "Username", uid: "username" },
     { name: "Rol", uid: "rol" },
+    { name: "Estado", uid: "estado" }, 
     { name: "Acciones", uid: "acciones" },
   ];
 
@@ -113,13 +115,21 @@ const UsuariosPage: React.FC = () => {
       numero_documento: usuario.numero_documento,
       username: usuario.username || "N/A",
       rol: usuario.rol?.rol || "Sin rol",
+    estado: (
+      <Switcher
+        color="success"
+        size="sm"
+        isSelected={usuario.is_staff}
+        onChange={(selected) =>
+          toggleStaff.mutate({ id: usuario.id, nuevoValor: selected })
+        }
+      />
+    ),
+
       acciones: (
         <>
           <button className="mr-2" onClick={() => handleEdit(usuario)}>
             <EditIcon size={22} color="black" />
-          </button>
-          <button onClick={() => handleDelete(usuario)}>
-            <Trash2 size={22} color="red" />
           </button>
         </>
       ),

@@ -1,14 +1,14 @@
 export interface Pago {
   id?: number;
-  actividades: number[]; // IDs de actividades
-  salario: number; // ID de salario
+  actividades: number[];
+  salario: number;
   fecha_inicio: string;
   fecha_fin: string;
   horas_trabajadas: number;
   jornales: number;
   total_pago: number;
   fecha_calculo?: string;
-  nombre_usuario?: string; 
+  usuario_nombre?: string; 
 
 }
 
