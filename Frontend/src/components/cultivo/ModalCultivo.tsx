@@ -9,7 +9,7 @@ import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 import { ModalBancal } from "./ModalBancal";
 import { Plus } from 'lucide-react';
 import { ModalEspecie } from "./ModalEspecie";
-
+import { Switch } from "@heroui/react";
 interface ModalCultivoProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -111,16 +111,17 @@ export const ModalCultivo = ({ isOpen, onOpenChange, onSuccess }: ModalCultivoPr
           onChange={(e)=> setNuevoCultivo({...nuevoCultivo, fechaSiembra: e.target.value})}
         />
 
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="activo"
-            checked={nuevoCultivo.activo}
-            onChange={handleChange}
-            className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+        <div className="flex items-center gap-4 mb-4">
+          <label className="block text-sm font-medium text-gray-700">Estado</label>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={nuevoCultivo.activo}
+            onChange={() =>
+              setNuevoCultivo((prev) => ({ ...prev, activo: !prev.activo }))
+            }
           />
-          <span className="text-sm text-gray-700">Activo</span>
-        </label>
+        </div>
 
         <div>
            <div className="flex items-center gap-2 mb-1">

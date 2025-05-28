@@ -32,7 +32,7 @@ const ActividadPage: React.FC = () => {
         fecha_inicio: "",
         fecha_fin: "",
         tipo_actividad: 0,
-        cultivo: 0,
+        cultivo: [] as SelectedOption[],
         estado: "PENDIENTE",
         prioridad: "MEDIA",
         instrucciones_adicionales: "",
@@ -44,6 +44,7 @@ const ActividadPage: React.FC = () => {
     const [searchUsuario, setSearchUsuario] = useState("");
     const [searchInsumo, setSearchInsumo] = useState("");
     const [searchHerramienta, setSearchHerramienta] = useState("");
+    const [searchCultivo, setSearchCultivo] = useState("");
 
     const mutation = useRegistrarActividad();
     const registrarTipoActividad = useRegistrarTipoActividad()
@@ -73,6 +74,7 @@ const ActividadPage: React.FC = () => {
     
 
     const usuarioOptions = usuarios?.map(u => ({ value: u.id, label: u.nombre })) || [];
+    const cultivoOptions = cultivos?.map(c => ({ value : c.id, label: c.nombre})) || []
     const insumoOptions = insumos?.map(i => ({ 
         value: i.id, 
         label: `${i.nombre} (Disponible: ${i.cantidad})`,
@@ -94,6 +96,9 @@ const ActividadPage: React.FC = () => {
     const filteredHerramientas = herramientaOptions.filter(opt => 
         opt.label.toLowerCase().includes(searchHerramienta.toLowerCase())
     );
+    const filteredCultivos = cultivoOptions.filter(opt =>
+        opt.label.toLowerCase().includes(searchCultivo.toLocaleLowerCase())
+     )
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -263,17 +268,18 @@ const ActividadPage: React.FC = () => {
                                 <Plus className="h-4 w-4" />
                             </button>
                         </div>
-                            <select 
-                                name="cultivo" 
-                                value={actividad.cultivo || ""} 
-                                onChange={(e) => setActividad({ ...actividad, cultivo: Number(e.target.value) })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 p-2 border"
-                            >
-                                <option value="">Seleccione un cultivo</option>
-                                {cultivos?.map((cultivo) => (
-                                    <option key={cultivo.id} value={cultivo.id}>{cultivo.nombre}</option>
-                                ))}
-                            </select>
+                        <Select
+                                isMulti
+                                options={filteredCultivos}
+                                value={actividad.cultivo}
+                                onChange={(selected) => setActividad({ ...actividad, cultivo: selected as SelectedOption[] })}
+                                onInputChange={setSearchCultivo}
+                                placeholder="Buscar cultivos..."
+                                components={animatedComponents}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                noOptionsMessage={() => "No hay usuarios disponibles"}
+                            />
                         </div>
                     </div>
 
