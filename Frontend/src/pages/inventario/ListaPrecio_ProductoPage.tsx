@@ -52,15 +52,11 @@ const ListaPrecioProductoPage: React.FC = () => {
     ];
 
     const transformedData = (preciosProductos ?? []).map((precioProducto) => {
-        const cosecha = precioProducto.cosecha
-            ? cosechas?.find((c) => c.id === precioProducto.cosecha)
-            : null;
+       
         return {
             id: precioProducto.id.toString(),
-            cosecha: cosecha
-                ? `Cosecha ${cosecha.id_cultivo} - ${cosecha.fecha}`
-                : "Sin cosecha",
-            unidad_medida: precioProducto.unidad_medida
+            cosecha:precioProducto.cosecha  || "No especificada",
+            unidad_medida: precioProducto.unidad_medida 
                 ? precioProducto.unidad_medida.nombre
                 : "Sin asignar",
             precio: formatCOPNumber(precioProducto.precio),
