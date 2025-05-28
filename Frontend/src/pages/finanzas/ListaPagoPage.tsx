@@ -78,9 +78,9 @@ const ListaPagosPage: React.FC = () => {
     id: pago.id?.toString() || '',
     periodo: `${formatDate(pago.fecha_inicio)} - ${formatDate(pago.fecha_fin)}`,
     horas: `${pago.horas_trabajadas} hrs`,
-    total: formatMoney(pago.total_pago), // Aplicamos el formato aquí
+    total: formatMoney(pago.total_pago), 
     fecha_calculo: formatDateTime(pago.fecha_calculo || ''),
-    nombre_usuario: pago.nombre_usuario,  // Asegúrate de que el nombre del usuario esté en los datos
+    nombre_usuario: pago.usuario_nombre, 
     acciones: (
       <div className="flex space-x-2">
         <button

@@ -3,57 +3,47 @@ from apps.Finanzas.pagos.models import Pago
 from apps.Cultivo.actividades.models import Actividad
 from apps.Finanzas.salario.models import Salario
 from django.core.exceptions import ValidationError
+from apps.Usuarios.usuarios.models import Usuarios
 
 class PagoCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pago
-        fields = ['fecha_inicio', 'fecha_fin']
+        fields = ['usuario', 'fecha_inicio', 'fecha_fin']
         
 class PagoSerializer(serializers.ModelSerializer):
-    nombre_usuario = serializers.SerializerMethodField()
+    usuario_nombre = serializers.CharField(source='usuario.nombre', read_only=True)
+    usuario_rol = serializers.CharField(source='usuario.rol.nombre', read_only=True)
 
     class Meta:
         model = Pago
         fields = '__all__'
         read_only_fields = ['horas_trabajadas', 'jornales', 'total_pago', 'fecha_calculo', 'salario', 'actividades']
 
-    def get_nombre_usuario(self, obj):
-        usuarios = set()
-
-        actividades = obj.actividades.all() if hasattr(obj, 'actividades') else []
-        print(f"01 {getattr(obj, 'id', 'N/A')}: {actividades}")
-
-        for actividad in actividades:
-            try:
-                for usuario in actividad.usuarios.all():
-                    usuarios.add(usuario.nombre)
-            except Exception as e:
-                print(f"Error accediendo a usuarios de la actividad {actividad.id}: {e}")
-
-        return ', '.join(usuarios) if usuarios else 'Desconocido'
-
-
 class CalculoPagoSerializer(serializers.Serializer):
     usuario_id = serializers.IntegerField()
     fecha_inicio = serializers.DateField()
     fecha_fin = serializers.DateField()
 
-
-
-
-
     def validate(self, data):
         if data['fecha_inicio'] > data['fecha_fin']:
             raise serializers.ValidationError("La fecha de inicio no puede ser mayor que la fecha fin")
+        
+        usuario = Usuarios.objects.filter(id=data['usuario_id']).first()
+        if not usuario:
+            raise serializers.ValidationError("Usuario no encontrado")
+        
+        if not usuario.rol:
+            raise serializers.ValidationError("El usuario no tiene un rol asignado")
+            
         return data
 
     def create(self, validated_data):
-        usuario_id = validated_data['usuario_id']
+        usuario = Usuarios.objects.get(id=validated_data['usuario_id'])
         fecha_inicio = validated_data['fecha_inicio']
         fecha_fin = validated_data['fecha_fin']
 
         actividades = Actividad.objects.filter(
-            usuarios__id=usuario_id,
+            usuarios=usuario,
             estado='COMPLETADA',
             fecha_fin__date__gte=fecha_inicio,
             fecha_fin__date__lte=fecha_fin
@@ -68,14 +58,21 @@ class CalculoPagoSerializer(serializers.Serializer):
         )
         horas_trabajadas = total_segundos / 3600
 
-        salario = Salario.objects.order_by('-fecha_de_implementacion').first()
-        if not salario:
-            raise ValidationError("No existe un valor de jornal configurado")
+        salario = Salario.objects.filter(
+            rol=usuario.rol,
+            activo=True,
+            fecha_de_implementacion__lte=fecha_fin
+        ).order_by('-fecha_de_implementacion').first()
 
-        jornales = horas_trabajadas / 8.5
+        if not salario:
+            raise ValidationError(f"No existe un salario configurado para el rol {usuario.rol.nombre}")
+
+        jornales = horas_trabajadas / 8  # Asumiendo 8.5 horas por jornal
         total_pago = jornales * float(salario.valorJornal)
 
+        # Crear el pago
         pago = Pago.objects.create(
+            usuario=usuario,
             fecha_inicio=fecha_inicio,
             fecha_fin=fecha_fin,
             horas_trabajadas=round(horas_trabajadas, 2),
