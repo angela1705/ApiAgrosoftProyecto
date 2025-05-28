@@ -12,6 +12,8 @@ import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
 import CustomSpinner from "@/components/globales/Spinner";
 import { ModalBancal } from "@/components/cultivo/ModalBancal";
 import { ModalEspecie } from "@/components/cultivo/ModalEspecie";
+import { Switch } from "@heroui/react";
+
 const CultivoPage: React.FC = () => {
   const [cultivo, setCultivo] = useState({
     nombre: "",
@@ -133,18 +135,6 @@ const CultivoPage: React.FC = () => {
             setCultivo({ ...cultivo, fechaSiembra: e.target.value })
           }
         />
-
-        <label className="flex items-center space-x-2 mb-4">
-          <input
-            type="checkbox"
-            checked={cultivo.activo}
-            onChange={(e) =>
-              setCultivo({ ...cultivo, activo: e.target.checked })
-            }
-            name="activo"
-          />
-          <span>Activo</span>
-        </label>
         <div className="mb-1">
           <div className="flex items-center gap-2 mb-1">
             <label className="block text-sm font-medium text-gray-700">Especie</label>
@@ -198,6 +188,17 @@ const CultivoPage: React.FC = () => {
               </option>
             ))}
           </select>
+        </div>
+        <div className="flex items-center gap-4 mb-4">
+          <label className="block text-sm font-medium text-gray-700">Estado</label>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={cultivo.activo}
+            onChange={() =>
+              setCultivo((prev) => ({ ...prev, activo: !prev.activo }))
+            }
+          />
         </div>
 
 

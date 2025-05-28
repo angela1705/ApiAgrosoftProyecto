@@ -5,6 +5,7 @@ import { useRegistrarLote } from "../../hooks/cultivo/uselotes";
 import { Lote } from "../../types/cultivo/Lotes";
 import Formulario from "../../components/globales/Formulario";
 import { useNavigate } from "react-router-dom";
+import { Switch } from "@heroui/react";
 const LotesPage: React.FC = () => {
   const [lote, setLote] = useState<Lote>({
     nombre: "",
@@ -82,15 +83,17 @@ const LotesPage: React.FC = () => {
         />
       </div>
 
-      <label className="flex items-center space-x-2 text-gray-700">
-        <input
-          type="checkbox"
-          className="w-5 h-5 text-red-600 border-gray-300 rounded"
-          checked={lote.activo}
-          onChange={(e) => setLote({ ...lote, activo: e.target.checked })}
-        />
-        <span>Activo</span>
-      </label>
+      <div className="flex items-center gap-4 mb-4">
+          <label className="block text-sm font-medium text-gray-700">Estado</label>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={lote.activo}
+            onChange={() =>
+              setLote((prev) => ({ ...prev, activo: !prev.activo }))
+            }
+          />
+        </div>
 
       <div className="col-span-1 md:col-span-2 flex justify-center">
         <button
