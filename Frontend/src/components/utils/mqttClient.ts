@@ -1,4 +1,5 @@
 import mqtt from 'mqtt';
+import { SensorData } from '@/types/iot/iotmqtt';
 
 // Configuración MQTT
 const MQTT_HOST = 'wss://92ae5e18dc884fefa81c4f3580a7485b.s1.eu.hivemq.cloud:8884/mqtt';
@@ -6,15 +7,6 @@ const MQTT_USER = 'agrosoft';
 const MQTT_PASSWORD = 'Agrosoft2025!';
 const TOPIC_TEMP = 'sensor/dht22/temperature';
 const TOPIC_HUM = 'sensor/dht22/humidity';
-
-// Tipos de datos
-export interface SensorData {
-  id: number;
-  fk_sensor: number;
-  temperatura: number | null;
-  humedad_ambiente: number | null;
-  fecha_medicion: string;
-}
 
 // Estado global
 let realTimeData: SensorData[] = [];
@@ -31,7 +23,7 @@ const client = mqtt.connect(MQTT_HOST, {
   username: MQTT_USER,
   password: MQTT_PASSWORD,
   reconnectPeriod: 5000,
-  connectTimeout: 10000, // Aumentado para redes lentas
+  connectTimeout: 10000,
   protocol: 'wss',
   clean: true,
   clientId: `react_client_${Math.random().toString(16).slice(3)}`,
@@ -43,7 +35,6 @@ client.on('connect', () => {
   console.log('Conectado a HiveMQ por WebSocket');
   isConnected = true;
   error = null;
-  // Retrasar suscripción para evitar 'client disconnecting'
   setTimeout(() => {
     client.subscribe([TOPIC_TEMP, TOPIC_HUM], { qos: 0 }, (err) => {
       if (err) {
@@ -94,7 +85,6 @@ client.on('close', () => {
   notifyListeners();
 });
 
-// Funciones para interactuar con el cliente
 function notifyListeners() {
   listeners.forEach((listener) =>
     listener({ realTimeData, isConnected, error })
