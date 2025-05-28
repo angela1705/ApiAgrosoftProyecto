@@ -15,21 +15,29 @@ class UsuariosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento', 'rol', 'rol_id']
+        fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento', 'rol', 'rol_id','is_staff']
 
-    def update(self, instance, validated_data):
-        nuevo_rol = validated_data.get("rol", instance.rol)
+def update(self, instance, validated_data):
+    nuevo_rol = validated_data.get("rol", instance.rol)
+    nuevo_is_staff = validated_data.get("is_staff", instance.is_staff)
 
-        if nuevo_rol and nuevo_rol.id == 4:
-            instance.is_superuser = True
-            instance.is_staff = True
-        else:
-            instance.is_superuser = False
-            instance.is_staff = False
+    # Si el rol es 4, forzar is_staff/is_superuser a True
+    if nuevo_rol and nuevo_rol.id == 4:
+        instance.is_superuser = True
+        instance.is_staff = True
+    else:
+        instance.is_staff = nuevo_is_staff
+        instance.is_superuser = False
 
-        instance = super().update(instance, validated_data)
-        instance.save(update_fields=["is_superuser", "is_staff"])
-        return instance
+    # Remueve is_staff e is_superuser de validated_data para que no se vuelvan a pisar
+    if 'is_staff' in validated_data:
+        validated_data.pop('is_staff')
+    if 'is_superuser' in validated_data:
+        validated_data.pop('is_superuser')
+
+    instance = super().update(instance, validated_data)
+    instance.save(update_fields=["is_superuser", "is_staff"])
+    return instance
 
 
 class RegistroUsuarioSerializer(serializers.ModelSerializer):
@@ -117,12 +125,16 @@ def generar_username_unico(base_username):
 
 
 class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
+    # Este campo se acepta si lo envían, pero no es obligatorio
     password = serializers.CharField(
         write_only=True,
-        required=False,  
+        required=False,
         allow_null=True,
         style={'input_type': 'password'}
     )
+
+    # Se mostrará en la respuesta (read-only)
+    password_generada = serializers.SerializerMethodField(read_only=True)
 
     email = serializers.EmailField(
         validators=[UniqueValidator(
@@ -130,7 +142,6 @@ class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
             message="Ya existe un usuario con ese correo electrónico."
         )]
     )
-
 
     numero_documento = serializers.IntegerField(
         validators=[UniqueValidator(
@@ -141,27 +152,37 @@ class RegistroSecundarioUsuarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuarios
-        fields = ['id', 'nombre', 'apellido', 'email', 'numero_documento', 'rol', 'password']
+        fields = ['id', 'nombre', 'apellido', 'email', 'numero_documento', 'rol', 'password', 'password_generada']
 
     def create(self, validated_data):
-        print("Entró al create del RegistroSecundarioUsuarioSerializer")
-
         nombre = validated_data.get("nombre", "")
         apellido = validated_data.get("apellido", "")
-        base_username = slugify(f"{nombre}{apellido}")  
+        numero_documento = validated_data.get("numero_documento", "")
 
+        # Generar username único basado en nombre y apellido
+        base_username = slugify(f"{nombre}{apellido}")
         username_generado = generar_username_unico(base_username)
         validated_data["username"] = username_generado
-        password = validated_data.pop('password', None)
-        usuario = Usuarios(**validated_data)
 
+        # Extraer la contraseña enviada (si viene)
+        password = validated_data.pop("password", None)
+
+        # Crear el usuario
+        usuario = Usuarios(**validated_data)
         usuario.is_superuser = True
         usuario.is_staff = True
 
-        if password:
-            usuario.set_password(password)
-        else:
-            usuario.set_unusable_password()
+        # Generar contraseña si no fue enviada
+        if not password:
+            primera_letra = nombre[0].lower() if nombre else "x"
+            password = f"{primera_letra}{numero_documento}"
+
+        usuario.set_password(password)
+        usuario._password_generada = password  # Guarda temporalmente para mostrarla en el serializer
 
         usuario.save()
         return usuario
+
+    def get_password_generada(self, obj):
+        return getattr(obj, "_password_generada", None)
+
