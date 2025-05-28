@@ -4,8 +4,9 @@ import {
   AnalisisCostoBeneficio,
   ResumenCosecha,
 } from "../../types/finanzas/CostoBeneficio";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = "http://127.0.0.1:8000/finanzas";
+const API_URL = `${BASE_URL}/finanzas`;
 
 const getTokenHeaders = () => {
   const token = localStorage.getItem("access_token");

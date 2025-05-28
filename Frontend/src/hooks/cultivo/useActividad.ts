@@ -4,7 +4,9 @@ import { addToast } from "@heroui/react";
 import { Actividad } from "@/types/cultivo/Actividad";
 import { Insumo } from "@/types/inventario/Insumo";
 import { User } from "@/context/AuthContext";
-const API_URL = "http://127.0.0.1:8000/cultivo/actividades/";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}/cultivo/actividades/`;
 
 const fetchActividades = async (): Promise<Actividad[]> => {
     const token = localStorage.getItem("access_token");
@@ -35,7 +37,7 @@ const fetchUsuarios = async (): Promise<User[]> => {
         throw new Error("No se encontró el token de autenticación.");
     }
 
-    const response = await api.get("http://127.0.0.1:8000/usuarios/usuarios/", {
+    const response = await api.get(`${BASE_URL}/usuarios/usuarios/`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -57,7 +59,7 @@ const fetchInsumos = async (): Promise<Insumo[]>=> {
         throw new Error("No se encontró el token de autenticación.");
     }
 
-    const response = await api.get("http://127.0.0.1:8000/inventario/insumo/", {
+    const response = await api.get(`${BASE_URL}/inventario/insumo/`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

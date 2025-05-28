@@ -2,7 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios"; 
 import { Salario } from "@/types/finanzas/Salario";
 
-const API_URL = "http://127.0.0.1:8000/finanzas/salario/";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+const API_URL = `${BASE_URL}/finanzas/salario/`;
 
 // Función para formatear números al estilo colombiano (1.000.000)
 export const formatColombianPeso = (value: number): string => {

@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 import { Ingreso } from "@/types/reportes/Ingreso";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = "http://127.0.0.1:8000/finanzas/venta/datos_graficas/";
+const API_URL = `${BASE_URL}/finanzas/venta/datos_graficas/`;
 
 const fetchVentaGraficas = async (fechaInicio: string, fechaFin: string): Promise<Ingreso> => {
   const token = localStorage.getItem("access_token");
