@@ -1,8 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
-import { ProductoControl } from "@/types/cultivo/ProductosControl"; 
-const API_URL = "http://127.0.0.1:8000/cultivo/productoscontrol/";
+import { ProductoControl } from "@/types/cultivo/ProductosControl";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+const API_URL = `${BASE_URL}/cultivo/productoscontrol/`;
 
 const fetchProductoControl = async (): Promise<ProductoControl[]> => {
   const token = localStorage.getItem("access_token");

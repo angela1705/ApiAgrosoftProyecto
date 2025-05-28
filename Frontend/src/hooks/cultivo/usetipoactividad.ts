@@ -3,7 +3,9 @@ import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { TipoActividad } from "@/types/cultivo/TipoActividad";
 
-const API_URL = "http://127.0.0.1:8000/cultivo/tipo_actividad/";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+const API_URL = `${BASE_URL}/cultivo/tipo_actividad/`;
 
 const fetchTipoActividad = async (): Promise<TipoActividad[]> => {
   const token = localStorage.getItem("access_token");
