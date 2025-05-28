@@ -2,7 +2,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
 
-const API_URL = "http://127.0.0.1:8000/usuarios/";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}/usuarios/`;
+
 
 export interface Rol {
   id: number;

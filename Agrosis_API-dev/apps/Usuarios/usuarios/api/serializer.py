@@ -56,13 +56,15 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
     
 
     numero_documento = serializers.IntegerField(
-    min_value=1000000,  
+    min_value=100000,
+    max_value=999999999999999999999,  
     validators=[UniqueValidator(
             queryset=Usuarios.objects.all(),
             message="Ya existe un usuario con ese número de documento."
         )],
     error_messages={
         "min_value": "El número de documento debe tener al menos 7 dígitos.",
+        "min_max": "El número de documento NO debe exceder 19 dígitos.",
         "required": "El número de documento es obligatorio.",
         "invalid": "Ingrese un número de documento válido."
     }

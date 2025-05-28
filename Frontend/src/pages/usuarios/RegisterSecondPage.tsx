@@ -22,14 +22,14 @@ const UsuariosSecondPage: React.FC = () => {
 
     if (
       usuario.numero_documento <= 0 ||
-      numeroStr.length < 7 ||
-      numeroStr.length > 15
+      numeroStr.length < 6 ||
+      numeroStr.length > 19
     ) {
       addToast({
         title: "Error",
         description:
           error?.response?.data?.detail ||
-          "El número de documento debe tener entre 7 y 10 dígitos.",
+          "El número de documento debe tener entre 7 y 19 dígitos.",
         timeout: 3000,
         color: "danger",
       });
