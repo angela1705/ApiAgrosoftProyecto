@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { EditIcon, Trash2 } from "lucide-react"; 
 import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 import { UnidadMedida } from "@/types/inventario/Insumo";
+import { Switch } from "@heroui/react";
 const ListarCultivoPage: React.FC = () => {
   const [cultivo, setCultivo] = useState({
     nombre: "",
@@ -156,21 +157,6 @@ const ListarCultivoPage: React.FC = () => {
             }))
           }
         />
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={selectedCultivo?.activo || false}
-            onChange={(e) =>
-              setSelectedCultivo((prev: any) => ({
-                ...prev,
-                activo: e.target.checked,
-              }))
-            }
-            name="activo"
-            className="border-gray-300 focus:ring-2 focus:ring-blue-500"
-          />
-          <span>Activo</span>
-        </label>
         <label className="block text-sm font-medium text-gray-700 mt-4">Especie</label>
         <select
           name="fk_especie"
@@ -205,6 +191,18 @@ const ListarCultivoPage: React.FC = () => {
             <option key={bancal.id} value={bancal.id}>{bancal.nombre}</option>
           ))}
         </select>
+        <div className="flex items-center gap-4 mb-4 py-4">
+          <label className="block text-sm font-medium text-gray-700">Estado</label>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={cultivo.activo}
+            onChange={() =>
+              setCultivo((prev) => ({ ...prev, activo: !prev.activo }))
+            }
+          />
+
+        </div>
       </ReuModal>
 
       <ReuModal
