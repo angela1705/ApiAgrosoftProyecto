@@ -24,13 +24,8 @@ class CultivoViewSet(viewsets.ModelViewSet):
     serializer_class = CultivoSerializer
     
     def get_queryset(self):
-        queryset = Cultivo.objects.all()
-        
-        mostrar_inactivos = self.request.query_params.get('activo', '').lower() == 'false'
-        
-        if not mostrar_inactivos:
-            queryset = queryset.filter(activo=True)
-        return queryset
+        return Cultivo.objects.all()
+
     
     @action(detail=False, methods=['get'],url_path='reporte_pdf')
     def reporte_cultivos_activos(self, request):

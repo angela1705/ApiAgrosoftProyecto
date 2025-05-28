@@ -44,9 +44,12 @@ export const useEspecies = () => {
 };
 
 export const useRegistrarEspecie = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (especie: FormData) => registrarEspecie(especie),
     onSuccess: () => {
+      queryClient.invalidateQueries({queryKey:['especies']});
       addToast({
         title: "Éxito",
         description: "Especie registrada con éxito",
