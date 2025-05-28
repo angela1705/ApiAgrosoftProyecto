@@ -29,15 +29,13 @@ export const useSalarios = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       
-      console.log("📌 Salarios recibidos:", response.data);
       return response.data as Salario[];
     },
     select: (data) => {
-      // Transforma los datos para mostrar en la UI
       return data.map((item) => ({
         ...item,
-        valorJornalFormatted: formatColombianPeso(item.valorJornal), // Para mostrar
-        valorJornal: item.valorJornal // Valor numérico original
+        valorJornalFormatted: formatColombianPeso(item.valorJornal),
+        rol_nombre: item.rol_nombre || item.rol?.nombre || 'Sin rol'
       }));
     }
   });
@@ -50,17 +48,16 @@ export const useRegistrarSalario = () => {
       const token = localStorage.getItem("access_token");
       if (!token) throw new Error("No se encontró el token de autenticación.");
 
-      // Convierte el valor formateado a número si es necesario
       const valorNumerico = typeof salario.valorJornal === 'string'
         ? parseColombianNumber(salario.valorJornal)
         : salario.valorJornal;
 
       const payload = {
+        rol_id: salario.rol_id,
         fecha_de_implementacion: salario.fecha_de_implementacion,
-        valorJornal: valorNumerico
+        valorJornal: valorNumerico,
+        activo: salario.activo
       };
-
-      console.log("📌 Enviando salario al backend:", payload);
 
       const response = await api.post(API_URL, payload, {
         headers: {
@@ -72,9 +69,6 @@ export const useRegistrarSalario = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["salarios"] });
-    },
-    onError: (error: any) => {
-      console.error("Error al registrar el salario:", error.message);
     },
   });
 };
