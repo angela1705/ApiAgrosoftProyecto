@@ -88,7 +88,7 @@ const RegisterPage: React.FC = () => {
       >
         <img
           src={LogoSena}
-          alt="Logo SENA"
+          alt="Logo SENA" 
           style={{
             width:'130px',
             height: 'auto',

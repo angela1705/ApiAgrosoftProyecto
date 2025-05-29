@@ -89,10 +89,10 @@ const LoginPage: React.FC = () => {
         }}
       >
         <img
-          src={LogoSena}
+          src={LogoSena} 
           alt="Logo SENA"
           style={{
-            width: isSmallScreen ? '700px' : '130px',
+            width: isSmallScreen ? '700px' : '130px', 
             height: 'auto',
           }}
         />
