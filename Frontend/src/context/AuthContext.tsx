@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}`;
+
 
 interface Rol {
   id: number;
@@ -38,7 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/login/", {
+      const response = await fetch(`${API_URL}/auth/login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -55,7 +58,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       localStorage.setItem("refresh_token", data.refresh);
       setAuthenticated(true);
 
-      const userResponse = await fetch("http://127.0.0.1:8000/usuarios/me/", {
+      const userResponse = await fetch(`${API_URL}/usuarios/me/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${data.access}`,

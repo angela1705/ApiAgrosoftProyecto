@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}`;
 
 const Register: React.FC = () => {
   const [nombre, setNombre] = useState<string>('');
@@ -31,7 +33,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/usuarios/registro/', {
+      const response = await fetch(`${API_URL}/usuarios/registro/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
