@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import Login from '../../components/usuarios/Login';
 import { Link as RouterLink } from 'react-router-dom';
 import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
-import LogoSena from '../../assets/logo2.png';
+import LogoSena from '../../assets/logob.png';
 
 const LoginPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -26,9 +26,8 @@ const LoginPage: React.FC = () => {
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: '#27a35e',
-        p: isSmallScreen ? 2 : 0,
-      }}
+        backgroundColor: '#27a35e', // Verde más oscuro
+      }} 
     >
       {/* Fondo con línea horizontal curva (~) */}
       <Box
@@ -85,7 +84,7 @@ const LoginPage: React.FC = () => {
         sx={{
           position: 'absolute',
           bottom: 16,
-          left: 16,
+          left: 22,
           zIndex: 1,
         }}
       >
@@ -93,7 +92,7 @@ const LoginPage: React.FC = () => {
           src={LogoSena}
           alt="Logo SENA"
           style={{
-            width: isSmallScreen ? '70px' : '100px',
+            width: isSmallScreen ? '700px' : '130px',
             height: 'auto',
           }}
         />
@@ -102,17 +101,15 @@ const LoginPage: React.FC = () => {
       {/* Contenedor principal */}
       <Box
         sx={{
-          display: 'flex',
-          width: isSmallScreen ? '100%' : { xs: '85%', sm: '70%', md: '50%' },
-          maxWidth: '800px',
-          minHeight: isSmallScreen ? 'auto' : '450px',
-          flexDirection: isSmallScreen ? 'column' : 'row',
+          width: { xs: '90%', sm: '70%', md: '50%' },
+          maxWidth: '600px',
           backgroundColor: '#fff',
           borderRadius: '24px',
           boxShadow: '0 15px 40px rgba(0,0,0,0.1)',
           position: 'relative',
           zIndex: 2,
           overflow: 'hidden',
+          p: { xs: 2, sm: 4 },
         }}
       >
         {/* Mitad izquierda: Formulario */}
@@ -125,21 +122,21 @@ const LoginPage: React.FC = () => {
             p: { xs: 3, sm: 4 },
           }}
         >
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+        >
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{
+              fontWeight: 'bold',
+              color: '#1a202c',
+              textAlign: 'center',
+              mb: 1,
+            }}
           >
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{
-                fontWeight: 'bold',
-                color: '#1a202c',
-                textAlign: 'center',
-                mb: 1,
-              }}
-            >
               Iniciar Sesión
             </Typography>
             <Typography
@@ -202,61 +199,6 @@ const LoginPage: React.FC = () => {
               alignSelf: 'center',
             }}
           />
-        )}
-
-        {/* Mitad derecha: Sección decorativa - oculta en xs y sm */}
-        {!isSmallScreen && (
-          <Box
-            sx={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              p: 4,
-              backgroundColor: '#e5e7eb',
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Typography
-                variant="h2"
-                sx={{
-                  fontWeight: 'bold',
-                  color: '#27a35e',
-                  letterSpacing: '2px',
-                }}
-              >
-                AGROSIS
-              </Typography>
-              <img
-                src={AgrosisLogotic}
-                alt="AGROSIS Logotic"
-                style={{
-                  width: '240px',
-                  height: 'auto',
-                  marginTop: '10px',
-                  marginBottom: '10px',
-                }}
-              />
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  color: '#718096',
-                }}
-              >
-                Innovación para el futuro
-              </Typography>
-            </motion.div>
-          </Box>
         )}
       </Box>
     </Box>
