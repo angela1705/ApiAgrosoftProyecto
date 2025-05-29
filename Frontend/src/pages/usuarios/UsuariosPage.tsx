@@ -114,16 +114,17 @@ const UsuariosPage: React.FC = () => {
       email: usuario.email,
       numero_documento: usuario.numero_documento,
       username: usuario.username || "N/A",
+      is_staff: usuario.is_staff, // ✅ esto faltaba
       rol: usuario.rol?.rol || "Sin rol",
     estado: (
-      <Switcher
-        color="success"
-        size="sm"
-        isSelected={usuario.is_staff}
-        onChange={(selected) =>
-          toggleStaff.mutate({ id: usuario.id, nuevoValor: selected })
-        }
-      />
+<Switcher
+  size="sm"
+  isSelected={usuario.is_staff}
+  color={usuario.is_staff ? "success" : "danger"}
+  onChange={(selected) =>
+    toggleStaff({ id: usuario.id, nuevoValor: selected })
+  }
+/>
     ),
 
       acciones: (
