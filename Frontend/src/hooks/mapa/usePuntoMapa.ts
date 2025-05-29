@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { PuntoMapa } from "@/types/mapa/PuntoMapa";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = "http://127.0.0.1:8000/mapa/puntos/";
+const API_URL = `${BASE_URL}/mapa/puntos/`;
 
 const fetchPuntosMapa = async (): Promise<PuntoMapa[]> => {
   const token = localStorage.getItem("access_token");

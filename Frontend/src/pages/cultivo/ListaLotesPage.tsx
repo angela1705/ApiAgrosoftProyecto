@@ -7,7 +7,7 @@ import { Lote } from "../../types/cultivo/Lotes";
 import Tabla from "@/components/globales/Tabla";
 import ReuModal from "../../components/globales/ReuModal";
 import { EditIcon, Trash2 } from 'lucide-react';
-
+import { Switch } from "@heroui/react";
 const ListarLotesPage: React.FC = () => {
   const [lote, setLote] = useState<Lote>({
     nombre: "",
@@ -135,15 +135,17 @@ const ListarLotesPage: React.FC = () => {
           onChange={(e) => setLote({ ...lote, descripcion: e.target.value })}
         />
 
-        <label className="flex items-center space-x-2 text-gray-700">
-          <input
-            type="checkbox"
-            className="w-5 h-5 text-red-600 border-gray-300 rounded"
-            checked={lote.activo}
-            onChange={(e) => setLote({ ...lote, activo: e.target.checked })}
+    <div className="flex items-center gap-4 mb-4">
+          <label className="block text-sm font-medium text-gray-700">Estado</label>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={lote.activo}
+            onChange={() =>
+              setLote((prev) => ({ ...prev, activo: !prev.activo }))
+            }
           />
-          <span>Activo</span>
-        </label>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <ReuInput

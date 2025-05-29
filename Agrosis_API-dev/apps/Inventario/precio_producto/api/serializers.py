@@ -18,7 +18,7 @@ class PrecioProductoSerializer(serializers.ModelSerializer):
     )
     Producto = serializers.StringRelatedField(read_only=True)
     Producto_id = serializers.PrimaryKeyRelatedField(
-        source='Producto',
+        source='Producto.id_cultivo.nombre',
         queryset=Cosecha.objects.all(),
         allow_null=True,
         required=False
