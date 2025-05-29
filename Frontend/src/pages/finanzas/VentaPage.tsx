@@ -30,7 +30,8 @@ const VentaPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
   const [openUnidadesMedidaModal, setOpenUnidadesMedidaModal] = useState(false);
-  
+
+
   const handleChange = (field: keyof DetalleVenta) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { value } = e.target;
     setDetalle((prev) => ({
@@ -47,7 +48,7 @@ const VentaPage: React.FC = () => {
 
     const nuevoDetalle = {
       ...detalle,
-      total: detalle.cantidad * productoSeleccionado.precio,
+      total: detalle.cantidad * (productoSeleccionado.precio || 0),
       unidades_de_medida: detalle.unidades_de_medida || productoSeleccionado.unidad_medida?.id || 0,
     };
 
@@ -90,18 +91,19 @@ const VentaPage: React.FC = () => {
   
   const transformedData = detallesAgregados.map((detalle, index) => {
     const productoSeleccionado = precio_producto?.find(p => p.id === detalle.producto);
-    const productoNombre = productoSeleccionado?.cosecha || "Desconocido";
-    const unidadNombre = unidadesMedida?.find(u => u.id === detalle.unidades_de_medida)?.nombre || "unidad";
+    const productoNombre = productoSeleccionado?.nombre_cultivo || "Desconocido";
+
+    const unidadNombre = unidadesMedida?.find(u => u.id === detalle.unidades_de_medida)?.nombre?.toString() || "unidad";
     const precio = productoSeleccionado?.precio || 0;
     const total = detalle.total || 0;
     
     return {
       id: index.toString(),
       producto: productoNombre,
-      cantidad: detalle.cantidad,
+      cantidad: detalle.cantidad.toString(),
       unidad: unidadNombre,
-      precio: `${precio.toFixed(2)}`,
-      total: `${total.toFixed(2)}`,
+      precio: `$${precio.toFixed(2)}`,
+      total: `$${total.toFixed(2)}`,
       acciones: (
         <div className="flex gap-2">
           <button
@@ -121,8 +123,9 @@ const VentaPage: React.FC = () => {
     };
   });
 
+
   const calcularTotalVenta = () => {
-    return detallesAgregados.reduce((sum, item) => sum + item.total, 0);
+    return detallesAgregados.reduce((sum, item) => sum + (item.total || 0), 0);
   };
 
   const handleFinalizarVenta = (montoEntregado: number) => {
@@ -177,7 +180,7 @@ const VentaPage: React.FC = () => {
                   <option value="0">Seleccione un producto</option>
                   {precio_producto?.map((producto) => (
                     <option key={producto.id} value={producto.id}>
-                      {producto.cosecha|| 'Producto'} - ${producto.precio}
+                      {producto.nombre_cultivo || 'Producto'} - ${producto.precio?.toString() || '0'}
                     </option>
                   ))}
                 </select>
@@ -188,7 +191,7 @@ const VentaPage: React.FC = () => {
                 placeholder="Ingrese la cantidad"
                 type="number"
                 value={String(detalle.cantidad)}
-                onChange={(e) => setDetalle({...detalle, cantidad: parseInt(e.target.value)})}
+                onChange={(e) => setDetalle({...detalle, cantidad: parseInt(e.target.value) || 0})}
               />
             </div>
 
@@ -213,7 +216,7 @@ const VentaPage: React.FC = () => {
                   <option value="0">Seleccione una unidad</option>
                   {unidadesMedida?.map((unidad) => (
                     <option key={unidad.id} value={unidad.id}>
-                      {unidad.nombre}
+                      {unidad.nombre?.toString() || 'Unidad'}
                     </option>
                   ))}
                 </select>

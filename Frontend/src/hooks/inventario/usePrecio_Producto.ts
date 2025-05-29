@@ -14,7 +14,7 @@ const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
     console.log("Datos de la API (preciosProductos):", response.data);
     return response.data.map((item: any) => ({
         id: item.id,
-cosecha: item.Producto_id
+cosecha: item.nombre_producto
   ? {
       id: item.Producto_id,
       nombre: item.nombre_producto || ""
