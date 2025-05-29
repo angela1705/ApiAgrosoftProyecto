@@ -7,16 +7,18 @@ import { useVenta } from "@/hooks/finanzas/useVenta";
 import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorologicosHistoricos";
 import { useActividades } from "@/hooks/cultivo/useActividad";
 import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
-import { useInsumos } from "@/hooks/inventario/useInsumo";
-import { FaTemperatureHigh, FaTint} from "react-icons/fa";
+import { useInsumos } from "@/hooks/inventario/useInsumo"; 
+import { FaTemperatureHigh, FaTint, FaDollarSign, FaBox, FaMicrochip } from "react-icons/fa";
 import { SensorData } from "@/types/iot/type";  
 import { Sensor } from "@/types/iot/type";
 import { Listbox } from "@headlessui/react";
+import { useNavigate } from "react-router-dom";
+
 // Tipos de datos para los gráficos
 const dataTypes = [
   { label: "Temperatura (°C)", key: "temperatura" as keyof SensorData, icon: <FaTemperatureHigh className="text-red-500" />, sensorId: 1 },
   { label: "Humedad (%)", key: "humedad_ambiente" as keyof SensorData, icon: <FaTint className="text-blue-500" />, sensorId: 2 },
- ];
+];
 
 // Definimos una interfaz para los datos mensuales (simulados)
 interface MonthlyData {
@@ -28,6 +30,7 @@ interface MonthlyData {
 const Dashboard = () => {
   const [selectedDataType, setSelectedDataType] = useState<keyof SensorData>("temperatura");
   const currentDate = new Date();
+  const navigate = useNavigate();
 
   // Hooks para obtener datos
   const { ventas, isLoading: loadingVentas, isError: errorVentas, error: errorVentasError } = useVenta();
@@ -91,7 +94,7 @@ const Dashboard = () => {
     { name: "Pendiente", value: pendingActivities },
   ];
 
-  const COLORS = ["#10B981", "#1E3A8A"];
+  const COLORS = ["#10b981", "#1e3a8a"];
 
   // Mostrar un spinner mientras se cargan los datos
   if (loadingVentas || loadingHistoricos || loadingActividades || loadingSensores || loadingInsumos) {
@@ -118,60 +121,76 @@ const Dashboard = () => {
 
   return (
     <DefaultLayout>
-      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Dashboard</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">Dashboard</h1>
 
       {/* Tarjetas superiores */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <motion.div
-          className="bg-blue-800 text-white p-4 rounded-lg text-center"
+          className="bg-white rounded-xl shadow-md p-6 text-center border border-green-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-sm sm:text-lg">Ganancias</h2>
-          <p className="text-lg sm:text-2xl">${ganancias.toLocaleString()}</p>
+          <p className="text-lg font-semibold text-gray-700 flex items-center justify-center gap-2">
+            <FaDollarSign className="text-green-500" /> Ganancias
+          </p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2 text-green-600">${ganancias.toLocaleString()}</p>
         </motion.div>
         <motion.div
-          className="bg-green-500 text-white p-4 rounded-lg text-center"
+          className="bg-white rounded-xl shadow-md p-6 text-center border border-yellow-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <h2 className="text-sm sm:text-lg">Insumos</h2>
-          <p className="text-lg sm:text-2xl">{totalInsumos}</p>
+          <p className="text-lg font-semibold text-gray-700 flex items-center justify-center gap-2">
+            <FaBox className="text-yellow-500" /> Insumos
+          </p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2 text-yellow-600">{totalInsumos}</p>
         </motion.div>
         <motion.div
-          className="bg-orange-500 text-white p-4 rounded-lg text-center"
+          className="bg-white rounded-xl shadow-md p-6 text-center border border-blue-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h2 className="text-sm sm:text-lg">Sensores Activos</h2>
-          <p className="text-lg sm:text-2xl">{sensoresActivos}</p>
+          <p className="text-lg font-semibold text-gray-700 flex items-center justify-center gap-2">
+            <FaMicrochip className="text-blue-500" /> Sensores Activos
+          </p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2 text-blue-600">{sensoresActivos}</p>
         </motion.div>
       </div>
 
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="bg-white p-4 rounded-lg shadow-xl">
-            <h2 className="text-lg font-semibold mb-2">Ganancias y Costos</h2>
+          <motion.div
+            className="bg-white p-6 rounded-xl shadow-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-lg font-semibold text-gray-700 mb-4">Ganancias y Costos</h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={barChartData}>
                 <XAxis dataKey="mes" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="ingresos" fill="#10B981" />
-                <Bar dataKey="costos" fill="#1E3A8A" />
+                <Bar dataKey="ingresos" fill="#10b981" />
+                <Bar dataKey="costos" fill="#1e3a8a" />
               </BarChart>
             </ResponsiveContainer>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow-xl">
-            <h2 className="text-lg font-semibold mb-2">Datos Meteorológicos (Últimos 7 Días)</h2>
+          </motion.div>
+          <motion.div
+            className="bg-white p-6 rounded-xl shadow-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <h2 className="text-lg font-semibold text-gray-700 mb-4">Datos Meteorológicos (Últimos 7 Días)</h2>
             <div className="mb-4">
               <Listbox value={selectedDataType} onChange={setSelectedDataType}>
                 <div className="relative">
-                  <Listbox.Button className="w-full rounded-lg bg-gray-200 text-gray-800 px-4 py-2 text-left cursor-pointer hover:bg-gray-300">
+                  <Listbox.Button className="w-full rounded-lg bg-white border border-gray-200 text-gray-800 px-4 py-2 text-left cursor-pointer hover:bg-gray-100">
                     {dataTypes.find(dt => dt.key === selectedDataType)?.label}
                   </Listbox.Button>
                   <Listbox.Options className="absolute z-10 mt-1 w-full rounded-lg bg-white shadow-lg max-h-60 overflow-auto focus:outline-none text-sm">
@@ -200,7 +219,7 @@ const Dashboard = () => {
                 <XAxis dataKey="fecha" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#10B981" />
+                <Line type="monotone" dataKey="value" stroke="#3b82f6" />
               </LineChart>
             </ResponsiveContainer>
             {lineChartData.length === 0 && (
@@ -208,10 +227,15 @@ const Dashboard = () => {
                 No hay datos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label}.
               </p>
             )}
-          </div>
+          </motion.div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-xl">
-          <h2 className="text-lg font-semibold mb-2">Progreso de Actividades</h2>
+        <motion.div
+          className="bg-white p-6 rounded-xl shadow-md"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">Progreso de Actividades</h2>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
@@ -230,18 +254,23 @@ const Dashboard = () => {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-          <p className="text-center text-sm mt-2">
+          <p className="text-center text-sm mt-2 text-gray-700">
             {completedActivities + pendingActivities > 0
               ? `${((completedActivities / (completedActivities + pendingActivities)) * 100).toFixed(1)}% Completado`
               : "0% Completado"}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Actividades */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="bg-white p-4 rounded-lg shadow-xl">
-          <h2 className="text-lg font-semibold mb-2">Actividades Futuras</h2>
+        <motion.div
+          className="bg-white p-6 rounded-xl shadow-md border border-purple-200"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">Actividades Futuras</h2>
           <ul className="list-disc list-inside text-gray-700 space-y-2 text-sm">
             {futureActivities.slice(0, 3).map((activity) => (
               <li key={activity.id}>
@@ -252,9 +281,14 @@ const Dashboard = () => {
               <li className="text-gray-500">No hay actividades futuras</li>
             )}
           </ul>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-xl">
-          <h2 className="text-lg font-semibold mb-2">Actividades Vencidas</h2>
+        </motion.div>
+        <motion.div
+          className="bg-white p-6 rounded-xl shadow-md border border-purple-200"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">Actividades Vencidas</h2>
           <ul className="list-disc list-inside text-gray-700 space-y-2 text-sm">
             {pastActivities.slice(0, 3).map((activity) => (
               <li key={activity.id}>
@@ -265,10 +299,15 @@ const Dashboard = () => {
               <li className="text-gray-500">No hay actividades vencidas</li>
             )}
           </ul>
-          <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded text-sm hover:bg-orange-600 transition-all">
+          <motion.button
+            className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md hover:bg-purple-700"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/cultivo/listaractividad')}
+          >
             Revisar Ahora
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
     </DefaultLayout>
   );
