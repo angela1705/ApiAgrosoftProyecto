@@ -90,7 +90,7 @@ const VentaPage: React.FC = () => {
   
   const transformedData = detallesAgregados.map((detalle, index) => {
     const productoSeleccionado = precio_producto?.find(p => p.id === detalle.producto);
-    const productoNombre = productoSeleccionado?.Producto?.id_cultivo?.nombre || "Desconocido";
+    const productoNombre = productoSeleccionado?.cosecha || "Desconocido";
     const unidadNombre = unidadesMedida?.find(u => u.id === detalle.unidades_de_medida)?.nombre || "unidad";
     const precio = productoSeleccionado?.precio || 0;
     const total = detalle.total || 0;
@@ -108,7 +108,7 @@ const VentaPage: React.FC = () => {
             className="text-blue-500 hover:text-blue-700"
             onClick={() => handleEdit(index)}
           >
-            <Edit size={20} />
+            <Edit size={20} color="black" />
           </button>
           <button
             className="text-red-500 hover:text-red-700"

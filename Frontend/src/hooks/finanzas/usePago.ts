@@ -5,7 +5,6 @@ import { Pago, CalculoPagoParams, PagoCreateParams } from "@/types/finanzas/Pago
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/finanzas/pago/`;
-console.log(import.meta.env.VITE_API_BASE_URL)
 
 const fetchPagos = async (): Promise<Pago[]> => {
   const token = localStorage.getItem("access_token");
