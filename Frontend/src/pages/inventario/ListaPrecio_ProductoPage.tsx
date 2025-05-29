@@ -52,15 +52,12 @@ const ListaPrecioProductoPage: React.FC = () => {
     ];
 
     const transformedData = (preciosProductos ?? []).map((precioProducto) => {
-        const cosecha = precioProducto.cosecha
-            ? cosechas?.find((c) => c.id === precioProducto.cosecha)
-            : null;
+        const nombreProducto = precioProducto.nombre_cultivo || "Sin nombre";
         return {
             id: precioProducto.id.toString(),
-            cosecha: cosecha
-                ? `Cosecha ${cosecha.id_cultivo} - ${cosecha.fecha}`
-                : "Sin cosecha",
+            cosecha: nombreProducto, 
             unidad_medida: precioProducto.unidad_medida
+
                 ? precioProducto.unidad_medida.nombre
                 : "Sin asignar",
             precio: formatCOPNumber(precioProducto.precio),
@@ -88,9 +85,10 @@ const ListaPrecioProductoPage: React.FC = () => {
                         <Trash2 size={22} color="red" />
                     </button>
                 </>
-            ),
-        };
-    });
+                ),
+            };
+        });
+
 
     const handleSubmitUnidadMedida = () => {
         crearUnidadMedida.mutate(nuevaUnidad, {

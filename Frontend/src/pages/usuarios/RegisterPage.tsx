@@ -82,15 +82,15 @@ const RegisterPage: React.FC = () => {
         sx={{
           position: 'absolute',
           bottom: 16,
-          left: -22,
+          left: 22,
           zIndex: 1,
         }}
       >
         <img
           src={LogoSena}
-          alt="Logo SENA"
+          alt="Logo SENA" 
           style={{
-            width: '190px',
+            width:'130px',
             height: 'auto',
           }}
         />

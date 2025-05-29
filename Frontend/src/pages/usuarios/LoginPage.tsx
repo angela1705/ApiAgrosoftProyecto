@@ -84,15 +84,15 @@ const LoginPage: React.FC = () => {
         sx={{
           position: 'absolute',
           bottom: 16,
-          left: -22,
+          left: 22,
           zIndex: 1,
         }}
       >
         <img
-          src={LogoSena}
+          src={LogoSena} 
           alt="Logo SENA"
           style={{
-            width: isSmallScreen ? '700px' : '190px',
+            width: isSmallScreen ? '700px' : '130px', 
             height: 'auto',
           }}
         />

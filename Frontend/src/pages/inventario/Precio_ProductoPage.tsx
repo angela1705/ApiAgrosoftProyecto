@@ -122,7 +122,7 @@ const PrecioProductoPage: React.FC = () => {
                         <option value="">Seleccione una cosecha</option>
                         {cosechas?.map((cosecha) => (
                             <option key={cosecha.id} value={cosecha.id}>
-                                {`Cosecha ${cosecha.cultivo_nombre} - ${cosecha.fecha}`}
+                                {`Cosecha ${cosecha.id_cultivo} ${cosecha.cultivo_nombre} - ${cosecha.fecha}`}
                             </option>
                         ))}
                     </select>
