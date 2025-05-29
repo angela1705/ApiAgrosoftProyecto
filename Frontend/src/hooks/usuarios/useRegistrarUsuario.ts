@@ -13,7 +13,7 @@ export interface NuevoUsuario {
   username?: string;
   password: string;
 }
-
+  
 export const useRegistrarUsuario = () => {
   const queryClient = useQueryClient();
 

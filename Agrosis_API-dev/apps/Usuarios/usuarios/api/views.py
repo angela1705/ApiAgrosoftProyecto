@@ -212,7 +212,7 @@ class RegistroMasivoUsuariosView(APIView):
             serializer = RegistroSecundarioUsuarioSerializer(data=data)
             if serializer.is_valid():
                 usuario = serializer.save()
-                usuarios_creados.append(UsuariosSerializer(usuario).data)  # ⭐ importante
+                usuarios_creados.append(UsuariosSerializer(usuario).data)  
             else:
                 errores.append({'fila': fila, 'errores': serializer.errors})
 

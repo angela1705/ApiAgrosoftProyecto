@@ -125,26 +125,27 @@ export const useToggleStaff = () => {
 
   const toggleStaffMutation = useMutation({
     mutationFn: async ({ id, nuevoValor }: { id: number; nuevoValor: boolean }) => {
-      const response = await api.put(`${API_URL}usuarios/${id}/`, { is_staff: nuevoValor });
+        console.log("Intentando cambiar is_staff a:", nuevoValor); 
+
+      const response = await api.patch(`${API_URL}usuarios/${id}/`, { is_staff: nuevoValor });
       return response.data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["usuarios"] });
-      addToast({
-        title: "Éxito",
-        description: `Estado actualizado a ${variables.nuevoValor ? "Activo" : "Inactivo"}`,
-        timeout: 3000,
-        color: "success",
-      });
-    },
-    onError: () => {
-      addToast({
-        title: "Error",
-        description: "No se pudo actualizar el estado del usuario",
-        timeout: 3000,
-        color: "danger",
-      });
-    },
+onSuccess: (_, variables) => {
+  queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+
+  setUsuariosLocal((prev) =>
+    prev.map((u) =>
+      u.id === variables.id ? { ...u, is_staff: variables.nuevoValor } : u
+    )
+  );
+
+  addToast({
+    title: "Éxito",
+    description: `Estado actualizado a ${variables.nuevoValor ? "Activo" : "Inactivo"}`,
+    timeout: 3000,
+    color: "success",
+  });
+},
   });
 
   return toggleStaffMutation.mutate; 
