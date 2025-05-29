@@ -57,6 +57,7 @@ const ListaPrecioProductoPage: React.FC = () => {
             id: precioProducto.id.toString(),
             cosecha: nombreProducto, 
             unidad_medida: precioProducto.unidad_medida
+
                 ? precioProducto.unidad_medida.nombre
                 : "Sin asignar",
             precio: formatCOPNumber(precioProducto.precio),
