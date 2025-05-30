@@ -9,6 +9,7 @@ import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 import { useAuth } from "@/context/AuthContext";
 import { addToast } from "@heroui/react";
 import { Plus } from 'lucide-react';
+import { Switch } from "@heroui/react";
 
 const InsumoPage: React.FC = () => {
     const {} = useAuth();
@@ -31,6 +32,11 @@ const InsumoPage: React.FC = () => {
         unidad_medida_id: undefined,
         tipo_insumo_id: undefined,
     });
+
+    const formatPrice = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    return numericValue ? Number(numericValue) : 0;
+    };
 
     const [nuevaUnidad, setNuevaUnidad] = useState<Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">>({
         nombre: "",
@@ -197,11 +203,11 @@ const InsumoPage: React.FC = () => {
                     </select>
                 </div>
                 <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        checked={insumo.activo}
+                    <Switch
+                        color="success"
+                        size="sm"
+                        isSelected={insumo.activo}
                         onChange={(e) => setInsumo({ ...insumo, activo: e.target.checked })}
-                        className="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
                     />
                     <label className="ml-2 text-sm font-medium text-gray-700">Activo</label>
                 </div>
@@ -231,14 +237,13 @@ const InsumoPage: React.FC = () => {
                     onChange={(e) => setInsumo({ ...insumo, fecha_caducidad: e.target.value || null })}
                 />
                 <ReuInput
-                    label="Precio del Insumo"
-                    placeholder="Ingrese el precio del insumo"
-                    type="number"
+                    label="Precio del Insumo (COP)"
+                    placeholder="Ingrese el precio"
+                    type="text"
                     variant="bordered"
                     radius="md"
-                    step="0.01"
-                    value={insumo.precio_insumo}
-                    onChange={(e) => setInsumo({ ...insumo, precio_insumo: Number(e.target.value) })}
+                    value={insumo.precio_insumo.toLocaleString("es-CO")}
+                    onChange={(e) => setInsumo({ ...insumo, precio_insumo: formatPrice(e.target.value) })}
                 />
                 <div className="col-span-1 sm:col-span-2 flex justify-center">
                     <button
