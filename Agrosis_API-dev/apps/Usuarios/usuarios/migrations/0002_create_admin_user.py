@@ -16,7 +16,7 @@ def create_admin_user(apps, schema_editor):
             'username': '@admin#',
             'nombre': 'Administer',
             'apellido': 'Userauth',
-            'numero_documento':166600666,
+            'numero_documento':123456,
             'password': make_password('admin'),  
             'rol': admin_role,
             'is_staff': True,

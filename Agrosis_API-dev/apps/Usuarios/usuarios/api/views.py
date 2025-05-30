@@ -147,23 +147,8 @@ class RegistroSecundarioUsuarioView(APIView):
         if serializer.is_valid():
             usuario = serializer.save()
 
-            try:
-                token = get_random_string(length=32)
-                PasswordResetToken.objects.create(user=usuario, token=token)
-
-                reset_link = f"http://localhost:5173/reset-password/{token}/"
-                send_mail(
-                    'Definir tu Contraseña',
-                    f'Haz clic en el siguiente enlace para definir tu contraseña: {reset_link}',
-                    'agrosoftadso2024@gmail.com',
-                    [usuario.email],
-                    fail_silently=False,
-                )
-            except Exception as e:
-                print(f"Error al enviar correo de definición de contraseña: {e}")
-
             return Response({
-                'mensaje': 'Usuario registrado correctamente. Se envió un enlace para definir la contraseña.',
+                'mensaje': 'Usuario registrado correctamente.',
                 'usuario': RegistroSecundarioUsuarioSerializer(usuario).data
             }, status=status.HTTP_201_CREATED)
 
@@ -190,9 +175,9 @@ class RegistroMasivoUsuariosView(APIView):
         usuarios_creados = []
 
         for index, row in df.iterrows():
-            fila = index + 2  # Para que coincida con el número de fila en Excel
+            fila = index + 2 
 
-            campos_requeridos = ['nombre', 'apellido', 'email', 'numero_documento']
+            campos_requeridos = ['nombre', 'apellido', 'numero_documento']  
             faltantes = [campo for campo in campos_requeridos if not row.get(campo)]
 
             if faltantes:
@@ -205,14 +190,13 @@ class RegistroMasivoUsuariosView(APIView):
             data = {
                 'nombre': row.get('nombre'),
                 'apellido': row.get('apellido'),
-                'email': row.get('email'),
-                'numero_documento': row.get('numero_documento'),
+                'numero_documento': row.get('numero_documento'),  
             }
 
             serializer = RegistroSecundarioUsuarioSerializer(data=data)
             if serializer.is_valid():
                 usuario = serializer.save()
-                usuarios_creados.append(UsuariosSerializer(usuario).data)  
+                usuarios_creados.append(UsuariosSerializer(usuario).data)
             else:
                 errores.append({'fila': fila, 'errores': serializer.errors})
 

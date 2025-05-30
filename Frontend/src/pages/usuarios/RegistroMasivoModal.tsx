@@ -10,7 +10,6 @@ interface Usuario {
   id?: number;
   nombre: string;
   apellido: string;
-  email: string;
   numero_documento: string | number;
 }
 
@@ -36,7 +35,7 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
   const [errores, setErrores] = useState<ErrorFila[]>([]);
 
   const [usuariosEjemplo] = useState<Usuario[]>([
-    { nombre: '', apellido: '', email: '', numero_documento: '' }
+    { nombre: '', apellido: '', numero_documento: '' }
   ]);
 
   const handleSeleccionarArchivo = () => {
@@ -94,10 +93,9 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
 
   const exportarAExcel = () => {
     try {
-      const hoja = usuariosEjemplo.map(({ nombre, apellido, email, numero_documento }) => ({
+      const hoja = usuariosEjemplo.map(({ nombre, apellido, numero_documento }) => ({
         nombre,
         apellido,
-        email,
         numero_documento,
       }));
 
