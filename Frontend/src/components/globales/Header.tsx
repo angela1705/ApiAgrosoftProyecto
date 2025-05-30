@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { Box, Typography } from '@mui/material';
 import UserMenu from '../usuarios/UserMenu';
-import Notificacion from "./Notificacion"; 
-import { Menu } from "lucide-react";
+import Notificacion from "./Notificacion";
 
 interface HeaderProps {
-  toggleSidebar: () => void;
+  toggleSidebar?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
@@ -47,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         >
           |
         </Typography>
-        <UserMenu hideText={isMobile} />
+        <UserMenu hideText={isMobile} /> {/* Prop hideText ahora es válida */}
       </Box>
     </header>
   );
