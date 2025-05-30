@@ -25,7 +25,7 @@ export default function SensoresPage() {
 
   // Conexión WebSocket
   useEffect(() => {
-    const ws = new WebSocket("ws://192.168.1.12:8000/ws/realtime/");
+    const ws = new WebSocket("ws://10.4.21.92:8000/ws/realtime/");
     ws.onopen = () => {
       console.log("Conexión WebSocket establecida");
       addToast({
