@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React from "react";
 
 export interface SensorData {
   id?: number | string;
@@ -23,7 +23,7 @@ export interface Sensor {
   tipo_sensor: string;
   unidad_medida: string;
   descripcion?: string;
-  estado: 'activo' | 'inactivo';
+  estado: "activo" | "inactivo";
   medida_minima: number;
   medida_maxima: number;
 }
@@ -56,7 +56,7 @@ export interface AnalisisCostoBeneficio {
 export interface DataType {
   label: string;
   key: keyof SensorData;
-  icon: React.ReactNode;  
+  icon: React.ReactNode;
   sensorId: number;
   decimals: number;
   tipo_sensor?: string;
@@ -65,4 +65,5 @@ export interface DataType {
 export interface DataTypeSelectorProps {
   selectedDataType: DataType;
   setSelectedDataType: (type: DataType) => void;
+  className?: string;
 }
