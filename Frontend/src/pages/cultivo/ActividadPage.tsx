@@ -184,15 +184,15 @@ const ActividadPage: React.FC = () => {
                             onChange={(e) => setActividad({ ...actividad, descripcion: e.target.value })}
                         />
 
+                        <label className="block text-sm font-medium text-gray-700">Fecha de inicio</label>
                         <ReuInput
-                            label="Fecha de Inicio"
                             type="datetime-local"
                             value={actividad.fecha_inicio}
                             onChange={(e) => setActividad({ ...actividad, fecha_inicio: e.target.value })}
                         />
 
+                        <label className="block text-sm font-medium text-gray-700">Fecha de fin</label>
                         <ReuInput
-                            label="Fecha de Fin"
                             type="datetime-local"
                             value={actividad.fecha_fin}
                             onChange={(e) => setActividad({ ...actividad, fecha_fin: e.target.value })}

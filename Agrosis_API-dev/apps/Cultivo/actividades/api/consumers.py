@@ -2,7 +2,6 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from apps.Usuarios.usuarios.models import Usuarios
-from .serializers import ActividadSerializer
 
 class ActividadNotificacionConsumer(AsyncWebsocketConsumer):
     async def connect(self):

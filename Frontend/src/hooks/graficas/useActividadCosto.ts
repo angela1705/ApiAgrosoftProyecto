@@ -1,4 +1,3 @@
-// hooks/cultivo/useActividadCostosGrafica.ts
 import { useQuery } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
