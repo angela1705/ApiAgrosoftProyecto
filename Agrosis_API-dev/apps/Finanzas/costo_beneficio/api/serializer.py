@@ -9,7 +9,7 @@ class CosechaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cosecha
-        fields = ['id', 'fecha', 'cultivo_nombre', 'unidades_de_medida', 'unidades_de_medida_nombre','cantidad']  # Ya no pongas 'nombre'
+        fields = ['id', 'fecha', 'cultivo_nombre', 'unidades_de_medida', 'unidades_de_medida_nombre','cantidad']  
 
 
 class AnalisisCostoBeneficioSerializer(serializers.ModelSerializer):

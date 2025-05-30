@@ -9,9 +9,9 @@ class Usuarios(AbstractUser):
     nombre = models.CharField(max_length=30)
     apellido = models.CharField(max_length=30)
     numero_documento = models.IntegerField(unique=True,null=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField( unique=True,null=True,blank=True)
     is_active = models.BooleanField(default=True)
-    USERNAME_FIELD = 'email' 
+    USERNAME_FIELD = 'numero_documento' 
     REQUIRED_FIELDS = ['username', 'nombre', 'apellido'] 
 
     def __str__(self):
