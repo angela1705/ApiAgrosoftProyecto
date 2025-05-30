@@ -34,7 +34,6 @@ const ActividadCostosGraficasPage: React.FC = () => {
     });
   };
 
-  // Validar que data.data existe y sea array, y filtrar elementos inválidos
   const validItems: ActividadCosto[] = data && Array.isArray(data.data)
     ? data.data.filter(item => item && item.actividad && item.desglose)
     : [];
@@ -56,6 +55,13 @@ const ActividadCostosGraficasPage: React.FC = () => {
         name: "Herramientas",
         type: "bar",
         marker: { color: "rgb(219, 64, 82)" }
+      },
+      {
+        x: validItems.map((item) => item.actividad),
+        y: validItems.map((item) => item.desglose.mano_de_obra),
+        name: "Mano de obra",
+        type: "bar",
+        marker: { color: "rgb(128, 191, 55)" }
       }
     ];
   };
@@ -132,7 +138,6 @@ const ActividadCostosGraficasPage: React.FC = () => {
           </div>
         )}
 
-        {/* Solo renderiza contenido si hay datos válidos */}
         {validItems.length > 0 ? (
           <div className="space-y-6">
             <div className="bg-white p-4 rounded-lg shadow">
@@ -179,12 +184,14 @@ const ActividadCostosGraficasPage: React.FC = () => {
                       actividad: item.actividad,
                       insumos: 0,
                       herramientas: 0,
+                      mano_de_obra: 0,
                       total: 0,
                       count: 0
                     };
                   }
                   acc[item.actividad].insumos += item.desglose.insumos;
                   acc[item.actividad].herramientas += item.desglose.herramientas;
+                  acc[item.actividad].mano_de_obra += item.desglose.mano_de_obra;
                   acc[item.actividad].total += item.costo_total;
                   acc[item.actividad].count += 1;
                   return acc;
@@ -193,7 +200,6 @@ const ActividadCostosGraficasPage: React.FC = () => {
                 const actividadesArray: ActividadConsolidada[] = Object.values(actividadesConsolidadas);
                 const totalGeneral: number = actividadesArray.reduce((sum: number, item: ActividadConsolidada) => sum + item.total, 0);
 
-                // Manejar caso en que no haya actividades para evitar error
                 const actividadMasCostosa: ActividadConsolidada | null = actividadesArray.length > 0 
                   ? actividadesArray.reduce(
                       (max, item) => item.total > max.total ? item : max,
@@ -209,6 +215,7 @@ const ActividadCostosGraficasPage: React.FC = () => {
                         { uid: "operaciones", name: "Veces realizada", sortable: true, className: "text-center" },
                         { uid: "insumos", name: "Insumos ($)", sortable: true, className: "text-right" },
                         { uid: "herramientas", name: "Herramientas ($)", sortable: true, className: "text-right" },
+                        { uid: "mano_de_obra", name: "Mano de obra ($)", sortable: true, className: "text-right" },
                         { uid: "total", name: "Total ($)", sortable: true, className: "text-right font-medium" },
                         { uid: "porcentaje", name: "% del total", sortable: true, className: "text-right" }
                       ]}
@@ -218,11 +225,12 @@ const ActividadCostosGraficasPage: React.FC = () => {
                         operaciones: item.count,
                         insumos: item.insumos,
                         herramientas: item.herramientas,
+                        mano_de_obra: item.mano_de_obra,
                         total: item.total,
                         porcentaje: totalGeneral > 0 ? ((item.total / totalGeneral) * 100).toFixed(1) + '%' : '0%',
                         esMasCostosa: actividadMasCostosa ? item.actividad === actividadMasCostosa.actividad : false
                       }))}
-                      initialVisibleColumns={["actividad", "operaciones", "insumos", "herramientas", "total", "porcentaje"]}
+                      initialVisibleColumns={["actividad", "operaciones", "insumos", "herramientas", "mano_de_obra", "total", "porcentaje"]}
                       renderCell={(item: any, columnKey: string) => {
                         if (columnKey === "actividad") {
                           return (
@@ -239,7 +247,7 @@ const ActividadCostosGraficasPage: React.FC = () => {
                         if (columnKey === "operaciones") {
                           return <span className="text-center">{item.operaciones}</span>;
                         }
-                        if (["insumos", "herramientas", "total"].includes(columnKey)) {
+                        if (["insumos", "herramientas", "mano_de_obra", "total"].includes(columnKey)) {
                           return (
                             <span className={`text-right ${item.esMasCostosa && columnKey === 'total' ? 'font-bold text-red-500' : ''}`}>
                               ${item[columnKey].toLocaleString()}
@@ -292,6 +300,13 @@ const ActividadCostosGraficasPage: React.FC = () => {
                         <div className="text-sm text-gray-500 mb-1">Total Herramientas</div>
                         <div className="text-xl font-medium text-green-600">
                           ${actividadesArray.reduce((sum, item) => sum + item.herramientas, 0).toLocaleString()}
+                        </div>
+                      </div>
+
+                      <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                        <div className="text-sm text-gray-500 mb-1">Total Mano de obra</div>
+                        <div className="text-xl font-medium text-purple-600">
+                          ${actividadesArray.reduce((sum, item) => sum + item.mano_de_obra, 0).toLocaleString()}
                         </div>
                       </div>
                     </div>

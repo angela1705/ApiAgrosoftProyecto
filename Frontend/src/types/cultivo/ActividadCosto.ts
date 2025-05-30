@@ -4,9 +4,12 @@ export interface CostoActividad {
   desglose: {
     insumos: number;
     herramientas: number;
+    mano_de_obra: number;
   };
+  tiempo_invertido_horas: number;
   fecha_inicio: string;
   fecha_fin: string;
+  usuarios: string[];
 }
 
 export interface ActividadCostosData {
@@ -23,16 +26,20 @@ export interface ActividadCosto {
   desglose: {
     insumos: number;
     herramientas: number;
+    mano_de_obra: number;
   };
   costo_total: number;
+  tiempo_invertido_horas: number;
   fecha_inicio: string;
   fecha_fin: string;
+  usuarios: string[];
 }
 
 export interface ActividadConsolidada {
   actividad: string;
   insumos: number;
   herramientas: number;
+  mano_de_obra: number;
   total: number;
   count: number;
 }
