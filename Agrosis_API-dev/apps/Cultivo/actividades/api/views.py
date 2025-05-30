@@ -19,6 +19,8 @@ from rest_framework.response import Response
 from rest_framework import status  
 from apps.Cultivo.actividades.api.serializers import FinalizarActividadSerializer
 from django.db.models import F, Prefetch
+from apps.Finanzas.salario.models import Salario
+from decimal import Decimal  
 
 class ActividadViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -59,18 +61,15 @@ class ActividadViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Actividad.objects.all()
         
-        # Optimización para reporte PDF
         if self.action == 'reporte_pdf':
             queryset = queryset.filter(estado='COMPLETADA')
         
-        # Optimización para gráficos de costos
         elif self.action == 'grafico_costos':
             queryset = queryset.select_related('tipo_actividad', 'cultivo').prefetch_related(
                 Prefetch('prestamos_insumos', queryset=PrestamoInsumo.objects.select_related('insumo')),
                 Prefetch('prestamos_herramientas', queryset=PrestamoHerramienta.objects.select_related('herramienta'))
             )
         
-        # Ordenamiento por defecto
         return queryset.order_by('-fecha_fin')
     
     @action(detail=False, methods=['get'])
@@ -195,29 +194,50 @@ class ActividadViewSet(viewsets.ModelViewSet):
         
         data = []
         for actividad in queryset:
-            # Calcular costos de insumos
+            # Calcular costos de insumos y herramientas usando Decimal
             costo_insumos = sum(
-                prestamo.insumo.precio_insumo * prestamo.cantidad_usada 
+                Decimal(prestamo.insumo.precio_insumo) * Decimal(prestamo.cantidad_usada) 
                 for prestamo in actividad.prestamos_insumos.all()
             )
             
-            # Calcular costos de herramientas (usando precio como costo de uso)
             costo_herramientas = sum(
-                prestamo.herramienta.precio * prestamo.cantidad_entregada
+                Decimal(prestamo.herramienta.precio) * Decimal(prestamo.cantidad_entregada)
                 for prestamo in actividad.prestamos_herramientas.all()
             )
             
-            total = costo_insumos + costo_herramientas
+            tiempo_invertido_horas = (actividad.fecha_fin - actividad.fecha_inicio).total_seconds() / 3600
+            
+            # Calcular costo de mano de obra
+            costo_mano_obra = Decimal(0)
+            usuarios = actividad.usuarios.all()
+            for usuario in usuarios:
+                if usuario.rol:
+                    salario = Salario.objects.filter(
+                        rol=usuario.rol,
+                        activo=True,
+                        fecha_de_implementacion__lte=actividad.fecha_fin
+                    ).order_by('-fecha_de_implementacion').first()
+                    
+                    if salario:
+                        horas_por_jornal = Decimal(8)
+                        costo_hora = Decimal(salario.valorJornal) / horas_por_jornal
+                        costo_mano_obra += Decimal(tiempo_invertido_horas) * costo_hora
+            
+            # ✅ Aquí ya todas las variables son Decimal
+            total = costo_insumos + costo_herramientas + costo_mano_obra
             
             data.append({
                 'actividad': actividad.tipo_actividad.nombre,
                 'costo_total': float(total),
                 'desglose': {
                     'insumos': float(costo_insumos),
-                    'herramientas': float(costo_herramientas)
+                    'herramientas': float(costo_herramientas),
+                    'mano_de_obra': float(costo_mano_obra)
                 },
+                'tiempo_invertido_horas': round(tiempo_invertido_horas, 2),
                 'fecha_inicio': actividad.fecha_inicio.strftime('%Y-%m-%d'),
-                'fecha_fin': actividad.fecha_fin.strftime('%Y-%m-%d')
+                'fecha_fin': actividad.fecha_fin.strftime('%Y-%m-%d'),
+                'usuarios': [usuario.nombre for usuario in usuarios]
             })
         
         return Response({

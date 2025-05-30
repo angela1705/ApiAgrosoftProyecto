@@ -8,6 +8,8 @@ import LogoSena from "../../assets/logo2.png";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { addToast } from "@heroui/react";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}`;
 
 const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState("");
@@ -29,7 +31,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     return;
     }
 try {
-  const response = await fetch(`http://localhost:8000/usuarios/password_reset_confirm/${token}/`, {
+  const response = await fetch(`${API_URL}/usuarios/password_reset_confirm/${token}/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

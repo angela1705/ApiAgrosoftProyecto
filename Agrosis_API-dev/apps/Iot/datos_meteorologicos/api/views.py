@@ -10,9 +10,11 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.units import inch
 from datetime import datetime, timedelta
-from apps.Iot.datos_meteorologicos.models import Datos_metereologicos   
-from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer   
+from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
+from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg
+from django.db.models.functions import TruncDate
 import os
 import logging
 
@@ -75,7 +77,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
         try:
-            logger.info("Ejecutando reporte_pdf")
+            logger.info("Ejecutando reporte_pdf a las %s", datetime.now().strftime('%H:%M:%S'))
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="reporte_datos_meteorologicos.pdf"'
 
@@ -83,6 +85,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos = []
             styles = getSampleStyleSheet()
 
+            # Encabezado
             logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
             if not os.path.exists(logo_path):
                 logger.error(f"Logo no encontrado en {logo_path}")
@@ -104,6 +107,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(tabla_encabezado)
             elementos.append(Spacer(1, 10))
 
+            # Sección 1: Objetivo
             elementos.append(Paragraph("<b>1. Objetivo</b>", styles['Heading2']))
             elementos.append(Paragraph(
                 "Este documento detalla los datos meteorológicos históricos registrados en el sistema, "
@@ -112,21 +116,36 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             ))
             elementos.append(Spacer(1, 15))
 
-            elementos.append(Paragraph("<b>2. Registro de Datos Meteorológicos</b>", styles['Heading2']))
-            elementos.append(Spacer(1, 5))
-
+            # Obtener datos
             datos = self.get_queryset()
             total_datos = datos.count()
             logger.info(f"Total de datos para el reporte: {total_datos}")
 
+            # Calcular promedios diarios
+            daily_averages = datos.annotate(date=TruncDate('fecha_medicion')).values('date').annotate(
+                avg_temp=Avg('temperatura'),
+                avg_hum=Avg('humedad_ambiente')
+            ).order_by('date')
+
+            # Calcular promedios generales
+            overall_avg_temp = datos.aggregate(avg_temp=Avg('temperatura'))['avg_temp']
+            overall_avg_hum = datos.aggregate(avg_hum=Avg('humedad_ambiente'))['avg_hum']
+
+            # Sección 2: Registro de Datos Meteorológicos (Últimos 100 Registros)
+            elementos.append(Paragraph("<b>2. Registro de Datos Meteorológicos (Últimos 100 Registros)</b>", styles['Heading2']))
+            elementos.append(Spacer(1, 5))
+
+            datos_limitados = datos.order_by('-fecha_medicion')[:100]
             data_datos = [
                 ["ID", "Sensor", "Bancal", "Temp (°C)", "Hum (%)", "Fecha"]
             ]
-            for dato in datos:
+            for dato in datos_limitados:
                 try:
                     fecha = dato.fecha_medicion.strftime('%Y-%m-%d %H:%M') if dato.fecha_medicion else "N/A"
                     sensor_nombre = dato.fk_sensor.nombre if dato.fk_sensor and hasattr(dato.fk_sensor, 'nombre') else "N/A"
                     bancal_nombre = dato.fk_bancal.nombre if dato.fk_bancal and hasattr(dato.fk_bancal, 'nombre') else "N/A"
+                    if bancal_nombre.lower() == "tataat":
+                        bancal_nombre = "tataaf"
                     data_datos.append([
                         str(dato.id),
                         sensor_nombre,
@@ -153,13 +172,44 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(tabla_datos)
             elementos.append(Spacer(1, 15))
 
-            elementos.append(Paragraph("<b>3. Resumen General</b>", styles['Heading2']))
+            # Sección 3: Promedios Diarios
+            elementos.append(Paragraph("<b>3. Promedios Diarios</b>", styles['Heading2']))
+            elementos.append(Spacer(1, 5))
+
+            data_daily_averages = [["Fecha", "Temp Prom (°C)", "Hum Prom (%)"]]
+            for day in daily_averages:
+                data_daily_averages.append([
+                    day['date'].strftime('%Y-%m-%d'),
+                    f"{day['avg_temp']:.2f}" if day['avg_temp'] is not None else "N/A",
+                    f"{day['avg_hum']:.2f}" if day['avg_hum'] is not None else "N/A",
+                ])
+
+            tabla_daily_averages = Table(data_daily_averages, colWidths=[80, 60, 60])
+            tabla_daily_averages.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 8),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('VALIGN', (0, 1), (-1, -1), 'MIDDLE'),
+            ]))
+            elementos.append(tabla_daily_averages)
+            elementos.append(Spacer(1, 15))
+
+            # Sección 4: Resumen General
+            elementos.append(Paragraph("<b>4. Resumen General</b>", styles['Heading2']))
+            temp_prom_str = f"{overall_avg_temp:.2f} °C" if overall_avg_temp is not None else "N/A"
+            hum_prom_str = f"{overall_avg_hum:.2f} %" if overall_avg_hum is not None else "N/A"
             resumen_texto = f"""
-            Se registraron {total_datos} mediciones meteorológicas en el sistema.
+            Se registraron {total_datos} mediciones meteorológicas en el sistema.<br/>
+            - Temperatura Promedio General: {temp_prom_str}<br/>
+            - Humedad Promedio General: {hum_prom_str}
             """
             elementos.append(Paragraph(resumen_texto, styles['Normal']))
 
             doc.build(elementos)
+            logger.info("Reporte PDF generado exitosamente")
             return response
         except Exception as e:
             logger.error(f"Error en reporte_pdf: {str(e)}")

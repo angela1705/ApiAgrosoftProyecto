@@ -3,12 +3,13 @@ import * as XLSX from 'xlsx';
 import ReuModal from '@/components/globales/ReuModal';
 import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}`;
 
 interface Usuario {
   id?: number;
   nombre: string;
   apellido: string;
-  email: string;
   numero_documento: string | number;
 }
 
@@ -34,7 +35,7 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
   const [errores, setErrores] = useState<ErrorFila[]>([]);
 
   const [usuariosEjemplo] = useState<Usuario[]>([
-    { nombre: '', apellido: '', email: '', numero_documento: '' }
+    { nombre: '', apellido: '', numero_documento: '' }
   ]);
 
   const handleSeleccionarArchivo = () => {
@@ -49,7 +50,7 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
     formData.append('archivo', archivo);
 
     try {
-      const response = await api.post('/registro_usuarios_masivo/', formData, {
+      const response = await api.post(`${API_URL}/registro_usuarios_masivo/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -92,10 +93,9 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
 
   const exportarAExcel = () => {
     try {
-      const hoja = usuariosEjemplo.map(({ nombre, apellido, email, numero_documento }) => ({
+      const hoja = usuariosEjemplo.map(({ nombre, apellido, numero_documento }) => ({
         nombre,
         apellido,
-        email,
         numero_documento,
       }));
 
