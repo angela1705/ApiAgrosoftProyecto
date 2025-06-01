@@ -3,6 +3,9 @@ import ReuModal from "../globales/ReuModal";
 import { ReuInput } from "../globales/ReuInput";
 import { useRegistrarInsumo, useUnidadesMedida, useTiposInsumo } from "@/hooks/inventario/useInsumo";
 import { Insumo } from "@/types/inventario/Insumo";
+import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
+import { ModalTipoInsumo } from "./ModalTipoInsumo";
+import { Plus } from "lucide-react";
 
 interface ModalInsumoProps {
   isOpen: boolean;
@@ -28,22 +31,23 @@ export const ModalInsumo = ({ isOpen, onOpenChange, onSuccess }: ModalInsumoProp
     tipo_insumo_id: undefined,
   });
 
+  const [isUnidadModalOpen, setIsUnidadModalOpen] = useState(false);
+  const [isTipoModalOpen, setIsTipoModalOpen] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    // Verificar si el elemento es un checkbox
-    if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
+    if (e.target instanceof HTMLInputElement && e.target.type === "checkbox") {
       const input = e.target as HTMLInputElement;
       setInsumo(prev => ({
         ...prev,
         [name]: input.checked
       }));
     } else {
-      // Manejar otros tipos de inputs
       setInsumo(prev => ({
         ...prev,
-        [name]: name === 'cantidad' || name === 'precio_insumo' ? (value ? Number(value) : 0) :
-                name === 'unidad_medida_id' || name === 'tipo_insumo_id' ? (value ? Number(value) : undefined) :
+        [name]: name === "cantidad" || name === "precio_insumo" ? (value ? Number(value) : 0) :
+                name === "unidad_medida_id" || name === "tipo_insumo_id" ? (value ? Number(value) : undefined) :
                 value
       }));
     }
@@ -85,6 +89,16 @@ export const ModalInsumo = ({ isOpen, onOpenChange, onSuccess }: ModalInsumoProp
       cancelText="Cancelar"
       size="2xl"
     >
+      <ModalUnidadMedida
+        isOpen={isUnidadModalOpen}
+        onOpenChange={setIsUnidadModalOpen}
+        onSuccess={() => setIsUnidadModalOpen(false)}
+      />
+      <ModalTipoInsumo
+        isOpen={isTipoModalOpen}
+        onOpenChange={setIsTipoModalOpen}
+        onSuccess={() => setIsTipoModalOpen(false)}
+      />
       <div className="space-y-4">
         <ReuInput
           label="Nombre"
@@ -108,7 +122,16 @@ export const ModalInsumo = ({ isOpen, onOpenChange, onSuccess }: ModalInsumoProp
           onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setInsumo({ ...insumo, cantidad: Number(e.target.value) || 0 })}
         />
         <div>
-          <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+            <button
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setIsUnidadModalOpen(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
           <select
             name="unidad_medida_id"
             value={insumo.unidad_medida_id || ""}
@@ -125,7 +148,16 @@ export const ModalInsumo = ({ isOpen, onOpenChange, onSuccess }: ModalInsumoProp
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Tipo de Insumo</label>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Tipo de Insumo</label>
+            <button
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setIsTipoModalOpen(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
           <select
             name="tipo_insumo_id"
             value={insumo.tipo_insumo_id || ""}
