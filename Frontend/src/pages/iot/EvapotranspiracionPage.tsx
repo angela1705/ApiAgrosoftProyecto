@@ -21,7 +21,7 @@ interface EvapotranspiracionData {
   id: number;
   fk_bancal: number;
   fecha: string;
-  valor: string; // El backend devuelve string, por ejemplo "7.13"
+  valor: string; 
   creado: string;
 }
 

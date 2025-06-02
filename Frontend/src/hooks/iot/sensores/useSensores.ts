@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { Sensor } from "@/types/iot/type";
-
-const API_URL = "http://127.0.0.1:8000/iot/sensores/";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}iot/sensores/`;
 
 const fetchSensores = async (): Promise<Sensor[]> => {
   const token = localStorage.getItem("access_token");

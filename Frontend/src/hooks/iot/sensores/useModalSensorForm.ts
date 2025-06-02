@@ -4,7 +4,7 @@ import { Sensor, TipoSensor } from "@/types/iot/type";
 import { Bancal } from "@/types/cultivo/Bancal";
 
 interface UseModalSensorFormProps {
-  sensor: Sensor; // Sensor no puede ser null
+  sensor: Sensor;  
   tipoSensores: TipoSensor[] | undefined;
   bancales: Bancal[] | undefined;
   onConfirm: (editedSensor: Sensor | null) => void;

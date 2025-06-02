@@ -1,4 +1,3 @@
-// src/types/iot/type.ts
 import React from "react";
 
 export interface SensorData {
