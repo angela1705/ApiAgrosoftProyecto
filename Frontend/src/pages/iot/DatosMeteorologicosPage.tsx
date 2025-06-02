@@ -7,8 +7,7 @@ import CustomSpinner from "@/components/globales/Spinner";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import { motion } from "framer-motion";
-
-// Definición de tipos de sensores
+ 
 const dataTypes = [
   { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" /> },
   { label: "Humedad (%)", key: "humedad_ambiente", icon: <FaTint className="text-blue-500" /> },

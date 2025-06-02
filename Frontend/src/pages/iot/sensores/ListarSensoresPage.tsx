@@ -8,8 +8,9 @@ import { useBancales } from "@/hooks/cultivo/usebancal";
 import { useNavigate } from "react-router-dom";
 import Tabla from "@/components/globales/Tabla";
 import { ModalSensor } from "@/components/Iot/ModalSensor";
+import GuideModal from "@/components/Iot/GuideModal"; // Importar el modal
 import { Sensor } from "@/types/iot/type";
-import { EditIcon, Trash2 } from "lucide-react";
+import { EditIcon, Trash2, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ListarSensoresPage() {
@@ -21,6 +22,7 @@ export default function ListarSensoresPage() {
   const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const navigate = useNavigate();
 
   console.log("[ListarSensoresPage] Estado inicial: ", {
@@ -43,73 +45,70 @@ export default function ListarSensoresPage() {
 
   const formattedData = useMemo(() => {
     console.log("[ListarSensoresPage] Formateando datos para la tabla: ", { sensores, bancales });
-    return sensores.map((sensor: Sensor) => {
-      const formattedSensor = {
-        id: sensor.id ? sensor.id.toString() : "N/A",
-        nombre: sensor.nombre || "Sin nombre",
-        tipo_sensor: sensor.tipo_sensor || "Desconocido",
-        unidad_medida: sensor.unidad_medida || "N/A",
-        device_code: sensor.device_code || "N/A",
-        bancal_nombre: sensor.bancal_nombre || "Sin bancal",
-        estado: (
-          <span
-            className={`px-2 py-1 rounded-full text-xs font-semibold ${
-              sensor.estado === "activo" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-            }`}
+    return sensores.map((sensor: Sensor) => ({
+      id: sensor.id ? sensor.id.toString() : "N/A",
+      nombre: sensor.nombre || "Sin nombre",
+      tipo_sensor: sensor.tipo_sensor || "Desconocido",
+      unidad_medida: sensor.unidad_medida || "N/A",
+      device_code: sensor.device_code || "N/A",
+      bancal_nombre: sensor.bancal_nombre || "Sin bancal",
+      estado: (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            sensor.estado === "activo" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
+        >
+          {sensor.estado === "activo" ? "Activo" : "Inactivo"}
+        </span>
+      ),
+      acciones: (
+        <div className="flex items-center gap-2">
+          <motion.button
+            onClick={() => {
+              console.log("[ListarSensoresPage] Abriendo modal de edición para sensor: ", sensor);
+              setSelectedSensor({ ...sensor });
+              setIsEditModalOpen(true);
+            }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            {sensor.estado === "activo" ? "Activo" : "Inactivo"}
-          </span>
-        ),
-        acciones: (
-          <div className="flex items-center gap-2">
-            <motion.button
-              onClick={() => {
-                console.log("[ListarSensoresPage] Abriendo modal de edición para sensor: ", sensor);
-                setSelectedSensor({ ...sensor });
-                setIsEditModalOpen(true);
+            <EditIcon size={20} color="black" />
+          </motion.button>
+          <motion.button
+            onClick={() => {
+              console.log("[ListarSensoresPage] Abriendo modal de eliminación para sensor: ", sensor);
+              setSelectedSensor(sensor);
+              setIsDeleteModalOpen(true);
+            }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Trash2 size={20} color="red" />
+          </motion.button>
+          <motion.label
+            className="flex items-center cursor-pointer"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <input
+              type="checkbox"
+              checked={sensor.estado === "activo"}
+              onChange={() => {
+                console.log("[ListarSensoresPage] Cambiando estado del sensor: ", {
+                  sensorId: sensor.id,
+                  newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
+                });
+                toggleSensor.mutate({
+                  sensorId: sensor.id,
+                  newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
+                });
               }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <EditIcon size={20} color="black" />
-            </motion.button>
-            <motion.button
-              onClick={() => {
-                console.log("[ListarSensoresPage] Abriendo modal de eliminación para sensor: ", sensor);
-                setSelectedSensor(sensor);
-                setIsDeleteModalOpen(true);
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Trash2 size={20} color="red" />
-            </motion.button>
-            <motion.label
-              className="flex items-center cursor-pointer"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <input
-                type="checkbox"
-                checked={sensor.estado === "activo"}
-                onChange={() => {
-                  console.log("[ListarSensoresPage] Cambiando estado del sensor: ", {
-                    sensorId: sensor.id,
-                    newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
-                  });
-                  toggleSensor.mutate({
-                    sensorId: sensor.id,
-                    newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
-                  });
-                }}
-                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-              />
-            </motion.label>
-          </div>
-        ),
-      };
-      return formattedSensor;
-    });
+              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+          </motion.label>
+        </div>
+      ),
+    }));
   }, [sensores, bancales, toggleSensor]);
 
   const handleConfirmEdit = (editedSensor: Sensor | null) => {
@@ -152,7 +151,23 @@ export default function ListarSensoresPage() {
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-5xl">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Lista de Sensores Registrados</h2>
+          {/* Botón de ayuda y título */}
+          <div className="flex justify-between items-center mb-4">
+            <motion.button
+              onClick={() => {
+                console.log("[ListarSensoresPage] Abriendo modal de guía");
+                setIsGuideModalOpen(true);
+              }}
+              className="p-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-all duration-300"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              title="Guía de uso"
+            >
+              <HelpCircle size={24} />
+            </motion.button>
+            <h2 className="text-2xl font-bold text-gray-800">Lista de Sensores Registrados</h2>
+            <div className="w-10"></div> {/* Espacio para alinear el título */}
+          </div>
           <div className="mb-2 flex justify-start gap-2">
             <button
               className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
@@ -178,25 +193,32 @@ export default function ListarSensoresPage() {
           )}
         </div>
       </div>
-        <ModalSensor
-          isOpen={isEditModalOpen}
-          onOpenChange={(open) => {
-            console.log("[ListarSensoresPage] Cambiando estado del modal de edición: ", open);
-            setIsEditModalOpen(open);
-          }}
-          sensor={selectedSensor!}  
-          onConfirm={handleConfirmEdit}
-        />
-        <ModalSensor
-          isOpen={isDeleteModalOpen}
-          onOpenChange={(open) => {
-            console.log("[ListarSensoresPage] Cambiando estado del modal de eliminación: ", open);
-            setIsDeleteModalOpen(open);
-          }}
-          sensor={selectedSensor!}  
-          onConfirm={handleConfirmDelete}
-          isDelete
-        />
+      <ModalSensor
+        isOpen={isEditModalOpen}
+        onOpenChange={(open) => {
+          console.log("[ListarSensoresPage] Cambiando estado del modal de edición: ", open);
+          setIsEditModalOpen(open);
+        }}
+        sensor={selectedSensor!}
+        onConfirm={handleConfirmEdit}
+      />
+      <ModalSensor
+        isOpen={isDeleteModalOpen}
+        onOpenChange={(open) => {
+          console.log("[ListarSensoresPage] Cambiando estado del modal de eliminación: ", open);
+          setIsDeleteModalOpen(open);
+        }}
+        sensor={selectedSensor!}
+        onConfirm={handleConfirmDelete}
+        isDelete
+      />
+      <GuideModal
+        isOpen={isGuideModalOpen}
+        onClose={() => {
+          console.log("[ListarSensoresPage] Cerrando modal de guía");
+          setIsGuideModalOpen(false);
+        }}
+      />
     </DefaultLayout>
-  );  
+  );
 }
