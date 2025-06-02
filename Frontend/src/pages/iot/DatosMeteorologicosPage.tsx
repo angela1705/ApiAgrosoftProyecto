@@ -1,75 +1,67 @@
-import { useState, useMemo, Fragment } from "react";
+import { useState, useMemo } from "react";
 import DefaultLayout from "@/layouts/default";
-import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorologicosHistoricos";
-import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
-import { useNavigate } from "react-router-dom";
+import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/datos_sensores/useDatosMeteorologicosHistoricos";
+import { useSensores } from "@/hooks/iot/sensores/useSensores";
 import Tabla from "@/components/globales/Tabla";
-import { Sensor, SensorData } from "@/types/iot/type";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { ArrowLeft } from "lucide-react";
-import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import CustomSpinner from "@/components/globales/Spinner";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { addToast } from "@heroui/react";
-import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
+// Definición de tipos de sensores
 const dataTypes = [
-  { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" />, sensorId: 1 },
-  { label: "Humedad (%)", key: "humedad_ambiente", icon: <FaTint className="text-blue-500" />, sensorId: 2 }, 
+  { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" /> },
+  { label: "Humedad (%)", key: "humedad_ambiente", icon: <FaTint className="text-blue-500" /> },
 ];
 
 export default function DatosMeteorologicosPage() {
-  const [selectedDataType, setSelectedDataType] = useState("humedad_ambiente");
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { data: historicos = [], isLoading, error } = useDatosMeteorologicosHistoricos();
-  const { sensores = [], isLoading: sensoresLoading, error: sensoresError } = useSensoresRegistrados();
-  const navigate = useNavigate();
+  const [selectedDataType, setSelectedDataType] = useState(dataTypes[0]);
+  const [selectedSensor, setSelectedSensor] = useState<number | "todos">("todos");
+  const { data: historicos = [], isLoading } = useDatosMeteorologicosHistoricos();
+  const { sensores = [], isLoading: sensoresLoading } = useSensores();
 
-  const filteredData = useMemo(() => {
-    return historicos.filter((dato: SensorData) => dato[selectedDataType as keyof SensorData] != null);
-  }, [historicos, selectedDataType]);
+  // Filtrar sensores por el tipo seleccionado
+  const filteredSensores = useMemo(() => {
+    return sensores.filter(sensor => sensor.tipo_sensor === selectedDataType.key);
+  }, [sensores, selectedDataType]);
 
+  // Datos para la tabla
   const tableData = useMemo(() => {
-    return filteredData.map((dato: SensorData) => ({
-      id: String(dato.id ?? "N/A"),
-      sensor: sensores.find((s: Sensor) => s.id === dato.fk_sensor)?.nombre ?? "N/A",
-      value: String(dato[selectedDataType as keyof SensorData] ?? "N/A"),
-      fecha_medicion: dato.fecha_medicion ? new Date(dato.fecha_medicion).toLocaleString("es-ES") : "N/A",
-    }));
-  }, [filteredData, sensores, selectedDataType]);
+    return historicos
+      .filter(dato => 
+        (selectedSensor === "todos" || dato.sensor_nombre === filteredSensores.find(s => s.id === selectedSensor)?.nombre) &&
+        dato[selectedDataType.key] != null
+      )
+      .map(dato => ({
+        id: dato.id || "N/A",
+        sensor: dato.sensor_nombre || "Desconocido",
+        bancal: dato.bancal_nombre || "N/A",
+        value: dato[selectedDataType.key],
+        fecha_medicion: new Date(dato.fecha_medicion).toLocaleString("es-ES", {
+          year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        })
+      }));
+  }, [historicos, selectedSensor, selectedDataType, filteredSensores]);
 
+  // Datos para el gráfico (últimos 50 registros)
   const chartData = useMemo(() => {
-    return tableData
-      .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())
-      .slice(0, 20)
-      .map((row, index) => ({
-        id: `${row.id}-${index}`,
-        fecha: row.fecha_medicion,
-        value: parseFloat(row.value) || 0,
+    return [...tableData]
+      .sort((a, b) => new Date(a.fecha_medicion).getTime() - new Date(b.fecha_medicion).getTime())
+      .slice(-50)
+      .map(dato => ({
+        fecha: dato.fecha_medicion.split(',')[0], 
+        hora: dato.fecha_medicion.split(',')[1].trim(), 
+        value: Number(dato.value)
       }));
   }, [tableData]);
 
   const columns = [
     { name: "ID", uid: "id", className: "hidden sm:table-cell" },
-    { name: "Sensor", uid: "sensor", className: "hidden sm:table-cell" },
-    { name: dataTypes.find(dt => dt.key === selectedDataType)?.label ?? "Dato", uid: "value" },
+    { name: "Sensor", uid: "sensor" },
+    { name: "Bancal", uid: "bancal" },
+    { name: selectedDataType.label, uid: "value" },
     { name: "Fecha de Medición", uid: "fecha_medicion" },
   ];
-
-  const mobileData = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return tableData.slice(start, end);
-  }, [tableData, page, rowsPerPage]);
-
-  const pages = Math.ceil(tableData.length / rowsPerPage);
-
-  const onRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  };
 
   if (isLoading || sensoresLoading) {
     return (
@@ -81,197 +73,71 @@ export default function DatosMeteorologicosPage() {
     );
   }
 
-  if (error || sensoresError) {
-    addToast({
-      title: "Error",
-      description: error?.message || sensoresError?.message || "Error al cargar los datos",
-      timeout: 3000,
-      color: "danger",
-    });
-    return (
-      <DefaultLayout>
-        <div className="w-full flex flex-col items-center min-h-screen p-6">
-          <p className="text-red-500 text-center">{error?.message || sensoresError?.message}</p>
-          <button
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            onClick={() => window.location.reload()}
-          >
-            Reintentar
-          </button>
-        </div>
-      </DefaultLayout>
-    );
-  }
-
   return (
     <DefaultLayout>
-      <div className="max-w-7xl mx-auto p-3 sm:p-4 bg-gray-50 min-h-screen">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 text-center">Datos Meteorológicos Históricos</h1>
-
-        <div className="mb-4 flex justify-start">
-          <motion.button
-            className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition duration-300 text-sm sm:text-base"
-            onClick={() => navigate("/iot/sensores")}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ArrowLeft className="mr-2" size={14} />
-            Volver a Tiempo Real
-          </motion.button>
+      <div className="max-w-7xl mx-auto p-4 bg-gray-50 min-h-screen">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Datos Meteorológicos Históricos</h1>
+        
+        {/* Selector de tipo de dato */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Dato</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {dataTypes.map(type => (
+              <motion.button
+                key={type.key}
+                className={`p-4 rounded-lg flex flex-col items-center justify-center transition-all ${
+                  selectedDataType.key === type.key ? "bg-blue-100 border-2 border-blue-500" : "bg-white border border-gray-200 hover:bg-gray-50"
+                }`}
+                onClick={() => {
+                  setSelectedDataType(type);
+                  setSelectedSensor("todos");
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="text-2xl mb-2">{type.icon}</div>
+                <span className="font-medium text-gray-800">{type.label}</span>
+              </motion.button>
+            ))}
+          </div>
         </div>
 
-        <motion.div
-          className="bg-white p-3 sm:p-4 rounded-lg shadow-md mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">Seleccionar Tipo de Dato</h3>
-          <Listbox value={selectedDataType} onChange={setSelectedDataType}>
-            <div className="relative">
-              <Listbox.Button className="relative w-full cursor-default rounded-lg bg-blue-100 py-2 pl-3 pr-10 text-left text-gray-700 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:text-sm">
-                <span className="flex items-center gap-2">
-                  {dataTypes.find(dt => dt.key === selectedDataType)?.icon}
-                  {dataTypes.find(dt => dt.key === selectedDataType)?.label ?? "Seleccionar"}
-                </span>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                  <ChevronUpDownIcon className="h-5 w-5 text-gray-500" />
-                </span>
-              </Listbox.Button>
-              <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-                <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 sm:text-sm z-10">
-                  {dataTypes.map((type) => (
-                    <Listbox.Option
-                      key={type.key}
-                      className={({ active }) =>
-                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                          active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
-                        }`
-                      }
-                      value={type.key}
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                            <div className="flex items-center gap-2">{type.icon} {type.label}</div>
-                          </span>
-                          {selected && (
-                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
-                              <CheckIcon className="h-5 w-5" />
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </Transition>
-            </div>
-          </Listbox>
-        </motion.div>
+        {/* Selector de sensor */}
+        <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Sensor</label>
+          <select 
+            value={selectedSensor}
+            onChange={(e) => setSelectedSensor(e.target.value === "todos" ? "todos" : Number(e.target.value))}
+            className="p-2 border rounded w-full"
+          >
+            <option value="todos">Todos los sensores</option>
+            {filteredSensores.map(sensor => (
+              <option key={sensor.id} value={sensor.id}>
+                {sensor.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        {tableData.length === 0 ? (
-          <p className="text-gray-600 text-center text-base sm:text-lg">
-            No hay datos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label ?? "el tipo seleccionado"}.
-          </p>
-        ) : (
-          <>
-            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-lg mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">Tabla de Datos</h3>
-              <div className="block sm:hidden">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-default-400 text-xs">
-                    Total {tableData.length} registros
-                  </span>
-                  <label className="flex items-center text-default-400 text-xs">
-                    Filas por página:
-                    <select
-                      className="bg-transparent outline-none text-default-400 text-xs ml-1"
-                      onChange={onRowsPerPageChange}
-                    >
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="15">15</option>
-                    </select>
-                  </label>
-                </div>
-                {mobileData.map((row) => (
-                  <motion.div
-                    key={row.id}
-                    className="border-b border-gray-200 p-3 mb-3 bg-gray-50 rounded-lg"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <p className="text-sm font-medium text-gray-700">
-                      {dataTypes.find(dt => dt.key === selectedDataType)?.label ?? "Dato"}: {row.value}
-                    </p>
-                    <p className="text-xs text-gray-500">Fecha: {row.fecha_medicion}</p>
-                    <p className="text-xs text-gray-500">Sensor: {row.sensor}</p>
-                  </motion.div>
-                ))}
-                <div className="flex justify-center mt-3">
-                  <div className="flex gap-2">
-                    <motion.button
-                      className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 text-xs"
-                      onClick={() => setPage(page - 1)}
-                      disabled={page === 1}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Anterior
-                    </motion.button>
-                    <motion.button
-                      className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 text-xs"
-                      onClick={() => setPage(page + 1)}
-                      disabled={page === pages}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Siguiente
-                    </motion.button>
-                  </div>
-                </div>
-              </div>
-              <div className="hidden sm:block overflow-x-auto">
-                <Tabla columns={columns} data={tableData} />
-              </div>
-            </div>
+        {/* Tabla de datos */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+          <Tabla columns={columns} data={tableData} />
+        </div>
 
-            <motion.div
-              className="bg-white p-3 sm:p-4 rounded-lg shadow-lg"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
-                Gráfica Histórica - {dataTypes.find(dt => dt.key === selectedDataType)?.label ?? "Dato"}
-              </h3>
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                  <XAxis
-                    dataKey="fecha"
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                    interval="preserveStartEnd"
-                    tick={{ fontSize: 10 }}
-                  />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{ fontSize: 12, padding: 8 }}
-                    formatter={(value: number) => [value, dataTypes.find(dt => dt.key === selectedDataType)?.label ?? "Valor"]}
-                  />
-                  <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-              {chartData.length === 0 && (
-                <p className="text-gray-600 text-center mt-4 text-sm sm:text-base">
-                  No hay datos históricos disponibles para {dataTypes.find(dt => dt.key === selectedDataType)?.label ?? "el tipo seleccionado"}.
-                </p>
-              )}
-            </motion.div>
-          </>
+        {/* Gráfico */}
+        {tableData.length > 0 && (
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Evolución de {selectedDataType.label}</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 30 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="hora" angle={-45} textAnchor="end" height={50} tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => selectedDataType.key === 'temperatura' ? `${value}°C` : `${value}%`} />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke={selectedDataType.key === 'temperatura' ? "#ef4444" : "#3b82f6"} strokeWidth={2} dot={{ r: 2 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         )}
       </div>
     </DefaultLayout>

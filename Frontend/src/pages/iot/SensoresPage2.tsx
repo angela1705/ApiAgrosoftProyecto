@@ -11,8 +11,8 @@ import { SensorStats } from "@/components/Iot/mqtt/SensorStats";
 import { SensorCharts } from "@/components/Iot/mqtt/SensorCharts";
 import { SensorTable } from "@/components/Iot/mqtt/SensorTable";
 import { DataType, ViewMode } from "@/types/iot/iotmqtt";
+ 
 
-// Definición de tipos de datos
 const dataTypes: DataType[] = [
   {
     label: "Temperatura (°C)",

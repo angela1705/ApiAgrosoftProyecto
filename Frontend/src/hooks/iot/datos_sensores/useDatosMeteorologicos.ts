@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import api from "@/components/utils/axios"; 
+import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { SensorData } from "@/types/iot/type";
 import { obtenerNuevoToken } from "@/components/utils/refresh";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = "http://192.168.1.12:8000/iot/datosmeteorologicos/";
+const API_URL = `${BASE_URL}/iot/datosmeteorologicos/`;
 
-const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
+const fetchDatosMeteorologicos = async (sensorId: number): Promise<SensorData[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) {
     addToast({
@@ -19,9 +20,12 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
   }
 
   try {
+    console.log(`Fetching data for sensor ${sensorId}`);
     const response = await api.get(API_URL, {
+      params: { fk_sensor_id: sensorId },
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("Response from /iot/datosmeteorologicos/:", response.data);
     return response.data.map((item: any) => ({
       id: item.id,
       fk_sensor: item.fk_sensor,
@@ -44,9 +48,12 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
       try {
         const newToken = await obtenerNuevoToken(refreshToken);
         localStorage.setItem("access_token", newToken);
+        console.log(`Fetching data for sensor ${sensorId} with new token`);
         const response = await api.get(API_URL, {
+          params: { fk_sensor_id: sensorId },
           headers: { Authorization: `Bearer ${newToken}` },
         });
+        console.log("Response from /iot/datosmeteorologicos/:", response.data);
         return response.data.map((item: any) => ({
           id: item.id,
           fk_sensor: item.fk_sensor,
@@ -73,7 +80,7 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
     } else {
       addToast({
         title: "Error",
-        description: error.response?.data?.message || "Error al cargar los datos históricos",
+        description: error.response?.data?.message || "Error al cargar los datos meteorológicos",
         timeout: 3000,
         color: "danger",
       });
@@ -82,10 +89,11 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
   }
 };
 
-export const useDatosMeteorologicosHistoricos = () => {
+export const useDatosMeteorologicos = (sensorId: number) => {
   return useQuery<SensorData[], Error>({
-    queryKey: ["datosMeteorologicosHistoricos"],
-    queryFn: fetchDatosHistoricos,
+    queryKey: ["datosMeteorologicos", sensorId],
+    queryFn: () => fetchDatosMeteorologicos(sensorId),
+    enabled: !!sensorId,
     staleTime: 1000 * 60,
   });
 };

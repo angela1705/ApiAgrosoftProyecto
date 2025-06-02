@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorologicosHistoricos";
+import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/datos_sensores/useDatosMeteorologicosHistoricos";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import { addToast } from "@heroui/react";
 import api from "@/components/utils/axios";

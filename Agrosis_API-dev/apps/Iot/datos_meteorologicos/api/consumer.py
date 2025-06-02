@@ -2,9 +2,7 @@ import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from apps.Iot.datos_meteorologicos.models import Datos_metereologicos
 from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
-from decimal import Decimal
 
 logger = logging.getLogger(__name__)
 
@@ -21,20 +19,26 @@ class RealtimeDataConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            logger.info(f"Datos recibidos en ws/realtime/: {data}")
+            logger.info(f"[WebSocket] Datos recibidos: {data}")
             serializer = Datos_metereologicosSerializer(data=data)
             is_valid = await database_sync_to_async(serializer.is_valid)()
             if is_valid:
-                validated_data = await database_sync_to_async(lambda: serializer.validated_data)()
-                # Convertir Decimal a float y datetime a string
+                obj = await database_sync_to_async(serializer.save)()
                 cleaned_data = {
-                    'fk_sensor': validated_data.get('fk_sensor').id,
-                    'fk_bancal': validated_data.get('fk_bancal').id,
-                    'temperatura': float(validated_data.get('temperatura')) if validated_data.get('temperatura') is not None else None,
-                    'humedad_ambiente': float(validated_data.get('humedad_ambiente')) if validated_data.get('humedad_ambiente') is not None else None,
-                    'fecha_medicion': validated_data.get('fecha_medicion').isoformat() if validated_data.get('fecha_medicion') else None
+                    'id': obj.id,
+                    'fk_sensor': obj.fk_sensor.id if obj.fk_sensor else None,
+                    'fk_bancal': obj.fk_bancal.id if obj.fk_bancal else None,
+                    'temperatura': float(obj.temperatura) if obj.temperatura is not None else None,
+                    'humedad_ambiente': float(obj.humedad_ambiente) if obj.humedad_ambiente is not None else None,
+                    'luminosidad': float(obj.luminosidad) if obj.luminosidad is not None else None,
+                    'lluvia': float(obj.lluvia) if obj.lluvia is not None else None,
+                    'velocidad_viento': float(obj.velocidad_viento) if obj.velocidad_viento is not None else None,
+                    'direccion_viento': float(obj.direccion_viento) if obj.direccion_viento is not None else None,
+                    'humedad_suelo': float(obj.humedad_suelo) if obj.humedad_suelo is not None else None,
+                    'ph_suelo': float(obj.ph_suelo) if obj.ph_suelo is not None else None,
+                    'fecha_medicion': obj.fecha_medicion.isoformat() if obj.fecha_medicion else None
                 }
-                logger.info(f"Datos validados para sensor {cleaned_data['fk_sensor']}: {cleaned_data}")
+                logger.info(f"[WebSocket] Datos guardados: {cleaned_data}")
                 await self.channel_layer.group_send(
                     "weather_group",
                     {
@@ -42,22 +46,20 @@ class RealtimeDataConsumer(AsyncWebsocketConsumer):
                         "data": cleaned_data
                     }
                 )
-                logger.info(f"Enviando al grupo (sensor {cleaned_data['fk_sensor']}): {cleaned_data}")
-                await self.send(text_data=json.dumps({"status": "Datos recibidos"}))
+                await self.send(text_data=json.dumps({"status": "ok"}))
             else:
                 errors = await database_sync_to_async(lambda: serializer.errors)()
-                logger.error(f"Error de validación: {errors}")
+                logger.error(f"[WebSocket] Error de validación: {errors}")
                 await self.send(text_data=json.dumps({"error": errors}))
         except json.JSONDecodeError as e:
-            logger.error(f"Datos JSON inválidos: {str(e)}")
-            await self.send(text_data=json.dumps({"error": "Datos JSON inválidos"}))
+            logger.error(f"[WebSocket] JSON inválido: {str(e)}")
+            await self.send(text_data=json.dumps({"error": "JSON inválido"}))
         except Exception as e:
-            logger.error(f"Error inesperado en receive: {str(e)}", exc_info=True)
+            logger.error(f"[WebSocket] Error inesperado: {str(e)}", exc_info=True)
             await self.send(text_data=json.dumps({"error": f"Error inesperado: {str(e)}"}))
 
     async def weather_data(self, event):
         data = event['data']
-        logger.info(f"Enviando datos a cliente en ws/realtime/: {data}")
         await self.send(text_data=json.dumps({
             'type': 'weather_data',
             'data': data

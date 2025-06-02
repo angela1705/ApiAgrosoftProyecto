@@ -1,0 +1,202 @@
+import { useState, useMemo } from "react";
+import DefaultLayout from "@/layouts/default";
+import { useSensores } from "@/hooks/iot/sensores/useSensores";
+import { useUpdateSensor } from "@/hooks/iot/sensores/usePutSensor";
+import { useDeleteSensor } from "@/hooks/iot/sensores/useDeleteSensor";
+import { useToggleSensor } from "@/hooks/iot/sensores/useToggleSensor";
+import { useBancales } from "@/hooks/cultivo/usebancal";
+import { useNavigate } from "react-router-dom";
+import Tabla from "@/components/globales/Tabla";
+import { ModalSensor } from "@/components/Iot/ModalSensor";
+import { Sensor } from "@/types/iot/type";
+import { EditIcon, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function ListarSensoresPage() {
+  const { sensores, isLoading, error } = useSensores();
+  const updateSensor = useUpdateSensor();
+  const deleteSensor = useDeleteSensor();
+  const toggleSensor = useToggleSensor();
+  const { data: bancales } = useBancales();
+  const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  console.log("[ListarSensoresPage] Estado inicial: ", {
+    sensores,
+    isLoading,
+    error,
+    bancales,
+  });
+
+  const columns = [
+    { name: "ID", uid: "id" },
+    { name: "Nombre", uid: "nombre" },
+    { name: "Tipo", uid: "tipo_sensor" },
+    { name: "Unidad", uid: "unidad_medida" },
+    { name: "Código Dispositivo", uid: "device_code" },
+    { name: "Bancal", uid: "bancal_nombre" },
+    { name: "Estado", uid: "estado" },
+    { name: "Acciones", uid: "acciones" },
+  ];
+
+  const formattedData = useMemo(() => {
+    console.log("[ListarSensoresPage] Formateando datos para la tabla: ", { sensores, bancales });
+    return sensores.map((sensor: Sensor) => {
+      const formattedSensor = {
+        id: sensor.id ? sensor.id.toString() : "N/A",
+        nombre: sensor.nombre || "Sin nombre",
+        tipo_sensor: sensor.tipo_sensor || "Desconocido",
+        unidad_medida: sensor.unidad_medida || "N/A",
+        device_code: sensor.device_code || "N/A",
+        bancal_nombre: sensor.bancal_nombre || "Sin bancal",
+        estado: (
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-semibold ${
+              sensor.estado === "activo" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
+          >
+            {sensor.estado === "activo" ? "Activo" : "Inactivo"}
+          </span>
+        ),
+        acciones: (
+          <div className="flex items-center gap-2">
+            <motion.button
+              onClick={() => {
+                console.log("[ListarSensoresPage] Abriendo modal de edición para sensor: ", sensor);
+                setSelectedSensor({ ...sensor });
+                setIsEditModalOpen(true);
+              }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <EditIcon size={20} color="black" />
+            </motion.button>
+            <motion.button
+              onClick={() => {
+                console.log("[ListarSensoresPage] Abriendo modal de eliminación para sensor: ", sensor);
+                setSelectedSensor(sensor);
+                setIsDeleteModalOpen(true);
+              }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Trash2 size={20} color="red" />
+            </motion.button>
+            <motion.label
+              className="flex items-center cursor-pointer"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <input
+                type="checkbox"
+                checked={sensor.estado === "activo"}
+                onChange={() => {
+                  console.log("[ListarSensoresPage] Cambiando estado del sensor: ", {
+                    sensorId: sensor.id,
+                    newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
+                  });
+                  toggleSensor.mutate({
+                    sensorId: sensor.id,
+                    newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
+                  });
+                }}
+                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+              />
+            </motion.label>
+          </div>
+        ),
+      };
+      return formattedSensor;
+    });
+  }, [sensores, bancales, toggleSensor]);
+
+  const handleConfirmEdit = (editedSensor: Sensor | null) => {
+    if (editedSensor?.id) {
+      console.log("[ListarSensoresPage] Confirmando edición del sensor: ", editedSensor);
+      updateSensor.mutate(editedSensor, {
+        onSuccess: () => {
+          console.log("[ListarSensoresPage] Edición exitosa, cerrando modal");
+          setIsEditModalOpen(false);
+          setSelectedSensor(null);
+        },
+        onError: (error: any) => {
+          console.error("[ListarSensoresPage] Error al editar sensor: ", error);
+        },
+      });
+    } else {
+      console.error("[ListarSensoresPage] No se puede editar: editedSensor.id es inválido", editedSensor);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedSensor?.id) {
+      console.log("[ListarSensoresPage] Confirmando eliminación del sensor: ", selectedSensor);
+      deleteSensor.mutate(selectedSensor.id, {
+        onSuccess: () => {
+          console.log("[ListarSensoresPage] Eliminación exitosa, cerrando modal");
+          setIsDeleteModalOpen(false);
+          setSelectedSensor(null);
+        },
+        onError: (error: any) => {
+          console.error("[ListarSensoresPage] Error al eliminar sensor: ", error);
+        },
+      });
+    } else {
+      console.error("[ListarSensoresPage] No se puede eliminar: selectedSensor.id es inválido", selectedSensor);
+    }
+  };
+
+  return (
+    <DefaultLayout>
+      <div className="w-full flex flex-col items-center min-h-screen p-6">
+        <div className="w-full max-w-5xl">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Lista de Sensores Registrados</h2>
+          <div className="mb-2 flex justify-start gap-2">
+            <button
+              className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+              onClick={() => {
+                console.log("[ListarSensoresPage] Navegando a /iot/registrar-sensor");
+                navigate("/iot/registrar-sensor");
+              }}
+            >
+              + Registrar Sensor
+            </button>
+          </div>
+          {isLoading ? (
+            <p className="text-gray-600 text-center">Cargando sensores...</p>
+          ) : error ? (
+            <p className="text-red-500 text-center">Error: {error.message}</p>
+          ) : (
+            <>
+              <Tabla columns={columns} data={formattedData} responsiveColumns={["nombre", "estado"]} />
+              {sensores.length === 0 && (
+                <p className="text-gray-600 text-center mt-4">No hay sensores registrados</p>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+        <ModalSensor
+          isOpen={isEditModalOpen}
+          onOpenChange={(open) => {
+            console.log("[ListarSensoresPage] Cambiando estado del modal de edición: ", open);
+            setIsEditModalOpen(open);
+          }}
+          sensor={selectedSensor!}  
+          onConfirm={handleConfirmEdit}
+        />
+        <ModalSensor
+          isOpen={isDeleteModalOpen}
+          onOpenChange={(open) => {
+            console.log("[ListarSensoresPage] Cambiando estado del modal de eliminación: ", open);
+            setIsDeleteModalOpen(open);
+          }}
+          sensor={selectedSensor!}  
+          onConfirm={handleConfirmDelete}
+          isDelete
+        />
+    </DefaultLayout>
+  );  
+}
