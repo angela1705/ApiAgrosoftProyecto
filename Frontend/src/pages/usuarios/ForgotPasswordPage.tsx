@@ -6,6 +6,10 @@ import { motion } from 'framer-motion';
 import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
 import LogoSena from '../../assets/logo2.png';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}`;
+
+
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
@@ -13,7 +17,7 @@ const ForgotPasswordPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8000/usuarios/password_reset/', {
+      const response = await fetch(`${API_URL}/usuarios/password_reset/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

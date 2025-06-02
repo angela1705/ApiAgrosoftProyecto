@@ -4,6 +4,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf import settings
+from django.conf.urls.static import static
 from apps.Usuarios.usuarios.api.views import (
     RegistroUsuarioView, RegistroSecundarioUsuarioView, CurrentUserView, PasswordResetRequestView, PasswordResetConfirmView, ChangePasswordView, RegistroMasivoUsuariosView)
 from apps.Usuarios.usuarios.api.routers import UsuariosRouter
@@ -134,3 +136,5 @@ urlpatterns = [
     path('mapa/', include(routermapa.urls)),
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

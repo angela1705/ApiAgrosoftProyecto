@@ -10,7 +10,7 @@ import ReuModal from "@/components/globales/ReuModal";
 import { ModalCosecha } from "@/components/cultivo/ModalCosecha";
 import { PrecioProducto, UnidadMedida } from "@/types/inventario/Precio_producto";
 import { addToast } from "@heroui/react";
-import { Plus } from 'lucide-react';
+import { Plus, Info } from 'lucide-react';
 
 const formatCOPNumber = (value: number | string): string => {
     const num = typeof value === 'string' ? parseInt(value.replace(/\./g, ''), 10) : value;
@@ -159,20 +159,30 @@ const PrecioProductoPage: React.FC = () => {
                         ))}
                     </select>
                 </div>
-                <ReuInput
-                    label="Precio"
-                    placeholder="Ej. 1.000"
-                    type="text"
-                    variant="bordered"
-                    radius="md"
-                    value={formatCOPNumber(precioProducto.precio)}
-                    onChange={(e) =>
-                        setPrecioProducto({
-                            ...precioProducto,
-                            precio: parseCOPNumber(e.target.value),
-                        })
-                    }
-                />
+                <div>
+                    <ReuInput
+                        label="Precio Producto (COP)"
+                        placeholder="Ej. 1.000"
+                        type="text"
+                        variant="bordered"
+                        radius="md"
+                        value={formatCOPNumber(precioProducto.precio)}
+                        onChange={(e) =>
+                            setPrecioProducto({
+                                ...precioProducto,
+                                precio: parseCOPNumber(e.target.value),
+                            })
+                        }
+                    />
+                    {precioProducto.cosecha !== 0 && (
+                        <div className="mt-2 flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-md p-2 shadow-sm">
+                            <Info className="h-4 w-4 text-blue-500" />
+                            <p className="text-sm text-gray-600">
+                                Sugerencia: El precio no debe ser menor al costo de producción. Asegúrese de establecer un valor competitivo.
+                            </p>
+                        </div>
+                    )}
+                </div>
                 <ReuInput
                     label="Fecha de Registro"
                     type="date"

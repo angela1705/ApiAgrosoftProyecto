@@ -11,6 +11,7 @@ import { ReuInput } from "@/components/globales/ReuInput";
 import { EditIcon, Trash2 } from "lucide-react";
 import RegistroMasivoModal from "@/pages/usuarios/RegistroMasivoModal";
 import Switcher from "@/components/switch";
+import { addToast } from "@heroui/toast";
 const UsuariosPage: React.FC = () => {
   const { user } = useAuth();
   const {
@@ -24,9 +25,9 @@ const UsuariosPage: React.FC = () => {
   } = useUsuarios();
 
   const navigate = useNavigate();
-  const toggleStaff = useToggleStaff();
 
   const [usuariosLocal, setUsuariosLocal] = useState<any[]>([]);
+  const toggleStaff = useToggleStaff();
 
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -114,16 +115,43 @@ const UsuariosPage: React.FC = () => {
       email: usuario.email,
       numero_documento: usuario.numero_documento,
       username: usuario.username || "N/A",
+      is_staff: usuario.is_staff, // ✅ esto faltaba
       rol: usuario.rol?.rol || "Sin rol",
     estado: (
-      <Switcher
-        color="success"
-        size="sm"
-        isSelected={usuario.is_staff}
-        onChange={(selected) =>
-          toggleStaff.mutate({ id: usuario.id, nuevoValor: selected })
-        }
-      />
+<Switcher
+  size="sm"
+  isSelected={usuario.is_staff}
+  color={usuario.is_staff ? "success" : "danger"}
+  onChange={(e) => {
+    const nuevoValor = e.target.checked;
+    toggleStaff.mutate(
+      { id: usuario.id, nuevoValor },
+      {
+        onSuccess: () => {
+          setUsuariosLocal((prev) =>
+            prev.map((u) =>
+              u.id === usuario.id ? { ...u, is_staff: nuevoValor } : u
+            )
+          );
+          addToast({
+            title: "Éxito",
+            description: `Estado actualizado a ${nuevoValor ? "Activo" : "Inactivo"}`,
+            timeout: 3000,
+            color: "success",
+          });
+        },
+        onError: () => {
+          addToast({
+            title: "Error",
+            description: "No se pudo actualizar el estado.",
+            timeout: 3000,
+            color: "danger",
+          });
+        },
+      }
+    );
+  }}
+/>
     ),
 
       acciones: (

@@ -10,36 +10,76 @@ const UsuariosSecondPage: React.FC = () => {
   const [usuario, setUsuario] = useState({
     nombre: "",
     apellido: "",
-    email: "",
     numero_documento: 0,
   });
 
-  const { registrarUsuario, isLoading, error } = useRegistrarUsuario();
+  const { registrarUsuario, isLoading } = useRegistrarUsuario();
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     const numeroStr = usuario.numero_documento.toString();
 
+    // Verificar campos vacíos
     if (
-      usuario.numero_documento <= 0 ||
-      numeroStr.length < 7 ||
-      numeroStr.length > 15
+      !usuario.nombre.trim() ||
+      !usuario.apellido.trim() ||
+      usuario.numero_documento === 0
     ) {
       addToast({
         title: "Error",
-        description:
-          error?.response?.data?.detail ||
-          "El número de documento debe tener entre 7 y 10 dígitos.",
+        description: "Hay campos vacíos. Por favor, complétalos todos.",
         timeout: 3000,
         color: "danger",
       });
       return;
     }
+
+    // Validar que nombre y apellido no contengan números
+    const contieneNumeros = /\d/;
+    if (contieneNumeros.test(usuario.nombre) || contieneNumeros.test(usuario.apellido)) {
+      addToast({
+        title: "Error",
+        description: "El nombre y el apellido no deben contener números.",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
+    }
+
+    // Validar número de documento entre 7 y 19 dígitos
+    if (
+      usuario.numero_documento <= 0 ||
+      numeroStr.length < 7 ||
+      numeroStr.length > 19
+    ) {
+      addToast({
+        title: "Error",
+        description: "El número de documento debe tener entre 7 y 19 dígitos.",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
+    }
+
     try {
       await registrarUsuario(usuario);
-      setUsuario({ nombre: "", apellido: "", email: "", numero_documento: 0 });
+      setUsuario({ nombre: "", apellido: "", numero_documento: 0 });
+
+      addToast({
+        title: "Éxito",
+        description: "Usuario registrado con éxito.",
+        timeout: 3000,
+        color: "success",
+      });
     } catch (error) {
       console.error("Error al registrar usuario:", error);
+
+      addToast({
+        title: "Error",
+        description: "Hubo un problema al registrar el usuario.",
+        timeout: 3000,
+        color: "danger",
+      });
     }
   };
 
@@ -66,14 +106,6 @@ const UsuariosSecondPage: React.FC = () => {
           onChange={(e) => setUsuario({ ...usuario, apellido: e.target.value })}
         />
         <ReuInput
-          label="Correo Electrónico"
-          placeholder="Ingrese el correo"
-          type="email"
-          value={usuario.email}
-          onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
-        />
-
-        <ReuInput
           label="Número de documento"
           placeholder="Ingrese el número de documento"
           type="number"
@@ -83,7 +115,6 @@ const UsuariosSecondPage: React.FC = () => {
           }
         />
 
-        {error && <p className="text-red-500">{error}</p>}
         <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
             type="button"

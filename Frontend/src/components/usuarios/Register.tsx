@@ -4,17 +4,17 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = `${BASE_URL}`;
 
 const Register: React.FC = () => {
   const [nombre, setNombre] = useState<string>('');
   const [numero_documento, setNumero_documento] = useState<number>();
   const [apellido, setApellido] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
 
@@ -24,19 +24,19 @@ const Register: React.FC = () => {
     setSuccess('');
     setLoading(true);
 
-    if (!nombre || !apellido || !email ||!numero_documento || !password) {
+    if (!nombre || !apellido || !email ||!numero_documento) {
       setError('Todos los campos son requeridos');
       setLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/usuarios/registro/', {
+      const response = await fetch(`${API_URL}/usuarios/registro/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre, apellido, email, numero_documento, password }),
+        body: JSON.stringify({ nombre, apellido, email, numero_documento }),
       });
 
       const data = await response.json();
@@ -93,52 +93,47 @@ const Register: React.FC = () => {
   >
     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-        <TextField
-          label="Nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          fullWidth
-          required
-          sx={textFieldStyles}
-        />
+<TextField
+  label="Nombre"
+  value={nombre}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setNombre(value);
+      setFieldErrors((prev) => ({ ...prev, nombre: '' }));
+    } else {
+      setFieldErrors((prev) => ({ ...prev, nombre: 'Solo se permiten letras y espacios' }));
+    }
+  }}
+  fullWidth
+  required
+  error={!!fieldErrors.nombre}
+  helperText={fieldErrors.nombre}
+  sx={textFieldStyles}
+/>
       </motion.div>
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-        <TextField
-          label="Apellido"
-          value={apellido}
-          onChange={(e) => setApellido(e.target.value)}
-          fullWidth
-          required
-          sx={textFieldStyles}
-        />
-      </motion.div>
+    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
+<TextField
+  label="Apellido"
+  value={apellido}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setApellido(value);
+      setFieldErrors((prev) => ({ ...prev, apellido: '' }));
+    } else {
+      setFieldErrors((prev) => ({ ...prev, apellido: 'Solo se permiten letras y espacios' }));
+    }
+  }}
+  fullWidth
+  required
+  error={!!fieldErrors.apellido}
+  helperText={fieldErrors.apellido}
+  sx={textFieldStyles}
+/>
+        </motion.div>
     </Box>
 
-    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
-        <TextField
-          type={showPassword ? 'text' : 'password'}
-          label="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          fullWidth
-          required
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={() => setShowPassword(!showPassword)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={textFieldStyles}
-        />
-      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -160,7 +155,6 @@ const Register: React.FC = () => {
           sx={textFieldStyles}
         />
       </motion.div>
-    </Box>
 
     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
       <TextField

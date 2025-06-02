@@ -134,8 +134,8 @@ CORS_ALLOWED_ORIGINS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft8',
+        'ENGINE': 'django.db.backends.postgresql', 
+        'NAME': 'agrosoft8', 
         'USER': 'postgres',
         'PASSWORD': 'adso2024',
         'HOST': 'localhost', 
@@ -174,7 +174,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

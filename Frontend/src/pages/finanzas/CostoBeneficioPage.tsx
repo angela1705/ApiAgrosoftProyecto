@@ -71,20 +71,19 @@ const CostoBeneficioPage: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {cosechas.map((cosecha) => (
-              <div
-                key={cosecha.id}
-                onClick={() => handleCardClick(cosecha)}
-                className="cursor-pointer hover:scale-105 transition-transform duration-200"
-              >
-                <CustomCard
-                  title={`Cosecha #${cosecha.id}`}
-                  subtitle={`Cultivo: ${cosecha.cultivo_nombre}`}
-                  tracks={`${formatNumber(cosecha.cantidad)} ${cosecha.unidades_de_medida}`}
-                  image="/images/default-cosecha.jpg"
-                />
-              </div>
-            ))}
+{cosechas.map((item) => (
+  <div
+    key={item.id}
+    onClick={() => handleCardClick(item.cosecha)} // Accede a la cosecha anidada
+    className="cursor-pointer hover:scale-105 transition-transform duration-200"
+  >
+    <CustomCard
+      title={`Cosecha #${item.cosecha.id}`}
+      subtitle={`Cultivo: ${item.cosecha.cultivo_nombre}`}
+      image="/images/default-cosecha.jpg"
+    />
+  </div>
+))}
           </div>
         )}
 
