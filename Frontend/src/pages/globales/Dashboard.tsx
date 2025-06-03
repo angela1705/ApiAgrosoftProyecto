@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import CustomSpinner from "@/components/globales/Spinner";
 import { useVenta } from "@/hooks/finanzas/useVenta"; 
-import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/useDatosMeteorologicosHistoricos";
+import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/datos_sensores/useDatosMeteorologicosHistoricos";
 import { useActividades } from "@/hooks/cultivo/useActividad";
-import { useSensoresRegistrados } from "@/hooks/iot/useSensoresRegistrados";
+import { useSensores } from "@/hooks/iot/sensores/useSensores";
 import { useInsumos } from "@/hooks/inventario/useInsumo"; 
 import { FaTemperatureHigh, FaTint, FaDollarSign, FaBox, FaMicrochip } from "react-icons/fa";
 import { SensorData } from "@/types/iot/type";  
@@ -36,7 +36,7 @@ const Dashboard = () => {
   const { ventas, isLoading: loadingVentas, isError: errorVentas, error: errorVentasError } = useVenta();
   const { data: historicos = [], isLoading: loadingHistoricos, error: errorHistoricos } = useDatosMeteorologicosHistoricos();
   const { data: actividades, isLoading: loadingActividades, error: errorActividades } = useActividades();
-  const { sensores = [], isLoading: loadingSensores, error: errorSensores } = useSensoresRegistrados();
+  const { sensores = [], isLoading: loadingSensores, error: errorSensores } = useSensores();
   const { data: insumos, isLoading: loadingInsumos, error: errorInsumos } = useInsumos();
 
   // Procesar datos de actividades

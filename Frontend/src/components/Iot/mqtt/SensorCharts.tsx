@@ -3,11 +3,15 @@ import { motion } from "framer-motion";
 import Plot from "react-plotly.js";
 import { SensorChartsProps } from "@/types/iot/iotmqtt";
 
-export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, selectedDataType }) => {
+export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, selectedDataType, selectedSensor }) => {
+  // Filtrar datos por tipo de dato y device_code
   const filteredData = realTimeData.filter(
-    (dato) => dato[selectedDataType.key] != null && dato.fk_sensor === selectedDataType.sensorId
+    (dato) =>
+      dato[selectedDataType.key] != null &&
+      (selectedSensor === "todos" || dato.device_code === selectedSensor)
   );
 
+  // Preparar datos para gráfico de barras (últimas 10 lecturas)
   const barChartData = [...filteredData]
     .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())
     .slice(0, 10)
@@ -21,6 +25,7 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
       value: typeof dato[selectedDataType.key] === "number" ? Number(dato[selectedDataType.key]) : 0,
     }));
 
+  // Preparar datos para gráfico de líneas (últimas 10 lecturas)
   const lineChartData = [...filteredData]
     .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())
     .slice(0, 10)
@@ -37,6 +42,7 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
+      {/* Gráfico de barras */}
       <motion.div
         className="bg-white p-6 rounded-lg shadow-md"
         initial={{ opacity: 0, y: 20 }}
@@ -64,6 +70,7 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
         />
         {barChartData.length === 0 && <p className="text-gray-600 text-center mt-4">No hay datos disponibles.</p>}
       </motion.div>
+      {/* Gráfico de líneas */}
       <motion.div
         className="bg-white p-6 rounded-lg shadow-md"
         initial={{ opacity: 0, y: 20 }}
