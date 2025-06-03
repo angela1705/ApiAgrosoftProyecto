@@ -33,9 +33,6 @@ class DetalleVenta(models.Model):
         if self.cantidad > self.producto.stock:
             raise ValidationError(f"Stock insuficiente. Disponible: {self.producto.stock}")
 
-        self.total = self.producto.precio * self.cantidad
-        self.producto.stock -= self.cantidad
-        self.producto.save()
 
         super().save(*args, **kwargs)
 
