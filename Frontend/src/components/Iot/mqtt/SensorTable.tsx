@@ -11,6 +11,10 @@ import { SensorTableProps } from "@/types/iot/iotmqtt";
 const columnHelper = createColumnHelper<SensorTableProps["realTimeData"][0]>();
 
 const columns = [
+  columnHelper.accessor("device_code", {
+    header: "Sensor",
+    cell: (info) => info.getValue(),
+  }),
   columnHelper.accessor("fecha_medicion", {
     header: "Fecha",
     cell: (info) =>

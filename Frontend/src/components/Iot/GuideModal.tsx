@@ -2,15 +2,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 
-// Importar imágenes locales
+// Importar imagenes locales
 import listar1 from "../../assets/iot/listariot1.png";
-import listar2 from "../../assets/iot/listariot2.png";
+import listar2 from "../../assets/iot/listariot2.png"; 
 import listar3 from "../../assets/iot/listariot3.png";
 import listar4 from "../../assets/iot/listariot4.png";
 import listar5 from "../../assets/iot/listariot5.png";
 import listar6 from "../../assets/iot/listariot6.png";
 
-// Definición de los pasos de la guía
+// Definición de los pasos de la guia
 interface GuideStep {
   image: string;
   description: string;

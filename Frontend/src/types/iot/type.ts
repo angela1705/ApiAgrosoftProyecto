@@ -15,13 +15,14 @@ export interface SensorData {
   direccion_viento?: number | null;
   ph_suelo?: number | null;
   fecha_medicion: string;
+  [key: string]: number | null | undefined | string;  
 }
 
 export interface Sensor {
   id: number;
   nombre: string;
-  tipo_sensor: string;  
-  tipo_sensor_id: number;  
+  tipo_sensor: string;
+  tipo_sensor_id: number;
   unidad_medida: string;
   descripcion?: string;
   estado: "activo" | "inactivo";
@@ -63,5 +64,6 @@ export interface EvapotranspiracionData {
 export interface DataTypeSelectorProps {
   selectedDataType: TipoSensor;
   setSelectedDataType: (type: TipoSensor) => void;
+  dataTypes: TipoSensor[];
   className?: string;
 }
