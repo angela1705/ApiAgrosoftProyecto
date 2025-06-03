@@ -43,6 +43,7 @@ export const usePreciosProductos = () => {
         queryKey: ["preciosProductos"],
         queryFn: fetchPreciosProductos,
         staleTime: 1000 * 60,
+        refetchInterval:1000,
     });
 };
 

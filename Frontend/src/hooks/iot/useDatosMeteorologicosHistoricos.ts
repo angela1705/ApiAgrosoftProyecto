@@ -1,11 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/components/utils/axios";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
+import { SensorData } from "@/types/iot/type";
 import { obtenerNuevoToken } from "@/components/utils/refresh";
 
-const API_URL = "http://10.4.21.92:8000/iot/datosmeteorologicos/";
+const API_URL = "http://192.168.1.12:8000/iot/datosmeteorologicos/";
 
-const registrarSensor = async (sensor: { fk_sensor: number; temperatura: number }) => {
+const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) {
     addToast({
@@ -18,13 +19,16 @@ const registrarSensor = async (sensor: { fk_sensor: number; temperatura: number 
   }
 
   try {
-    const response = await api.post(API_URL, sensor, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const response = await api.get(API_URL, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data;
+    return response.data.map((item: any) => ({
+      id: item.id,
+      fk_sensor: item.fk_sensor,
+      temperatura: item.temperatura || null,
+      humedad_ambiente: item.humedad_ambiente || null,
+      fecha_medicion: item.fecha_medicion,
+    }));
   } catch (error: any) {
     if (error.response?.status === 401) {
       const refreshToken = localStorage.getItem("refresh_token");
@@ -40,13 +44,16 @@ const registrarSensor = async (sensor: { fk_sensor: number; temperatura: number 
       try {
         const newToken = await obtenerNuevoToken(refreshToken);
         localStorage.setItem("access_token", newToken);
-        const response = await api.post(API_URL, sensor, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${newToken}`,
-          },
+        const response = await api.get(API_URL, {
+          headers: { Authorization: `Bearer ${newToken}` },
         });
-        return response.data;
+        return response.data.map((item: any) => ({
+          id: item.id,
+          fk_sensor: item.fk_sensor,
+          temperatura: item.temperatura || null,
+          humedad_ambiente: item.humedad_ambiente || null,
+          fecha_medicion: item.fecha_medicion,
+        }));
       } catch (refreshError) {
         addToast({
           title: "Sesión expirada",
@@ -66,7 +73,7 @@ const registrarSensor = async (sensor: { fk_sensor: number; temperatura: number 
     } else {
       addToast({
         title: "Error",
-        description: error.response?.data?.message || "Error al registrar el sensor",
+        description: error.response?.data?.message || "Error al cargar los datos históricos",
         timeout: 3000,
         color: "danger",
       });
@@ -75,21 +82,10 @@ const registrarSensor = async (sensor: { fk_sensor: number; temperatura: number 
   }
 };
 
-export const useRegistrarSensor = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: registrarSensor,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["datosMeteorologicos"] });
-      addToast({
-        title: "Éxito",
-        description: "Sensor registrado con éxito",
-        timeout: 3000,
-        color: "success",
-      });
-    },
-    onError: () => { 
-    },
+export const useDatosMeteorologicosHistoricos = () => {
+  return useQuery<SensorData[], Error>({
+    queryKey: ["datosMeteorologicosHistoricos"],
+    queryFn: fetchDatosHistoricos,
+    staleTime: 1000 * 60,
   });
 };
