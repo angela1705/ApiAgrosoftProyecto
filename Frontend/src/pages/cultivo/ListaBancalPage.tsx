@@ -23,8 +23,8 @@
       { name: "Nombre", uid: "nombre" },
       { name: "Tamaño X", uid: "TamX" },
       { name: "Tamaño Y", uid: "TamY" },
-      { name: "Posición X", uid: "posX" },
-      { name: "Posición Y", uid: "posY" },
+      { name: "Latitud", uid: "posX" },
+      { name: "Longitud", uid: "posY" },
       { name: "Lote", uid: "fk_lote" },
       { name: "Acciones", uid: "acciones" },
     ];
@@ -153,7 +153,7 @@
             }
           />
           <ReuInput
-            label="Posición X"
+            label="Latitud"
             placeholder="Ingrese posición X"
             type="number"
             value={selectedBancal?.posX || 0}
@@ -165,7 +165,7 @@
             }
           />
           <ReuInput
-            label="Posición Y"
+            label="Longitud"
             placeholder="Ingrese posición Y"
             type="number"
             value={selectedBancal?.posY || 0}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/button";
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+import { Menu, ChevronDown, ChevronRight } from "lucide-react";
 import {
   FaHome,
   FaUser,
@@ -187,7 +187,7 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
         <div className="flex flex-col items-center gap-4">
           {!isMobile && (
             <Button isIconOnly variant="light" className="mb-4" onClick={toggleSidebar}>
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <Menu size={24} /> : <Menu size={24} />}
             </Button>
           )}
           <div className={`flex items-center justify-center gap-4 ${!isOpen ? "hidden" : ""}`}>

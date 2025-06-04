@@ -33,8 +33,8 @@ const ListarLotesPage: React.FC = () => {
     { name: "Activo", uid: "activo" },
     { name: "Tamaño X", uid: "tam_x" },
     { name: "Tamaño Y", uid: "tam_y" },
-    { name: "Posición X", uid: "pos_x" },
-    { name: "Posición Y", uid: "pos_y" },
+    { name: "Latitud", uid: "pos_x" },
+    { name: "Longitud", uid: "pos_y" },
     { name: "Acciones", uid: "acciones" },
   ];
 
@@ -167,7 +167,7 @@ const ListarLotesPage: React.FC = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <ReuInput
-            label="Posición X"
+            label="Latitud"
             placeholder="Ingrese posición X"
             type="number"
             value={lote.latitud.toString()}
@@ -175,7 +175,7 @@ const ListarLotesPage: React.FC = () => {
           />
 
           <ReuInput
-            label="Posición Y"
+            label="Longitud"
             placeholder="Ingrese posición Y"
             type="number"
             value={lote.longitud.toString()}
