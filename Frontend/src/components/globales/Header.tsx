@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import UserMenu from '../usuarios/UserMenu';
 import Notificacion from "./Notificacion";
 
 interface HeaderProps {
-  toggleSidebar?: () => void;
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
+export const Header: React.FC<HeaderProps> = ({ isSidebarOpen }) => { 
   const [isMobile, setIsMobile] = useState(false);
 
   // Detectar si es móvil
@@ -24,29 +25,38 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     };
   }, []);
 
-  // Depuración de props
-  console.log('Header props:', { toggleSidebar });
+  // Calcular estilos dinámicamente
+  const getHeaderStyles = () => {
+    if (isMobile) {
+      return {
+        marginLeft: "0",
+        width: "100%",
+        paddingLeft: isSidebarOpen ? "1rem" : "4.5rem" // Ajuste para el botón de hamburguesa
+      };
+    } else {
+      return {
+        marginLeft: isSidebarOpen ? "250px" : "70px",
+        width: isSidebarOpen ? "calc(100% - 250px)" : "calc(100% - 70px)"
+      };
+    }
+  };
 
   return (
     <header
-      className="fixed top-0 left-0 z-40 bg-green-600 h-16 flex items-center px-2 w-full"
-    >  
-      {/* Espacio flexible para empujar UserMenu y Notificaciones a la derecha */}
+      className="fixed top-0 left-0 z-40 bg-green-600 h-16 flex items-center px-4 transition-all duration-300" // z-40 se mantiene
+      style={getHeaderStyles()}
+    >
+     
+    
+
+
+      {/* Espacio flexible para empujar el UserMenu a la derecha */}
       <div className="flex-grow" />
 
-      {/* Menú de usuario y notificaciones a la derecha */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: isMobile ? 0 : 0.25 
-      }}>
+      {/* Menú de usuario en la derecha */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Notificacion />
-        <Typography 
-          className={`text-white ${isMobile ? 'text-xl mx-0.25' : 'text-2xl mx-0.5'} font-light`}
-        >
-          |
-        </Typography>
-        <UserMenu hideText={isMobile} /> {/* Prop hideText ahora es válida */}
+        <UserMenu />
       </Box>
     </header>
   );
