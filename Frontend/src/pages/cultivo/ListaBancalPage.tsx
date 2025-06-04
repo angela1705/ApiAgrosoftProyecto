@@ -54,10 +54,10 @@
       
       id: bancal.id?.toString() || '',
       nombre: bancal.nombre,
-      TamX: bancal.TamX,
-      TamY: bancal.TamY,
-      posX: bancal.posX,
-      posY: bancal.posY,
+      TamX: bancal.tam_x,
+      TamY: bancal.tam_y,
+      posX: bancal.latitud,
+      posY: bancal.longitud,
       fk_lote: lotes?.find((lote) => lote.id === bancal.lote)?.nombre || 'Sin lote',
       acciones: (
         <>

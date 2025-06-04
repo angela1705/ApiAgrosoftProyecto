@@ -28,22 +28,14 @@ const registrarLote = async (lote: Lote) => {
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  const formData = new FormData();
-  formData.append("nombre", lote.nombre);
-  formData.append("descripcion", lote.descripcion);
-  formData.append("activo", JSON.stringify(lote.activo));
-  formData.append("tam_x", lote.tam_x.toString());
-  formData.append("tam_y", lote.tam_y.toString());
-  formData.append("pos_x", lote.pos_x.toString());
-  formData.append("pos_y", lote.pos_y.toString());
-
-  return api.post(API_URL, formData, {
+  return api.post(API_URL, lote, {
     headers: {
-      "Content-Type":"application/json",
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
 };
+
 
 export const useLotes = () => {
   return useQuery<Lote[], Error>({

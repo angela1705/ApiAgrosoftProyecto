@@ -19,9 +19,11 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
     activo: false,
     tam_x: 0,
     tam_y: 0,
-    pos_x: 0,
-    pos_y: 0,
+    latitud: 0,
+    longitud: 0,
   });
+    const [latitudStr, setLatitudStr] = useState("0");
+    const [longitudStr, setLongitudStr] = useState("0");
 
   const mutation = useRegistrarLote();
 
@@ -36,7 +38,15 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
   };
 
   const handleSubmit = () => {
-    mutation.mutate(nuevoLote, {
+     const latitud = parseFloat(latitudStr);
+      const longitud = parseFloat(longitudStr);
+    
+      const loteFinal: Lote = {
+        ...nuevoLote,
+        latitud: isNaN(latitud) ? 0 : latitud,
+        longitud: isNaN(longitud) ? 0 : longitud,
+      };
+    mutation.mutate(loteFinal, {
       onSuccess: () => {
         onOpenChange(false);
         setNuevoLote({
@@ -45,8 +55,8 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
           activo: false,
           tam_x: 0,
           tam_y: 0,
-          pos_x: 0,
-          pos_y: 0,
+          latitud: 0,
+          longitud: 0,
         });
         onSuccess?.();
       }
@@ -110,20 +120,20 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
 
         <div className="grid grid-cols-2 gap-4">
           <ReuInput
-            label="Posición X"
-            placeholder="Ingrese posición X"
-            type="number"
-            value={nuevoLote.pos_x.toString()}
-            onChange={(e) => setNuevoLote({... nuevoLote, pos_x: parseFloat(e.target.value)})}
-            />
+            label="Latitud"
+            placeholder="Ingrese la latitud"
+            type="text"
+            value={latitudStr}
+            onChange={(e) => setLatitudStr(e.target.value)}
+          />
 
-          <ReuInput
-            label="Posición Y"
-            placeholder="Ingrese posición Y"
-            type="number"
-            value={nuevoLote.pos_y.toString()}
-            onChange={(e) => setNuevoLote({... nuevoLote, pos_y: parseFloat(e.target.value)})}
-            />
+        <ReuInput
+          label="Longitud"
+          placeholder="Ingrese la longitud"
+          type="text"
+          value={longitudStr}
+          onChange={(e) => setLongitudStr(e.target.value)}
+          />
         </div>
       </div>
     </ReuModal>

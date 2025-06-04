@@ -15,17 +15,18 @@ interface ModalBancalProps {
 export const ModalBancal = ({ isOpen, onOpenChange, onSuccess }: ModalBancalProps) => {
   const [nuevoBancal, setNuevoBancal] = useState<Bancal>({
     nombre: "",
-    TamX: 0,
-    TamY: 0,
-    posX: 0,
-    posY: 0,
+    tam_x: 0,
+    tam_y: 0,
+    latitud: 0,
+    longitud: 0,
     lote: 0,
   });
 
   const { data: lotes } = useLotes();
   const mutation = useRegistrarBancal();
   const [openLote, setOpenLote] = useState(false);
-
+  const [latitudStr, setLatitudStr] = useState("0");
+  const [longitudStr, setLongitudStr] = useState("0");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNuevoBancal(prev => ({
@@ -35,15 +36,23 @@ export const ModalBancal = ({ isOpen, onOpenChange, onSuccess }: ModalBancalProp
   };
 
   const handleSubmit = () => {
-    mutation.mutate(nuevoBancal, {
+     const latitud = parseFloat(latitudStr);
+     const longitud = parseFloat(longitudStr);
+      
+    const bancalFinal: Bancal = {
+      ...nuevoBancal,
+      latitud: isNaN(latitud) ? 0 : latitud,
+      longitud: isNaN(longitud) ? 0 : longitud,
+    };
+    mutation.mutate(bancalFinal, {
       onSuccess: () => {
         onOpenChange(false);
         setNuevoBancal({
           nombre: "",
-          TamX: 0,
-          TamY: 0,
-          posX: 0,
-          posY: 0,
+          tam_x: 0,
+          tam_y: 0,
+          latitud: 0,
+          longitud: 0,
           lote: 0,
         });
         onSuccess?.();
@@ -78,35 +87,35 @@ export const ModalBancal = ({ isOpen, onOpenChange, onSuccess }: ModalBancalProp
             label="Tamaño X"
             placeholder="Ingrese tamaño X"
             type="number"
-            value={nuevoBancal.TamX.toString()}
-            onChange={(e) => setNuevoBancal({...nuevoBancal, TamX: parseFloat(e.target.value)})}
+            value={nuevoBancal.tam_x.toString()}
+            onChange={(e) => setNuevoBancal({...nuevoBancal, tam_x: parseFloat(e.target.value)})}
           />
 
           <ReuInput
             label="Tamaño Y"
             placeholder="Ingrese tamaño Y"
             type="number"
-            value={nuevoBancal.TamY.toString()}
-            onChange={(e) => setNuevoBancal({...nuevoBancal, TamY: parseFloat(e.target.value)})}
+            value={nuevoBancal.tam_y.toString()}
+            onChange={(e) => setNuevoBancal({...nuevoBancal, tam_y: parseFloat(e.target.value)})}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <ReuInput
-            label="Posición X"
-            placeholder="Ingrese posición X"
-            type="number"
-            value={nuevoBancal.posX.toString()}
-            onChange={(e) => setNuevoBancal({...nuevoBancal, posX: parseFloat(e.target.value)})}
-          />
-
-          <ReuInput
-            label="Posición Y"
-            placeholder="Ingrese posición Y"
-            type="number"
-            value={nuevoBancal.posY.toString()}
-            onChange={(e) => setNuevoBancal({...nuevoBancal, posY: parseFloat(e.target.value)})}
-          />
+            <ReuInput
+              label="Latitud"
+              placeholder="Ingrese la latitud"
+              type="text"
+              value={latitudStr}
+              onChange={(e) => setLatitudStr(e.target.value)}
+              />
+            
+            <ReuInput
+              label="Longitud"
+              placeholder="Ingrese la longitud"
+              type="text"
+              value={longitudStr}
+              onChange={(e) => setLongitudStr(e.target.value)}
+              />
         </div>
 
         <div>
