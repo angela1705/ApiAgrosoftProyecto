@@ -15,8 +15,8 @@ const ListarLotesPage: React.FC = () => {
     activo: false,
     tam_x: 0,
     tam_y: 0,
-    pos_x: 0,
-    pos_y: 0,
+    latitud: 0,
+    longitud: 0,
   });
 
   const [selectedLote, setSelectedLote] = useState<Lote | null>(null);
@@ -64,8 +64,8 @@ const ListarLotesPage: React.FC = () => {
     activo: lote.activo ? "Sí" : "No",
     tam_x: lote.tam_x,
     tam_y: lote.tam_y,
-    pos_x: lote.pos_x,
-    pos_y: lote.pos_y,
+    pos_x: lote.latitud,
+    pos_y: lote.longitud,
     acciones: (
       <>
         <button
@@ -170,16 +170,16 @@ const ListarLotesPage: React.FC = () => {
             label="Posición X"
             placeholder="Ingrese posición X"
             type="number"
-            value={lote.pos_x.toString()}
-            onChange={(e) => setLote({ ...lote, pos_x: parseFloat(e.target.value) })}
+            value={lote.latitud.toString()}
+            onChange={(e) => setLote({ ...lote, latitud: parseFloat(e.target.value) })}
           />
 
           <ReuInput
             label="Posición Y"
             placeholder="Ingrese posición Y"
             type="number"
-            value={lote.pos_y.toString()}
-            onChange={(e) => setLote({ ...lote, pos_y: parseFloat(e.target.value) })}
+            value={lote.longitud.toString()}
+            onChange={(e) => setLote({ ...lote, longitud: parseFloat(e.target.value) })}
           />
         </div>
       </ReuModal>
