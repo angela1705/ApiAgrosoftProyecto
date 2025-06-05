@@ -52,7 +52,7 @@ export default defineConfig({
             // { label: 'Especie', slug: 'modules/trazabilidad/especie' },
             // { label: 'Cultivo', slug: 'modules/trazabilidad/cultivo' },
             // { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
-            // { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
+            { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
             // { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
             { label: 'Tipo de plaga', slug: 'modules/trazabilidad/tipoplaga' },
             // { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },

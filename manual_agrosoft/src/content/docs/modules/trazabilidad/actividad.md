@@ -3,300 +3,144 @@ title: Gestion de actividades
 ---
 
 
-Las **Actividades** son tareas programadas relacionadas con el manejo de cultivos, que involucran recursos, personal y planificación.
+## ¿Cómo listar y gestionar actividades?
 
-## ¿Cómo registrar una actividad?
-Para registrar una nueva actividad en Agrosoft:
-1. Navega al módulo de Actividades
-2. Haz clic en el botón **"Nueva Actividad"**
-3. Completa los siguientes campos obligatorios:
-   - **Tipo de actividad**: Selecciona de la lista disponible
-   - **Programación**: Asocia a una programación existente
-   - **Fechas**: Define inicio y fin de la actividad
-   - **Usuario responsable**: Asigna un usuario
-   - **Cultivo**: Selecciona el cultivo afectado
-
-## Datos de una actividad
-Cada actividad tiene la siguiente información:
-
-| Campo               | Tipo                | Descripción |  
-|---------------------|---------------------|-------------|  
-| **id**              | `AutoField`         | Identificador único |  
-| **tipo_actividad**  | `ForeignKey`        | Relación con tabla TipoActividad |  
-| **programacion**    | `ForeignKey`        | Relación con tabla Programación |  
-| **descripcion**     | `TextField`         | Detalles de la actividad |  
-| **fecha_inicio**    | `DateField`         | Fecha de inicio |  
-| **fecha_fin**       | `DateField`         | Fecha de finalización |  
-| **usuario**         | `ForeignKey`        | Usuario responsable |  
-| **cultivo**         | `ForeignKey`        | Cultivo asociado |  
-| **insumo**          | `ForeignKey`        | Insumo utilizado |  
-| **cantidadUsada**   | `IntegerField`      | Cantidad de insumo utilizada |  
-
-## Ejemplo de API para gestionar actividades
-
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/"><div></div></button></div></figure></div>  </section>
-
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
-
-**Ejemplo de solicitud:**
-```json
-{
-  "tipo_actividad": 3,
-  "programacion": 5,
-  "descripcion": "Aplicación de fertilizante orgánico",
-  "fecha_inicio": "2023-11-20",
-  "fecha_fin": "2023-11-21",
-  "usuario": 12,
-  "cultivo": 45,
-  "insumo": 8,
-  "cantidadUsada": 5
-}
-```
-
-**Validaciones:**
-- `fecha_inicio` no puede ser posterior a `fecha_fin`
-- `cultivo` debe estar activo
-- `insumo` debe tener suficiente stock disponible
-- `cantidadUsada` debe ser mayor que 0
-
-**Ejemplo de respuesta exitosa (201 Created):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "id": 1,
-  "tipo_actividad": 3,
-  "programacion": 5,
-  "descripcion": "Aplicación de fertilizante orgánico",
-  "fecha_inicio": "2023-11-20",
-  "fecha_fin": "2023-11-21",
-  "usuario": 12,
-  "cultivo": 45,
-  "insumo": 8,
-  "cantidadUsada": 5
-}
-```
-
-**Posibles errores:**
-- `400 Bad Request`: Si faltan campos obligatorios
-- `409 Conflict`: Si hay solapamiento de fechas con otras actividades
+Esta documentación detalla el proceso para listar, registrar, actualizar, eliminar y finalizar actividades en el sistema. Sigue los pasos a continuación para gestionar las actividades de manera efectiva.
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/"><div></div></button></div></figure></div>  </section>
+### 1. Navegar al módulo de Actividades
+1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Listar Actividades"**:
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
-
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-[
-  {
-    "id": 1,
-    "tipo_actividad": {
-      "id": 3,
-      "nombre": "Fertilización"
-    },
-    "programacion": {
-      "id": 5,
-      "nombre": "Programación Noviembre"
-    },
-    "descripcion": "Aplicación de fertilizante orgánico",
-    "fecha_inicio": "2023-11-20",
-    "fecha_fin": "2023-11-21",
-    "usuario": {
-      "id": 12,
-      "nombre": "Juan Pérez"
-    },
-    "cultivo": {
-      "id": 45,
-      "nombre": "Lechuga Romana - B2"
-    },
-    "insumo": {
-      "id": 8,
-      "nombre": "Fertilizante Orgánico 5kg"
-    },
-    "cantidadUsada": 5
-  }
-]
-```
+   <img src="/public/trazabilidad/actividad/SidebarActividad.png" alt="Navegación al módulo de actividades" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/{id}/"><div></div></button></div></figure></div>  </section>
+### 2. Visualizar el listado de actividades
+- Al entrar en **"Listar Actividades"**, encontrarás una tabla con las actividades registradas. Si no hay registros, verás una tabla vacía:
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+   <img src="/public/trazabilidad/actividad/ListaActividadVacía.png" alt="Listado de actividades vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "id": 1,
-  "tipo_actividad": {
-    "id": 3,
-    "nombre": "Fertilización"
-  },
-  "programacion": {
-    "id": 5,
-    "nombre": "Programación Noviembre"
-  },
-  "descripcion": "Aplicación de fertilizante orgánico",
-  "fecha_inicio": "2023-11-20",
-  "fecha_fin": "2023-11-21",
-  "usuario": {
-    "id": 12,
-    "nombre": "Juan Pérez"
-  },
-  "cultivo": {
-    "id": 45,
-    "nombre": "Lechuga Romana - B2"
-  },
-  "insumo": {
-    "id": 8,
-    "nombre": "Fertilizante Orgánico 5kg"
-  },
-  "cantidadUsada": 5
-}
-```
-
-**Posibles errores:**
-- `404 Not Found`: Si el ID no existe
+- La tabla muestra información detallada de cada actividad, incluyendo:
+  - **Descripción**
+  - **Fecha de inicio**
+  - **Fecha de fin**
+  - **Estado** (Pendiente, En proceso, Completada, Cancelada)
+  - **Prioridad** (Alta, Media, Baja)
+  - **Tipo de actividad**
+  - **Usuarios asignados**
+  - **Cultivo**
+  - **Insumos utilizados**
+  - **Herramientas asignadas**
+  - **Acciones** (Finalizar, Editar, Eliminar)
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/{id}/"><div></div></button></div></figure></div>  </section>
+### 3. Registrar una nueva actividad
+1. En la parte superior derecha del listado, haz clic en el botón **"+ Registrar"**:
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+   <img src="/public/registrarActividadBtn.png" alt="Botón registrar actividad" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-**Ejemplo de solicitud:**
-```json
-{
-  "descripcion": "Aplicación de fertilizante orgánico (dosis doble)",
-  "cantidadUsada": 10,
-  "fecha_fin": "2023-11-22"
-}
-```
+2. Se abrirá el formulario de registro de actividades:
 
-**Restricciones:**
-- No se puede modificar `cultivo` o `tipo_actividad` después de creado
-- `fecha_inicio` solo editable si la actividad no ha comenzado
+   <img src="/public/trazabilidad/actividad/AsignarActividadFormulario.png" alt="Formulario de registro de actividad" style="display: block; margin: auto; width: 120%; border-radius: 12px;" />
 
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "id": 1,
-  "message": "Actividad actualizada correctamente"
-}
-```
+3. **Campos del formulario**:
+   - **Descripción**: Obligatorio. Describe la actividad a realizar.
+   - **Fecha de inicio**: Obligatorio. Selecciona la fecha y hora de inicio.
+   - **Fecha de fin**: Opcional. Selecciona la fecha y hora de finalización.
+   - **Estado**: Selecciona entre Pendiente, En proceso, Completada o Cancelada (por defecto: Pendiente).
+   - **Prioridad**: Selecciona entre Alta, Media o Baja (por defecto: Media).
+   - **Tipo de actividad**: Obligatorio. Selecciona un tipo de actividad o registra uno nuevo haciendo clic en el botón **"+"** para abrir el modal de registro de tipo de actividad.
+   - **Cultivo**: Obligatorio. Selecciona un cultivo o registra uno nuevo haciendo clic en el botón **"+"**.
+   - **Usuarios asignados**: Selecciona uno o más usuarios para asignar a la actividad.
+   - **Insumos requeridos**: Selecciona los insumos necesarios y especifica la cantidad. Puedes registrar nuevos insumos con el botón **"+"**.
+   - **Herramientas**: Selecciona las herramientas necesarias y especifica la cantidad entregada. Puedes registrar nuevas herramientas con el botón **"+"**.
+   - **Instrucciones adicionales**: Opcional. Ingresa detalles adicionales para la actividad.
 
----
+   <img src="/public/actividadFormFilled.png" alt="Formulario de actividad diligenciado" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/actividades/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/actividades/{id}/"><div></div></button></div></figure></div>  </section>
+4. **⚠️ Importante**:
+   - Los campos **Descripción**, **Fecha de inicio**, **Tipo de actividad** y **Cultivo** son obligatorios.
+   - Los campos de insumos y herramientas permiten especificar cantidades y, en el caso de herramientas, marcar si han sido devueltas.
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |
+5. Haz clic en **"Guardar"** para registrar la actividad.
 
-**Ejemplo de respuesta exitosa (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "message": "Actividad eliminada correctamente",
-  "id": 1
-}
-```
+6. Verás un mensaje de éxito como este:
 
-**Error común (400 Bad Request):**
-```json
-{
-  "error": "No se puede eliminar",
-  "detail": "La actividad ya ha comenzado"
-}
-```
+   <img src="/public/exitoActividad.png" alt="Mensaje de registro exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+7. Regresa a **"Listar Actividades"** para confirmar que la actividad se registró correctamente:
+
+   <img src="/public/listaActividades2.png" alt="Listado con actividad registrada" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
-## **Ejemplos de Uso**
+### 4. Actualizar una actividad
+1. En el listado de actividades, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-### **Crear y luego actualizar una actividad:**
-```bash
-# Crear (POST)
-POST /actividades/
-{
-  "tipo_actividad": 1,
-  "programacion": 2,
-  "descripcion": "Riego por goteo",
-  "fecha_inicio": "2023-11-25",
-  "fecha_fin": "2023-11-25",
-  "usuario": 15,
-  "cultivo": 32,
-  "insumo": null,
-  "cantidadUsada": 0
-}
+   <img src="/public/editarActividad.png" alt="Botón de editar actividad" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-# Actualizar (PUT)
-PUT /actividades/8
-{
-  "cantidadUsada": 3,
-  "descripcion": "Ajuste de cantidad según recomendación técnica"
-}
-```
+2. Se abrirá un formulario con los datos actuales de la actividad:
 
-### **Filtrar actividades:**
-```bash
-# Por cultivo
-GET /actividades/?cultivo=45
+   <img src="/public/editarActividadForm.png" alt="Formulario de edición de actividad" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-# Por rango de fechas
-GET /actividades/?fecha_inicio=2023-11-01&fecha_fin=2023-11-30
-```
+3. Modifica los campos que desees actualizar (Descripción, Fechas, Estado, Prioridad, etc.).
+4. Haz clic en **"Confirmar"** para guardar los cambios.
+5. Verás un mensaje de actualización exitosa:
+
+   <img src="/public/exitoActividadActualizada.png" alt="Mensaje de actualización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
-## **Relaciones en el Sistema**
-Las **Actividades** se vinculan con:
-- **Usuarios** (responsables de ejecución)
-- **Cultivos** (afectados por la actividad)
-- **Insumos** (recursos utilizados)
-- **Programaciones** (calendario de trabajo)
+### 5. Eliminar una actividad
+1. En el listado de actividades, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
+
+   <img src="/public/eliminarActividad.png" alt="Botón de eliminar actividad" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+
+2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
+
+   <img src="/public/confirmarEliminarActividad.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer.
+4. Haz clic en **"Confirmar"** para eliminar la actividad.
+5. Verás un mensaje de eliminación exitosa:
+
+   <img src="/public/exitoActividadEliminada.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
-## **Buenas Prácticas**
- **Planificación anticipada**: Programar actividades con al menos 3 días de anticipación  
- **Verificación de stock**: Confirmar disponibilidad de insumos antes de crear actividades  
- **Actualización oportuna**: Registrar cambios en fechas o cantidades tan pronto ocurran  
- **Documentación detallada**: Usar el campo descripción para notas relevantes
+### 6. Finalizar una actividad
+1. En el listado de actividades, en la columna **Acciones**, haz clic en el ícono de **Finalizar** (check verde), disponible solo para actividades que no estén en estado **Completada**:
+
+   <img src="/public/finalizarActividad.png" alt="Botón de finalizar actividad" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+
+2. Se abrirá un modal para finalizar la actividad:
+
+   <img src="/public/finalizarActividadForm.png" alt="Formulario de finalización de actividad" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+3. **Campos del formulario de finalización**:
+   - **Fecha y hora de finalización**: Selecciona la fecha y hora en que se completó la actividad.
+   - **Herramientas utilizadas**: Para cada herramienta, marca si fue devuelta, especifica la cantidad devuelta y selecciona la fecha de devolución.
+   - **Insumos utilizados**: Especifica la cantidad de insumos devueltos (si aplica).
+   - **Resumen**: Revisa el estado de la actividad y las herramientas pendientes por devolver.
+
+4. Haz clic en **"Confirmar Finalización"** para marcar la actividad como **Completada**.
+5. Verás un mensaje de finalización exitosa:
+
+   <img src="/public/exitoActividadFinalizada.png" alt="Mensaje de finalización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+---
+
+### 7. Notas adicionales
+- **Estados de actividad**: Los estados (Pendiente, En proceso, Completada, Cancelada) se muestran con colores distintivos:
+  - Pendiente: Amarillo
+  - En proceso: Azul
+  - Completada: Verde
+  - Cancelada: Rojo
+- **Prioridades**: Las prioridades (Alta, Media, Baja) también tienen colores:
+  - Alta: Rojo
+  - Media: Amarillo
+  - Baja: Verde
+- **Filtros y búsqueda**: Usa los filtros en la tabla para buscar actividades por descripción, estado, prioridad, etc.
+- **Acceso a otros módulos**: Puedes registrar nuevos tipos de actividades, cultivos, insumos o herramientas directamente desde el formulario de registro haciendo clic en los botones **"+"** correspondientes.
