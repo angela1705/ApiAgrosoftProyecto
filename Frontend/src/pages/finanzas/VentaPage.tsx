@@ -26,6 +26,7 @@ const VentaPage: React.FC = () => {
   const [isTiqueteModalOpen, setIsTiqueteModalOpen] = useState(false);
   const [ventaIdForTiquete, setVentaIdForTiquete] = useState<number | null>(null);
   const { registrarVenta, isRegistrando } = useVenta();
+  const { agregarDetalleVenta } = useVenta();
   const { data: precio_producto, isLoading: precioProductoLoading } = usePreciosProductos();
   const navigate = useNavigate();
   const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
@@ -41,32 +42,26 @@ const VentaPage: React.FC = () => {
     }));
   };
 
-  const agregarDetalle = () => {
-    const productoSeleccionado = precio_producto?.find(p => p.id === detalle.producto);
-    if (!productoSeleccionado) return;
+const agregarDetalle = () => {
+  const productoSeleccionado = precio_producto?.find(p => p.id === detalle.producto);
+  if (!productoSeleccionado) return;
 
-    const nuevoDetalle = {
-      ...detalle,
-      total: detalle.cantidad * (productoSeleccionado.precio || 0),
-      unidades_de_medida: detalle.unidades_de_medida || productoSeleccionado.unidad_medida?.id || 0,
-    };
-
-    if (editIndex !== null) {
-      const nuevosDetalles = [...detallesAgregados];
-      nuevosDetalles[editIndex] = nuevoDetalle;
-      setDetallesAgregados(nuevosDetalles);
-      setEditIndex(null);
-    } else {
-      setDetallesAgregados([...detallesAgregados, nuevoDetalle]);
-    }
-
-    setDetalle({
-      producto: 0,
-      cantidad: 0,
-      unidades_de_medida: 0,
-      total: 0,
-    });
-  };
+  agregarDetalleVenta(
+    detalle,
+    detallesAgregados,
+    editIndex,
+    productoSeleccionado,
+    setDetallesAgregados,
+    setEditIndex,
+    () =>
+      setDetalle({
+        producto: 0,
+        cantidad: 0,
+        unidades_de_medida: 0,
+        total: 0,
+      })
+  );
+};
 
   const handleEdit = (index: number) => {
     const detalleAEditar = detallesAgregados[index];
@@ -220,6 +215,8 @@ const VentaPage: React.FC = () => {
               </div>
 
               {/* Cantidad */}
+
+              
               <div>
                 <ReuInput
                   label="Cantidad *"
@@ -229,7 +226,18 @@ const VentaPage: React.FC = () => {
                   value={String(detalle.cantidad)}
                   onChange={(e) => setDetalle({...detalle, cantidad: parseInt(e.target.value) || 0})}
                 />
+
+                    {detalle.producto !== 0 && (
+           <p className="text-sm text-gray-500 mt-1">
+           Stock disponible: {
+              precio_producto?.find(p => p.id === detalle.producto)?.stock ?? 'N/A'
+            }
+          </p>
+        )}
               </div>
+                  
+                  
+
 
               {/* Unidad de medida */}
               <div>

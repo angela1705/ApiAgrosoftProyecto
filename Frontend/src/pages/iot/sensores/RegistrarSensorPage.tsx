@@ -1,22 +1,20 @@
 import { useState } from "react";
 import DefaultLayout from "@/layouts/default";
-import { ReuInput } from "@/components/globales/ReuInput";
+import {ReuInput} from "@/components/globales/ReuInput";
 import { useNavigate } from "react-router-dom";
 import { Sensor } from "@/types/iot/type";
-import api from "@/components/utils/axios";
+import { useCreateSensor } from "@/hooks/iot/sensores/usePostSensor";
 import { addToast } from "@heroui/react";
-import { useQueryClient } from "@tanstack/react-query";
-import { obtenerNuevoToken } from "@/components/utils/refresh";
 
 const sensorTypes = [
-  { value: "temperatura", label: "Temperatura (°C)" },
-  { value: "ambient_humidity", label: "Humedad Ambiente (%)" },
-  { value: "soil_humidity", label: "Humedad Suelo (%)" },
-  { value: "luminosidad", label: "Luminosidad (lux)" },
-  { value: "lluvia", label: "Lluvia (mm/h)" },
-  { value: "velocidad_viento", label: "Velocidad Viento (m/s)" },
-  { value: "direccion_viento", label: "Dirección Viento (grados)" },
-  { value: "ph_suelo", label: "pH Suelo (pH)" },
+  { value: "temperatura", label: "Temperatura (°C)", id: 1 },
+  { value: "ambient_humidity", label: "Humedad Ambiente (%)", id: 2 },
+  { value: "soil_humidity", label: "Humedad Suelo (%)", id: 3 },
+  { value: "luminosidad", label: "Luminosidad (lux)", id: 4 },
+  { value: "lluvia", label: "Lluvia (mm/h)", id: 5 },
+  { value: "velocidad_viento", label: "Velocidad Viento (m/s)", id: 6 },
+  { value: "direccion_viento", label: "Dirección Viento (grados)", id: 7 },
+  { value: "ph_suelo", label: "pH Suelo (pH)", id: 8 },
 ];
 
 const sensorConfigurations: { [key: string]: { unidad_medida: string; medida_minima: number; medida_maxima: number } } = {
@@ -34,21 +32,30 @@ const RegistrarSensorPage: React.FC = () => {
   const [sensor, setSensor] = useState<Partial<Sensor>>({
     nombre: "",
     tipo_sensor: "",
+    tipo_sensor_id: 0,
     unidad_medida: "",
     descripcion: "",
     medida_minima: 0,
     medida_maxima: 0,
+    estado: "inactivo",
+    device_code: null,
+    bancal_id: null,
+    bancal_nombre: null,
   });
+  const createSensor = useCreateSensor();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    console.log(`[RegistrarSensorPage] Cambio en el campo ${name}: `, value);
+
     if (name === "tipo_sensor") {
+      const tipoSensor = sensorTypes.find((type) => type.value === value);
       const config = sensorConfigurations[value] || { unidad_medida: "", medida_minima: 0, medida_maxima: 0 };
       setSensor((prev) => ({
         ...prev,
         tipo_sensor: value,
+        tipo_sensor_id: tipoSensor?.id || 0,
         unidad_medida: config.unidad_medida,
         medida_minima: config.medida_minima,
         medida_maxima: config.medida_maxima,
@@ -63,88 +70,28 @@ const RegistrarSensorPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("access_token");
-    if (!token) {
+    console.log("[RegistrarSensorPage] Enviando formulario con datos: ", sensor);
+
+    if (!sensor.nombre || !sensor.tipo_sensor || !sensor.tipo_sensor_id) {
+      console.error("[RegistrarSensorPage] Validación fallida: nombre o tipo_sensor_id faltante", sensor);
       addToast({
-        title: "Sesión expirada",
-        description: "No se encontró el token de autenticación, por favor inicia sesión nuevamente.",
+        title: "Error",
+        description: "El nombre y el tipo de sensor son obligatorios.",
         timeout: 3000,
         color: "danger",
       });
       return;
     }
 
-    try {
-      const response = await api.post("http://127.0.0.1:8000/iot/sensores/", sensor, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      queryClient.invalidateQueries({ queryKey: ["sensores"] });
-      addToast({
-        title: "Éxito",
-        description: "Sensor registrado con éxito",
-        timeout: 3000,
-        color: "success",
-      });
-      navigate("/iot/listar-sensores");
-      return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        const refreshToken = localStorage.getItem("refresh_token");
-        if (!refreshToken) {
-          addToast({
-            title: "Sesión expirada",
-            description: "No se encontró el refresh token, por favor inicia sesión nuevamente.",
-            timeout: 3000,
-            color: "danger",
-          });
-          return;
-        }
-        try {
-          const newToken = await obtenerNuevoToken(refreshToken);
-          localStorage.setItem("access_token", newToken);
-          const response = await api.post("http://127.0.0.1:8000/iot/sensores/", sensor, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${newToken}`,
-            },
-          });
-          queryClient.invalidateQueries({ queryKey: ["sensores"] });
-          addToast({
-            title: "Éxito",
-            description: "Sensor registrado con éxito",
-            timeout: 3000,
-            color: "success",
-          });
-          navigate("/iot/listar-sensores");
-          return response.data;
-        } catch (refreshError) {
-          addToast({
-            title: "Sesión expirada",
-            description: "No se pudo refrescar el token, por favor inicia sesión nuevamente.",
-            timeout: 3000,
-            color: "danger",
-          });
-          return;
-        }
-      } else if (error.response?.status === 403) {
-        addToast({
-          title: "Acceso denegado",
-          description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
-          timeout: 3000,
-          color: "danger",
-        });
-      } else {
-        addToast({
-          title: "Error",
-          description: error.response?.data?.message || "Error al registrar el sensor",
-          timeout: 3000,
-          color: "danger",
-        });
-      }
-    }
+    createSensor.mutate(sensor as Sensor, {
+      onSuccess: () => {
+        console.log("[RegistrarSensorPage] Sensor creado con éxito");
+        navigate("/iot/listar-sensores");
+      },
+      onError: (error: any) => {
+        console.error("[RegistrarSensorPage] Error al crear sensor: ", error);
+      },
+    });
   };
 
   return (
@@ -159,8 +106,10 @@ const RegistrarSensorPage: React.FC = () => {
                 label="Nombre"
                 placeholder="Ingrese el nombre del sensor"
                 type="text"
+                name="nombre"
                 value={sensor.nombre || ""}
-                onChange={(e) => setSensor({ ...sensor, nombre: e.target.value })}
+                onChange={handleChange}
+                required
               />
             </div>
 
@@ -171,10 +120,11 @@ const RegistrarSensorPage: React.FC = () => {
                 name="tipo_sensor"
                 value={sensor.tipo_sensor || ""}
                 onChange={handleChange}
+                required
               >
                 <option value="">Seleccione un tipo de sensor</option>
                 {sensorTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
+                  <option key={type.id} value={type.value}>
                     {type.label}
                   </option>
                 ))}
@@ -186,8 +136,9 @@ const RegistrarSensorPage: React.FC = () => {
                 label="Unidad de Medida"
                 placeholder="Ej: °C, %, lux"
                 type="text"
+                name="unidad_medida"
                 value={sensor.unidad_medida || ""}
-                onChange={(e) => setSensor({ ...sensor, unidad_medida: e.target.value })}
+                disabled
               />
             </div>
 
@@ -196,8 +147,20 @@ const RegistrarSensorPage: React.FC = () => {
                 label="Descripción"
                 placeholder="Descripción del sensor"
                 type="text"
+                name="descripcion"
                 value={sensor.descripcion || ""}
-                onChange={(e) => setSensor({ ...sensor, descripcion: e.target.value })}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="text-sm">
+              <ReuInput
+                label="Código del Dispositivo"
+                placeholder="Código del dispositivo"
+                type="text"
+                name="device_code"
+                value={sensor.device_code || ""}
+                onChange={handleChange}
               />
             </div>
 
@@ -207,8 +170,9 @@ const RegistrarSensorPage: React.FC = () => {
                   label="Medida Mínima"
                   placeholder="Valor mínimo"
                   type="number"
+                  name="medida_minima"
                   value={sensor.medida_minima?.toString() || "0"}
-                  onChange={(e) => setSensor({ ...sensor, medida_minima: Number(e.target.value) })}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -217,8 +181,9 @@ const RegistrarSensorPage: React.FC = () => {
                   label="Medida Máxima"
                   placeholder="Valor máximo"
                   type="number"
+                  name="medida_maxima"
                   value={sensor.medida_maxima?.toString() || "0"}
-                  onChange={(e) => setSensor({ ...sensor, medida_maxima: Number(e.target.value) })}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -232,7 +197,10 @@ const RegistrarSensorPage: React.FC = () => {
             <button
               className="w-full px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg text-sm"
               type="button"
-              onClick={() => navigate("/iot/listar-sensores")}
+              onClick={() => {
+                console.log("[RegistrarSensorPage] Navegando a /iot/listar-sensores");
+                navigate("/iot/listar-sensores");
+              }}
             >
               Ir a Lista de Sensores
             </button>

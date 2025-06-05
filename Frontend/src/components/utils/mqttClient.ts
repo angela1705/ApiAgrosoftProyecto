@@ -32,7 +32,7 @@ const client = mqtt.connect(MQTT_HOST, {
 
 // Manejo de eventos
 client.on('connect', () => {
-  console.log('Conectado a HiveMQ por WebSocket');
+  console.log('Conectado a HiveMQ por MQTT');
   isConnected = true;
   error = null;
   setTimeout(() => {
@@ -50,19 +50,29 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   try {
-    const value = parseFloat(message.toString());
+    const payload = message.toString();
+    // Separar device_code y valor
+    const parts = payload.split(':');
+    if (parts.length !== 2) {
+      console.error(`Formato inválido en ${topic}: ${payload}`);
+      return;
+    }
+    const device_code = parts[0].trim();
+    const valueStr = parts[1].trim();
+    const value = parseFloat(valueStr);
     if (isNaN(value)) {
-      console.error(`Valor inválido en ${topic}: ${message.toString()}`);
+      console.error(`Valor numérico inválido en ${topic}: ${valueStr}`);
       return;
     }
     const newData: SensorData = {
       id: Date.now(),
-      fk_sensor: topic === TOPIC_TEMP ? 1 : 2,
+      device_code: device_code,
       temperatura: topic === TOPIC_TEMP ? value : null,
       humedad_ambiente: topic === TOPIC_HUM ? value : null,
       fecha_medicion: new Date().toISOString(),
     };
     realTimeData = [...realTimeData, newData].slice(-50);
+    console.log('Datos procesados:', newData); // Log para depuración
     notifyListeners();
   } catch (err) {
     console.error(`Error procesando mensaje MQTT en ${topic}:`, err);

@@ -13,19 +13,35 @@ const LotesPage: React.FC = () => {
     activo: false,
     tam_x: 0,
     tam_y: 0,
-    pos_x: 0,
-    pos_y: 0,
+    latitud: 0,
+    longitud: 0,
   });
 
  
 
   const mutation = useRegistrarLote();
   const navigate = useNavigate()
+  const [latitudStr, setLatitudStr] = useState("0");
+  const [longitudStr, setLongitudStr] = useState("0");
 
   const handleSubmit=(e: React.FormEvent)=>{
     e.preventDefault()
+  const latitud = parseFloat(latitudStr);
+  const longitud = parseFloat(longitudStr);
 
-    mutation.mutate(lote)
+  const loteFinal: Lote = {
+    ...lote,
+    latitud: isNaN(latitud) ? 0 : latitud,
+    longitud: isNaN(longitud) ? 0 : longitud,
+  };
+  console.log("Lote a enviar:", loteFinal);
+
+  mutation.mutate(loteFinal, {
+    onError: (error: any) => {
+      console.error("Error al registrar lote:", error.response?.data || error.message);
+      alert("Error al registrar lote: " + JSON.stringify(error.response?.data));
+    }
+  });
   }
 
   return (
@@ -67,20 +83,20 @@ const LotesPage: React.FC = () => {
 
       <div className="grid grid-cols-2 gap-4">
         <ReuInput
-          label="Posición X"
-          placeholder="Ingrese posición X"
-          type="number"
-          value={lote.pos_x.toString()}
-          onChange={(e) => setLote({ ...lote, pos_x: parseFloat(e.target.value) })}
+          label="Latitud"
+          placeholder="Ingrese la latitud"
+          type="text"
+          value={latitudStr}
+          onChange={(e) => setLatitudStr(e.target.value)}
         />
 
-        <ReuInput
-          label="Posición Y"
-          placeholder="Ingrese posición Y"
-          type="number"
-          value={lote.pos_y.toString()}
-          onChange={(e) => setLote({ ...lote, pos_y: parseFloat(e.target.value) })}
-        />
+       <ReuInput
+        label="Longitud"
+        placeholder="Ingrese la longitud"
+        type="text"
+        value={longitudStr}
+        onChange={(e) => setLongitudStr(e.target.value)}
+      />
       </div>
 
       <div className="flex items-center gap-4 mb-4">

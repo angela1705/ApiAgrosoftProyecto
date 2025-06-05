@@ -4,6 +4,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { motion } from "framer-motion";
 import { ViewMode, ViewModeSelectorProps } from "@/types/iot/iotmqtt";
 
+// Definir modos de vista
 const viewModes: ViewMode[] = [
   { id: "realtime", label: "Tiempo Real" },
   { id: "allData", label: "Todos los Datos" },
@@ -17,7 +18,9 @@ export const ViewModeSelector: React.FC<ViewModeSelectorProps> = ({ selectedView
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h3 className="text-lg font-semibold text-gray-700 mb-4">Modo de Visualización</h3>
+      <h3 className="text-lg font-semibold text-gray-700 mb-4">Modo de Visualizacion</h3>
+      {// Menu desplegable para seleccionar modo de vista
+      }
       <Listbox value={selectedViewMode} onChange={setSelectedViewMode}>
         <div className="relative">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-blue-100 py-2 pl-3 pr-10 text-left text-gray-700 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:text-sm">

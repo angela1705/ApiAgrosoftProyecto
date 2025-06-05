@@ -3,8 +3,9 @@ import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 import { SensorData } from "@/types/iot/type";
 import { obtenerNuevoToken } from "@/components/utils/refresh";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = "http://192.168.1.12:8000/iot/datosmeteorologicos/";
+const API_URL = `${BASE_URL}/iot/datosmeteorologicos/`;
 
 const fetchDatosMeteorologicos = async (sensorId: number): Promise<SensorData[]> => {
   const token = localStorage.getItem("access_token");

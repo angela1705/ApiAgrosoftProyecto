@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-y25f0nlxx-^y1tc$12**4)gsf=uy7wkcvt%ahr(*l)cf=7#m5i
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.X', '192.168.1.12']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.X', '192.168.1.12','10.4.21.92']
     
 
 
@@ -134,8 +134,8 @@ CORS_ALLOWED_ORIGINS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft_new4',
+        'ENGINE': 'django.db.backends.postgresql', 
+        'NAME': 'testdb12', 
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost', 

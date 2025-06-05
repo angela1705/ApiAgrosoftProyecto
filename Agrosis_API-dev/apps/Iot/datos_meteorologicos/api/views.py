@@ -85,7 +85,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos = []
             styles = getSampleStyleSheet()
 
-            # Encabezado
             logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
             if not os.path.exists(logo_path):
                 logger.error(f"Logo no encontrado en {logo_path}")
@@ -107,7 +106,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(tabla_encabezado)
             elementos.append(Spacer(1, 10))
 
-            # Sección 1: Objetivo
             elementos.append(Paragraph("<b>1. Objetivo</b>", styles['Heading2']))
             elementos.append(Paragraph(
                 "Este documento detalla los datos meteorológicos históricos registrados en el sistema, "
@@ -116,22 +114,18 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             ))
             elementos.append(Spacer(1, 15))
 
-            # Obtener datos
             datos = self.get_queryset()
             total_datos = datos.count()
             logger.info(f"Total de datos para el reporte: {total_datos}")
 
-            # Calcular promedios diarios
             daily_averages = datos.annotate(date=TruncDate('fecha_medicion')).values('date').annotate(
                 avg_temp=Avg('temperatura'),
                 avg_hum=Avg('humedad_ambiente')
             ).order_by('date')
 
-            # Calcular promedios generales
             overall_avg_temp = datos.aggregate(avg_temp=Avg('temperatura'))['avg_temp']
             overall_avg_hum = datos.aggregate(avg_hum=Avg('humedad_ambiente'))['avg_hum']
 
-            # Sección 2: Registro de Datos Meteorológicos (Últimos 100 Registros)
             elementos.append(Paragraph("<b>2. Registro de Datos Meteorológicos (Últimos 100 Registros)</b>", styles['Heading2']))
             elementos.append(Spacer(1, 5))
 
@@ -172,7 +166,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(tabla_datos)
             elementos.append(Spacer(1, 15))
 
-            # Sección 3: Promedios Diarios
             elementos.append(Paragraph("<b>3. Promedios Diarios</b>", styles['Heading2']))
             elementos.append(Spacer(1, 5))
 
@@ -197,7 +190,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(tabla_daily_averages)
             elementos.append(Spacer(1, 15))
 
-            # Sección 4: Resumen General
             elementos.append(Paragraph("<b>4. Resumen General</b>", styles['Heading2']))
             temp_prom_str = f"{overall_avg_temp:.2f} °C" if overall_avg_temp is not None else "N/A"
             hum_prom_str = f"{overall_avg_hum:.2f} %" if overall_avg_hum is not None else "N/A"
