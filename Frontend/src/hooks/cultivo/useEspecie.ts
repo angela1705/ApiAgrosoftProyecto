@@ -96,7 +96,7 @@ export const useActualizarEspecie = () => {
     mutationFn: ({ id, especie }: { id: number; especie: any }) => actualizarEspecie(id, especie),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["especies"] });
-      addToast({ title: "Éxito", description: "Especie actualizada con éxito", timeout: 3000 });
+      addToast({ title: "Éxito", description: "Especie actualizada con éxito", color: "success", timeout: 3000 });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {

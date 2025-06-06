@@ -162,6 +162,54 @@ export const useVenta = () => {
     },
   });
 
+  const agregarDetalleVenta = (
+  detalle: DetalleVenta,
+  detallesActuales: DetalleVenta[],
+  editIndex: number | null,
+  productoSeleccionado: PrecioProducto,
+  setDetalles: (d: DetalleVenta[]) => void,
+  setEditIndex: (i: number | null) => void,
+  resetDetalle: () => void
+) => {
+  const cantidadYaAgregada = detallesActuales
+    .filter(d => d.producto === detalle.producto)
+    .reduce((sum, d) => sum + d.cantidad, 0);
+
+  const cantidadEditando =
+    editIndex !== null && detallesActuales[editIndex]?.producto === detalle.producto
+      ? detallesActuales[editIndex].cantidad
+      : 0;
+
+  const cantidadTotal = cantidadYaAgregada - cantidadEditando + detalle.cantidad;
+
+  if (cantidadTotal > productoSeleccionado.stock) {
+    addToast({
+      title: "Stock insuficiente",
+      description: `Stock disponible: ${productoSeleccionado.stock}, solicitado: ${cantidadTotal}`,
+      color: "danger",
+    });
+    return;
+  }
+
+  const nuevoDetalle: DetalleVenta = {
+    ...detalle,
+    total: detalle.cantidad * (productoSeleccionado.precio || 0),
+    unidades_de_medida: detalle.unidades_de_medida || productoSeleccionado.unidad_medida?.id || 0,
+  };
+
+  if (editIndex !== null) {
+    const nuevosDetalles = [...detallesActuales];
+    nuevosDetalles[editIndex] = nuevoDetalle;
+    setDetalles(nuevosDetalles);
+    setEditIndex(null);
+  } else {
+    setDetalles([...detallesActuales, nuevoDetalle]);
+  }
+
+  resetDetalle();
+};
+
+
   const useDetallesVenta = (ventaId: number) => {
     return useQuery<DetalleVenta[], Error>({
       queryKey: ["ventas", ventaId, "detalles"],
@@ -182,5 +230,7 @@ export const useVenta = () => {
     eliminarVenta: eliminarMutation.mutate,
     isEliminando: eliminarMutation.isPending,
     useDetallesVenta, 
+    agregarDetalleVenta,
+
   };
 };

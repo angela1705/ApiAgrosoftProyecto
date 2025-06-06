@@ -6,6 +6,7 @@ import { Box, Button, TextField, Typography, Modal, Backdrop, Fade, IconButton, 
 import { motion } from "framer-motion";
 import api from "@/components/utils/axios"; 
 import { toast } from "react-hot-toast";
+import { addToast } from "@heroui/toast";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -88,24 +89,40 @@ const PerfilPage: React.FC = () => {
       setPasswordError("Las nuevas contraseñas no coinciden.");
       return;
     }
-    try {
-      const token = localStorage.getItem("access_token");
-      await api.post(
+  try {
+    const token = localStorage.getItem("access_token");
+    await api.post(
       `${API_URL}/usuarios/change_password/`,
-        
-        { current_password: currentPassword, new_password: newPassword },
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
-      );
-      setPasswordError(null);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-      setOpenModal(false);
-      toast.success("Contraseña actualizada con éxito.");
-    } catch (err: any) {
-      setPasswordError(err.response?.data?.error || "Error al cambiar la contraseña. Verifica los datos.");
-    }
-  };
+      { current_password: currentPassword, new_password: newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    setPasswordError(null);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setOpenModal(false);
+
+    addToast({
+      title: "Éxito",
+      description: "Contraseña actualizada con éxito.",
+      type: "success",
+      color:"success"
+    });
+
+  } catch (err: any) {
+    setPasswordError(
+      err.response?.data?.error ||
+      "Error al cambiar la contraseña. Verifica los datos.",
+     
+    );
+  }
+};
 
   
 

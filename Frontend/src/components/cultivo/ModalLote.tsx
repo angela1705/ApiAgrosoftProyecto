@@ -3,7 +3,7 @@ import { ReuInput } from "../globales/ReuInput";
 import { useRegistrarLote } from "@/hooks/cultivo/uselotes";
 import { Lote } from "@/types/cultivo/Lotes";
 import { useState } from "react";
-
+import { Switch } from "@heroui/react";
 
 
 interface ModalLoteProps {
@@ -19,24 +19,24 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
     activo: false,
     tam_x: 0,
     tam_y: 0,
-    pos_x: 0,
-    pos_y: 0,
+    latitud: 0,
+    longitud: 0,
   });
+    const [latitudStr, setLatitudStr] = useState("0");
+    const [longitudStr, setLongitudStr] = useState("0");
 
   const mutation = useRegistrarLote();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    
-    setNuevoLote(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : 
-              type === 'number' ? parseFloat(value) : value
-    }));
-  };
-
   const handleSubmit = () => {
-    mutation.mutate(nuevoLote, {
+     const latitud = parseFloat(latitudStr);
+      const longitud = parseFloat(longitudStr);
+    
+      const loteFinal: Lote = {
+        ...nuevoLote,
+        latitud: isNaN(latitud) ? 0 : latitud,
+        longitud: isNaN(longitud) ? 0 : longitud,
+      };
+    mutation.mutate(loteFinal, {
       onSuccess: () => {
         onOpenChange(false);
         setNuevoLote({
@@ -45,8 +45,8 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
           activo: false,
           tam_x: 0,
           tam_y: 0,
-          pos_x: 0,
-          pos_y: 0,
+          latitud: 0,
+          longitud: 0,
         });
         onSuccess?.();
       }
@@ -79,17 +79,6 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
           onChange={(e) => setNuevoLote({... nuevoLote, descripcion: e.target.value})}
         />
 
-        <label className="flex items-center space-x-2 text-gray-700">
-          <input
-            type="checkbox"
-            name="activo"
-            className="w-5 h-5 text-red-600 border-gray-300 rounded"
-            checked={nuevoLote.activo}
-            onChange={handleChange}
-          />
-          <span>Activo</span>
-        </label>
-
         <div className="grid grid-cols-2 gap-4">
           <ReuInput
             label="Tamaño X"
@@ -110,20 +99,31 @@ export const ModalLote = ({ isOpen, onOpenChange, onSuccess }: ModalLoteProps) =
 
         <div className="grid grid-cols-2 gap-4">
           <ReuInput
-            label="Posición X"
-            placeholder="Ingrese posición X"
-            type="number"
-            value={nuevoLote.pos_x.toString()}
-            onChange={(e) => setNuevoLote({... nuevoLote, pos_x: parseFloat(e.target.value)})}
-            />
+            label="Latitud"
+            placeholder="Ingrese la latitud"
+            type="text"
+            value={latitudStr}
+            onChange={(e) => setLatitudStr(e.target.value)}
+          />
 
           <ReuInput
-            label="Posición Y"
-            placeholder="Ingrese posición Y"
-            type="number"
-            value={nuevoLote.pos_y.toString()}
-            onChange={(e) => setNuevoLote({... nuevoLote, pos_y: parseFloat(e.target.value)})}
+            label="Longitud"
+            placeholder="Ingrese la longitud"
+            type="text"
+            value={longitudStr}
+            onChange={(e) => setLongitudStr(e.target.value)}
             />
+        </div>
+        <div className="flex items-center gap-4 mb-4">
+          <label className="block text-sm font-medium text-gray-700">Estado</label>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={nuevoLote.activo}
+            onChange={() =>
+              setNuevoLote((prev) => ({ ...prev, activo: !prev.activo }))
+            }
+          />
         </div>
       </div>
     </ReuModal>

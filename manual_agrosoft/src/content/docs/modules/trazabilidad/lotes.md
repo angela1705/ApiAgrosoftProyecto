@@ -1,262 +1,122 @@
 ---
-title: Gestion de lotes
---- 
-  
+title: Gestión de Lotes
+---
 
-## ¿Qué es un Lote?  
-Los **lotes** son unidades de cultivo delimitadas dentro de un terreno agrícola, caracterizadas por su ubicación precisa, dimensiones y estado productivo.
+## ¿Cómo listar y gestionar lotes?
 
-## ¿Cómo registrar un lote?  
-Para crear un nuevo lote en Agrosoft:  
-1. Accede al módulo de Trazabilidad > Lotes  
-2. Haz clic en **"Nuevo Lote"**  
-3. Completa los campos obligatorios:  
-   - **Nombre**: Identificador único (ej: "Lote Norte")  
-   - **Dimensiones**: Ancho (X) y Largo (Y) en metros  
-   - **Ubicación**: Coordenadas dentro del terreno general  
-   - **Estado**: Activo/Inactivo  
+Esta documentación detalla el proceso para listar, registrar, actualizar y eliminar lotes en el sistema. Sigue los pasos a continuación para gestionar los lotes de manera efectiva.
 
-## Estructura de Datos  
+---
 
-| Campo           | Tipo de Dato       | Descripción | Validaciones |  
-|-----------------|--------------------|-------------|--------------|  
-| **ID**         | `AutoField`        | Identificador único | - |  
-| **Nombre**     | `CharField`        | Nombre identificador | Único, máx. 15 chars |  
-| **Descripción**| `TextField`        | Información adicional | Opcional |  
-| **Estado**     | `BooleanField`     | Disponibilidad | True=Activo |  
-| **Tam_x**      | `DecimalField`     | Ancho (metros) | > 0, 2 decimales |  
-| **Tam_y**      | `DecimalField`     | Largo (metros) | > 0, 2 decimales |  
-| **Pos_x**      | `DecimalField`     | Coordenada X | ≥ 0 |  
-| **Pos_y**      | `DecimalField`     | Coordenada Y | ≥ 0 |  
+### 1. Navegar al módulo de Lotes
+1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Lotes"**:
 
-## Ejemplo de API para gestión de lotes  
+   <img src="/public/trazabilidad/lotes/LotesSidebar.png" alt="Navegación al módulo de lotes" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/lotes/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/lotes/"><div></div></button></div></figure></div>  
-</section>  
+---
 
-**Encabezados de la solicitud**  
-| Encabezado        | Valor                      | Descripción |  
-|-------------------|----------------------------|-------------|  
-| **Content-Type**  | `application/json`         | Formato de datos |  
-| **Authorization** | `Bearer <token_de_acceso>` | Autenticación |  
+### 2. Visualizar el listado de lotes
+- Al entrar en **"Lotes"**, encontrarás una tabla con los lotes registrados. Si no hay registros, verás una tabla vacía:
 
-**Ejemplo de solicitud:**  
-```json  
-{  
-  "nombre": "Lote A",  
-  "descripcion": "Lote principal con riego automatizado",  
-  "activo": true,  
-  "tam_x": 10.50,  
-  "tam_y": 15.75,  
-  "pos_x": 5.00,  
-  "pos_y": 3.50  
-}  
-```  
+   <img src="/public/trazabilidad/lotes/LotesListaVacio.png" alt="Listado de lotes vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-**Validaciones:**  
-- `nombre` debe ser único en el sistema  
-- `tam_x` y `tam_y` deben ser valores positivos  
-- Coordenadas no pueden superar dimensiones del terreno general  
+- La tabla muestra información detallada de cada lote, incluyendo:
+  - **Nombre**
+  - **Descripción**
+  - **Estado** (Activo: Sí/No)
+  - **Tamaño X** (en metros)
+  - **Tamaño Y** (en metros)
+  - **Latitud**
+  - **Longitud**
+  - **Acciones** (Editar, Eliminar)
 
-**Ejemplo de respuesta exitosa (201 Created):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "id": 1,  
-  "nombre": "Lote A",  
-  "descripcion": "Lote principal con riego automatizado",  
-  "estado": "Activo",  
-  "dimensiones": "10.5m × 15.75m",  
-  "ubicacion": "(5.0, 3.5)",  
-  "area": "165.38 m²",  
-  "bancales": 0,  
-  "cultivos_activos": 0  
-}  
-```  
+---
 
----  
+### 3. Registrar un nuevo lote
+1. En la parte superior derecha del listado, haz clic en el botón **"+ Registrar"**:
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/lotes/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/lotes/"><div></div></button></div></figure></div>  
-</section>  
+   <img src="/public/trazabilidad/lotes/RegistrarLoteBtn.png" alt="Botón registrar lote" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-**Filtros disponibles:**  
-- `?estado=activo/inactivo`  
-- `?area_min=X` (Área mínima en m²)  
-- `?cultivos=true` (Solo con cultivos activos)  
+2. Se abrirá el formulario de registro de lotes:
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-[  
-  {  
-    "id": 1,  
-    "nombre": "Lote A",  
-    "estado": "Activo",  
-    "dimensiones": "10.5m × 15.75m",  
-    "ubicacion": "Sector Norte",  
-    "cultivos_activos": 3,  
-    "ultima_actividad": "2023-11-15"  
-  },  
-  {  
-    "id": 2,  
-    "nombre": "Lote B",  
-    "estado": "En descanso",  
-    "dimensiones": "8.0m × 12.0m",  
-    "ubicacion": "Sector Este",  
-    "cultivos_activos": 0,  
-    "proximo_cultivo": "2024-02-01"  
-  }  
-]  
-```  
+   <img src="/public/trazabilidad/lotes/FormularioRegistroLote.png" alt="Formulario de registro de lote" style="display: block; margin: auto; width: 120%; border-radius: 12px;" />
 
----  
+3. **Campos del formulario**:
+   - **Nombre**: Obligatorio. Ingresa un nombre único para el lote (máximo 15 caracteres).
+   - **Descripción**: Opcional. Describe el lote.
+   - **Estado**: Selecciona si el lote está **Activo** o **Inactivo** usando el interruptor (por defecto: Inactivo).
+   - **Tamaño X**: Obligatorio. Ingresa el tamaño en metros en el eje X (máximo 5 dígitos, 2 decimales).
+   - **Tamaño Y**: Obligatorio. Ingresa el tamaño en metros en el eje Y (máximo 5 dígitos, 2 decimales).
+   - **Latitud**: Obligatorio. Ingresa la coordenada de latitud (máximo 9 dígitos, 6 decimales).
+   - **Longitud**: Obligatorio. Ingresa la coordenada de longitud (máximo 9 dígitos, 6 decimales).
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/lotes/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/lotes/{id}/"><div></div></button></div></figure></div>  
-</section>  
+   <img src="/public/trazabilidad/lotes/FormularioRegistroLoteLleno.png" alt="Formulario de lote diligenciado" style="display: block; margin: auto; max-width: 1000px; width: 100%; border-radius: 12px;" />
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "id": 1,  
-  "nombre": "Lote A",  
-  "descripcion": "Lote principal con riego automatizado",  
-  "estado": "Activo",  
-  "dimensiones": {  
-    "ancho": 10.5,  
-    "largo": 15.75,  
-    "area": "165.38 m²"  
-  },  
-  "ubicacion": {  
-    "x": 5.0,  
-    "y": 3.5,  
-    "sector": "Noreste"  
-  },  
-  "bancales": [  
-    {  
-      "id": 12,  
-      "nombre": "B1",  
-      "cultivos_activos": 2  
-    }  
-  ],  
-  "historial": {  
-    "creacion": "2023-01-10",  
-    "ultima_modificacion": "2023-11-01",  
-    "actividades_30dias": 5  
-  }  
-}  
-```  
+4. **⚠️ Importante**:
+   - Los campos **Nombre**, **Tamaño X**, **Tamaño Y**, **Latitud** y **Longitud** son obligatorios.
+   - El campo **Nombre** debe ser único.
+   - Los valores de **Tamaño X** y **Tamaño Y** deben ser números positivos.
+   - Las coordenadas de **Latitud** y **Longitud** deben ser válidas.
 
----  
+5. Haz clic en **"Guardar"** para registrar el lote.
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/lotes/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/lotes/{id}/"><div></div></button></div></figure></div>  
-</section>  
+6. Verás un mensaje de éxito como este:
 
-**Restricciones:**  
-- No se puede reducir tamaño si contiene bancales  
-- Cambio a `activo=false` requiere confirmación  
+   <img src="/public/trazabilidad/lotes/LoteRegistradoConExito.png" alt="Mensaje de registro exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-**Ejemplo de solicitud:**  
-```json  
-{  
-  "descripcion": "Lote principal - Riego por goteo instalado 2023",  
-  "tam_y": 16.0  
-}  
-```  
+7. Regresa a **"Listar Lotes"** para confirmar que el lote se registró correctamente:
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "id": 1,  
-  "message": "Lote actualizado correctamente",  
-  "cambios": {  
-    "descripcion": ["Texto anterior", "Nuevo texto"],  
-    "tam_y": [15.75, 16.0]  
-  },  
-  "area_actualizada": "168.0 m²"  
-}  
-```  
+   <img src="/public/trazabilidad/lotes/LotesListaLleno.png" alt="Listado con lote registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
----  
+---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/lotes/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/lotes/{id}/"><div></div></button></div></figure></div>  
-</section>  
+### 4. Actualizar un lote
+1. En el listado de lotes, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-**Condiciones para eliminación:**  
-- Sin bancales asociados  
-- Sin historial de actividades  
+   <img src="/public/trazabilidad/lotes/EditarLoteAccion.png" alt="Botón de editar lote" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-**Ejemplo de respuesta exitosa (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "message": "Lote eliminado correctamente",  
-  "id": 3,  
-  "espacio_liberado": "120.25 m²"  
-}  
-```  
+2. Se abrirá un formulario con los datos actuales del lote:
 
-**Error común (409 Conflict):**  
-```json  
-{  
-  "error": "Eliminación restringida",  
-  "detail": "El lote contiene 4 bancales activos",  
-  "alternativa": "Desactivar el lote en lugar de eliminar"  
-}  
-```  
+   <img src="/public/trazabilidad/lotes/LoteModalEdición.png" alt="Formulario de edición de lote" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
----  
+3. Modifica los campos que desees actualizar (Nombre, Descripción, Estado, Tamaño X, Tamaño Y, Latitud, Longitud).
+4. Haz clic en **"Confirmar"** para guardar los cambios.
+5. Verás un mensaje de actualización exitosa:
 
-## **Relaciones en el Sistema**  
-Los **Lotes** se vinculan con:  
-- **Bancales** (subdivisiones productivas)  
-- **Actividades** (labores realizadas)  
-- **Programaciones** (calendario de uso)  
-- **Mapas** (georreferenciación)  
+   <img src="/public/trazabilidad/lotes/LoteActualizadoConExito.png" alt="Mensaje de actualización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-## **Buenas Prácticas**  
- **Identificación clara**: Usar nombres que indiquen ubicación (Norte/Sur)  
- **Documentación espacial**: Registrar coordenadas exactas  
- **Rotación planificada**: Alternar estados activo/descanso  
-✔️ **Actualización dimensional**: Ajustar medidas después de modificaciones físicas  
+---
 
-## **Ejemplo Completo de Uso**  
+### 5. Eliminar un lote
+1. En el listado de lotes, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
 
-```bash  
-# 1. Registrar nuevo lote  
-POST /cultivo/lotes/  
-{  
-  "nombre": "Lote Experimental",  
-  "descripcion": "Para pruebas de nuevas variedades",  
-  "tam_x": 12.5,  
-  "tam_y": 8.75,  
-  "pos_x": 2.0,  
-  "pos_y": 0.0  
-}  
+   <img src="/public/trazabilidad/lotes/EliminarLoteAccion.png" alt="Botón de eliminar lote" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-# 2. Consultar lotes disponibles  
-GET /cultivo/lotes/?estado=activo&area_min=100  
+2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
 
-# 3. Expandir dimensión  
-PUT /cultivo/lotes/5/  
-{  
-  "tam_x": 15.0,  
-  "descripcion": "Ampliación Este completada"  
-}  
-```
+   <img src="/public/trazabilidad/lotes/LoteEliminarModal.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+
+3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer.
+4. Haz clic en **"Confirmar"** para eliminar el lote.
+5. Verás un mensaje de eliminación exitosa:
+
+   <img src="/public/trazabilidad/lotes/LoteEliminadoConExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+---
+
+### 6. Notas adicionales
+- **Estado del lote**: El estado (Activo/Inactivo) se muestra como "Sí" o "No" en la tabla.
+- **Filtros y búsqueda**: Usa los filtros en la tabla para buscar lotes por nombre, descripción, estado, etc.
+- **Validaciones**:
+  - El **Nombre** debe ser único y no exceder los 15 caracteres.
+  - **Tamaño X** y **Tamaño Y** deben ser valores numéricos positivos con hasta 2 decimales.
+  - **Latitud** y **Longitud** deben ser valores numéricos válidos con hasta 6 decimales.
+- **Acceso a otros módulos**: Los lotes pueden estar relacionados con cultivos o actividades. Asegúrate de que no existan dependencias (como cultivos asociados) antes de eliminar un lote.
+
+---
+
+### 7. Casos de uso
+- **Registrar un lote**: Ideal para definir nuevas áreas de cultivo con sus dimensiones y ubicación geográfica.
+- **Actualizar un lote**: Útil para corregir datos (como coordenadas o descripción) o cambiar el estado del lote.
+- **Eliminar un lote**: Aplicable cuando un lote ya no es utilizado, pero debe hacerse con precaución debido a posibles dependencias con otros módulos.
+- **Listar lotes**: Permite supervisar todos los lotes registrados, filtrarlos por estado o nombre, y realizar acciones rápidas como editar o eliminar.

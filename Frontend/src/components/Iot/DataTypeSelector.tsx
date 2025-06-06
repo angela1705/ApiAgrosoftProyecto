@@ -1,32 +1,17 @@
 import React, { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { DataType, DataTypeSelectorProps } from "@/types/iot/type";
-
-const dataTypes: DataType[] = [
-  {
-    label: "Temperatura (°C)",
-    key: "temperatura",
-    icon: <FaTemperatureHigh className="text-red-500" />,
-    sensorId: 1,
-    decimals: 3,
-  },
-  {
-    label: "Humedad (%)",
-    key: "humedad_ambiente",
-    icon: <FaTint className="text-blue-500" />,
-    sensorId: 2,
-    decimals: 1,
-  },
-];
+import { DataTypeSelectorProps } from "@/types/iot/type";
 
 export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({
+  dataTypes,
   selectedDataType,
   setSelectedDataType,
   className,
 }) => {
+  if (!dataTypes || dataTypes.length === 0) return null;
+
   return (
     <motion.div
       className={`relative ${className || "w-full h-auto"}`}
@@ -38,8 +23,8 @@ export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({
         <div className="relative">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left text-gray-700 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
             <span className="flex items-center gap-2 truncate">
-              {selectedDataType.icon}
-              {selectedDataType.label}
+              {selectedDataType?.icon}
+              {selectedDataType?.label || "Seleccionar tipo"}
             </span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
@@ -64,9 +49,7 @@ export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({
                 >
                   {({ selected }) => (
                     <>
-                      <span
-                        className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
-                      >
+                      <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
                         <div className="flex items-center gap-2">
                           {type.icon}
                           {type.label}
