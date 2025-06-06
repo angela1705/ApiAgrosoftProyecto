@@ -1,168 +1,125 @@
 ---
-title: "Módulo de Pagos - Gestión de Pagos"
-slug: modules/finanzas/pagos
-description: "Cómo administrar pagos a trabajadores en el módulo de Pagos de Agrosoft, calculando el total a pagar basado en horas trabajadas y salario por hora."
+title: Gestión de Pagos
 ---
 
-El módulo de Pagos en Agrosoft permite registrar y calcular los pagos a trabajadores basados en las **horas trabajadas** y el **salario por hora** asociado a cada usuario. Este módulo está vinculado al modelo de `Salario` y `Usuarios`, y calcula automáticamente el **total a pagar** mediante un método integrado en el modelo.
+## ¿Cómo listar y gestionar pagos?
 
-## Características principales
-- Registro de **pagos** asociados a usuarios específicos.
-- Cálculo automático del **total a pagar** basado en horas trabajadas y salario por hora.
-- Almacenamiento de datos históricos de pagos.
-- Integración con los módulos de **Salarios** y **Usuarios** para una gestión eficiente.
-- Visualización de pagos en la interfaz de Agrosoft.
-
-## ¿Cómo registrar un pago?
-Para registrar un nuevo pago en Agrosoft:
-1. Ir a la sección **Pagos → Gestión de Pagos**.
-2. Hacer clic en el botón **"Registrar Pago"**.
-3. Completar los siguientes campos:
-   - **Horas Trabajadas:** Cantidad de horas trabajadas por el usuario (por ejemplo, "40").
-   - **Salario:** Seleccionar el salario asociado al trabajador desde el módulo de Salarios.
-   - **Usuario:** Seleccionar el usuario al que corresponde el pago.
-   - **Total a Pagar:** Se calcula automáticamente al guardar (opcional para edición manual).
-4. Guardar los cambios.
-   - **Nota:** El método `calcular_total()` se ejecuta automáticamente para determinar el total a pagar.
-
-## Datos de un Pago
-Cada pago tiene la siguiente información:
-
-| Campo               | Tipo de Dato      | Descripción                                      |
-|---------------------|-------------------|--------------------------------------------------|
-| **ID**              | `Integer`         | Identificador único del pago                    |
-| **Horas Trabajadas**| `IntegerField`    | Cantidad de horas trabajadas por el usuario     |
-| **Salario**         | `ForeignKey`      | Relación con el modelo `Salario` (salario/hora) |
-| **Total a Pagar**   | `DecimalField`    | Total calculado (máx. 10 dígitos, 2 decimales)  |
-| **Usuario**         | `ForeignKey`      | Relación con el modelo `Usuarios`               |
+Esta documentación detalla el proceso para listar, calcular, visualizar detalles y eliminar pagos en el sistema. Sigue los pasos a continuación para gestionar los pagos de manera efectiva.
 
 ---
 
-## Ejemplos de API para gestionar pagos
+### 1. Navegar al módulo de Pagos
+1. En el menú principal, busca el módulo **"Finanzas"** y selecciona el subítem **"Pagos"**:
 
-A continuación, se presentan los ejemplos de uso de la API para las operaciones CRUD sobre el recurso `/api/pagos`:
-
-### **POST /api/pagos**
-
-Registra un nuevo pago para un trabajador.
-
-**Validaciones:**
-- Campos obligatorios: `horas_trabajadas`, `salario`, `usuario`
-- `horas_trabajadas` debe ser un número entero mayor o igual a 0
-- `salario` y `usuario` deben corresponder a IDs válidos en sus respectivas tablas
-
----
-### **Ejemplos de solicitudes y respuestas post:**
-
-```json
-// POST /api/pagos - Ejemplo de solicitud
-{
-  "horas_trabajadas": 40,
-  "salario": 1,
-  "usuario": 5
-}
-
-// POST /api/pagos - Respuesta exitosa (201 Created)
-{
-  "id": 1,
-  "message": "Pago registrado correctamente"
-}
-```
----
-### **GET /api/pagos**
-
-Obtiene todos los pagos registrados con filtros opcionales.
+   <img src="/public/trazabilidad/pagos/SidebarPagos.png" alt="Navegación al módulo de pagos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
-### **Ejemplos de solicitudes y respuestas get:**
+### 2. Visualizar el listado de pagos
+- Al entrar en **"Pagos"**, encontrarás una tabla con los pagos registrados. Si no hay registros, verás una tabla vacía:
 
-```json
+   <img src="/public/trazabilidad/pagos/ListaPagosVacia.png" alt="Listado de pagos vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-// GET /api/pagos - Ejemplo de respuesta (200 OK)
-[
-  {
-    "id": 1,
-    "horas_trabajadas": 40,
-    "salario": {"id": 1, "valor_por_hora": 20.00},
-    "total_a_pagar": 800.00,
-    "usuario": {"id": 5, "nombre": "Juan Pérez"}
-  }
-]
-```
+- La tabla muestra información detallada de cada pago, incluyendo:
+  - **ID**
+  - **Período** (fecha de inicio - fecha de fin)
+  - **Horas Trabajadas**
+  - **Total** (en COP)
+  - **Usuario**
+  - **Fecha de Cálculo**
+  - **Acciones** (Ver detalles, Eliminar)
 
 ---
 
+### 3. Calcular un nuevo pago
+1. En la parte superior derecha del listado, haz clic en el botón **"+ Calcular Nuevo Pago"**:
 
-**Parámetros opcionales:**
-- `?usuario=5`: Filtra por ID de usuario
-- `?salario=1`: Filtra por ID de salario
+   <img src="/public/trazabilidad/pagos/CalcularPagoBtn.png" alt="Botón calcular nuevo pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
----
+2. Se abrirá el formulario para calcular un nuevo pago:
 
-### **GET /api/pagos/{id}**
+   <img src="/public/trazabilidad/pagos/CalcularPagoFormulario.png" alt="Formulario de cálculo de pago" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-Obtiene un pago específico por su ID.
+3. **Campos del formulario**:
+   - **Usuario**: Obligatorio. Selecciona un usuario de la lista desplegable (puedes buscar por nombre).
+   - **Fecha Inicio**: Obligatorio. Selecciona la fecha de inicio del período.
+   - **Fecha Fin**: Obligatorio. Selecciona la fecha de fin del período.
 
----
+   <img src="/public/trazabilidad/pagos/CalcularPagoLleno.png" alt="Formulario de pago diligenciado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-### **Ejemplos de solicitudes y respuestas get por ID:**
+4. **⚠️ Importante**:
+   - Todos los campos son obligatorios.
+   - La **Fecha de Inicio** no puede ser mayor que la **Fecha de Fin**.
+   - El **Usuario** debe tener un rol asignado y un salario configurado para su rol.
+   - Deben existir actividades completadas por el usuario en el rango de fechas especificado para calcular el pago.
 
-```json
+5. Haz clic en **"Calcular Pago"** para procesar el cálculo.
 
-// GET /api/pagos/{id} - Ejemplo de respuesta (200 OK)
-{
-  "id": 1,
-  "horas_trabajadas": 40,
-  "salario": {"id": 1},
-  "total_a_pagar": 800.00,
-  "usuario": {"id": 5}
-}
+6. Verás un mensaje de éxito como este:
 
-```
+   <img src="/public/trazabilidad/pagos/CalculoExitoso.png" alt="Mensaje de cálculo exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
----
+7. Serás redirigido a **"Listar Pagos"**, donde podrás confirmar que el pago se registró correctamente:
 
-### **PUT /api/pagos/{id}**
-
-Actualiza un pago existente.
+   <img src="/public/trazabilidad/pagos/ListaPagosNoVacia.png" alt="Listado con pago registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
-### **Ejemplos de solicitudes y respuestas put por ID:**
+### 4. Visualizar detalles de un pago
+1. En el listado de pagos, en la columna **Acciones**, haz clic en el ícono de **Ver detalles** (ojo):
 
-```json
+   <img src="/public/trazabilidad/pagos/PagoAccionVer.png" alt="Botón de ver detalles de pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-// PUT /api/pagos/{id} - Ejemplo de solicitud
-{
-  "horas_trabajadas": 45,
-  "salario": 1
-}
-```
+2. Se abrirá un modal con los detalles del pago:
 
-**Restricciones:**
-- No se puede modificar el `usuario` asociado
-- `horas_trabajadas` debe ser un número entero mayor o igual a 0
+   <img src="/public/trazabilidad/pagos/DetallesPago.png" alt="Modal de detalles de pago" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
----
+3. Los detalles incluyen:
+   - Período (fechas de inicio y fin)
+   - Horas trabajadas
+   - Jornales calculados
+   - Total a pagar
+   - Fecha de cálculo
+   - Número de actividades incluidas
 
-### **DELETE /api/pagos/{id}**
-
-Elimina un registro de pago.
-
-**Error común (404 Not Found):**
+4. Haz clic en **"Cerrar"** para volver al listado.
 
 ---
 
-### **Ejemplos de solicitudes y respuestas delete por ID:**
-```json
+### 5. Eliminar un pago
+1. En el listado de pagos, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
 
-// DELETE /api/pagos/{id} - Respuesta exitosa (200 OK)
-{
-  "message": "Pago eliminado correctamente"
-}
+   <img src="/public/trazabilidad/pagos/PagoAccionEliminar.png" alt="Botón de eliminar pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-// DELETE /api/pagos/{id} - Error común (404 Not Found)
-{
-  "error": "No existe el pago especificado"
-}
+2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
+
+   <img src="/public/trazabilidad/pagos/EliminarPago.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+
+3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer.
+4. Haz clic en **"Eliminar"** para confirmar la eliminación.
+5. Verás un mensaje de eliminación exitosa:
+
+   <img src="/public/trazabilidad/pagos/PagoEliminadoExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+---
+
+### 6. Notas adicionales
+- **Filtros y búsqueda**: Usa los filtros en la tabla para buscar pagos por ID, período, horas trabajadas, total, usuario o fecha de cálculo.
+- **Validaciones**:
+  - El **Usuario** debe tener un rol asignado y un salario configurado.
+  - La **Fecha de Inicio** no puede ser mayor que la **Fecha de Fin**.
+  - Deben existir actividades completadas en el rango de fechas especificado para calcular el pago.
+  - El cálculo del pago se basa en las horas trabajadas (suma de la duración de actividades completadas) y el valor del jornal definido en el salario del rol del usuario.
+- **Acceso a otros módulos**: Los pagos están relacionados con **Usuarios**, **Actividades** y **Salarios**. Asegúrate de que los usuarios tengan roles y salarios configurados, y que existan actividades completadas antes de calcular un pago.
+- **Formato de datos**:
+  - Los totales se muestran en pesos colombianos (COP) sin decimales.
+  - Las fechas se formatean en el formato DD/MM/YYYY.
+  - Las horas trabajadas y jornales se redondean a 2 decimales.
+
+---
+
+### 7. Casos de uso
+- **Calcular un nuevo pago**: Ideal para registrar el pago correspondiente a un usuario basado en las actividades completadas en un período específico.
+- **Visualizar detalles de un pago**: Útil para revisar la información detallada de un pago, incluyendo el período, horas trabajadas, jornales, total y actividades asociadas.
+- **Eliminar un pago**: Aplicable cuando un registro de pago es erróneo o ya no es relevante, pero debe hacerse con precaución debido a su carácter irreversible.
+- **Listar pagos**: Permite supervisar todos los pagos registrados, filtrarlos por ID, período, usuario, horas, total o fecha de cálculo, y realizar acciones rápidas como ver detalles o eliminar.

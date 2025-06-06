@@ -8,6 +8,8 @@ import Formulario from "@/components/globales/Formulario";
 import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 import { Plus } from 'lucide-react';
 import { ModalUnidadMedida } from "@/components/cultivo/ModalUnidadMedida";
+import { ModalCultivo } from "@/components/cultivo/ModalCultivo";
+
 const CosechaPage: React.FC = () => {
 
     const [cosecha, setCosecha] = useState({
@@ -22,6 +24,7 @@ const CosechaPage: React.FC = () => {
     const navigate = useNavigate();
     const { data: unidadesMedida, isLoading: loadingUnidadesMedida } = useUnidadesMedida();
     const [openUnidadesMedidaModal, setOpenUnidadesMedidaModal] = useState(false);
+    const [openCultivoModal, setOpenCultivoModal] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -38,14 +41,26 @@ const CosechaPage: React.FC = () => {
 
     return (
         <DefaultLayout>
+               <ModalCultivo 
+                    isOpen={openCultivoModal}
+                    onOpenChange={setOpenCultivoModal}
+                 />
+            
             <Formulario title="Registrar Cosecha"
             onSubmit={handleSubmit}
             >
 
             <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700">
-                        Cultivo
-                    </label>
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Cultivo</label>
+                             <button 
+                                    className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    onClick={() => setOpenCultivoModal(true)}
+                                    type="button"
+                                >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                     </div>
                     <select
                         name="id_cultivo"
                         value={cosecha.id_cultivo || ""}
