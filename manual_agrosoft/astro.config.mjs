@@ -32,6 +32,8 @@ export default defineConfig({
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
             { label: 'Log-in', slug: 'modules/usuarios/Log-in' },
             { label: 'Administrar perfil', slug: 'modules/usuarios/adminstrarPerfil' },
+            { label: 'Administrar usuarios', slug: 'modules/usuarios/adminstrarUsuarios' },
+
 
           ],
         },
