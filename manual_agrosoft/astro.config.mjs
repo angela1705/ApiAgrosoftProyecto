@@ -47,7 +47,7 @@ export default defineConfig({
           items: [
             // { label: 'Introducción', slug: 'modules/trazabilidad/index' },
             { label: 'Lotes', slug: 'modules/trazabilidad/lotes' },
-            // { label: 'Bancales', slug: 'modules/trazabilidad/bancal' },
+            { label: 'Bancales', slug: 'modules/trazabilidad/bancal' },
             { label: 'Tipo de Especie', slug: 'modules/trazabilidad/tipoespecie' },
             { label: 'Especie', slug: 'modules/trazabilidad/especie' },
             { label: 'Cultivo', slug: 'modules/trazabilidad/cultivo' },
