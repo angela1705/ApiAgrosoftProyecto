@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+// src/pages/sensores/ListarSensoresPage.tsx
+import { useState, useMemo, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useSensores } from "@/hooks/iot/sensores/useSensores";
 import { useUpdateSensor } from "@/hooks/iot/sensores/usePutSensor";
@@ -8,10 +9,12 @@ import { useBancales } from "@/hooks/cultivo/usebancal";
 import { useNavigate } from "react-router-dom";
 import Tabla from "@/components/globales/Tabla";
 import { ModalSensor } from "@/components/Iot/ModalSensor";
-import GuideModal from "@/components/Iot/GuideModal"; // Importar el modal
+import GuideModal from "@/components/Iot/GuideModal";
 import { Sensor } from "@/types/iot/type";
 import { EditIcon, Trash2, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import Switcher from "@/components/switch"; 
+import { addToast } from "@heroui/toast";
 
 export default function ListarSensoresPage() {
   const { sensores, isLoading, error } = useSensores();
@@ -23,7 +26,13 @@ export default function ListarSensoresPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
+  const [sensoresLocal, setSensoresLocal] = useState<Sensor[]>([]); // Estado local para actualizar UI
   const navigate = useNavigate();
+
+  // Sincronizar sensoresLocal con sensores de la API
+  useEffect(() => {
+    setSensoresLocal(sensores);
+  }, [sensores]);
 
   console.log("[ListarSensoresPage] Estado inicial: ", {
     sensores,
@@ -45,7 +54,7 @@ export default function ListarSensoresPage() {
 
   const formattedData = useMemo(() => {
     console.log("[ListarSensoresPage] Formateando datos para la tabla: ", { sensores, bancales });
-    return sensores.map((sensor: Sensor) => ({
+    return sensoresLocal.map((sensor: Sensor) => ({
       id: sensor.id ? sensor.id.toString() : "N/A",
       nombre: sensor.nombre || "Sin nombre",
       tipo_sensor: sensor.tipo_sensor || "Desconocido",
@@ -85,31 +94,45 @@ export default function ListarSensoresPage() {
           >
             <Trash2 size={20} color="red" />
           </motion.button>
-          <motion.label
+          <motion.div
             className="flex items-center cursor-pointer"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
-            <input
-              type="checkbox"
-              checked={sensor.estado === "activo"}
-              onChange={() => {
+            <Switcher
+              size="sm"
+              isSelected={sensor.estado === "activo"}
+              color={sensor.estado === "activo" ? "success" : "danger"}
+              onChange={(e) => {
+                const activo = e.target.checked;
                 console.log("[ListarSensoresPage] Cambiando estado del sensor: ", {
                   sensorId: sensor.id,
-                  newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
+                  activo,
                 });
-                toggleSensor.mutate({
-                  sensorId: sensor.id,
-                  newEstado: sensor.estado === "activo" ? "inactivo" : "activo",
-                });
+                toggleSensor.mutate(
+                  { sensorId: sensor.id, activo },
+                  {
+                    onSuccess: () => {
+                      // Actualizar el estado local para reflejar el cambio en la UI
+                      setSensoresLocal((prev) =>
+                        prev.map((s) =>
+                          s.id === sensor.id ? { ...s, estado: activo ? "activo" : "inactivo" } : s
+                        )
+                      );
+                      // El toast ya está manejado en useToggleSensor
+                    },
+                    onError: () => {
+                      // El toast de error ya está manejado en useToggleSensor
+                    },
+                  }
+                );
               }}
-              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
             />
-          </motion.label>
+          </motion.div>
         </div>
       ),
     }));
-  }, [sensores, bancales, toggleSensor]);
+  }, [sensoresLocal, bancales, toggleSensor]);
 
   const handleConfirmEdit = (editedSensor: Sensor | null) => {
     if (editedSensor?.id) {
@@ -151,7 +174,6 @@ export default function ListarSensoresPage() {
     <DefaultLayout>
       <div className="w-full flex flex-col items-center min-h-screen p-6">
         <div className="w-full max-w-5xl">
-          {/* Botón de ayuda y título */}
           <div className="flex justify-between items-center mb-4">
             <motion.button
               onClick={() => {
@@ -166,7 +188,7 @@ export default function ListarSensoresPage() {
               <HelpCircle size={24} />
             </motion.button>
             <h2 className="text-2xl font-bold text-gray-800">Lista de Sensores Registrados</h2>
-            <div className="w-10"></div> {/* Espacio para alinear el título */}
+            <div className="w-10"></div>
           </div>
           <div className="mb-2 flex justify-start gap-2">
             <button
@@ -186,7 +208,7 @@ export default function ListarSensoresPage() {
           ) : (
             <>
               <Tabla columns={columns} data={formattedData} responsiveColumns={["nombre", "estado"]} />
-              {sensores.length === 0 && (
+              {sensoresLocal.length === 0 && (
                 <p className="text-gray-600 text-center mt-4">No hay sensores registrados</p>
               )}
             </>

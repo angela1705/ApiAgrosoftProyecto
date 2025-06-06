@@ -4,8 +4,13 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from apps.Iot.datos_meteorologicos.api.serializers import Datos_metereologicosSerializer
 from apps.Iot.sensores.models import Sensor
+import hashlib
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
+
+# Caché en memoria para notificaciones de alertas
+ALERT_CACHE = {}  # {device_code: {alert_id: alert_data}}
 
 class RealtimeDataConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -55,8 +60,85 @@ class RealtimeDataConsumer(AsyncWebsocketConsumer):
             logger.error(f"Error al guardar datos: {str(e)}", exc_info=True)
             return None
 
+    def check_thresholds(self, data, sensor_name, bancal_name):
+        """
+        Verifica si los datos meteorológicos exceden los umbrales y genera alertas.
+        """
+        thresholds = {
+            'temperatura': {'min': 0, 'max': 40},  # °C
+            'humedad_ambiente': {'min': 20, 'max': 90},  # %
+            'luminosidad': {'min': 100, 'max': 100000},  # lux
+            'lluvia': {'min': 0, 'max': 50},  # mm
+            'velocidad_viento': {'min': 0, 'max': 20},  # m/s
+            'humedad_suelo': {'min': 10, 'max': 80},  # %
+            'ph_suelo': {'min': 5.5, 'max': 7.5},  # pH
+        }
+        alerts = []
+        timestamp = str(int(timezone.now().timestamp() * 1000))
+        device_code = data.get('device_code')
+
+        for field, limits in thresholds.items():
+            value = data.get(field)
+            if value is not None:
+                try:
+                    value = float(value)
+                    if value < limits['min']:
+                        alert_id = hashlib.md5(f"{device_code}_{field}_below_{timestamp}".encode()).hexdigest()
+                        alerts.append({
+                            'id': alert_id,
+                            'type': f'{field}_below_threshold',
+                            'message': f"Alerta: {field.replace('_', ' ').title()} bajo en {sensor_name} ({bancal_name}): {value} (mínimo permitido: {limits['min']})",
+                            'timestamp': timestamp,
+                            'device_code': device_code,
+                            'source': 'meteorological_data'
+                        })
+                    elif value > limits['max']:
+                        alert_id = hashlib.md5(f"{device_code}_{field}_above_{timestamp}".encode()).hexdigest()
+                        alerts.append({
+                            'id': alert_id,
+                            'type': f'{field}_above_threshold',
+                            'message': f"Alerta: {field.replace('_', ' ').title()} alto en {sensor_name} ({bancal_name}): {value} (máximo permitido: {limits['max']})",
+                            'timestamp': timestamp,
+                            'device_code': device_code,
+                            'source': 'meteorological_data'
+                        })
+                except (ValueError, TypeError):
+                    logger.error(f"Valor inválido para {field}: {value}")
+                    continue
+        return alerts
+
+    def get_existing_alerts(self, device_code):
+        """
+        Obtiene las alertas existentes para un device_code desde el caché.
+        """
+        return ALERT_CACHE.get(device_code, {})
+
+    def save_alert(self, alert, device_code):
+        """
+        Guarda una alerta en el caché.
+        """
+        if device_code not in ALERT_CACHE:
+            ALERT_CACHE[device_code] = {}
+        ALERT_CACHE[device_code][alert['id']] = alert
+
+    async def send_alert(self, alert):
+        """
+        Envía una alerta al grupo de WebSocket.
+        """
+        try:
+            await self.channel_layer.group_send(
+                "weather_group",
+                {
+                    "type": "weather_alert",
+                    "data": alert
+                }
+            )
+            logger.debug(f"Alerta enviada al grupo: {alert}")
+        except Exception as e:
+            logger.error(f"Error enviando alerta: {str(e)}")
+
     async def receive(self, text_data):
-        logger.info(f"RECIBIDO EN /ws/realtime/: {text_data}")  # Log para confirmar recepción
+        logger.info(f"RECIBIDO EN /ws/realtime/: {text_data}")
         try:
             data = json.loads(text_data)
             logger.debug(f"Datos parseados: {data}")
@@ -83,6 +165,16 @@ class RealtimeDataConsumer(AsyncWebsocketConsumer):
                     }
                 )
                 await self.send(text_data=json.dumps({"status": "ok", "data": saved_data}))
+
+                # Verificar umbrales y enviar alertas
+                sensor_name = saved_data.get('sensor_nombre', 'N/A')
+                bancal_name = saved_data.get('bancal_nombre', 'N/A')
+                alerts = self.check_thresholds(data, sensor_name, bancal_name)
+                existing_alerts = self.get_existing_alerts(device_code)
+                for alert in alerts:
+                    if alert['id'] not in existing_alerts:
+                        self.save_alert(alert, device_code)
+                        await self.send_alert(alert)
             else:
                 logger.error("Error al guardar datos en la base de datos")
                 await self.send(text_data=json.dumps({"error": "Error al guardar datos"}))
@@ -98,5 +190,13 @@ class RealtimeDataConsumer(AsyncWebsocketConsumer):
         logger.debug(f"Enviando datos al cliente: {data}")
         await self.send(text_data=json.dumps({
             'type': 'weather_data',
+            'data': data
+        }))
+
+    async def weather_alert(self, event):
+        data = event['data']
+        logger.debug(f"Enviando alerta al cliente: {data}")
+        await self.send(text_data=json.dumps({
+            'type': 'weather_alert',
             'data': data
         }))
