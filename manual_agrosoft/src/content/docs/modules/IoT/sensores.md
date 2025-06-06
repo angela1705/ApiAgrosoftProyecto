@@ -1,209 +1,122 @@
 ---
-
 title: "Módulo de IoT - Gestión de Sensores"  
 slug: modules/IoT/sensores  
 description: "Cómo administrar sensores en el módulo de IoT de Agrosoft para monitoreo en tiempo real de condiciones meteorológicas en cultivos."  
-
 ---
 
+## Gestión de Sensores
 
-# Módulo de IoT - Gestión de Sensores
+Los **sensores** son dispositivos clave en Agrosoft que recopilan información en tiempo real sobre las condiciones de tus cultivos, como temperatura, humedad, luminosidad, y más. Gestionar tus sensores te permite monitorear tus bancales de forma eficiente y garantizar que los datos sean precisos.
 
-Los **Sensores** son dispositivos físicos conectados al sistema que recopilan datos meteorológicos en tiempo real, como temperatura y humedad, en los bancales de cultivo. Estos datos se integran con el módulo de trazabilidad para un control completo del proceso agrícola.
+**¿Por qué es importante?**
 
-## ¿Cómo registrar un sensor?
-Para registrar un nuevo sensor en Agrosoft:  
-1. Ve a la sección **IoT → Sensores**.  
-2. Hacer clic en el botón **"Registrar Sensor"**.  
-3. Completar los siguientes campos:  
-   - **Nombre del Sensor:** Nombre único del sensor (por ejemplo, "DHT22_001").  
-   - **Tipo de Sensor:** Tipo de sensor (por ejemplo, "DHT22").  
-   - **Unidad de Medida:** Unidad de los datos (por ejemplo, "Celsius/%").  
-   - **Descripción:** Información adicional sobre el sensor (opcional).  
-   - **Medida Mínima:** Valor mínimo que el sensor puede registrar.  
-   - **Medida Máxima:** Valor máximo que el sensor puede registrar.  
-4. Guardar los cambios.  
-   - **Nota:** La asociación del sensor a un bancal se realiza al configurar los datos enviados por el dispositivo.
+- **Monitoreo en tiempo real**: Los sensores activos envían datos continuos para que tomes decisiones informadas sobre el riego, fertilización, y otros cuidados.
+- **Trazabilidad**: Vincular sensores a bancales asegura que los datos se asocien correctamente con tus cultivos, mejorando el control del proceso agrícola.
+- **Flexibilidad**: Puedes registrar nuevos sensores, editar su información, o desactivarlos si ya no son necesarios.
+- **Seguridad y control**: Solo los usuarios autorizados (instructores y administradores) pueden modificar sensores, garantizando la integridad de los datos.
 
-## Datos de un Sensor
-Cada sensor tiene la siguiente información:  
-| Campo             | Tipo de Dato    | Descripción                                      |  
-|-------------------|-----------------|--------------------------------------------------|  
-| **ID**            | `Integer`       | Identificador único del sensor                  |  
-| **Nombre**        | `CharField`     | Nombre del sensor (máx. 15 caracteres, único)   |  
-| **Tipo**          | `CharField`     | Tipo de sensor (ej. "DHT22")                    |  
-| **Unidad**        | `CharField`     | Unidad de medida (ej. "Celsius/%")              |  
-| **Descripción**   | `TextField`     | Información opcional sobre el sensor            |  
-| **Medida Mínima** | `DecimalField`  | Valor mínimo que el sensor puede registrar      |  
-| **Medida Máxima** | `DecimalField`  | Valor máximo que el sensor puede registrar      |
+Esta funcionalidad te ayuda a mantener tus sensores organizados y optimiza la gestión de tus cultivos.
 
-## Ejemplo de API para gestionar sensores
+## Acceso al Módulo de Sensores
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span> </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/iot/sensores/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/iot/sensores/"><div></div></button></div></figure></div>  </section>  
+Para gestionar tus sensores, sigue estos pasos:
 
-**Encabezados de la solicitud**  
-| Encabezado     | Valor                         | Descripción                                               |  
-|----------------|-------------------------------|-----------------------------------------------------------|  
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |  
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |  
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |  
-- Crea un nuevo sensor.  
+1. Inicia sesión en Agrosoft.
+2. En el **menú lateral izquierdo**, busca la sección **IoT** y haz clic en **Sensores**. Esto te llevará a la pantalla principal del módulo de sensores, donde podrás ver la lista de sensores registrados.
 
-**Ejemplo de solicitud:**  
-```json  
-{  
-  "nombre": "DHT22_001",  
-  "tipo": "DHT22",  
-  "unidad": "Celsius/%",  
-  "descripcion": "Sensor de temperatura y humedad",  
-  "medida_minima": -40.00,  
-  "medida_maxima": 80.00  
-}  
-```
+<img src="public/iot/iot_DU_1.png" alt="Menú de sensores" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
-**Ejemplo de respuesta exitosa (201 Created):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>  
-```json  
-{  
-  "id": 1,  
-  "nombre": "DHT22_001",  
-  "tipo": "DHT22",  
-  "unidad": "Celsius/%",  
-  "descripcion": "Sensor de temperatura y humedad",  
-  "medida_minima": -40.00,  
-  "medida_maxima": 80.00  
-}  
-```
+## Lista de Sensores
 
-**Posibles errores:**  
-- `400 Bad Request`: Si faltan campos obligatorios.  
-- `409 Conflict`: Si el nombre ya existe.  
+En la pantalla principal de **Sensores**, encontrarás una tabla con la siguiente información para cada sensor:
 
----
+- **ID**: Identificador único del sensor.
+- **Nombre**: Nombre descriptivo (ej. "Sensor DHT22 Patio").
+- **Tipo**: Tipo de sensor (ej. "DHT22").
+- **Unidad**: Unidad de medida (ej. "°C/%").
+- **Código Dispositivo**: Código único del dispositivo físico.
+- **Bancal**: Bancal asociado (si aplica).
+- **Estado**: Indica si el sensor está **Activo** o **Inactivo**.
+- **Acciones**: Opciones para editar, eliminar, o cambiar el estado del sensor.
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span> </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/iot/sensores/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/iot/sensores/"><div></div></button></div></figure></div>  </section>  
+<img src="/public/sensores/listar-sensores.png" alt="Lista de sensores" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
-**Encabezados de la solicitud**  
-| Encabezado     | Valor                         | Descripción                                               |  
-|----------------|-------------------------------|-----------------------------------------------------------|  
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |  
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |  
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |  
-- Obtiene todos los sensores registrados.  
+En la parte superior derecha, encontrarás un ícono de **ayuda** (un signo de interrogación) que abre una **guía de uso** con instrucciones adicionales.
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>  
-```json  
-[  
-  {  
-    "id": 1,  
-    "nombre": "DHT22_001",  
-    "tipo": "DHT22",  
-    "unidad": "Celsius/%",  
-    "descripcion": "Sensor de temperatura y humedad",  
-    "medida_minima": -40.00,  
-    "medida_maxima": 80.00  
-  }  
-]  
-```
+## Registrar un Nuevo Sensor
 
----
+Para agregar un sensor al sistema:
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span> </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/iot/sensores/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/iot/sensores/{id}/"><div></div></button></div></figure></div>  </section>  
+1. En la pantalla de **Sensores**, haz clic en el botón **+ Registrar Sensor** ubicado en la parte superior izquierda.
+2. Completa el formulario con la siguiente información:
+   - **Nombre**: Un nombre único para identificar el sensor (ej. "Sensor DHT22 Patio").
+   - **Tipo de Sensor**: Selecciona el tipo (ej. "DHT22").
+   - **Descripción**: Información adicional (opcional).
+   - **Medida Mínima**: Valor mínimo que el sensor puede registrar.
+   - **Medida Máxima**: Valor máximo que el sensor puede registrar.
+   - **Estado**: Selecciona **Activo** o **Inactivo**.
+   - **Código Dispositivo**: Código único del dispositivo físico (ej. "DHT22_001").
+   - **Bancal**: Selecciona un bancal para asociarlo (opcional).
+3. Haz clic en **Guardar** para registrar el sensor.
 
-**Encabezados de la solicitud**  
-| Encabezado     | Valor                         | Descripción                                               |  
-|----------------|-------------------------------|-----------------------------------------------------------|  
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |  
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |  
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |  
-- Obtiene un sensor específico por su ID.  
+<img src="/public/sensores/registrar-sensor.png" alt="Formulario de registro" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>  
-```json  
-{  
-  "id": 1,  
-  "nombre": "DHT22_001",  
-  "tipo": "DHT22",  
-  "unidad": "Celsius/%",  
-  "descripcion": "Sensor de temperatura y humedad",  
-  "medida_minima": -40.00,  
-  "medida_maxima": 80.00  
-}  
-```
+## Editar un Sensor
 
-**Posibles errores:**  
-- `404 Not Found`: Si el ID no existe.  
+Para modificar la información de un sensor existente:
 
----
+1. En la tabla de sensores, busca el sensor que deseas editar.
+2. Haz clic en el ícono de **Editar** (un lápiz) en la columna **Acciones**.
+3. Actualiza los campos necesarios en el formulario que aparece (nombre, descripción, bancal, etc.).
+4. Haz clic en **Guardar** para confirmar los cambios.
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span> </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/iot/sensores/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/iot/sensores/{id}/"><div></div></button></div></figure></div>  </section>  
+<img src="/public/sensores/editar-sensor.png" alt="Editar sensor" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-**Encabezados de la solicitud**  
-| Encabezado     | Valor                         | Descripción                                               |  
-|----------------|-------------------------------|-----------------------------------------------------------|  
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |  
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |  
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |  
-- Actualiza un sensor existente.  
+## Cambiar el Estado de un Sensor
 
-**Ejemplo de solicitud:**  
-```json  
-{  
-  "nombre": "DHT22_001_modificado",  
-  "descripcion": "Sensor actualizado"  
-}  
-```
+Puedes activar o desactivar un sensor para controlar si envía datos al sistema:
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>  
-```json  
-{  
-  "id": 1,  
-  "nombre": "DHT22_001_modificado",  
-  "tipo": "DHT22",  
-  "unidad": "Celsius/%",  
-  "descripcion": "Sensor actualizado",  
-  "medida_minima": -40.00,  
-  "medida_maxima": 80.00  
-}  
-```
+1. En la tabla de sensores, localiza el sensor.
+2. En la columna **Acciones**, usa el **interruptor** (Switcher) para cambiar el estado:
+   - **Verde**: Sensor activo (envía datos).
+   - **Rojo**: Sensor inactivo (no envía datos).
+3. El cambio se guarda automáticamente.
 
-**Posibles errores:**  
-- `404 Not Found`: Si el ID no existe.  
-- `400 Bad Request`: Si los datos enviados son inválidos.  
+## Eliminar un Sensor
 
----
+Para eliminar un sensor que ya no necesitas:
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span> </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/iot/sensores/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/iot/sensores/{id}/"><div></div></button></div></figure></div>  </section>  
+1. En la tabla de sensores, busca el sensor.
+2. Haz clic en el ícono de **Eliminar** (un basurero rojo) en la columna **Acciones**.
+3. Confirma la eliminación en el mensaje que aparece.
+4. El sensor será eliminado del sistema.
 
-**Encabezados de la solicitud**  
-| Encabezado     | Valor                         | Descripción                                               |  
-|----------------|-------------------------------|-----------------------------------------------------------|  
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |  
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |  
-| **Accept**       | `application/json`            | Indica que la respuesta debe estar en formato JSON.       |  
-- Elimina un sensor (si no está en uso).  
+<img src="/public/sensores/eliminar-sensor.png" alt="Confirmar eliminación" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-**Ejemplo de respuesta exitosa (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>  
-```json  
-{  
-  "message": "Sensor eliminado correctamente"  
-}  
-```
+**Nota**: Solo los sensores inactivos o sin datos asociados pueden eliminarse fácilmente. Contacta a un administrador si encuentras problemas.
 
-**Posibles errores:**  
-- `404 Not Found`: Si el ID no existe.  
----
+## ¿Por qué importa la gestión de sensores en la navegación?
+
+El módulo de **Sensores** es fundamental para el monitoreo de tus cultivos. Al gestionar sensores correctamente, puedes:
+
+1. **Monitorear condiciones**: Los datos de los sensores te ayudan a tomar decisiones sobre el cuidado de tus cultivos.
+2. **Integrar con otros módulos**: Los sensores están vinculados a módulos como **Datos Meteorológicos** y **Evapotranspiración**, que dependen de ellos.
+3. **Generar reportes**: Los datos de sensores activos se usan para crear reportes en PDF o Excel.
+4. **Optimizar recursos**: Aseguras que solo los sensores necesarios estén activos, ahorrando energía y mejorando el rendimiento.
+
+## Experiencia por Tipo de Usuario
+
+- **Aprendices y Pasantes**:
+  - Pueden **ver** la lista de sensores y sus datos.
+  - No pueden registrar, editar, eliminar, ni cambiar el estado de sensores.
+  - Pueden descargar reportes generados por sensores (si tienen permisos).
+
+- **Instructores**:
+  - Pueden **ver**, **registrar**, **editar**, y **cambiar el estado** de sensores.
+  - Pueden eliminar sensores, salvo restricciones del sistema.
+  - Tienen acceso a reportes y datos en tiempo real.
+
+- **Administradores**:
+  - Tienen **acceso total** al módulo de sensores.
+  - Pueden realizar todas las acciones (registrar, editar, eliminar, cambiar estado).
+  - Gestionan permisos de otros usuarios y resuelven conflictos (ej. eliminación de sensores con datos asociados). 
