@@ -33,6 +33,7 @@ export default defineConfig({
             { label: 'Log-in', slug: 'modules/usuarios/Log-in' },
             { label: 'Administrar perfil', slug: 'modules/usuarios/adminstrarPerfil' },
             { label: 'Administrar usuarios', slug: 'modules/usuarios/adminstrarUsuarios' },
+            
 
 
           ],
@@ -57,6 +58,8 @@ export default defineConfig({
             { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
             { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
             { label: 'Tipo de plaga', slug: 'modules/trazabilidad/tipoplaga' },
+            { label: 'Tipo de Control', slug: 'modules/trazabilidad/tipoControl' },
+            { label: 'Control', slug: 'modules/trazabilidad/control' },
             // { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
             // { label: 'Control de Productos', slug: 'modules/trazabilidad/productoscontrol' },
 
@@ -80,7 +83,7 @@ export default defineConfig({
           items: [
             // { label: 'Panel de Finanzas', slug: 'modules/finanzas/index' },
             { label: 'Gestión de Pagos', slug: 'modules/finanzas/pagos' },
-            // { label: 'Gestión de Salario', slug: 'modules/finanzas/salarios' },
+            { label: 'Gestión de Salario', slug: 'modules/finanzas/salarios' },
             // { label: 'Gestión de Ventas', slug: 'modules/finanzas/ventas' },
           ],
         },
