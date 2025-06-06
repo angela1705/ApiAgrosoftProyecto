@@ -11,14 +11,14 @@ Esta documentación detalla el proceso para listar, calcular, visualizar detalle
 ### 1. Navegar al módulo de Pagos
 1. En el menú principal, busca el módulo **"Finanzas"** y selecciona el subítem **"Pagos"**:
 
-   <img src="/public/trazabilidad/pagos/SidebarPagos.png" alt="Navegación al módulo de pagos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/sidebarPago.png" alt="Navegación al módulo de pagos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
 ### 2. Visualizar el listado de pagos
 - Al entrar en **"Pagos"**, encontrarás una tabla con los pagos registrados. Si no hay registros, verás una tabla vacía:
 
-   <img src="/public/trazabilidad/pagos/ListaPagosVacia.png" alt="Listado de pagos vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/ListaVacia.png" alt="Listado de pagos vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 - La tabla muestra información detallada de cada pago, incluyendo:
   - **ID**
@@ -34,18 +34,18 @@ Esta documentación detalla el proceso para listar, calcular, visualizar detalle
 ### 3. Calcular un nuevo pago
 1. En la parte superior derecha del listado, haz clic en el botón **"+ Calcular Nuevo Pago"**:
 
-   <img src="/public/trazabilidad/pagos/CalcularPagoBtn.png" alt="Botón calcular nuevo pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/CalcularPagoBtn.png" alt="Botón calcular nuevo pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
 2. Se abrirá el formulario para calcular un nuevo pago:
 
-   <img src="/public/trazabilidad/pagos/CalcularPagoFormulario.png" alt="Formulario de cálculo de pago" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/FormularioVacio.png" alt="Formulario de cálculo de pago" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 3. **Campos del formulario**:
    - **Usuario**: Obligatorio. Selecciona un usuario de la lista desplegable (puedes buscar por nombre).
    - **Fecha Inicio**: Obligatorio. Selecciona la fecha de inicio del período.
    - **Fecha Fin**: Obligatorio. Selecciona la fecha de fin del período.
 
-   <img src="/public/trazabilidad/pagos/CalcularPagoLleno.png" alt="Formulario de pago diligenciado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/FormularioLleno.png" alt="Formulario de pago diligenciado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 4. **⚠️ Importante**:
    - Todos los campos son obligatorios.
@@ -57,22 +57,22 @@ Esta documentación detalla el proceso para listar, calcular, visualizar detalle
 
 6. Verás un mensaje de éxito como este:
 
-   <img src="/public/trazabilidad/pagos/CalculoExitoso.png" alt="Mensaje de cálculo exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/RegistroExito.png" alt="Mensaje de cálculo exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 7. Serás redirigido a **"Listar Pagos"**, donde podrás confirmar que el pago se registró correctamente:
 
-   <img src="/public/trazabilidad/pagos/ListaPagosNoVacia.png" alt="Listado con pago registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/ListaLlena.png" alt="Listado con pago registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
 ### 4. Visualizar detalles de un pago
 1. En el listado de pagos, en la columna **Acciones**, haz clic en el ícono de **Ver detalles** (ojo):
 
-   <img src="/public/trazabilidad/pagos/PagoAccionVer.png" alt="Botón de ver detalles de pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/DetallePagoAccion.png" alt="Botón de ver detalles de pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
 2. Se abrirá un modal con los detalles del pago:
 
-   <img src="/public/trazabilidad/pagos/DetallesPago.png" alt="Modal de detalles de pago" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/DetallePago.png" alt="Modal de detalles de pago" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 3. Los detalles incluyen:
    - Período (fechas de inicio y fin)
@@ -89,17 +89,17 @@ Esta documentación detalla el proceso para listar, calcular, visualizar detalle
 ### 5. Eliminar un pago
 1. En el listado de pagos, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
 
-   <img src="/public/trazabilidad/pagos/PagoAccionEliminar.png" alt="Botón de eliminar pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/DetallePagoAccionEliminar.png" alt="Botón de eliminar pago" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
 2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
 
-   <img src="/public/trazabilidad/pagos/EliminarPago.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/EliminarPagoModal.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer.
 4. Haz clic en **"Eliminar"** para confirmar la eliminación.
 5. Verás un mensaje de eliminación exitosa:
 
-   <img src="/public/trazabilidad/pagos/PagoEliminadoExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/finanzas/pagos/EliminarExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
