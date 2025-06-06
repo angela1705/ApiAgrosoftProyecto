@@ -1,162 +1,90 @@
 ---
-title: "Módulo de Salarios - Gestión de Salarios"
-slug: modules/finanzas/salarios
-description: "Cómo administrar salarios de trabajadores en el módulo de Salarios de Agrosoft, gestionando el salario base y el valor por hora."
+title: Gestión de Salarios
 ---
 
-El módulo de Salarios en Agrosoft permite registrar y gestionar los salarios de los trabajadores, incluyendo el **salario base** y el **valor por hora** para calcular pagos. Este módulo está vinculado al modelo de `Pago` y se utiliza para determinar el costo laboral de los usuarios.
+## ¿Cómo listar y gestionar salarios?
 
-## Características principales
-- Registro de **salarios** con salario base y valor por hora.
-- Almacenamiento de datos históricos de salarios.
-- Integración con el módulo de **Pagos** para calcular el total a pagar.
-- Visualización de salarios en la interfaz de Agrosoft.
-
-## ¿Cómo registrar un salario?
-Para registrar un nuevo salario en Agrosoft:
-1. Ir a la sección **Salarios → Gestión de Salarios**.
-2. Hacer clic en el botón **"Registrar Salario"**.
-3. Completar los siguientes campos:
-   - **Salario Base:** Monto base del salario (por ejemplo, "1500.00").
-   - **Valor por Hora:** Valor por hora trabajada (por ejemplo, "20.00").
-4. Guardar los cambios.
-
-## Datos de un Salario
-Cada salario tiene la siguiente información:
-
-| Campo             | Tipo de Dato      | Descripción                                      |
-|-------------------|-------------------|--------------------------------------------------|
-| **ID**            | `Integer`         | Identificador único del salario                 |
-| **Salario Base**  | `DecimalField`    | Salario base del trabajador (máx. 10 dígitos, 2 decimales) |
-| **Valor por Hora**| `DecimalField`    | Valor por hora trabajada (máx. 10 dígitos, 2 decimales) |
+Esta documentación detalla el proceso para listar, calcular, visualizar detalles y eliminar salario en el sistema. Sigue los pasos a continuación para gestionar los salario de manera efectiva.
 
 ---
 
-## Ejemplos de API para gestionar salarios
+### 1. Navegar al módulo de salario
+1. En el menú principal, busca el módulo **"Finanzas"** y selecciona el subítem **"salario"**:
 
-A continuación, se presentan los ejemplos de uso de la API para las operaciones CRUD sobre el recurso `/api/salarios`:
-
-### **POST /api/salarios**
-
-Registra un nuevo salario para un trabajador.
-
-**Validaciones:**
-- Campos obligatorios: `salario_base`, `valor_por_hora`
-- `salario_base` debe ser un número decimal mayor o igual a 0
-- `valor_por_hora` debe ser un número decimal mayor o igual a 0
-
----
-### **Ejemplos de solicitudes y respuestas post:**
-
-```json
-
-// POST /api/salarios - Ejemplo de solicitud
-{
-  "salario_base": 1500.00,
-  "valor_por_hora": 20.00
-}
-
-// POST /api/salarios - Respuesta exitosa (201 Created)
-{
-  "id": 1,
-  "message": "Salario registrado correctamente"
-}
-
-```
----
-### **GET /api/salarios**
-
-Obtiene todos los salarios registrados con filtros opcionales.
+   <img src="/public/finanzas/salario/sideBarSalario.png" alt="Navegación al módulo de salario" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
-### **Ejemplos de solicitudes y respuestas get:**
+### 2. Visualizar el listado de salario
+- Al entrar en **"salario"**, encontrarás una tabla con los salario registrados. Si no hay registros, verás una tabla vacía:
 
-```json
+   <img src="/public/finanzas/salario/ListSalario.png" alt="Listado de salarios vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-// GET /api/salarios - Ejemplo de respuesta (200 OK)
-[
-  {
-    "id": 1,
-    "salario_base": 1500.00,
-    "valor_por_hora": 20.00
-  }
-]
-
-```
+- La tabla muestra información detallada del salario, incluyendo:
+  - **Rol**
+  - **Fecha Implementacion** (fecha de inicio - fecha de fin)
+  - **Valor jornal** (en COP)
+  - **Estado**
+  - **Acciones** (Ver detalles, Eliminar)
 
 ---
 
-**Parámetros opcionales:**
-- `?salario_base_min=1000.00`: Filtra por salario base mínimo
-- `?valor_por_hora_min=15.00`: Filtra por valor por hora mínimo
+### 3. Registrar un salario por rol
+1. En la parte superior derecha del listado, haz clic en el botón **"+ Registrar nuevo salario"**:
+
+   <img src="/public/finanzas/salario/salariobtn.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
+
+2. Se abrirá el formulario para registrar un nuevo salario:
+
+   <img src="/public/finanzas/salario/salarioForm.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+
+3. **Campos del formulario**:
+   - **Rol**: Obligatorio. Selecciona un rol de la lista desplegable .
+   - **Fecha de implementación**: Obligatorio. Selecciona la fecha de inicio de Implementacion.
+   - **Valor Jornal**: cantidad a pagar por actividades dependiendo la cantidad de tiempo empleado
+   <img src="/public/finanzas/salario/salarioForm2.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+
+4. **⚠️ Importante**:
+   - Todos los campos son obligatorios.
+  
+5. Haz clic en **"Guardar"** para procesar el cálculo.
+
+6. Verás un mensaje de éxito como este:
+
+   <img src="/public/finanzas/salario/salarioNot.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+
+7. Serás redirigido a **"Listar salarios"**, donde podrás confirmar que el salario se registró correctamente:
+
+   <img src="/public/finanzas/salario/salarioForm2.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
-### **GET /api/salarios/{id}**
+### 4. Editar un salario
+1. En el listado de salarios, en la columna **Acciones**, haz clic en el ícono de **editar** (lapiz):
 
-Obtiene un salario específico por su ID.
+   <img src="/public/finanzas/salario/editelim.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
----
+2. Se abrirá un modal Para editar el salario:
 
-### **Ejemplos de solicitudes y respuestas get por ID:**
-
-```json
-
-// GET /api/salarios/{id} - Ejemplo de respuesta (200 OK)
-{
-  "id": 1,
-  "salario_base": 1500.00,
-  "valor_por_hora": 20.00
-}
-
-```
+   <img src="/public/finanzas/salario/editForm.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 ---
 
-### **PUT /api/salarios/{id}**
+### 5. Eliminar un salario
+1. En el listado de salarios, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
 
-Actualiza un salario existente.
+   <img src="/public/finanzas/salario/editelim2.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
----
+2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
 
-### **Ejemplos de solicitudes y respuestas put por ID:**
+   <img src="/public/finanzas/salario/elimnCofirm.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
-```json
+3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer.
+4. Haz clic en **"Eliminar"** para confirmar la eliminación.
+5. Verás un mensaje de eliminación exitosa:
 
-// PUT /api/salarios/{id} - Ejemplo de solicitud
-{
-  "salario_base": 1600.00,
-  "valor_por_hora": 22.00
-}
-
-```
+   <img src="/public/finanzas/salario/salarioNot3.png" alt="Botón calcular nuevo salario" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 ---
 
-**Restricciones:**
-- `salario_base` debe ser un número decimal mayor o igual a 0
-- `valor_por_hora` debe ser un número decimal mayor o igual a 0
 
----
-
-### **DELETE /api/salarios/{id}**
-
-Elimina un registro de salario.
-
-**Error común (404 Not Found):**
-
----
-
-### **Ejemplos de solicitudes y respuestas delete por ID:**
-```json
-
-// DELETE /api/salarios/{id} - Respuesta exitosa (200 OK)
-{
-  "message": "Salario eliminado correctamente"
-}
-
-// DELETE /api/salarios/{id} - Error común (404 Not Found)
-{
-  "error": "No existe el salario especificado"
-}
