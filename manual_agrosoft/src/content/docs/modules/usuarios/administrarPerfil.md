@@ -1,5 +1,5 @@
 ---
-title: "Navegación del Sistema"
+title: "Administrar Perfil"
 slug: modules/usuarios/adminstrarPerfil
 description: "Guía básica para entender cómo administrar tu propia informacion como usuario del sistema Agrosoft."
 ---
@@ -33,11 +33,20 @@ En la parte superior derecha de la pantalla, los usuarios pueden acceder a su pe
 - Puedes editar toda tu información personal a exepción de **Rol**, ya que solo un **Adminstrador** tiene control sobre este aspecto de los usuarios.
 <img src="/public/usuarios/editaruser2.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
-- **Cambio de Contraseña**:
+## Cambio de Contraseña
 - Ingresa tu contraseña actual.
-- Ingresa la contraseña nueva.
-- Confirma contraseña nueva.
 <img src="/public/usuarios/cambContra.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+- Ingresa la contraseña nueva.
+<img src="/public/usuarios/cambContra2.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+- Confirma contraseña nueva.
+⚠️Asegurate de que las contraseñas coincidan
+<img src="/public/usuarios/cambContra3.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+- Finaliza el cambio:
+<img src="/public/usuarios/cambContra4.png" alt="Gestión de usuarios" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+
+## Solicitar cambio de rol
+-⚠️ Para solicitar un cambio de rol, debes comnicarte con un **administrador / encargado**
+
 
 ## Por  que importan tus credenciales en la navegacion? navegación
 
