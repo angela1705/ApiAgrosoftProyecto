@@ -1,240 +1,118 @@
 ---
-title: Gestion de cosechas
+title: Gestión de Cosechas
 ---
 
-## ¿Qué es un Registro de Cosecha?  
-Los registros de **Cosecha** documentan la producción obtenida de cada cultivo, permitiendo llevar un historial preciso de rendimientos y productividad.
+## ¿Cómo listar y gestionar cosechas?
 
-## ¿Cómo registrar una cosecha?  
-Para documentar una nueva cosecha:  
-1. Accede al módulo de Cultivos > Cosechas  
-2. Selecciona **"Registrar Cosecha"**  
-3. Completa los campos obligatorios:  
-   - **Cultivo**: Selecciona de la lista activa  
-   - **Cantidad**: Valor numérico positivo  
-   - **Unidad**: Selecciona la medida adecuada  
-   - **Fecha**: Establece la fecha de cosecha  
+Esta documentación detalla el proceso para listar, registrar, actualizar y eliminar cosechas en el sistema. Sigue los pasos a continuación para gestionar las cosechas de manera efectiva.
 
-## Estructura de Datos  
+---
 
-| Campo               | Tipo de Dato        | Descripción | Validaciones |  
-|---------------------|---------------------|-------------|--------------|  
-| **ID**             | `AutoField`         | Identificador único | - |  
-| **id_cultivo**     | `ForeignKey`        | Cultivo asociado | Debe existir |  
-| **cantidad**       | `IntegerField`      | Producción obtenida | > 0 |  
-| **unidades_de_medida** | `CharField`  | Unidad de medida | Valores predefinidos |  
-| **fecha**          | `DateField`         | Fecha de registro | ≤ fecha actual |  
+### 1. Navegar al módulo de Cosechas
+1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Cosechas"**:
 
-## Ejemplo de API para gestión de cosechas  
+   <img src="/public/trazabilidad/cosechas/sidebarCosecha.png" alt="Navegación al módulo de cosechas" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/cosechas/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/cosechas/"><div></div></button></div></figure></div>  
-</section>  
+---
 
-**Encabezados de la solicitud**  
-| Encabezado        | Valor                      | Descripción |  
-|-------------------|----------------------------|-------------|  
-| **Content-Type**  | `application/json`         | Formato de datos |  
-| **Authorization** | `Bearer <token_de_acceso>` | Autenticación |  
-| **Accept**        | `application/json`         | Formato de respuesta |  
+### 2. Visualizar el listado de cosechas
+- Al entrar en **"Cosechas"**, encontrarás una tabla con las cosechas registradas. Si no hay registros, verás una tabla vacía:
 
-**Ejemplo de solicitud:**  
-```json  
-{  
-  "id_cultivo": 45,  
-  "cantidad": 120,  
-  "unidades_de_medida": "kg",  
-  "fecha": "2023-11-20"  
-}  
-```  
+   <img src="/public/trazabilidad/cosechas/ListaVacia.png" alt="Listado de cosechas vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-**Validaciones:**  
-- `id_cultivo` debe corresponder a un cultivo activo  
-- `cantidad` debe ser entero positivo  
-- `unidades_de_medida` debe ser uno de: `['kg', 'g', 'lb', 'ton', 'cajas', 'unidades']`  
-- `fecha` no puede ser futura  
+- La tabla muestra información detallada de cada cosecha, incluyendo:
+  - **Cultivo**
+  - **Cantidad**
+  - **Unidad de Medida**
+  - **Fecha de recolección**
+  - **Acciones** (Editar, Eliminar)
 
-**Ejemplo de respuesta exitosa (201 Created):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "id": 1,  
-  "id_cultivo": 45,  
-  "cultivo_nombre": "Lechuga Romana - B2",  
-  "cantidad": 120,  
-  "unidades_de_medida": "kg",  
-  "fecha": "2023-11-20",  
-  "message": "Cosecha registrada exitosamente"  
-}  
-```  
+---
 
----  
+### 3. Registrar una nueva cosecha
+1. En la parte superior derecha del listado, haz clic en el botón **"+ Registrar"**:
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/cosechas/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/cosechas/"><div></div></button></div></figure></div>  
-</section>  
+   <img src="/public/trazabilidad/cosechas/RegistrarCosechaBtn.png" alt="Botón registrar cosecha" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-[  
-  {  
-    "id": 1,  
-    "fecha": "2023-11-20",  
-    "cultivo": {  
-      "id": 45,  
-      "nombre": "Lechuga Romana",  
-      "variedad": "B2"  
-    },  
-    "cantidad": 120,  
-    "unidades_de_medida": "kg",  
-    "valor_estimado": 360000  
-  },  
-  {  
-    "id": 2,  
-    "fecha": "2023-11-18",  
-    "cultivo": {  
-      "id": 32,  
-      "nombre": "Zanahoria",  
-      "variedad": "Nantes"  
-    },  
-    "cantidad": 85,  
-    "unidades_de_medida": "kg",  
-    "valor_estimado": 212500  
-  }  
-]  
-```  
+2. Se abrirá el formulario de registro de cosechas:
 
----  
+   <img src="/public/trazabilidad/cosechas/formularioVacio.png" alt="Formulario de registro de cosecha" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/cosechas/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/cosechas/{id}/"><div></div></button></div></figure></div>  
-</section>  
+3. **Campos del formulario**:
+   - **Cultivo**: Obligatorio. Selecciona un cultivo de la lista desplegable.
+    <img src="/public/trazabilidad/cosechas/ModalCultivo.png" alt="ModalUnidadMedida" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+   - **Cantidad**: Obligatorio. Ingresa la cantidad cosechada (número entero positivo).
+   - **Unidad de Medida**: Obligatorio. Selecciona una unidad de medida de la lista desplegable o registra una nueva haciendo clic en el botón **"+"**.
+     <img src="/public/trazabilidad/cosechas/modalunidadmedida.png" alt="ModalUnidadMedida" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+   - **Fecha de recolección**: Obligatorio. Selecciona la fecha en que se realizó la cosecha.
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "id": 1,  
-  "fecha": "2023-11-20",  
-  "cultivo": {  
-    "id": 45,  
-    "nombre": "Lechuga Romana",  
-    "variedad": "B2",  
-    "bancal": "N1",  
-    "lote": "Norte"  
-  },  
-  "cantidad": 120,  
-  "unidades_de_medida": "kg",  
-  "registrado_por": {  
-    "id": 12,  
-    "nombre": "Juan Pérez"  
-  },  
-  "valor_estimado": 360000,  
-  "observaciones": "Cosecha primera temporada"  
-}  
-```  
+   <img src="/public/trazabilidad/cosechas/formularioLleno.png" alt="Formulario de cosecha diligenciado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
----  
+4. **⚠️ Importante**:
+   - Los campos **Cultivo**, **Cantidad**, **Unidad de Medida** y **Fecha de recolección** son obligatorios.
+   - La **Cantidad** debe ser un número entero positivo.
+   - La **Fecha de recolección** debe ser una fecha válida.
+   - El **Cultivo** y la **Unidad de Medida** deben seleccionarse de listas existentes o crearse nuevas desde los modales correspondientes.
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/cosechas/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/cosechas/{id}/"><div></div></button></div></figure></div>  
-</section>  
+5. Haz clic en **"Guardar"** para registrar la cosecha.
 
-**Restricciones:**  
-- No se puede modificar `id_cultivo` después de creado  
-- `fecha` solo editable por administradores  
+6. Verás un mensaje de éxito como este:
 
-**Ejemplo de solicitud:**  
-```json  
-{  
-  "cantidad": 125,  
-  "observaciones": "Ajuste por merma inicial"  
-}  
-```  
+   <img src="/public/trazabilidad/cosechas/RegistradoExito.png" alt="Mensaje de registro exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-**Ejemplo de respuesta (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "id": 1,  
-  "message": "Registro de cosecha actualizado",  
-  "changes": {  
-    "cantidad": ["120", "125"],  
-    "observaciones": ["", "Ajuste por merma inicial"]  
-  }  
-}  
-```  
+7. Regresa a **"Listar Cosechas"** para confirmar que la cosecha se registró correctamente:
 
----  
+   <img src="/public/trazabilidad/cosechas/formularioVacio.png" alt="Listado con cosecha registrada" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>  
-URL:  
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/cosechas/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/cosechas/{id}/"><div></div></button></div></figure></div>  
-</section>  
+---
 
-**Ejemplo de respuesta exitosa (200 OK):**  
-<span class="sl-badge success small astro-avdet4wd">Success</span>   
-```json  
-{  
-  "message": "Registro de cosecha eliminado",  
-  "id": 2,  
-  "cultivo": "Zanahoria Nantes",  
-  "cantidad": "85 kg"  
-}  
-```  
+### 4. Actualizar una cosecha
+1. En el listado de cosechas, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-**Error común (403 Forbidden):**  
-```json  
-{  
-  "error": "Acción restringida",  
-  "detail": "Solo administradores pueden eliminar registros antiguos"  
-}  
-```  
+   <img src="/public/trazabilidad/cosechas/EditarCosechaAccion.png" alt="Botón de editar cosecha" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
----  
+2. Se abrirá un formulario con los datos actuales de la cosecha:
 
-## **Relaciones en el Sistema**  
-Los **Registros de Cosecha** se vinculan con:  
-- **Cultivos** (origen de la producción)  
-- **Usuarios** (responsable del registro)  
-- **Inventario** (actualización automática de existencias)  
-- **Ventas** (asignación de productos vendidos)  
+   <img src="/public/trazabilidad/cosechas/EditarModal.png" alt="Formulario de edición de cosecha" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-## **Buenas Prácticas**  
- **Registro inmediato**: Documentar cosechas el mismo día de recolección  
- **Unidades consistentes**: Usar preferiblemente unidades métricas (kg, g)  
- **Verificación cruzada**: Contrastar con registros de actividades previas  
- **Documentación**: Incluir observaciones sobre calidad o condiciones especiales  
+3. Modifica los campos que desees actualizar (Cultivo, Cantidad, Unidad de Medida, Fecha de recolección).
+4. Haz clic en **"Confirmar"** para guardar los cambios.
+5. Verás un mensaje de actualización exitosa:
 
-## **Ejemplo Completo de Uso**  
+   <img src="/public/trazabilidad/cosechas/ActualizadaExito.png" alt="Mensaje de actualización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
-```bash  
-# 1. Registrar nueva cosecha  
-POST /cultivo/cosechas/  
-{  
-  "id_cultivo": 78,  
-  "cantidad": 200,  
-  "unidades_de_medida": "kg",  
-  "fecha": "2023-11-25",  
-  "observaciones": "Cosecha orgánica certificada"  
-}  
+---
 
-# 2. Filtrar por cultivo  
-GET /cultivo/cosechas/?cultivo=78  
+### 5. Eliminar una cosecha
+1. En el listado de cosechas, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
 
-# 3. Actualizar por error de pesaje  
-PUT /cultivo/cosechas/15/  
-{  
-  "cantidad": 195  
-}  
-```
+   <img src="/public/trazabilidad/cosechas/EliminarCosechaAccion.png" alt="Botón de eliminar cosecha" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+
+2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
+
+   <img src="/public/trazabilidad/cosechas/EliminarModal.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+
+3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer.
+4. Haz clic en **"Confirmar"** para eliminar la cosecha.
+5. Verás un mensaje de eliminación exitosa:
+
+   <img src="/public/trazabilidad/cosechas/EliminadaExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+---
+
+### 6. Notas adicionales
+- **Filtros y búsqueda**: Usa los filtros en la tabla para buscar cosechas por cultivo, cantidad, unidad de medida o fecha de recolección.
+- **Validaciones**:
+  - La **Cantidad** debe ser un número entero positivo.
+  - La **Fecha de recolección** debe ser una fecha válida.
+  - El **Cultivo** y la **Unidad de Medida** deben seleccionarse de listas existentes o crearse nuevas desde los modales correspondientes.
+- **Acceso a otros módulos**: Las cosechas están relacionadas con el módulo de **Cultivos**. Asegúrate de que el cultivo asociado esté correctamente registrado antes de crear una cosecha.
+- **Modales de creación**: El botón **"+"** en el campo de Unidad de Medida permite registrar nuevas unidades directamente desde el formulario.
+
+---
+
+### 7. Casos de uso
+- **Registrar una cosecha**: Ideal para documentar la cantidad recolectada de un cultivo específico, especificando la unidad de medida y la fecha de recolección.
+- **Actualizar una cosecha**: Útil para corregir datos como la cantidad cosechada, la unidad de medida, el cultivo asociado o la fecha de recolección.
+- **Eliminar una cosecha**: Aplicable cuando un registro de cosecha es erróneo o ya no es relevante, pero debe hacerse con precaución debido a su carácter irreversible.
+- **Listar cosechas**: Permite supervisar todas las cosechas registradas, filtrarlas por cultivo, cantidad, unidad de medida o fecha, y realizar acciones rápidas como editar o eliminar.
