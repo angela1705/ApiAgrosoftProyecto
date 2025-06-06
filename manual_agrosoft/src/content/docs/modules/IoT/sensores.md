@@ -22,9 +22,9 @@ Esta funcionalidad te ayuda a mantener tus sensores organizados y optimiza la ge
 Para gestionar tus sensores, sigue estos pasos:
 
 1. Inicia sesión en Agrosoft.
-2. En el **menú lateral izquierdo**, busca la sección **IoT** y haz clic en **Sensores**. Esto te llevará a la pantalla principal del módulo de sensores, donde podrás ver la lista de sensores registrados.
+2. En el **menú lateral izquierdo**, busca la sección **IoT** y haz clic en **Lista de sensores**. Esto te llevará a la pantalla principal del módulo de sensores, donde podrás ver la lista de sensores registrados.
 
-<img src="public/iot/iot_DU_1.png" alt="Menú de sensores" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1.png" alt="Menú de sensores" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ## Lista de Sensores
 
@@ -53,8 +53,7 @@ Para agregar un sensor al sistema:
    - **Tipo de Sensor**: Selecciona el tipo (ej. "DHT22").
    - **Descripción**: Información adicional (opcional).
    - **Medida Mínima**: Valor mínimo que el sensor puede registrar.
-   - **Medida Máxima**: Valor máximo que el sensor puede registrar.
-   - **Estado**: Selecciona **Activo** o **Inactivo**.
+   - **Medida Máxima**: Valor máximo que el sensor puede registrar. 
    - **Código Dispositivo**: Código único del dispositivo físico (ej. "DHT22_001").
    - **Bancal**: Selecciona un bancal para asociarlo (opcional).
 3. Haz clic en **Guardar** para registrar el sensor.
