@@ -9,14 +9,14 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ---
 
 ### 1. Navegar al módulo de Bancales
-1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Bancales"**:
+1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Bancal"**:
 
    <img src="/public/trazabilidad/bancales/sidebarBancal.png" alt="Navegación al módulo de bancales" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
 ### 2. Visualizar el listado de bancales
-- Al entrar en **"Bancales"**, encontrarás una tabla con los bancales registrados. Si no hay registros, verás una tabla vacía:
+- Al entrar en **"Bancal"**, encontrarás una tabla con los bancales registrados. Si no hay registros, verás una tabla vacía:
 
    <img src="/public/trazabilidad/bancales/ListaVacia.png" alt="Listado de bancales vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
