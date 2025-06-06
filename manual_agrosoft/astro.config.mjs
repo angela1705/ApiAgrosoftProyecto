@@ -49,7 +49,7 @@ export default defineConfig({
             { label: 'Lotes', slug: 'modules/trazabilidad/lotes' },
             // { label: 'Bancales', slug: 'modules/trazabilidad/bancal' },
             { label: 'Tipo de Especie', slug: 'modules/trazabilidad/tipoespecie' },
-            // { label: 'Especie', slug: 'modules/trazabilidad/especie' },
+            { label: 'Especie', slug: 'modules/trazabilidad/especie' },
             // { label: 'Cultivo', slug: 'modules/trazabilidad/cultivo' },
             { label: 'Tipo de actividad', slug: 'modules/trazabilidad/tipoactividad' },
             { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
