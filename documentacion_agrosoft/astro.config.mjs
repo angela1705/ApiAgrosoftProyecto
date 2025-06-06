@@ -80,7 +80,9 @@ export default defineConfig({
             { label: 'Introducción', slug: 'modules/IoT/index' },
             { label: 'Gestión de Sensores', slug: 'modules/IoT/sensores' },
             { label: 'Datos Meteorológicos', slug: 'modules/IoT/datos-meteorologicos' },
-            { label: 'Configuración', slug: 'modules/IoT/configuracion' }, 
+            { label: 'Configuración', slug: 'modules/IoT/configuracion' },
+            { label: 'Evapotranspiración', slug: 'modules/IoT/evapotranspiracion' },
+
           ],
         },
       ],

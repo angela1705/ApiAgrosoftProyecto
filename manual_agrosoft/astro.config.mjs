@@ -87,10 +87,9 @@ export default defineConfig({
         {
           label: 'IoT (Sensores)',
           items: [
-            // { label: 'Introducción', slug: 'modules/IoT/index' },
-            // { label: 'Gestión de Sensores', slug: 'modules/IoT/sensores' },
-            // { label: 'Datos Meteorológicos', slug: 'modules/IoT/datos-meteorologicos' },
-            // { label: 'Configuración', slug: 'modules/IoT/configuracion' }, 
+            { label: 'Introducción', slug: 'modules/IoT/index' },
+            { label: 'Gestión de Sensores', slug: 'modules/IoT/sensores' },
+            { label: 'Datos Meteorológicos', slug: 'modules/IoT/datos-meteorologicos' }, 
           ],
         },
       ],
