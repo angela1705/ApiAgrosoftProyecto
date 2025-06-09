@@ -9,11 +9,25 @@ export const usePlagaNotifications = (
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mountedRef = useRef(true);
 
   const setupWebSocket = useCallback(() => {
-    if (!userId) return;
+    if (!userId) {
+      console.log("No userId provided, skipping WebSocket setup for plagas");
+      return;
+    }
 
-    if (wsRef.current) {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      console.log("WebSocket already open for plagas, skipping setup");
+      return;
+    }
+
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+
+    if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
       wsRef.current.close();
     }
 
@@ -22,11 +36,13 @@ export const usePlagaNotifications = (
     wsRef.current = ws;
 
     ws.onopen = () => {
+      if (!mountedRef.current) return;
       reconnectAttemptsRef.current = 0;
-      console.log('WebSocket de reporte de plagas conectado');
+      console.log(`WebSocket de plagas conectado para userId: ${userId}`);
     };
 
     ws.onmessage = (event) => {
+      if (!mountedRef.current) return;
       try {
         const data = JSON.parse(event.data);
         const newNotification: Notification = {
@@ -46,22 +62,31 @@ export const usePlagaNotifications = (
         };
         addNotification(newNotification);
       } catch (error) {
-        console.error('Error procesando notificación de reporte de plagas:', error);
+        console.error("Error procesando notificación de plaga:", error);
       }
     };
 
     ws.onerror = (error) => {
-      console.error('Error en WebSocket de reporte de plagas:', error);
+      if (!mountedRef.current) return;
+      console.error(`WebSocket error para userId: ${userId}`, error);
     };
 
-    ws.onclose = () => {
-      console.log('WebSocket reporte de plagas cerrado');
+    ws.onclose = (event) => {
+      if (!mountedRef.current) return;
+      console.log(`WebSocket de plagas cerrado para userId: ${userId}, code: ${event.code}, reason: ${event.reason}`);
+      wsRef.current = null;
+
       if (reconnectAttemptsRef.current < maxReconnectAttempts) {
         const delay = Math.min(3000 * (reconnectAttemptsRef.current + 1), 15000);
+        console.log(`Reintentando conexión WebSocket de plagas en ${delay}ms (intento ${reconnectAttemptsRef.current + 1})`);
         reconnectTimeoutRef.current = setTimeout(() => {
-          reconnectAttemptsRef.current++;
-          setupWebSocket();
+          if (mountedRef.current && (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN)) {
+            reconnectAttemptsRef.current++;
+            setupWebSocket();
+          }
         }, delay);
+      } else {
+        console.warn("Se alcanzó el número máximo de reintentos para WebSocket de plagas");
       }
     };
 
@@ -69,15 +94,25 @@ export const usePlagaNotifications = (
   }, [userId, addNotification]);
 
   useEffect(() => {
-    setupWebSocket();
+    mountedRef.current = true;
+
+    if (userId) {
+      setupWebSocket();
+    } else if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      mountedRef.current = false;
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
       }
     };
-  }, [setupWebSocket]);
+  }, [setupWebSocket, userId]);
 };
