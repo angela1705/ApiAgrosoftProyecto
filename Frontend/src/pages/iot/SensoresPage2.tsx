@@ -19,7 +19,7 @@ const dataTypes: DataType[] = [
     key: "temperatura",
     icon: <FaTemperatureHigh className="text-red-500" />,
     tipo_sensor: "temperatura",
-    decimals: 3,
+    decimals: 2,
   },
   {
     label: "Humedad (%)",
