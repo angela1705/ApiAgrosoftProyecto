@@ -15,9 +15,7 @@ Para registrar un nuevo lote en Agrosoft:
 3. Completar los siguientes campos:
    - **Nombre:** Nombre único del usuario.
    - **Apellido:** Apellido único del usuario.
-   - **Contraseña:** cadena de caracteres utilizada para autenticar y verificar la identidad del usuario al acceder a un sistema.
-   - **Username:** Nombre corto personalizado único del usuario.
-   - **Email:** Dirección de contacto mail única del usuario.
+   - **Numero de documento:** Numero de identificación única del usuario.
 
 
 ## Datos de un usuario
@@ -27,6 +25,7 @@ Cada usuario tiene la siguiente información:
 | **ID**       | `AutoField`  | Identificador único del usuario. |
 | **Nombre**   | `CharField`  | Nombre del usuario. |
 | **Apellido** | `CharField`  | Apellido del usuario. |
+| **Numero de documento**    | `IntegerField`  | Número de identifcacion del usuario. |
 | **Contraseña** | `CharField`  | Clave de acceso cifrada del usuario. |
 | **Username**   | `CharField`  | Nombre de usuario único y mas personalizado. |
 | **Email**    | `EmailField`  | Correo electrónico del usuario. |
@@ -52,10 +51,8 @@ URL:
 {
     "nombre": "Juan",
     "apellido": "Rojas",
-    "email": "juan.rojas@gmail.com",
-    "username": "juan123",
-    "password": "Segura123!",
-    "rol_id": 1
+    "numero_documento": 100335789,
+    "email": "juan.rojas@gmail.com"
 }
 ```
 
@@ -65,32 +62,32 @@ URL:
 - Debe tener un dominio válido (ejemplo: gmail.com).
 - Puede incluir puntos (.) en el dominio y el nombre de usuario.
 - No puede tener espacios 
-- Requerido, máximo 255 caracteres, único.
-- `Pasword`:
-- Debe contenet diferentes tipos de caracteres 
-- Mayúsculas (A-Z)
-- Minúsculas (a-z)
-- Números (0-9)
-- Caracteres especiales (@, #, $, %, &, *, !, etc.).
+- Requerido y único para cada usuario.
+- `Nombres y apellido`:
+-  ✅Solo debe contener letras 
+-  ❌NO Números (1,2,3,4,5, etc.)
+-  ❌NO Caracteres especiales (@, #, $, %, &, *, !, etc.).
+- `Numero de documento`:
+-  ⚠️Debe ser unico en cada usuario. 
 
 **Ejemplo de respuesta exitosa (201 Created):**
 <span class="sl-badge success small astro-avdet4wd">Success</span> 
 ```json
 {
-
-    "id": 1,
+    "id": 5,
     "nombre": "Juan",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
-    "rol": 1
-
+    "numero_documento": 100335789,
+    "username":"juanrojas" (Generado por el sistema automaticamente)
+    "rol": 1, (Asignada por el sistema automaticamente)
+    "password_generada": "j100335789" (Generada por el sistema automaticamente)
 }
 ```
 
 **Posibles errores:**
 - `400 Bad Request`: Si faltan campos obligatorios.
-- `409 Conflict`: Si el nombre ya existe.
+- `409 Conflict`: Si el **email** o **numero de documento** ya existe.
 
 ---
 
@@ -117,7 +114,7 @@ URL:
     "nombre": "Juan",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
+    "username": "juanrojas",
     "rol": {
             "id": 1,
             "rol": "Aprendiz"
@@ -129,7 +126,7 @@ URL:
     "nombre": "Alex",
     "apellido": "perez",
     "email": "alex.@gmail.com",
-    "username": "alex01",
+    "username": "alexperes",
     "rol": {
             "id": 1,
             "rol": "Aprendiz"
@@ -162,7 +159,7 @@ URL:
     "nombre": "Juan",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
+    "username": "juanrojas",
     "rol": {
             "id": 1,
             "rol": "Aprendiz"
@@ -192,8 +189,7 @@ URL:
     "nombre": "andres",
     "apellido": "perez",
     "email": "sic@gmail.com",
-    "username": "andres9",
-    "rol":4
+    "username": "andresperez",
 }
 ```
 
@@ -206,7 +202,7 @@ URL:
     "nombre": "andres",
     "apellido": "perez",
     "email": "andres@gmail.com",
-    "username": "andres9",
+    "username": "andresperez",
     "rol":{
             "id": 4,
             "rol": "Administrador"
@@ -256,16 +252,16 @@ Metodo: POST http://127.0.0.1:8000/usuarios/registro/
 {
     "nombre": "Juan",
     "apellido": "Rojas",
+    "numero_documento": 100335789,
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
-    "password": "Segura123!",
-    "rol_id": 1
+    "numero_documento": 100335789,
+
 }
 
 # Actualizar (PUT)
 Metodo: PUT http://127.0.0.1:8000/usuarios/usuarios/1/
 {
-  "username": "juan054"
+  "Nombre": "Juan Jose"
 }
 ```
 
@@ -275,12 +271,13 @@ Metodo: PUT http://127.0.0.1:8000/usuarios/usuarios/1/
 Metodo: GET http://127.0.0.1:8000/usuarios/usuarios/
 {
     "id": 1 ,
-    "nombre": "Juan",
+    "nombre": "Juan Jose",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan054",
-    "password": "Segura123!",
-    "rol_id": 1
+    "numero_documento": 100335789,
+    "rol":  "id": 4,
+            "rol": "Administrador"
+        
 }
 
 ```
@@ -290,12 +287,22 @@ Metodo: GET http://127.0.0.1:8000/usuarios/usuarios/
 
 ## **Manejo de Errores**
 
-### **Ejemplo de error (nombre duplicado):**
+### **Ejemplo de error (correo duplicado):**
 ```json
 {
   "error": "ValidationError",
   "detail": {
-    "nombre": ["Ya existe un usuario con este nombre."]
+    "nombre": ["Ya existe un usuario con este correo."]
+  },
+  "status": 400
+}
+```
+### **Ejemplo de error (Numero de documento duplicado):**
+```json
+{
+  "error": "ValidationError",
+  "detail": {
+    "nombre": ["Ya existe un usuario con este numero de documento."]
   },
   "status": 400
 }
@@ -317,11 +324,7 @@ Los **Usuarios** se vinculan con:
 - **Roles** (ejemplo: "Juan rojas" → "Juan rojas-> rol_id: 4 (Adminstrador)").
 - **Asignación de labores** (para asignar actividades a otros usuarios recurrentes).
 - **Registros sobre economia** (para administrar ventas y producciones).
-
-
 ---
 
 
 
-### **Buenas Prácticas**
-✔️ **Contraseñas de seguridad efectiva**: (" Usar contraseñas de más de 8 caracteres con variedad de los mismos").  
