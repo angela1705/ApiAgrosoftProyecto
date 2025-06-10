@@ -19,7 +19,7 @@ const dataTypes: DataType[] = [
     key: "temperatura",
     icon: <FaTemperatureHigh className="text-red-500" />,
     tipo_sensor: "temperatura",
-    decimals: 3,
+    decimals: 2,
   },
   {
     label: "Humedad (%)",
@@ -30,7 +30,7 @@ const dataTypes: DataType[] = [
   },
 ];
 
-// Definir modos de vista para tiempo real y todos los datos
+// Definir modos de vista
 const viewModes: ViewMode[] = [
   { id: "realtime", label: "Tiempo Real" },
   { id: "allData", label: "Todos los Datos" },
@@ -43,6 +43,9 @@ const SensoresPage: React.FC = () => {
   const [selectedViewMode, setSelectedViewMode] = useState(viewModes[0]);
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
   const navigate = useNavigate();
+
+  // Filtrar datos por device_code (opcional, si quieres mostrar solo ESP32_001)
+  const filteredData = realTimeData.filter((d) => d.device_code === "ESP32_001"); // Ajustar según necesidad
 
   if (isLoading) {
     return (
@@ -79,7 +82,7 @@ const SensoresPage: React.FC = () => {
           {/* Fila 1: Tarjetas de datos */}
           <div className="flex items-center justify-center gap-4 mb-6">
             {dataTypes.map((type, index) => {
-              const latest = realTimeData
+              const latest = filteredData
                 .filter((d) => d[type.key] !== null)
                 .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())[0];
 
@@ -146,11 +149,11 @@ const SensoresPage: React.FC = () => {
 
           {/* Renderizar gráficos o estadísticas/tabla según modo */}
           {selectedViewMode.id === "realtime" ? (
-            <SensorCharts realTimeData={realTimeData} selectedDataType={selectedDataType} />
+            <SensorCharts realTimeData={filteredData} selectedDataType={selectedDataType} />
           ) : (
             <>
-              <SensorStats realTimeData={realTimeData} />
-              <SensorTable realTimeData={realTimeData} />
+              <SensorStats realTimeData={filteredData} />
+              <SensorTable realTimeData={filteredData} />
             </>
           )}
         </div>
