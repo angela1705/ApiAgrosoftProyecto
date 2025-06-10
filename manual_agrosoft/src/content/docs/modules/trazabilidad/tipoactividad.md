@@ -1,216 +1,108 @@
 ---
-title: "Gestión de tipo de actividad"
----
-Los **Tipos de Actividad** permiten clasificar las diferentes labores agrícolas realizadas en el sistema (siembra, riego, fertilización, poda, cosecha, etc.). Esta documentación cubre los endpoints RESTful para su gestión.
-
+title: Gestión de Tipos de Actividad
 ---
 
-## **Endpoints de la API**
+## ¿Cómo listar y gestionar tipo de actividad?
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/"><div></div></button></div></figure></div>  </section>
-
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-
-
-Resultado: Obtiene todos los tipos de actividad registrados.
-
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-
-```json
-[
-  {
-    "id": 1,
-    "nombre": "Riego",
-    "descripcion": "Aplicación controlada de agua a los cultivos"
-  },
-  {
-    "id": 2,
-    "nombre": "Fertilización",
-    "descripcion": "Aporte de nutrientes al suelo"
-  }
-]
-```
-
-**Parámetros opcionales:**
-- `?search=riego`: Busca tipos por nombre (búsqueda insensible a mayúsculas).
+Esta documentación detalla el proceso para listar, registrar, actualizar y eliminar tipos de actividad en el sistema. Sigue los pasos a continuación para gestionar los tipo de actividad de manera efectiva.
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/{id}</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/{id}"><div></div></button></div></figure></div>  </section>
+### 1. Navegar al módulo de Tipos de Actividad
+1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Tipo de Actividad"**:
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
-
-
-Resultado: Obtiene un tipo de actividad específico por su ID.
-
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-
-```json
-{
-  "id": 1,
-  "nombre": "Riego",
-  "descripcion": "Aplicación controlada de agua a los cultivos"
-}
-```
-
-**Posibles errores:**
-- `404 Not Found`: Si el ID no existe.
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadSidebar.png" alt="Navegación al módulo de tipo de actividad" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/"><div></div></button></div></figure></div>  </section>
+### 2. Visualizar el listado de tipo de actividad
+- Al entrar en **"Tipos de Actividad"**, encontrarás una tabla con los tipo de actividad registrados. Si no hay registros, verás una tabla vacía:
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadListaVacio.png" alt="Listado de tipo de actividad vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
-
-Resultado: Crea un nuevo tipo de actividad.
-
-**Ejemplo de solicitud:**
-```json
-{
-  "nombre": "Poda",
-  "descripcion": "Corte de ramas para mejorar el crecimiento"
-}
-```
-
-**Validaciones:**
-- `nombre`: Requerido, máximo 255 caracteres, único.
-- `descripcion`: Opcional.
-
-**Ejemplo de respuesta exitosa (201 Created):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-
-```json
-{
-  "message": "tipo de actividad registrado con exito"
-}
-```
-
-**Posibles errores:**
-- `400 Bad Request`: Si faltan campos obligatorios.
-- `409 Conflict`: Si el nombre ya existe.
+- La tabla muestra información detallada de cada tipo de actividad, incluyendo:
+  - **Nombre**
+  - **Descripción**
+  - **Acciones** (Editar, Eliminar)
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/{id}</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/{id}"><div></div></button></div></figure></div>  </section>
+### 3. Registrar un nuevo tipo de actividad
+1. En la parte superior derecha del listado, haz clic en el botón **"+ Registrar"**:
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+   <img src="/public/trazabilidad/tipo_actividad/RegistrarTipoActividadBtn.png" alt="Botón registrar tipo de actividad" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
+2. Se abrirá el formulario de registro de tipos de actividad:
 
-Resultado: Actualiza un tipo de actividad existente.
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadFormularioVacio.png" alt="Formulario de registro de tipo de actividad" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-**Ejemplo de solicitud:**
-```json
-{
-  "nombre": "Poda de formación",
-  "descripcion": "Poda para guiar la estructura de la planta"
-}
-```
+3. **Campos del formulario**:
+   - **Nombre**: Obligatorio. Ingresa un nombre único para el tipo de actividad (máximo 255 caracteres).
+   - **Descripción**: Obligatorio. Describe el tipo de actividad.
 
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "message": "tipo de actividad actualizado con exito"
-}
-```
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadFormularioLleno.png" alt="Formulario de tipo de actividad diligenciado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-**Notas:**
-- Se pueden actualizar campos individualmente.
-- El `nombre` debe seguir siendo único.
+4. **⚠️ Importante**:
+   - Los campos **Nombre** y **Descripción** son obligatorios.
+   - El campo **Nombre** debe ser único.
+
+5. Haz clic en **"Guardar"** para registrar el tipo de actividad.
+
+6. Verás un mensaje de éxito como este:
+
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadRegistradoExito.png" alt="Mensaje de registro exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+7. Regresa a **"Listar Tipos de Actividad"** para confirmar que el tipo de actividad se registró correctamente:
+
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadListaLleno.png" alt="Listado con tipo de actividad registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/{id}</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/{id}"><div></div></button></div></figure></div>  </section>
+### 4. Actualizar un tipo de actividad
+1. En el listado de tipos de actividad, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-**Encabezados de la solicitud**
-| Encabezado     | Valor                         | Descripción                                               |
-|----------------|-------------------------------|-----------------------------------------------------------|
-| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
-| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+   <img src="/public/trazabilidad/tipo_actividad/EditarTPAccion.png" alt="Botón de editar tipo de actividad" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
+2. Se abrirá un formulario con los datos actuales del tipo de actividad:
 
-Resultado: Elimina un tipo de actividad (si no está en uso).
+   <img src="/public/trazabilidad/tipo_actividad/EditarTipoActividadModal.png" alt="Formulario de edición de tipo de actividad" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-**Ejemplo de respuesta exitosa (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
+3. Modifica los campos que desees actualizar (Nombre, Descripción).
+4. Haz clic en **"Confirmar"** para guardar los cambios.
+5. Verás un mensaje de actualización exitosa:
 
-```json
-{
-  "message": "Tipo de actividad eliminado correctamente"
-}
-```
-
-**Posibles errores:**
-- `404 Not Found`: Si el ID no existe.
-- `409 Conflict`: Si el tipo está asociado a actividades registradas.
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadActualizadoConExito.png" alt="Mensaje de actualización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
-## ** Ejemplos de Uso**
+### 5. Eliminar un tipo de actividad
+1. En el listado de tipos de actividad, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
 
-### **Crear y luego actualizar un tipo:**
-```bash
-Metodo: POST 
-URL:http://127.0.0.1:8000/cultivo/tipo_actividad/
-{
-  "nombre": "Deshierbe",
-  "descripcion": "Eliminación de malezas"
-}
+   <img src="/public/trazabilidad/tipo_actividad/EliminarTPAccion.png" alt="Botón de eliminar tipo de actividad" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-Metodo: PUT 
-URL:http://127.0.0.1:8000/cultivo/tipo_actividad/4
-{
-  "descripcion": "Eliminación manual o química de malezas"
-}
-```
+2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
 
-### **Listar tipos de actividad:**
-```bash
-Metodo: GET 
-URL:http://127.0.0.1:8000/cultivo/tipo_actividad/
-```
+   <img src="/public/trazabilidad/tipo_actividad/EliminarTipoActividadModal.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+
+3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer. Asegúrate de que el tipo de actividad no esté asociado a ninguna actividad existente.
+4. Haz clic en **"Confirmar"** para eliminar el tipo de actividad.
+5. Verás un mensaje de eliminación exitosa:
+
+   <img src="/public/trazabilidad/tipo_actividad/TipoActividadEliminadoExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
-## **Manejo de Errores**
+### 6. Notas adicionales
+- **Filtros y búsqueda**: Usa los filtros en la tabla para buscar tipos de actividad por nombre o descripción.
+- **Validaciones**:
+  - El **Nombre** debe ser único y no exceder los 255 caracteres.
+  - La **Descripción** es obligatoria y debe proporcionar un contexto claro sobre el tipo de actividad.
+- **Acceso a otros módulos**: Los tipos de actividad son utilizados en el módulo de **Actividades** para clasificar las tareas. Asegúrate de que no existan dependencias (como actividades asociadas) antes de eliminar un tipo de actividad.
 
-### **Ejemplo de error (nombre duplicado):**
-```json
-{
-   "message": "Ya existe un tipo de actividad con este nombre"
-}
-```
+---
 
-### **Buenas Prácticas**
-**Nomenclatura clara**: Usar nombres descriptivos (ej: "Fertilización foliar" en lugar de "Aplicación 1").  
-**Descripciones útiles**: Incluir detalles como métodos comunes o precauciones.  
-**Evitar duplicados**: Revisar tipos existentes antes de crear nuevos.
+### 7. Casos de uso
+- **Registrar un tipo de actividad**: Ideal para definir categorías de tareas (por ejemplo, "Siembra", "Riego", "Cosecha") que se usarán al registrar actividades.
+- **Actualizar un tipo de actividad**: Útil para corregir nombres o descripciones, o para mejorar la claridad de la información.
+- **Eliminar un tipo de actividad**: Aplicable cuando un tipo de actividad ya no es relevante, pero debe hacerse con precaución debido a posibles dependencias con actividades existentes.
+- **Listar tipos de actividad**: Permite supervisar todos los tipos de actividad registrados, filtrarlos por nombre o descripción, y realizar acciones rápidas como editar o eliminar.

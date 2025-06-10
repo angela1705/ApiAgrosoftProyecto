@@ -1,259 +1,123 @@
 ---
-title: Gestion de bancales
+title: Gestión de Bancales
 ---
 
-## ¿Qué es un Bancal?  
-Los **bancales** son subdivisiones de los lotes que permiten una gestión más detallada del cultivo. Cada bancal tiene dimensiones y ubicación específica dentro de un lote.
+## ¿Cómo listar y gestionar bancales?
 
-## ¿Cómo registrar un bancal?
-Para crear un nuevo bancal en Agrosoft:
-1. Accede al módulo de Cultivos > Bancales
-2. Haz clic en **"Nuevo Bancal"**
-3. Completa los campos obligatorios:
-   - **Nombre**: Identificador único (ej: "Bancal N1")
-   - **Dimensiones**: Ancho (X) y Largo (Y) en metros
-   - **Posición**: Coordenadas dentro del lote
-   - **Lote**: Selecciona el lote contenedor
-
-## Estructura de Datos
-
-| Campo           | Tipo de Dato       | Descripción | Validaciones |
-|-----------------|--------------------|-------------|--------------|
-| **ID**         | `AutoField`        | Identificador único | - |
-| **Nombre**     | `CharField`        | Nombre identificador | Único, máx. 15 chars |
-| **TamX**       | `DecimalField`     | Ancho (metros) | Máx 3 enteros, 2 decimales |
-| **TamY**       | `DecimalField`     | Largo (metros) | Máx 3 enteros, 2 decimales |
-| **posX**       | `DecimalField`     | Posición horizontal | 2 decimales |
-| **posY**       | `DecimalField`     | Posición vertical | 2 decimales |
-| **Lote**       | `ForeignKey`       | Lote contenedor | Requerido |
-
-## Ejemplo de API para gestionar bancales
-
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/bancales/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/bancales/"><div></div></button></div></figure></div>  
-</section>
-
-**Encabezados de la solicitud**
-| Encabezado        | Valor                      | Descripción |
-|-------------------|----------------------------|-------------|
-| **Content-Type**  | `application/json`         | Formato de datos |
-| **Authorization** | `Bearer <token_de_acceso>` | Autenticación |
-| **Accept**        | `application/json`         | Formato de respuesta |
-
-**Ejemplo de solicitud:**
-```json
-{
-  "nombre": "Bancal 1",
-  "TamX": 2.50,
-  "TamY": 1.75,
-  "posX": 0.50,
-  "posY": 0.25,
-  "lote": 1
-}
-```
-
-**Validaciones:**
-- `nombre` debe ser único en el sistema
-- `TamX/TamY` no pueden ser ≤ 0
-- `lote` debe existir y estar activo
-
-**Ejemplo de respuesta exitosa (201 Created):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "id": 1,
-  "nombre": "Bancal 1",
-  "TamX": 2.50,
-  "TamY": 1.75,
-  "posX": 0.50,
-  "posY": 0.25,
-  "lote": 1,
-  "message": "Bancal creado exitosamente"
-}
-```
-
-**Errores comunes:**
-- `400 Bad Request`: Datos faltantes o inválidos
-- `409 Conflict`: Nombre de bancal ya existe
+Esta documentación detalla el proceso para listar, registrar, actualizar y eliminar bancales en el sistema. Sigue los pasos a continuación para gestionar los bancales de manera efectiva.
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/bancales/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/bancales/"><div></div></button></div></figure></div>  
-</section>
+### 1. Navegar al módulo de Bancales
+1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Bancal"**:
 
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-[
-  {
-    "id": 1,
-    "nombre": "Bancal 1",
-    "TamX": 2.5,
-    "TamY": 1.75,
-    "posX": 0.5,
-    "posY": 0.25,
-    "lote": {
-      "id": 1,
-      "nombre": "Lote Norte"
-    },
-    "cultivos_activos": 2
-  },
-  {
-    "id": 2,
-    "nombre": "Bancal 2",
-    "TamX": 3.0,
-    "TamY": 2.0,
-    "posX": 3.5,
-    "posY": 0.25,
-    "lote": {
-      "id": 1,
-      "nombre": "Lote Norte"
-    },
-    "cultivos_activos": 0
-  }
-]
-```
+   <img src="/public/trazabilidad/bancales/sidebarBancal.png" alt="Navegación al módulo de bancales" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/bancales/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/bancales/{id}/"><div></div></button></div></figure></div>  
-</section>
+### 2. Visualizar el listado de bancales
+- Al entrar en **"Bancal"**, encontrarás una tabla con los bancales registrados. Si no hay registros, verás una tabla vacía:
 
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "id": 1,
-  "nombre": "Bancal 1",
-  "TamX": 2.50,
-  "TamY": 1.75,
-  "posX": 0.50,
-  "posY": 0.25,
-  "lote": {
-    "id": 1,
-    "nombre": "Lote Norte",
-    "hectareas": 1.5
-  },
-  "cultivos_activos": [
-    {
-      "id": 45,
-      "nombre": "Lechuga Romana",
-      "fecha_siembra": "2023-10-15"
-    }
-  ]
-}
-```
+   <img src="/public/trazabilidad/bancales/ListaVacia.png" alt="Listado de bancales vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+
+- La tabla muestra información detallada de cada bancal, incluyendo:
+  - **Nombre**
+  - **Tamaño X** (en metros)
+  - **Tamaño Y** (en metros)
+  - **Latitud**
+  - **Longitud**
+  - **Lote**
+  - **Acciones** (Editar, Eliminar)
 
 ---
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/bancales/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/bancales/{id}/"><div></div></button></div></figure></div>  
-</section>
+### 3. Registrar un nuevo bancal
+1. En la parte superior derecha del listado, haz clic en el botón **"+ Registrar"**:
 
-**Ejemplo de solicitud:**
-```json
-{
-  "TamX": 3.20,
-  "TamY": 2.10,
-  "nombre": "Bancal 1A"
-}
-```
+   <img src="/public/trazabilidad/bancales/RegistrarBancalBtn.png" alt="Botón registrar bancal" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-**Restricciones:**
-- No se puede modificar el campo `lote`
-- No se puede reducir tamaño si hay cultivos activos
-- El nuevo nombre debe ser único
+2. Se abrirá el formulario de registro de bancales:
 
-**Ejemplo de respuesta (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "id": 1,
-  "nombre": "Bancal 1A",
-  "TamX": 3.20,
-  "TamY": 2.10,
-  "message": "Bancal actualizado correctamente"
-}
-```
+   <img src="/public/trazabilidad/bancales/FormularioVacio.png" alt="Formulario de registro de bancal" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
----
+3. **Campos del formulario**:
+   - **Nombre**: Obligatorio. Ingresa un nombre único para el bancal (máximo 15 caracteres).
+   - **Tamaño X**: Obligatorio. Ingresa el tamaño en metros en el eje X (máximo 5 dígitos, 2 decimales).
+   - **Tamaño Y**: Obligatorio. Ingresa el tamaño en metros en el eje Y (máximo 5 dígitos, 2 decimales).
+   - **Latitud**: Obligatorio. Ingresa la coordenada de latitud (máximo 9 dígitos, 6 decimales).
+   - **Longitud**: Obligatorio. Ingresa la coordenada de longitud (máximo 9 dígitos, 6 decimales).
+   - **Lote**: Obligatorio. Selecciona un lote de la lista desplegable o registra uno nuevo haciendo clic en el botón **"+"**.
+     <img src="/public/trazabilidad/bancales/modalLotw.png.png" alt="ModalLote" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
-URL:
-<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  
-  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/bancales/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/bancales/{id}/"><div></div></button></div></figure></div>  
-</section>
+   <img src="/public/trazabilidad/bancales/FormularioLleno.png" alt="Formulario de bancal diligenciado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-**Ejemplo de respuesta exitosa (200 OK):**
-<span class="sl-badge success small astro-avdet4wd">Success</span> 
-```json
-{
-  "message": "Bancal eliminado correctamente",
-  "id": 2
-}
-```
+4. **⚠️ Importante**:
+   - Los campos **Nombre**, **Tamaño X**, **Tamaño Y**, **Latitud**, **Longitud** y **Lote** son obligatorios.
+   - El campo **Nombre** debe ser único y no exceder los 15 caracteres.
+   - Los valores de **Tamaño X** y **Tamaño Y** deben ser números positivos con hasta 2 decimales.
+   - Las coordenadas de **Latitud** y **Longitud** deben ser valores numéricos válidos con hasta 6 decimales.
+   - El **Lote** debe seleccionarse de una lista de lotes existentes o crearse uno nuevo desde el modal correspondiente.
 
-**Error común (409 Conflict):**
-```json
-{
-  "error": "No se puede eliminar",
-  "detail": "Existen cultivos asociados a este bancal"
-}
-```
+5. Haz clic en **"Guardar"** para registrar el bancal.
+
+6. Verás un mensaje de éxito como este:
+
+   <img src="/public/trazabilidad/bancales/RegistradoExito.png" alt="Mensaje de registro exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+7. Regresa a **"Listar Bancales"** para confirmar que el bancal se registró correctamente:
+
+   <img src="/public/trazabilidad/bancales/ListaLlena.png" alt="Listado con bancal registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
-## **Relaciones en el Sistema**
-Los **Bancales** se vinculan con:
-- **Lotes** (contenedor principal)
-- **Cultivos** (asignaciones productivas)
-- **Actividades** (tareas realizadas en el bancal)
+### 4. Actualizar un bancal
+1. En el listado de bancales, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-## **Ejemplos de Uso**
+   <img src="/public/trazabilidad/bancales/EditarBancalAccion.png" alt="Botón de editar bancal" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
 
-### **Crear y actualizar bancal:**
-```bash
-# Creación
-POST /cultivo/bancales/
-{
-  "nombre": "Bancal Experimental",
-  "TamX": 4.25,
-  "TamY": 3.50,
-  "posX": 2.0,
-  "posY": 1.5,
-  "lote": 3
-}
+2. Se abrirá un formulario con los datos actuales del bancal:
 
-# Actualización parcial
-PUT /cultivo/bancales/5/
-{
-  "TamY": 4.0
-}
-```
+   <img src="/public/trazabilidad/bancales/EditarModal.png" alt="Formulario de edición de bancal" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
-### **Filtrar bancales:**
-```bash
-# Por lote
-GET /cultivo/bancales/?lote=3
+3. Modifica los campos que desees actualizar (Nombre, Tamaño X, Tamaño Y, Latitud, Longitud, Lote).
+4. Haz clic en **"Confirmar"** para guardar los cambios.
+5. Verás un mensaje de actualización exitosa:
 
-# Con cultivos activos
-GET /cultivo/bancales/?activos=true
-```
+   <img src="/public/trazabilidad/bancales/ActualizadoExito.png" alt="Mensaje de actualización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
-## **Buenas Prácticas**
- **Nomenclatura clara**: Usar nombres que indiquen ubicación (ej: "Bancal Noreste")  
- **Planificación espacial**: Registrar coordenadas precisas para mapeo  
- **Verificación previa**: Confirmar disponibilidad en lote antes de crear  
- **Documentación**: Registrar observaciones en nombre o descripción
+### 5. Eliminar un bancal
+1. En el listado de bancales, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura):
+
+   <img src="/public/trazabilidad/bancales/EliminarBancalAccion.png" alt="Botón de eliminar bancal" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+
+2. Se mostrará un mensaje de advertencia, ya que esta acción es **irreversible**:
+
+   <img src="/public/trazabilidad/bancales/eliminarModal.png" alt="Mensaje de confirmación de eliminación" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
+
+3. **⚠️ Considera cuidadosamente** antes de eliminar, ya que no se puede deshacer. Asegúrate de que el bancal no esté asociado a ningún cultivo existente.
+4. Haz clic en **"Confirmar"** para eliminar el bancal.
+5. Verás un mensaje de eliminación exitosa:
+
+   <img src="/public/trazabilidad/bancales/eliminadoExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
+---
+
+### 6. Notas adicionales
+- **Filtros y búsqueda**: Usa los filtros en la tabla para buscar bancales por nombre, tamaño, coordenadas o lote.
+- **Validaciones**:
+  - El **Nombre** debe ser único y no exceder los 15 caracteres.
+  - **Tamaño X** y **Tamaño Y** deben ser valores numéricos positivos con hasta 2 decimales.
+  - **Latitud** y **Longitud** deben ser valores numéricos válidos con hasta 6 decimales.
+  - El **Lote** debe seleccionarse de una lista de lotes existentes.
+- **Acceso a otros módulos**: Los bancales están relacionados con **Lotes** y **Cultivos**. Asegúrate de que no existan dependencias (como cultivos asociados) antes de eliminar un bancal.
+- **Modales de creación**: El botón **"+"** en el campo de Lote permite registrar nuevos lotes directamente desde el formulario.
+
+---
+
+### 7. Casos de uso
+- **Registrar un bancal**: Ideal para definir áreas específicas dentro de un lote para cultivos, especificando dimensiones y ubicación geográfica.
+- **Actualizar un bancal**: Útil para corregir datos como el nombre, dimensiones, coordenadas o lote asociado.
+- **Eliminar un bancal**: Aplicable cuando un bancal ya no es utilizado, pero debe hacerse con precaución debido a posibles dependencias con cultivos.
+- **Listar bancales**: Permite supervisar todos los bancales registrados, filtrarlos por nombre, tamaño, coordenadas o lote, y realizar acciones rápidas como editar o eliminar.
