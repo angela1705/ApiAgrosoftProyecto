@@ -3,16 +3,16 @@ import { motion } from "framer-motion";
 import { SensorStatsProps } from "@/types/iot/iotmqtt";
 
 export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData }) => {
-  // Calcular estadisticas usando useMemo para optimizar
+  // Calcular estadísticas usando useMemo para optimizar
   const stats = useMemo(() => {
     // Filtrar y mapear valores de temperatura
     const tempValues = realTimeData
-      .filter((d) => d.fk_sensor === 1 && d.temperatura != null)
-      .map((d) => d.temperatura!);
+      .filter((d) => d.temperatura != null)
+      .map((d) => (typeof d.temperatura === "number" ? d.temperatura : parseFloat(d.temperatura) || 0));
     // Filtrar y mapear valores de humedad
     const humValues = realTimeData
-      .filter((d) => d.fk_sensor === 2 && d.humedad_ambiente != null)
-      .map((d) => d.humedad_ambiente!);
+      .filter((d) => d.humedad_ambiente != null)
+      .map((d) => (typeof d.humedad_ambiente === "number" ? d.humedad_ambiente : parseFloat(d.humedad_ambiente) || 0));
 
     return {
       temp: {
@@ -28,6 +28,8 @@ export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData }) => {
     };
   }, [realTimeData]);
 
+  console.log("stats:", stats);
+
   return (
     <motion.div
       className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -35,16 +37,12 @@ export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {// Mostrar estadisticas de temperatura
-      }
       <div>
         <h3 className="text-lg font-semibold text-gray-700">Temperatura (°C)</h3>
         <p>Max: {stats.temp.max?.toFixed(3) ?? "N/A"}</p>
         <p>Min: {stats.temp.min?.toFixed(3) ?? "N/A"}</p>
         <p>Promedio: {stats.temp.avg?.toFixed(3) ?? "N/A"}</p>
       </div>
-      {// Mostrar estadisticas de humedad
-      }
       <div>
         <h3 className="text-lg font-semibold text-gray-700">Humedad (%)</h3>
         <p>Max: {stats.hum.max?.toFixed(1) ?? "N/A"}</p>
