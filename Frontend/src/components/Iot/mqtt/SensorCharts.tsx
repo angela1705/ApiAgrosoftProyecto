@@ -3,13 +3,18 @@ import { motion } from "framer-motion";
 import Plot from "react-plotly.js";
 import { SensorChartsProps } from "@/types/iot/iotmqtt";
 
-export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, selectedDataType, selectedSensor }) => {
+export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, selectedDataType, selectedSensor = "todos" }) => {
   // Filtrar datos por tipo de dato y device_code
   const filteredData = realTimeData.filter(
     (dato) =>
       dato[selectedDataType.key] != null &&
       (selectedSensor === "todos" || dato.device_code === selectedSensor)
   );
+
+  // Depuración
+  console.log("selectedDataType:", selectedDataType);
+  console.log("selectedSensor:", selectedSensor);
+  console.log("filteredData:", filteredData);
 
   // Preparar datos para gráfico de barras (últimas 10 lecturas)
   const barChartData = [...filteredData]
@@ -22,7 +27,9 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
         minute: "2-digit",
         second: "2-digit",
       }),
-      value: typeof dato[selectedDataType.key] === "number" ? Number(dato[selectedDataType.key]) : 0,
+      value: typeof dato[selectedDataType.key] === "number"
+        ? dato[selectedDataType.key]
+        : parseFloat(dato[selectedDataType.key]) || 0,
     }));
 
   // Preparar datos para gráfico de líneas (últimas 10 lecturas)
@@ -37,8 +44,13 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
         hour: "2-digit",
         minute: "2-digit",
       }),
-      value: typeof dato[selectedDataType.key] === "number" ? Number(dato[selectedDataType.key]) : 0,
+      value: typeof dato[selectedDataType.key] === "number"
+        ? dato[selectedDataType.key]
+        : parseFloat(dato[selectedDataType.key]) || 0,
     }));
+
+  console.log("barChartData:", barChartData);
+  console.log("lineChartData:", lineChartData);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
