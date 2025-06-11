@@ -24,7 +24,7 @@ Para visualizar los datos meteorológicos, sigue estos pasos:
 1. Inicia sesión en Agrosoft.
 2. En el **menú lateral izquierdo**, busca la sección **IoT** y haz clic en **Datos Meteorológicos**. Esto te llevará a la pantalla principal del módulo, donde podrás ver los datos históricos.
 
-<img src="/public/datos-meteorologicos/menu-datos.png" alt="Menú de datos meteorológicos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-2.png" alt="Menú de datos meteorológicos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ## Visualizar Datos Meteorológicos
 
@@ -40,8 +40,8 @@ En la pantalla principal de **Datos Meteorológicos**, encontrarás herramientas
   - **Fecha de Medición**: Fecha y hora del registro.
 - **Gráfico de Evolución**: Un gráfico de línea que muestra los últimos 50 registros, con la fecha/hora en el eje horizontal y el valor (temperatura o humedad) en el eje vertical.
 
-<img src="/public/datos-meteorologicos/pantalla-principal.png" alt="Pantalla de datos meteorológicos" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
-
+<img src="/public/iot/iot_DU_1-3.png" alt="Pantalla de datos meteorológicos" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-4.png" alt="Pantalla de datos meteorológicos" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 ## Seleccionar Tipo de Dato
 
 Para elegir qué tipo de dato visualizar:
@@ -51,7 +51,8 @@ Para elegir qué tipo de dato visualizar:
    - **Humedad (%)**: Muestra datos de humedad con un ícono de gota azul.
 2. La tabla y el gráfico se actualizarán automáticamente para mostrar los datos correspondientes.
 
-<img src="/public/datos-meteorologicos/selector-tipo.png" alt="Selector de tipo de dato" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-5.png" alt="Selector de tipo de dato" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-6.png" alt="Selector de tipo de dato" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ## Filtrar por Sensor
 
@@ -61,7 +62,8 @@ Para enfocarte en un sensor específico:
 2. Elige un sensor de la lista (ej. "Sensor DHT22 Patio") o selecciona **Todos los sensores** para ver todos los datos disponibles.
 3. La tabla y el gráfico se actualizarán para mostrar solo los datos del sensor seleccionado.
 
-<img src="/public/datos-meteorologicos/selector-sensor.png" alt="Selector de sensor" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-7.png" alt="Selector de sensor" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-8.png" alt="Selector de sensor" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ## Consultar Datos en la Tabla
 
@@ -70,7 +72,7 @@ La tabla muestra los registros históricos de forma organizada:
 1. Revisa la tabla para ver los detalles de cada registro (ID, sensor, bancal, valor, fecha).
 2. Usa la barra de desplazamiento para explorar más registros si la lista es larga.
 
-<img src="/public/datos-meteorologicos/tabla-datos.png" alt="Tabla de datos" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-9.png" alt="Tabla de datos" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 ## Analizar Tendencias en el Gráfico
 
@@ -80,7 +82,7 @@ El gráfico te ayuda a visualizar cómo han cambiado los datos con el tiempo:
 2. Coloca el cursor sobre un punto del gráfico para ver el valor exacto y la fecha/hora correspondiente.
 3. El eje horizontal muestra las fechas y horas, mientras que el eje vertical muestra los valores (en °C para temperatura o % para humedad).
 
-<img src="/public/datos-meteorologicos/grafico-evolucion.png" alt="Gráfico de evolución" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_1-10.png" alt="Gráfico de evolución" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 ## ¿Por qué importa la visualización de datos meteorológicos en la navegación?
 
