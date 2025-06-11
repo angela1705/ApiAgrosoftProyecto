@@ -39,7 +39,7 @@ En la pantalla principal de **Sensores**, encontrarás una tabla con la siguient
 - **Estado**: Indica si el sensor está **Activo** o **Inactivo**.
 - **Acciones**: Opciones para editar, eliminar, o cambiar el estado del sensor.
 
-<img src="/public/sensores/listar-sensores.png" alt="Lista de sensores" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_2.png" alt="Lista de sensores" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 En la parte superior derecha, encontrarás un ícono de **ayuda** (un signo de interrogación) que abre una **guía de uso** con instrucciones adicionales.
 
@@ -48,6 +48,7 @@ En la parte superior derecha, encontrarás un ícono de **ayuda** (un signo de i
 Para agregar un sensor al sistema:
 
 1. En la pantalla de **Sensores**, haz clic en el botón **+ Registrar Sensor** ubicado en la parte superior izquierda.
+<img src="/public/iot/iot_DU_3.png" alt="Lista de sensores" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 2. Completa el formulario con la siguiente información:
    - **Nombre**: Un nombre único para identificar el sensor (ej. "Sensor DHT22 Patio").
    - **Tipo de Sensor**: Selecciona el tipo (ej. "DHT22").
@@ -58,7 +59,7 @@ Para agregar un sensor al sistema:
    - **Bancal**: Selecciona un bancal para asociarlo (opcional).
 3. Haz clic en **Guardar** para registrar el sensor.
 
-<img src="/public/sensores/registrar-sensor.png" alt="Formulario de registro" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_4.png" alt="Formulario de registro" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ## Editar un Sensor
 
@@ -69,7 +70,7 @@ Para modificar la información de un sensor existente:
 3. Actualiza los campos necesarios en el formulario que aparece (nombre, descripción, bancal, etc.).
 4. Haz clic en **Guardar** para confirmar los cambios.
 
-<img src="/public/sensores/editar-sensor.png" alt="Editar sensor" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_5.png" alt="Editar sensor" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ## Cambiar el Estado de un Sensor
 
@@ -90,7 +91,7 @@ Para eliminar un sensor que ya no necesitas:
 3. Confirma la eliminación en el mensaje que aparece.
 4. El sensor será eliminado del sistema.
 
-<img src="/public/sensores/eliminar-sensor.png" alt="Confirmar eliminación" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+<img src="/public/iot/iot_DU_6.png" alt="Confirmar eliminación" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 **Nota**: Solo los sensores inactivos o sin datos asociados pueden eliminarse fácilmente. Contacta a un administrador si encuentras problemas.
 
