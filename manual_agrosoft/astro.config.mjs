@@ -60,6 +60,7 @@ export default defineConfig({
             { label: 'Tipo de plaga', slug: 'modules/trazabilidad/tipoplaga' },
             { label: 'Tipo de Control', slug: 'modules/trazabilidad/tipoControl' },
             { label: 'Control', slug: 'modules/trazabilidad/control' },
+            { label: 'Residuos', slug: 'modules/trazabilidad/Gestión.de-Residuos' },     
             // { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
             // { label: 'Control de Productos', slug: 'modules/trazabilidad/productoscontrol' },
 
