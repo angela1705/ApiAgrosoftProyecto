@@ -34,7 +34,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 3. Registrar un nuevo precio de producto
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar"**:
 
-   <img src="/public/inventario/preciosproductos/RegistrarPrecioProductoBtn.png" alt="Botón registrar precio de producto" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/inventario/preciosproductos/RegistrarPrecioProductoBtn.png" alt="Botón registrar precio de producto" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de precios de productos:
 
@@ -137,7 +137,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Actualizar un precio de producto existente
 1. En el listado de precios de productos, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/preciosproductos/PrecioProductoAccionEditar.png" alt="Botón de editar precio de producto" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar precio de producto" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
@@ -177,7 +177,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 6. Eliminar un precio de producto
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/preciosproductos/PrecioProductoAccionEliminar.png" alt="Botón de eliminar precio de producto" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar precio de producto" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 
