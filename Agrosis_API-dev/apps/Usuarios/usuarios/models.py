@@ -5,12 +5,13 @@ from django.utils import timezone
 from datetime import timedelta
 
 class Usuarios(AbstractUser): 
-    rol = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
+    rol = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True, default=1)
     nombre = models.CharField(max_length=30)
     apellido = models.CharField(max_length=30)
-    email = models.EmailField(unique=True)
+    numero_documento = models.IntegerField(unique=True,null=True)
+    email = models.EmailField( unique=True,null=True,blank=True)
     is_active = models.BooleanField(default=True)
-    USERNAME_FIELD = 'email' 
+    USERNAME_FIELD = 'numero_documento' 
     REQUIRED_FIELDS = ['username', 'nombre', 'apellido'] 
 
     def __str__(self):

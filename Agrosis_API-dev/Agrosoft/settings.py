@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-y25f0nlxx-^y1tc$12**4)gsf=uy7wkcvt%ahr(*l)cf=7#m5i
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.X', '192.168.1.12']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.X', '192.168.1.12','10.4.21.92']
     
 
 
@@ -37,53 +37,49 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.Usuarios.permisos',
-    'apps.Usuarios.rol_permiso',
     'apps.Usuarios.usuarios',
     'apps.Usuarios.roles',
-    'apps.Usuarios.usuario_rol',
-    'apps.Usuarios.roles_acciones',
     'apps.Cultivo.bancal',
     'apps.Cultivo.tipo_plaga',
     'apps.Cultivo.plagas',
     'apps.Cultivo.especies',
     'apps.Cultivo.tipo_especies',
     'apps.Cultivo.cultivos',
-    'apps.Cultivo.fase_lunar',
     'apps.Cultivo.tipo_control',
     'apps.Cultivo.semillero',
-    'apps.Cultivo.semillero_herramienta',
-    'apps.Cultivo.semillero_insumo',
-    'apps.Cultivo.tareas',
     'apps.Cultivo.afecciones',
     'apps.Cultivo.controles',
-    'apps.Cultivo.productos_control',
     'apps.Cultivo.plantaciones',
     'apps.Cultivo.tipo_actividad',
     'apps.Cultivo.actividades',
+    'apps.Cultivo.ReportePlaga',
     'apps.Iot.datos_meteorologicos',
     'apps.Iot.sensores',
     'apps.Finanzas.pagos',
     'apps.Finanzas.venta',
     'apps.Finanzas.salario',
+    'apps.Inventario.herramientas',
+    'apps.Inventario.insumos',
+    'apps.Finanzas.costo_beneficio',
+    'apps.Inventario.precio_producto',
     'apps.Inventario.bodega',
     'apps.Inventario.bodega_insumo',
     'apps.Inventario.bodega_herramienta',
-    'apps.Inventario.herramientas',
-    'apps.Inventario.insumos',
+    'apps.Inventario.bodega_precio_producto',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
     'apps.Cultivo.residuos',
     'apps.Cultivo.tipos_residuos',
-    'apps.Cultivo.programacion',
     'apps.Cultivo.cosechas',
     'apps.Cultivo.lotes',
+    'apps.Autenticacion.autenticacion',
     'channels',
     'corsheaders',
     'django_filters',
+    'apps.Iot.evapotranspiracion',
+    'apps.mapa'
 ]
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -94,6 +90,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+CORS_EXPOSE_HEADERS = ['Content-Disposition']
 
 ROOT_URLCONF = 'Agrosoft.urls'
 
@@ -120,22 +117,27 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("redis://127.0.0.1:6379/0")],
         },
     },
 }
 
 
+# Configuración CORS para desarrollo
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Frontend Vite
+    "http://127.0.0.1:5173",
+]
+
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.1/ref/settizngs/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrosoft',
+        'ENGINE': 'django.db.backends.postgresql', 
+        'NAME': 'testdb12', 
         'USER': 'postgres',
         'PASSWORD': 'root',
-
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {
@@ -172,7 +174,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -235,6 +237,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'steventu06@gmail.com'
-EMAIL_HOST_PASSWORD = 'ytjb ipyp odsw ryqr' 
-DEFAULT_FROM_EMAIL = 'steventu06@gmail.com'
+EMAIL_HOST_USER = 'agrosoftadso2024@gmail.com'
+EMAIL_HOST_PASSWORD = 'kbup uwpx qxyb lywp' 
+DEFAULT_FROM_EMAIL = 'agrosoftadso2024@gmail.com'
+
+USE_TZ = True
+TIME_ZONE = 'America/Bogota'

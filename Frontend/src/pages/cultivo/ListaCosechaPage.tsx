@@ -6,7 +6,9 @@ import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import ReuModal from "@/components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
 import { useNavigate } from "react-router-dom";
-
+import { EditIcon, Trash2 } from 'lucide-react';
+import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
+import { UnidadMedida } from "@/types/inventario/Insumo";
 const ListarCosechaPage: React.FC = () => {
   const [selectedCosecha, setSelectedCosecha] = useState<any>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -16,6 +18,7 @@ const ListarCosechaPage: React.FC = () => {
   const { data: cultivos } = useCultivos();
   const actualizarMutation = useActualizarCosecha();
   const eliminarMutation = useEliminarCosecha();
+  const { data: unidadesMedida } = useUnidadesMedida();
   const navigate = useNavigate();
 
   const columns = [
@@ -51,7 +54,7 @@ const ListarCosechaPage: React.FC = () => {
     id: cosecha.id?.toString() || '',
     cultivo: cultivos?.find((cultivo) => cultivo.id === cosecha.id_cultivo)?.nombre || 'Sin cultivo',
     cantidad: cosecha.cantidad,
-    unidades_de_medida: cosecha.unidades_de_medida,
+    unidades_de_medida: unidadesMedida?.find((um) => um.id === cosecha.unidades_de_medida)?.nombre || 'Sin unidad',
     fecha: new Date(cosecha.fecha).toLocaleDateString(),
     acciones: (
       <>
@@ -59,13 +62,13 @@ const ListarCosechaPage: React.FC = () => {
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(cosecha)}
         >
-          Editar
+           <EditIcon size={22} color='black'/>
         </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(cosecha)}
         >
-          Eliminar
+            <Trash2   size={22} color='red'/>
         </button>
       </>
     ),
@@ -73,28 +76,24 @@ const ListarCosechaPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Cosechas</h2>
+          <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Cosechas</h2>
+          <div className="mb-2 flex justify-start">
+                        <button
+                        className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
+                                    shadow-md hover:shadow-lg transform hover:scale-105"
+                        onClick={() => navigate('/cultivo/cosecha/')} 
+                        >
+                        + Registrar
+                        </button>
+            </div>
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
           ) : (
             <>
               <Tabla columns={columns} data={transformedData} />
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
-                             hover:bg-blue-700 transition-all duration-300 ease-in-out 
-                             shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={() => navigate('/cultivo/cosecha/')}
-                >
-                  Registrar Cosecha
-                </button>
-              </div>
             </>
           )}
-        </div>
-      </div>
 
       <ReuModal
         isOpen={isEditModalOpen}
@@ -144,18 +143,25 @@ const ListarCosechaPage: React.FC = () => {
             }))
           }
         />
-        <ReuInput
-          label="Unidades de Medida"
-          placeholder="Ingrese las unidades de medida"
-          type="text"
-          value={selectedCosecha?.unidades_de_medida || ''}
-          onChange={(e) =>
-            setSelectedCosecha((prev: any) => ({
-              ...prev,
-              unidades_de_medida: e.target.value,
-            }))
-          }
-        />
+       <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
+      <select
+        value={selectedCosecha?.unidades_de_medida || 0}
+        onChange={(e) =>
+          setSelectedCosecha((prev: any) => ({
+            ...prev,
+            unidades_de_medida: parseInt(e.target.value),
+          }))
+          
+        }
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+      >
+        <option value="">Seleccione una unidad</option>
+        {unidadesMedida?.map((unidad: UnidadMedida) => (
+          <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
+        ))}
+      </select>
+    </div>
         <ReuInput
           label="Fecha"
           placeholder="Ingrese la fecha"

@@ -6,6 +6,7 @@ import { useProgramaciones, useActualizarProgramacion, useEliminarProgramacion }
 import ReuModal from "../../components/globales/ReuModal";
 import Tabla from "@/components/globales/Tabla";
 import { useNavigate } from "react-router-dom";
+import { EditIcon, Trash2 } from 'lucide-react';
 
 const ListaProgramacion: React.FC = () => {
   const [programacion, setProgramacion] = useState<Programacion>({
@@ -80,13 +81,13 @@ const ListaProgramacion: React.FC = () => {
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(prog)}
         >
-          Editar
+           <EditIcon size={22} color='black'/>
         </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(prog)}
         >
-          Eliminar
+            <Trash2   size={22} color='red'/>
         </button>
       </>
     ),
@@ -94,28 +95,25 @@ const ListaProgramacion: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Programaciones</h2>
+          <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Programaciones</h2>
+          <div className="mb-2 flex justify-start">
+                        <button
+                        className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
+                                    shadow-md hover:shadow-lg transform hover:scale-105"
+                        onClick={() => navigate('/cultivo/programacion/')} 
+                        >
+                        + Registrar
+                        </button>
+            </div>
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
           ) : (
             <>
               <Tabla columns={columns} data={transformedData} />
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
-                             hover:bg-blue-700 transition-all duration-300 ease-in-out 
-                             shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={() => navigate('/cultivo/programacion/')}
-                >
-                  Registrar Programación
-                </button>
-              </div>
             </>
           )}
-        </div>
-      </div>
+
 
       <ReuModal
         isOpen={isEditModalOpen}

@@ -1,77 +1,151 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from asgiref.sync import async_to_sync, sync_to_async
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
+import asyncio
+import hashlib
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 from apps.Inventario.bodega_herramienta.models import BodegaHerramienta
-from channels.layers import get_channel_layer
-from django.urls import re_path
-import uuid
+from apps.Cultivo.actividades.models import PrestamoHerramienta
+import logging
+
+logger = logging.getLogger(__name__)
+User = get_user_model()
+active_connections = {}
 
 class BodegaHerramientaConsumer(AsyncWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sent_notifications = set()
+        self.check_task = None
+        self.user_id = None
+        self.group_name = None
+
     async def connect(self):
-        await self.channel_layer.group_add("bodega_herramienta", self.channel_name)
+        self.user_id = self.scope['url_route']['kwargs'].get('user_id')
+        logger.info(f"Intento de conexión WebSocket con user_id: {self.user_id}")
+
+        if self.user_id == 'admin':
+            self.group_name = "bodega_herramienta_admin_group"
+        else:
+            try:
+                self.user_id = int(self.user_id)
+                user = await self.get_user(self.user_id)
+                if not user:
+                    logger.error(f"Usuario con ID {self.user_id} no encontrado")
+                    await self.close(code=4001)
+                    return
+                self.group_name = f"bodega_herramienta_user_{self.user_id}"
+            except (ValueError, TypeError):
+                logger.error(f"ID de usuario inválido: {self.user_id}")
+                await self.close(code=4000)
+                return
+
+        if self.group_name in active_connections:
+            logger.info(f"Cerrando conexión previa para {self.group_name}")
+            await active_connections[self.group_name].close(code=4002)
+        active_connections[self.group_name] = self
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
-        await self.send_initial_state()
+        logger.info(f"Conexión WebSocket establecida para {self.group_name}")
+        self.check_task = asyncio.create_task(self.periodic_check())
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard("bodega_herramienta", self.channel_name)
+        logger.info(f"Desconexión WebSocket para {self.group_name}, código: {close_code}")
+        if self.group_name and self.group_name in active_connections:
+            if active_connections[self.group_name] == self:
+                del active_connections[self.group_name]
+        if hasattr(self, 'group_name'):
+            await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        if self.check_task:
+            self.check_task.cancel()
 
-    async def receive(self, text_data):
-        data = json.loads(text_data)
-        if data.get("action") == "sync":
-            await self.send_initial_state()
-
-    @sync_to_async
-    def get_all_herramientas(self):
-        return [
-            {
-                "id": h.id,
-                "bodega": h.bodega.nombre if h.bodega else "Desconocido",
-                "herramienta": h.herramienta.nombre if h.herramienta else "Desconocido",
-                "cantidad": h.cantidad or 0
-            }
-            for h in BodegaHerramienta.objects.all()
-        ]
-
-    async def send_initial_state(self):
-        herramientas = await self.get_all_herramientas()
-        await self.send(text_data=json.dumps({
-            "action": "initial_state",
-            "data": herramientas,
-            "message_id": str(uuid.uuid4())
-        }))
-
-    async def send_update(self, event):
-        await self.send(text_data=json.dumps(event["message"]))
-
-@receiver(post_save, sender=BodegaHerramienta)
-def herramienta_saved(sender, instance, created, **kwargs):
-    channel_layer = get_channel_layer()
-    message = {
-        "type": "send_update",
-        "message": {
-            "id": instance.id,
-            "bodega": instance.bodega.nombre if instance.bodega else "Desconocido",
-            "herramienta": instance.herramienta.nombre if instance.herramienta else "Desconocido",
-            "cantidad": instance.cantidad or 0,
-            "accion": "create" if created else "update"
+    async def send_notification(self, event):
+        current_hash = event['hash']
+        if current_hash in self.sent_notifications:
+            return
+        if self.group_name not in active_connections or active_connections[self.group_name] != self:
+            return
+        self.sent_notifications.add(current_hash)
+        message_data = {
+            'message': event['message'],
+            'notification_type': event.get('notification_type', 'info'),
+            'timestamp': event.get('timestamp'),
+            'herramienta_id': event.get('herramienta_id'),
+            'actividad_id': event.get('actividad_id'),
+            'hash': current_hash
         }
-    }
-    async_to_sync(channel_layer.group_send)("bodega_herramienta", message)
+        await self.send(text_data=json.dumps(message_data))
 
-@receiver(post_delete, sender=BodegaHerramienta)
-def herramienta_deleted(sender, instance, **kwargs):
-    channel_layer = get_channel_layer()
-    message = {
-        "type": "send_update",
-        "message": {
-            "id": instance.id,
-            "accion": "delete"
-        }
-    }
-    async_to_sync(channel_layer.group_send)("bodega_herramienta", message)
+    @database_sync_to_async
+    def get_user(self, user_id):
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return None
 
-websocket_urlpatterns = [
-    re_path(r'ws/inventario/bodega_herramienta/$', BodegaHerramientaConsumer.as_asgi())
-]
+    @database_sync_to_async
+    def check_herramientas(self):
+        herramientas = BodegaHerramienta.objects.select_related('herramienta', 'bodega').all()
+        notificaciones = []
+        timestamp = str(int(timezone.now().timestamp() * 1000))
+        umbral_cantidad = 10
+
+        for herramienta in herramientas:
+            if herramienta.cantidad <= umbral_cantidad:
+                herramienta_hash = hashlib.md5(f"{herramienta.id}low_stock".encode()).hexdigest()
+                notif = {
+                    "herramienta_id": herramienta.id,
+                    "message": f"La herramienta {herramienta.herramienta.nombre} en {herramienta.bodega.nombre} está baja en stock: {herramienta.cantidad} unidades restantes.",
+                    "notification_type": "warning",
+                    "timestamp": timestamp,
+                    "hash": herramienta_hash
+                }
+                notificaciones.append(notif)
+
+            prestamos = PrestamoHerramienta.objects.filter(
+                bodega_herramienta=herramienta,
+                devuelta=False
+            )
+            cantidad_prestada = prestamos.count()
+            if cantidad_prestada > 0:
+                for prestamo in prestamos:
+                    herramienta_hash = hashlib.md5(f"{herramienta.id}lent_{prestamo.id}".encode()).hexdigest()
+                    notif = {
+                        "herramienta_id": herramienta.id,
+                        "actividad_id": prestamo.actividad_id,
+                        "message": f"1 unidad de {herramienta.herramienta.nombre} está prestada para la actividad ID {prestamo.actividad_id} desde la bodega {herramienta.bodega.nombre}.",
+                        "notification_type": "info",
+                        "timestamp": timestamp,
+                        "hash": herramienta_hash
+                    }
+                    notificaciones.append(notif)
+        return notificaciones
+
+    async def periodic_check(self):
+        while True:
+            try:
+                if self.group_name not in active_connections or active_connections[self.group_name] != self:
+                    logger.info(f"Terminando periodic_check para {self.group_name}")
+                    break
+                notificaciones = await self.check_herramientas()
+                for notif in notificaciones:
+                    await self.channel_layer.group_send(
+                        self.group_name,
+                        {
+                            "type": "send_notification",
+                            "message": notif["message"],
+                            "notification_type": notif["notification_type"],
+                            "timestamp": notif["timestamp"],
+                            "herramienta_id": notif["herramienta_id"],
+                            "actividad_id": notif.get("actividad_id"),
+                            "hash": notif["hash"]
+                        }
+                    )
+                await asyncio.sleep(300)
+            except asyncio.CancelledError:
+                logger.info(f"periodic_check cancelado para {self.group_name}")
+                break
+            except Exception as e:
+                logger.error(f"Error en periodic_check para {self.group_name}: {str(e)}")
+                await asyncio.sleep(300)

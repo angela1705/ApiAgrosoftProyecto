@@ -6,7 +6,8 @@ import { useLotes, useActualizarLote, useEliminarLote } from "../../hooks/cultiv
 import { Lote } from "../../types/cultivo/Lotes";
 import Tabla from "@/components/globales/Tabla";
 import ReuModal from "../../components/globales/ReuModal";
-
+import { EditIcon, Trash2 } from 'lucide-react';
+import { Switch } from "@heroui/react";
 const ListarLotesPage: React.FC = () => {
   const [lote, setLote] = useState<Lote>({
     nombre: "",
@@ -14,8 +15,8 @@ const ListarLotesPage: React.FC = () => {
     activo: false,
     tam_x: 0,
     tam_y: 0,
-    pos_x: 0,
-    pos_y: 0,
+    latitud: 0,
+    longitud: 0,
   });
 
   const [selectedLote, setSelectedLote] = useState<Lote | null>(null);
@@ -32,8 +33,8 @@ const ListarLotesPage: React.FC = () => {
     { name: "Activo", uid: "activo" },
     { name: "Tamaño X", uid: "tam_x" },
     { name: "Tamaño Y", uid: "tam_y" },
-    { name: "Posición X", uid: "pos_x" },
-    { name: "Posición Y", uid: "pos_y" },
+    { name: "Latitud", uid: "pos_x" },
+    { name: "Longitud", uid: "pos_y" },
     { name: "Acciones", uid: "acciones" },
   ];
 
@@ -63,21 +64,21 @@ const ListarLotesPage: React.FC = () => {
     activo: lote.activo ? "Sí" : "No",
     tam_x: lote.tam_x,
     tam_y: lote.tam_y,
-    pos_x: lote.pos_x,
-    pos_y: lote.pos_y,
+    pos_x: lote.latitud,
+    pos_y: lote.longitud,
     acciones: (
       <>
         <button
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(lote)}
         >
-          Editar
+           <EditIcon size={22} color='black'/>
         </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(lote)}
         >
-          Eliminar
+        <Trash2   size={22} color='red'/>
         </button>
       </>
     ),
@@ -85,29 +86,24 @@ const ListarLotesPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Lotes</h2>
-
+          <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Lotes</h2>
+          <div className="mb-2 flex justify-start">
+                        <button
+                        className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                                    hover:bg-green-700 transition-all duration-300 ease-in-out 
+                                    shadow-md hover:shadow-lg transform hover:scale-105"
+                        onClick={() => navigate('/cultivo/lotes/')} 
+                        >
+                        + Registrar
+                        </button>
+            </div>
           {isLoading ? (
             <p className="text-gray-600">Cargando...</p>
           ) : (
             <>
               <Tabla columns={columns} data={transformedData} />
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg 
-                             hover:bg-blue-700 transition-all duration-300 ease-in-out 
-                             shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={() => navigate('/cultivo/lotes')} 
-                >
-                  Registrar Lote
-                </button>
-              </div>
             </>
-          )}
-        </div>
-      </div>
+          )}  
 
       <ReuModal
         isOpen={isEditModalOpen}
@@ -139,15 +135,17 @@ const ListarLotesPage: React.FC = () => {
           onChange={(e) => setLote({ ...lote, descripcion: e.target.value })}
         />
 
-        <label className="flex items-center space-x-2 text-gray-700">
-          <input
-            type="checkbox"
-            className="w-5 h-5 text-red-600 border-gray-300 rounded"
-            checked={lote.activo}
-            onChange={(e) => setLote({ ...lote, activo: e.target.checked })}
+    <div className="flex items-center gap-4 mb-4">
+          <label className="block text-sm font-medium text-gray-700">Estado</label>
+          <Switch
+            color="success"
+            size="sm"
+            isSelected={lote.activo}
+            onChange={() =>
+              setLote((prev) => ({ ...prev, activo: !prev.activo }))
+            }
           />
-          <span>Activo</span>
-        </label>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <ReuInput
@@ -169,19 +167,19 @@ const ListarLotesPage: React.FC = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <ReuInput
-            label="Posición X"
+            label="Latitud"
             placeholder="Ingrese posición X"
             type="number"
-            value={lote.pos_x.toString()}
-            onChange={(e) => setLote({ ...lote, pos_x: parseFloat(e.target.value) })}
+            value={lote.latitud.toString()}
+            onChange={(e) => setLote({ ...lote, latitud: parseFloat(e.target.value) })}
           />
 
           <ReuInput
-            label="Posición Y"
+            label="Longitud"
             placeholder="Ingrese posición Y"
             type="number"
-            value={lote.pos_y.toString()}
-            onChange={(e) => setLote({ ...lote, pos_y: parseFloat(e.target.value) })}
+            value={lote.longitud.toString()}
+            onChange={(e) => setLote({ ...lote, longitud: parseFloat(e.target.value) })}
           />
         </div>
       </ReuModal>

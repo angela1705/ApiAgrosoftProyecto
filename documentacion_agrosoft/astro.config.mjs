@@ -2,6 +2,9 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+  server: {
+    port: 4321,
+  },
   integrations: [
     starlight({
       title: 'Agrosis',
@@ -28,7 +31,6 @@ export default defineConfig({
           items: [
             { label: 'Introducción', slug: 'modules/usuarios/index' },
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
-            { label: 'roles', slug: 'modules/usuarios/roles' },
           ],
         },
         {
@@ -44,7 +46,9 @@ export default defineConfig({
             { label: 'Actividad', slug: 'modules/trazabilidad/actividad' },
             { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
             { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
-            { label: 'tipoplaga', slug: 'modules/trazabilidad/tipoplaga' },
+            { label: 'Tipo de plaga', slug: 'modules/trazabilidad/tipoplaga' },
+            { label: 'Control de Productos', slug: 'modules/trazabilidad/productoscontrol' },
+
 
 
           ],
@@ -75,7 +79,9 @@ export default defineConfig({
             { label: 'Introducción', slug: 'modules/IoT/index' },
             { label: 'Gestión de Sensores', slug: 'modules/IoT/sensores' },
             { label: 'Datos Meteorológicos', slug: 'modules/IoT/datos-meteorologicos' },
-            { label: 'Configuración', slug: 'modules/IoT/configuracion' }, 
+            { label: 'Configuración', slug: 'modules/IoT/configuracion' },
+            { label: 'Evapotranspiración', slug: 'modules/IoT/evapotranspiracion' },
+
           ],
         },
       ],

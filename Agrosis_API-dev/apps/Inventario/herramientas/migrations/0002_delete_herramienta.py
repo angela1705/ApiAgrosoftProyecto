@@ -2,11 +2,9 @@
 
 from django.db import migrations
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bodega_herramienta', '0002_delete_bodegaherramienta'),
         ('herramientas', '0001_initial'),
     ]
 

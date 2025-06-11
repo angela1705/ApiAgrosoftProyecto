@@ -5,13 +5,13 @@ import { useBodegas, useActualizarBodega, useEliminarBodega } from "@/hooks/inve
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
+import { EditIcon, Trash2 } from 'lucide-react';
 
 interface Bodega {
   id: number;
   nombre: string;
   ubicacion: string;
   capacidad: number;
-  direccion: string;
   telefono: string;
   activo: boolean;
 }
@@ -30,7 +30,6 @@ const ListaBodegaPage: React.FC = () => {
     { name: "Nombre", uid: "nombre" },
     { name: "Ubicación", uid: "ubicacion" },
     { name: "Capacidad", uid: "capacidad" },
-    { name: "Dirección", uid: "direccion" },
     { name: "Teléfono", uid: "telefono" },
     { name: "Activo", uid: "activo" },
     { name: "Acciones", uid: "acciones" },
@@ -63,7 +62,6 @@ const ListaBodegaPage: React.FC = () => {
     nombre: bodega.nombre,
     ubicacion: bodega.ubicacion,
     capacidad: bodega.capacidad,
-    direccion: bodega.direccion,
     telefono: bodega.telefono,
     activo: bodega.activo ? "Sí" : "No",
     acciones: (
@@ -72,13 +70,13 @@ const ListaBodegaPage: React.FC = () => {
           className="text-green-500 hover:underline mr-2"
           onClick={() => handleEdit(bodega)}
         >
-          Editar
+          <EditIcon size={22} color="black" />
         </button>
         <button
           className="text-red-500 hover:underline"
           onClick={() => handleDelete(bodega)}
         >
-          Eliminar
+          <Trash2 size={22} color="red" />
         </button>
       </>
     ),
@@ -86,28 +84,23 @@ const ListaBodegaPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Bodegas</h2>
-
-          {isLoading ? (
-            <p className="text-gray-600">Cargando...</p>
-          ) : (
-            <>
-              <Tabla columns={columns} data={transformedData} />
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={() => navigate("/inventario/bodega/")}
-                >
-                  Registrar Bodega
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Bodegas Registradas</h2><br /><br />
+      <div className="mb-2 flex justify-start">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                     hover:bg-green-700 transition-all duration-300 ease-in-out 
+                     shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate("/inventario/bodega/")}
+        >
+          + Registrar
+        </button>
       </div>
 
+      {isLoading ? (
+        <p className="text-gray-600">Cargando...</p>
+      ) : (
+        <Tabla columns={columns} data={transformedData} />
+      )}
 
       <ReuModal
         isOpen={isEditModalOpen}
@@ -115,7 +108,8 @@ const ListaBodegaPage: React.FC = () => {
         title="Editar Bodega"
         onConfirm={() => {
           if (selectedBodega && selectedBodega.id !== undefined) {
-            actualizarMutation.mutate(selectedBodega, {
+            const { id, ...bodegaWithoutId } = selectedBodega;
+            actualizarMutation.mutate({ id, bodega: bodegaWithoutId }, {
               onSuccess: () => {
                 setIsEditModalOpen(false);
                 refetch();
@@ -157,15 +151,6 @@ const ListaBodegaPage: React.FC = () => {
               }
             />
             <ReuInput
-              label="Dirección"
-              placeholder="Ingrese la dirección"
-              type="text"
-              value={selectedBodega.direccion}
-              onChange={(e) =>
-                setSelectedBodega({ ...selectedBodega, direccion: e.target.value })
-              }
-            />
-            <ReuInput
               label="Teléfono"
               placeholder="Ingrese el teléfono"
               type="text"
@@ -189,7 +174,6 @@ const ListaBodegaPage: React.FC = () => {
         )}
       </ReuModal>
 
-      
       <ReuModal
         isOpen={isDeleteModalOpen}
         onOpenChange={setIsDeleteModalOpen}

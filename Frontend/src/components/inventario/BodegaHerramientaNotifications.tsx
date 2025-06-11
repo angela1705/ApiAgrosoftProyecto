@@ -1,126 +1,199 @@
-import React, { useEffect, useRef } from "react";
+{/*
+  import React, { useEffect, useState, useRef } from "react";
 import { addToast } from "@heroui/toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/context/AuthContext";
 
-const BodegaHerramientaNotifications: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  const queryClient = useQueryClient();
+interface Notification {
+  message: string;
+  type: "info" | "warning" | "alert" | "error";
+  timestamp: number;
+  herramientaId?: number;
+  actividadId?: number;
+  uniqueId?: string;
+}
+
+interface BodegaHerramientaNotificationsProps {
+  userId3: number;
+  isAdmin?: boolean;
+}
+
+const BodegaHerramientaNotifications: React.FC<BodegaHerramientaNotificationsProps> = ({
+  userId3,
+  isAdmin = false,
+}) => {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
-  const processedMessages = useRef<Set<string>>(new Set());
-  const isConnectedRef = useRef(false);
-  const reconnectAttempts = useRef(0);
+  const receivedIds = useRef<Set<string>>(new Set());
+  const reconnectTimer = useRef<NodeJS.Timeout | null>(null);
+  const reconnectAttempts = useRef<number>(0);
   const maxReconnectAttempts = 5;
-  const SOCKET_URL = "ws://127.0.0.1:8000/ws/inventario/bodega_herramienta/";
+  const baseReconnectDelay = 3000;
 
   const connectWebSocket = () => {
-    if (isConnectedRef.current || socketRef.current?.readyState === WebSocket.OPEN) {
+    if ((!userId3 || userId3 <= 0) && !isAdmin) {
+      console.error("No se puede conectar WebSocket: userId3 inválido o no proporcionado");
+      addToast({
+        title: "Error de Conexión",
+        description: "ID de usuario inválido. Por favor, inicia sesión nuevamente.",
+        timeout: 10000,
+        color: "danger",
+      });
       return;
     }
 
-    if (reconnectAttempts.current >= maxReconnectAttempts) {
-      return;
-    }
+    const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+    const wsUrl = isAdmin
+      ? `${protocol}${window.location.hostname}:8000/ws/inventario/bodega_herramienta/admin/`
+      : `${protocol}${window.location.hostname}:8000/ws/inventario/bodega_herramienta/${userId3}/`;
 
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      return;
-    }
+    console.log(`Intentando conectar WebSocket a: ${wsUrl}`);
+    socketRef.current = new WebSocket(wsUrl);
 
-    const wsUrl = `${SOCKET_URL}?token=${token}`;
-    const socket = new WebSocket(wsUrl);
-    socketRef.current = socket;
-
-    socket.onopen = () => {
-      isConnectedRef.current = true;
+    socketRef.current.onopen = () => {
+      console.log("Conexión WebSocket establecida");
       reconnectAttempts.current = 0;
-      socket.send(JSON.stringify({ action: "sync" }));
+      if (reconnectTimer.current) {
+        clearTimeout(reconnectTimer.current);
+        reconnectTimer.current = null;
+      }
     };
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+    socketRef.current.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("Mensaje WebSocket recibido:", data);
+        if (data.hash && receivedIds.current.has(data.hash)) {
+          return;
+        }
+        if (data.hash) {
+          receivedIds.current.add(data.hash);
+        }
+        const newNotification: Notification = {
+          message: data.message,
+          type: data.notification_type || "info",
+          timestamp: data.timestamp || Date.now(),
+          herramientaId: data.herramienta_id,
+          actividadId: data.actividad_id,
+          uniqueId: data.hash,
+        };
+        setNotifications((prev) => {
+          const isDuplicate = prev.some(
+            (n) =>
+              n.message === data.message &&
+              n.timestamp === newNotification.timestamp
+          );
+          return isDuplicate ? prev : [newNotification, ...prev.slice(0, 19)];
+        });
+        addToast({
+          title: "Estado de Herramienta",
+          description: data.message,
+          timeout: 60000,
+          color:
+            data.notification_type === "error"
+              ? "danger"
+              : data.notification_type === "warning"
+              ? "warning"
+              : data.notification_type === "alert"
+              ? "warning"
+              : "success",
+        });
+      } catch (error) {
+        console.error("Error al procesar mensaje WebSocket:", error);
+      }
+    };
 
-      const messageId = data.message_id || data.id?.toString() || `${data.accion || data.action}-${Date.now()}`;
-      if (processedMessages.current.has(messageId)) {
+    socketRef.current.onerror = (error) => {
+      console.error("Error en WebSocket:", error);
+    };
+
+    socketRef.current.onclose = (event) => {
+      console.log(`WebSocket cerrado con código: ${event.code}, razón: ${event.reason}`);
+      if (event.code === 4001) {
+        console.error("Conexión cerrada: usuario no encontrado");
+        addToast({
+          title: "Error de Conexión",
+          description: "Usuario no encontrado. Por favor, verifica tu sesión.",
+          timeout: 10000,
+          color: "danger",
+        });
         return;
       }
-      processedMessages.current.add(messageId);
-
-      const now = Date.now();
-      let lastRefetch = localStorage.getItem("lastRefetchHerramienta")
-        ? parseInt(localStorage.getItem("lastRefetchHerramienta")!, 10)
-        : 0;
-      if (now - lastRefetch > 2000) {
-        queryClient.invalidateQueries({ queryKey: ["bodega_herramientas"] });
-        localStorage.setItem("lastRefetchHerramienta", now.toString());
+      if (event.code === 4002) {
+        console.warn("Conexión cerrada: otra conexión activa para el mismo usuario");
+        return;
       }
-
-      if (data.action === "initial_state" && data.data) {
-        const statusMessage = data.data
-          .map((item: any) => `${item.bodega || "Desconocido"} - ${item.herramienta || "Desconocido"}: ${item.cantidad || 0} unidades`)
-          .join(", ");
+      if (reconnectAttempts.current < maxReconnectAttempts) {
+        const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts.current);
+        console.log(`Intentando reconectar en ${delay}ms... (Intento ${reconnectAttempts.current + 1})`);
+        reconnectTimer.current = setTimeout(() => {
+          reconnectAttempts.current += 1;
+          connectWebSocket();
+        }, delay);
+      } else {
+        console.error("Máximo de intentos de reconexión alcanzado");
         addToast({
-          title: "Estado de Bodega Herramienta",
-          description: statusMessage,
-          timeout: 5000,
+          title: "Error de Conexión",
+          description: "No se pudo reconectar al servidor de notificaciones. Por favor, intenta de nuevo más tarde.",
+          timeout: 10000,
+          color: "danger",
         });
-      } else if (data.accion === "create" || data.accion === "update") {
-        const message = `${data.bodega || "Desconocido"} - ${data.herramienta || "Desconocido"}: ${data.cantidad || 0} unidades`;
-        addToast({
-          title: data.accion === "create" ? "Herramienta Creada" : "Herramienta Actualizada",
-          description: message,
-          timeout: 5000,
-        });
-      } else if (data.accion === "delete") {
-        const message = `Registro ID ${data.id || "Desconocido"} eliminado`;
-        addToast({
-          title: "Herramienta Eliminada",
-          description: message,
-          timeout: 5000,
-        });
-      }
-    };
-
-    socket.onerror = () => {
-      isConnectedRef.current = false;
-      socketRef.current = null;
-    };
-
-    socket.onclose = () => {
-      isConnectedRef.current = false;
-      socketRef.current = null;
-      processedMessages.current.clear();
-      if (isAuthenticated) {
-        reconnectAttempts.current += 1;
-        setTimeout(() => connectWebSocket(), 5000);
       }
     };
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = null;
-        isConnectedRef.current = false;
-        processedMessages.current.clear();
-      }
-      return;
-    }
-
     connectWebSocket();
-
+    const interval = setInterval(() => {
+      setNotifications((prev) => {
+        const now = Date.now();
+        return prev.filter((notif) => now - Number(notif.timestamp) < 60000);
+      });
+    }, 1000);
     return () => {
       if (socketRef.current) {
         socketRef.current.close();
-        socketRef.current = null;
-        isConnectedRef.current = false;
-        processedMessages.current.clear();
       }
+      if (reconnectTimer.current) {
+        clearTimeout(reconnectTimer.current);
+      }
+      clearInterval(interval);
     };
-  }, [isAuthenticated]);
+  }, [userId3, isAdmin]);
 
-  if (!isAuthenticated) return null;
+  return (
+    <div className="fixed bottom-4 right-4 w-80 bg-white p-4 rounded-lg shadow-lg border border-gray-200 z-50">
+      <h2 className="text-lg font-semibold mb-2">Notificaciones de Herramientas</h2>
+      <div className="max-h-60 overflow-y-auto">
+        {notifications.length === 0 ? (
+          <p className="text-gray-500 text-sm">No hay notificaciones recientes</p>
+        ) : (
+          notifications.map((notif, index) => (
+            <div
+              key={`${notif.uniqueId || index}`}
+              className="mb-2 pb-2 border-b border-gray-100"
+            >
+              <p
+                className={`text-sm ${
+                  notif.type === "error"
+                    ? "text-red-600"
+                    : notif.type === "warning"
+                    ? "text-yellow-600"
+                    : notif.type === "alert"
+                    ? "text-orange-600"
+                    : "text-green-600"
+                }`}
+              >
+                {notif.message}
+              </p>
+              <p className="text-xs text-gray-400">
+                {new Date(notif.timestamp).toLocaleTimeString()}
+              </p>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default BodegaHerramientaNotifications;
+*/}

@@ -7,10 +7,22 @@ Los **Tipos de Actividad** permiten clasificar las diferentes labores agrícolas
 
 ## **Endpoints de la API**
 
-### **GET /cultivo/tipo_actividad/**
-Obtiene todos los tipos de actividad registrados.
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
+
+Resultado: Obtiene todos los tipos de actividad registrados.
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 [
   {
@@ -31,10 +43,22 @@ Obtiene todos los tipos de actividad registrados.
 
 ---
 
-### **GET /cultivo/tipo_actividad/{id}**
-Obtiene un tipo de actividad específico por su ID.
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/{id}</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/{id}"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
+
+Resultado: Obtiene un tipo de actividad específico por su ID.
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 {
   "id": 1,
@@ -48,8 +72,18 @@ Obtiene un tipo de actividad específico por su ID.
 
 ---
 
-### **POST /cultivo/tipo_actividad/**
-Crea un nuevo tipo de actividad.
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
+
+Resultado: Crea un nuevo tipo de actividad.
 
 **Ejemplo de solicitud:**
 ```json
@@ -64,6 +98,8 @@ Crea un nuevo tipo de actividad.
 - `descripcion`: Opcional.
 
 **Ejemplo de respuesta exitosa (201 Created):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 {
   "message": "tipo de actividad registrado con exito"
@@ -76,8 +112,18 @@ Crea un nuevo tipo de actividad.
 
 ---
 
-### **PUT /cultivo/tipo_actividad/{id}**
-Actualiza un tipo de actividad existente.
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/{id}</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/{id}"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
+
+Resultado: Actualiza un tipo de actividad existente.
 
 **Ejemplo de solicitud:**
 ```json
@@ -88,6 +134,7 @@ Actualiza un tipo de actividad existente.
 ```
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
 ```json
 {
   "message": "tipo de actividad actualizado con exito"
@@ -100,10 +147,22 @@ Actualiza un tipo de actividad existente.
 
 ---
 
-### **DELETE /actividades/tipos/{id}**
-Elimina un tipo de actividad (si no está en uso).
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/cultivo/tipo_actividad/{id}</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/cultivo/tipo_actividad/{id}"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
+
+Resultado: Elimina un tipo de actividad (si no está en uso).
 
 **Ejemplo de respuesta exitosa (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 {
   "message": "Tipo de actividad eliminado correctamente"
@@ -120,13 +179,15 @@ Elimina un tipo de actividad (si no está en uso).
 
 ### **Crear y luego actualizar un tipo:**
 ```bash
-POST /cultivo/tipo_actividad/
+Metodo: POST 
+URL:http://127.0.0.1:8000/cultivo/tipo_actividad/
 {
   "nombre": "Deshierbe",
   "descripcion": "Eliminación de malezas"
 }
 
-PUT /cultivo/tipo_actividad/4
+Metodo: PUT 
+URL:http://127.0.0.1:8000/cultivo/tipo_actividad/4
 {
   "descripcion": "Eliminación manual o química de malezas"
 }
@@ -134,7 +195,8 @@ PUT /cultivo/tipo_actividad/4
 
 ### **Listar tipos de actividad:**
 ```bash
-GET /cultivo/tipo_actividad/
+Metodo: GET 
+URL:http://127.0.0.1:8000/cultivo/tipo_actividad/
 ```
 
 ---

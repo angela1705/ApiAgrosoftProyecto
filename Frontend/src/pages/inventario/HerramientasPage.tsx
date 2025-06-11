@@ -3,15 +3,9 @@ import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
 import { useRegistrarHerramienta } from "@/hooks/inventario/useHerramientas";
 import { ReuInput } from "@/components/globales/ReuInput";
-
-interface Herramienta {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  cantidad: number;
-  estado: string;
-  activo: boolean;
-}
+import Formulario from "@/components/globales/Formulario";
+import { Herramienta } from "@/types/inventario/Herramientas";
+import { Switch } from "@heroui/react";
 
 const HerramientaPage: React.FC = () => {
   const [herramienta, setHerramienta] = useState<Herramienta>({
@@ -20,7 +14,9 @@ const HerramientaPage: React.FC = () => {
     descripcion: "",
     cantidad: 0,
     estado: "Disponible",
+    fecha_registro: new Date().toISOString(),
     activo: true,
+    precio: 0,
   });
 
   const mutation = useRegistrarHerramienta();
@@ -36,85 +32,97 @@ const HerramientaPage: React.FC = () => {
           descripcion: "",
           cantidad: 0,
           estado: "Disponible",
+          fecha_registro: new Date().toISOString(),
           activo: true,
+          precio: 0,
         });
       },
     });
   };
 
+  const formatPrice = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    return numericValue ? Number(numericValue) : 0;
+  };
+
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Herramienta</h2>
-          <form onSubmit={handleSubmit}>
-            <ReuInput
-              label="Nombre"
-              placeholder="Ingrese el nombre"
-              type="text"
-              value={herramienta.nombre}
-              onChange={(e) =>
-                setHerramienta({ ...herramienta, nombre: e.target.value })
-              }
-            />
-            <ReuInput
-              label="Descripción"
-              placeholder="Ingrese la descripción"
-              type="text"
-              value={herramienta.descripcion}
-              onChange={(e) =>
-                setHerramienta({ ...herramienta, descripcion: e.target.value })
-              }
-            />
-            <ReuInput
-              label="Cantidad"
-              placeholder="Ingrese la cantidad"
-              type="number"
-              value={herramienta.cantidad.toString()}
-              onChange={(e) =>
-                setHerramienta({
-                  ...herramienta,
-                  cantidad: Number(e.target.value),
-                })
-              }
-            />
-            <ReuInput
-              label="Estado"
-              placeholder="Ingrese el estado"
-              type="text"
-              value={herramienta.estado}
-              onChange={(e) =>
-                setHerramienta({ ...herramienta, estado: e.target.value })
-              }
-            />
-            <div className="mb-4 flex items-center">
-              <input
-                type="checkbox"
-                checked={herramienta.activo}
-                onChange={(e) =>
-                  setHerramienta({ ...herramienta, activo: e.target.checked })
-                }
-                className="mr-2 leading-tight"
-              />
-              <label className="text-gray-700 text-sm font-bold">Activo</label>
-            </div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? "Registrando..." : "Guardar"}
-            </button>
-            <button
-              type="button"
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
-              onClick={() => navigate("/inventario/listarherramientas/")}
-            >
-              Listar Herramientas
-            </button>
-          </form>
+      <Formulario
+        title="Registro de Herramienta"
+        onSubmit={handleSubmit}
+        buttonText="Guardar"
+        isSubmitting={mutation.isPending}
+      >
+        <ReuInput
+          label="Nombre"
+          placeholder="Ingrese el nombre"
+          type="text"
+          value={herramienta.nombre}
+          onChange={(e) =>
+            setHerramienta({ ...herramienta, nombre: e.target.value })
+          }
+        />
+        <ReuInput
+          label="Descripción"
+          placeholder="Ingrese la descripción"
+          type="text"
+          value={herramienta.descripcion}
+          onChange={(e) =>
+            setHerramienta({ ...herramienta, descripcion: e.target.value })
+          }
+        />
+        <ReuInput
+          label="Cantidad"
+          placeholder="Ingrese la cantidad"
+          type="number"
+          value={herramienta.cantidad.toString()}
+          onChange={(e) =>
+            setHerramienta({
+              ...herramienta,
+              cantidad: Number(e.target.value),
+            })
+          }
+        />
+        <ReuInput
+          label="Precio Herramienta (COP)"
+          placeholder="Ingrese el precio"
+          type="text"
+          value={herramienta.precio.toLocaleString("es-CO")}
+          onChange={(e) =>
+            setHerramienta({
+              ...herramienta,
+              precio: formatPrice(e.target.value),
+            })
+          }
+        />
+        <ReuInput
+          label="Fecha de Registro"
+          placeholder="Fecha de registro"
+          type="datetime-local"
+          value={herramienta.fecha_registro.slice(0, 16)}
+          onChange={(e) =>
+            setHerramienta({ ...herramienta, fecha_registro: e.target.value })
+          }
+        />
+          <div className="flex items-center">
+            <Switch
+                color="success"
+                size="sm"
+                isSelected={herramienta.activo}
+                onChange={(e) => setHerramienta({ ...herramienta, activo: e.target.checked })}
+                />
+                <label className="ml-2 text-sm font-medium text-gray-700">Activo</label>
         </div>
-      </div>
+        <div className="col-span-1 md:col-span-2 flex justify-center">
+          <button
+            type="button"
+            className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
+            onClick={() => navigate("/inventario/listarherramientas/")}
+          >
+            Listar Herramientas
+          </button>
+        </div>
+      </Formulario>
     </DefaultLayout>
   );
 };

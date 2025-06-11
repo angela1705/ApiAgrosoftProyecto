@@ -6,7 +6,6 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bodega_insumo', '0002_delete_bodegainsumo'),
         ('insumos', '0001_initial'),
     ]
 

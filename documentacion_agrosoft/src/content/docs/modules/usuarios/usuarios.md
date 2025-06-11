@@ -15,9 +15,7 @@ Para registrar un nuevo lote en Agrosoft:
 3. Completar los siguientes campos:
    - **Nombre:** Nombre único del usuario.
    - **Apellido:** Apellido único del usuario.
-   - **Contraseña:** cadena de caracteres utilizada para autenticar y verificar la identidad del usuario al acceder a un sistema.
-   - **Username:** Nombre corto personalizado único del usuario.
-   - **Email:** Dirección de contacto mail única del usuario.
+   - **Numero de documento:** Numero de identificación única del usuario.
 
 
 ## Datos de un usuario
@@ -27,14 +25,22 @@ Cada usuario tiene la siguiente información:
 | **ID**       | `AutoField`  | Identificador único del usuario. |
 | **Nombre**   | `CharField`  | Nombre del usuario. |
 | **Apellido** | `CharField`  | Apellido del usuario. |
+| **Numero de documento**    | `IntegerField`  | Número de identifcacion del usuario. |
 | **Contraseña** | `CharField`  | Clave de acceso cifrada del usuario. |
 | **Username**   | `CharField`  | Nombre de usuario único y mas personalizado. |
 | **Email**    | `EmailField`  | Correo electrónico del usuario. |
 
 
 ## Ejemplo de API para gestionar usuarios
-## POST /usuarios/registro/
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/registro/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/registro/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
 
 - Crea un nuevo usuario.
 
@@ -45,10 +51,8 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 {
     "nombre": "Juan",
     "apellido": "Rojas",
-    "email": "juan.rojas@gmail.com",
-    "username": "juan123",
-    "password": "Segura123!",
-    "rol_id": 1
+    "numero_documento": 100335789,
+    "email": "juan.rojas@gmail.com"
 }
 ```
 
@@ -58,39 +62,50 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 - Debe tener un dominio válido (ejemplo: gmail.com).
 - Puede incluir puntos (.) en el dominio y el nombre de usuario.
 - No puede tener espacios 
-- Requerido, máximo 255 caracteres, único.
-- `Pasword`:
-- Debe contenet diferentes tipos de caracteres 
-- Mayúsculas (A-Z)
-- Minúsculas (a-z)
-- Números (0-9)
-- Caracteres especiales (@, #, $, %, &, *, !, etc.).
+- Requerido y único para cada usuario.
+- `Nombres y apellido`:
+-  ✅Solo debe contener letras 
+-  ❌NO Números (1,2,3,4,5, etc.)
+-  ❌NO Caracteres especiales (@, #, $, %, &, *, !, etc.).
+- `Numero de documento`:
+-  ⚠️Debe ser unico en cada usuario. 
 
 **Ejemplo de respuesta exitosa (201 Created):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
 ```json
 {
-
-    "id": 1,
+    "id": 5,
     "nombre": "Juan",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
-    "rol": 1
-
+    "numero_documento": 100335789,
+    "username":"juanrojas" (Generado por el sistema automaticamente)
+    "rol": 1, (Asignada por el sistema automaticamente)
+    "password_generada": "j100335789" (Generada por el sistema automaticamente)
 }
 ```
 
 **Posibles errores:**
 - `400 Bad Request`: Si faltan campos obligatorios.
-- `409 Conflict`: Si el nombre ya existe.
+- `409 Conflict`: Si el **email** o **numero de documento** ya existe.
 
 ---
 
-### **GET /usuarios/usuarios**
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/usuarios/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/usuarios/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
 - Obtiene todos los usuarios registrados.
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 [
 {
@@ -99,7 +114,7 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
     "nombre": "Juan",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
+    "username": "juanrojas",
     "rol": {
             "id": 1,
             "rol": "Aprendiz"
@@ -111,7 +126,7 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
     "nombre": "Alex",
     "apellido": "perez",
     "email": "alex.@gmail.com",
-    "username": "alex01",
+    "username": "alexperes",
     "rol": {
             "id": 1,
             "rol": "Aprendiz"
@@ -122,11 +137,21 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 
 
 ---
-### **GET /usuarios/usuarios/{id}**
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/usuarios/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/usuarios/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
 - Obtiene un usuario específico por su ID.
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 {
 
@@ -134,7 +159,7 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
     "nombre": "Juan",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
+    "username": "juanrojas",
     "rol": {
             "id": 1,
             "rol": "Aprendiz"
@@ -146,8 +171,16 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 - `404 Not Found`: Si el ID no existe.
 
 ---
-### **PUT /usuarios/usuarios/{id}**
-headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/usuarios/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/usuarios/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
 - Actualiza un usuario existente.
 
 **Ejemplo de solicitud:**
@@ -156,19 +189,20 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
     "nombre": "andres",
     "apellido": "perez",
     "email": "sic@gmail.com",
-    "username": "andres9",
-    "rol":4
+    "username": "andresperez",
 }
 ```
 
 **Ejemplo de respuesta (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 {
    "id": 1,
     "nombre": "andres",
     "apellido": "perez",
     "email": "andres@gmail.com",
-    "username": "andres9",
+    "username": "andresperez",
     "rol":{
             "id": 4,
             "rol": "Administrador"
@@ -183,10 +217,21 @@ headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" 
 - El `nombre`,`email`,`username` debe seguir siendo único.
 
 ---
-### **DELETE /usuarios/usuarios/{id}**
-Elimina un usuario (si no está en uso).
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span>  </p>
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">  <div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">http://127.0.0.1:8000/usuarios/usuarios/{id}/</span></div></div></code></pre><div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/usuarios/usuarios/{id}/"><div></div></button></div></figure></div>  </section>
+
+**Encabezados de la solicitud**
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`            | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`    | Token de autenticación necesario para acceder al recurso. |
+
+- Elimina un usuario (si no está en uso).
 
 **Ejemplo de respuesta exitosa (200 OK):**
+<span class="sl-badge success small astro-avdet4wd">Success</span> 
+
 ```json
 {
   "message": "Usuario eliminado correctamente"
@@ -203,35 +248,36 @@ Elimina un usuario (si no está en uso).
 ### **Crear y luego actualizar un usuario:**
 ```bash
 # Crear (POST)
-POST /usuarios/registro/
+Metodo: POST http://127.0.0.1:8000/usuarios/registro/
 {
     "nombre": "Juan",
     "apellido": "Rojas",
+    "numero_documento": 100335789,
     "email": "juan.rojas@gmail.com",
-    "username": "juan123",
-    "password": "Segura123!",
-    "rol_id": 1
+    "numero_documento": 100335789,
+
 }
 
 # Actualizar (PUT)
-PUT /usuarios/usuarios/1/
+Metodo: PUT http://127.0.0.1:8000/usuarios/usuarios/1/
 {
-  "username": "juan054"
+  "Nombre": "Juan Jose"
 }
 ```
 
 ### **Listar usuarios:**
 ```bash
 # Obtener (GET)
-GET /usuarios/usuarios/
+Metodo: GET http://127.0.0.1:8000/usuarios/usuarios/
 {
     "id": 1 ,
-    "nombre": "Juan",
+    "nombre": "Juan Jose",
     "apellido": "Rojas",
     "email": "juan.rojas@gmail.com",
-    "username": "juan054",
-    "password": "Segura123!",
-    "rol_id": 1
+    "numero_documento": 100335789,
+    "rol":  "id": 4,
+            "rol": "Administrador"
+        
 }
 
 ```
@@ -241,12 +287,22 @@ GET /usuarios/usuarios/
 
 ## **Manejo de Errores**
 
-### **Ejemplo de error (nombre duplicado):**
+### **Ejemplo de error (correo duplicado):**
 ```json
 {
   "error": "ValidationError",
   "detail": {
-    "nombre": ["Ya existe un usuario con este nombre."]
+    "nombre": ["Ya existe un usuario con este correo."]
+  },
+  "status": 400
+}
+```
+### **Ejemplo de error (Numero de documento duplicado):**
+```json
+{
+  "error": "ValidationError",
+  "detail": {
+    "nombre": ["Ya existe un usuario con este numero de documento."]
   },
   "status": 400
 }
@@ -268,11 +324,7 @@ Los **Usuarios** se vinculan con:
 - **Roles** (ejemplo: "Juan rojas" → "Juan rojas-> rol_id: 4 (Adminstrador)").
 - **Asignación de labores** (para asignar actividades a otros usuarios recurrentes).
 - **Registros sobre economia** (para administrar ventas y producciones).
-
-
 ---
 
 
 
-### **Buenas Prácticas**
-✔️ **Contraseñas de seguridad efectiva**: (" Usar contraseñas de más de 8 caracteres con variedad de los mismos").  

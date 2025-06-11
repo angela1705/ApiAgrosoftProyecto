@@ -1,47 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { addToast } from "@heroui/toast";
+{/*import React, { useEffect } from "react";
+import { addToast } from "@heroui/react";
+import { useAuth } from "@/context/AuthContext";
 
-interface Notification {
-  message: string;
-}
-
-interface ActividadNotificationsProps {
-  userId: number;
-}
-
-const ActividadNotifications: React.FC<ActividadNotificationsProps> = ({ userId }) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+const ActividadNotifications: React.FC = () => {
+  const { user } = useAuth();
 
   useEffect(() => {
-    console.log("userId received:", userId);
-    if (userId === 0) {
-      console.error("El userId es 0. Asegúrate de pasar un ID válido.");
-      return;
-    }
-
-    const wsUrl = `ws://127.0.0.1:8000/ws/actividad/${userId}/`;
-    const socket = new WebSocket(wsUrl);
+    if (!user?.id) return;
+    const socketUrl = `ws://${window.location.hostname}:8000/ws/actividades/notificaciones/${user.id}/`;
+    const socket = new WebSocket(socketUrl);
 
     socket.onopen = () => {
-      console.log("Conectado al WebSocket:", wsUrl);
+      console.log("Conexión WebSocket establecida");
     };
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("Mensaje recibido:", data.message);
-
-      setNotifications((prev) => {
-        const newNotifications = [...prev, { message: data.message }];
-        console.log("Actualizando notificaciones:", newNotifications);
-        return newNotifications;
-      });
-
-      // Asegurarse de que la notificación aparece
-      addToast({
-        title: "Nueva Actividad",
-        description: data.message,
-        timeout: 5000, 
-      });
+      if (data.type === 'actividad_asignada') {
+        addToast({
+          title: 'Nueva actividad asignada',
+          description: `${data.actividad.tipo_actividad}\nPrioridad: ${data.actividad.prioridad}`,
+          timeout: 5000
+        });
+      }
     };
 
     socket.onerror = (error) => {
@@ -49,28 +30,21 @@ const ActividadNotifications: React.FC<ActividadNotificationsProps> = ({ userId 
     };
 
     socket.onclose = (event) => {
-      console.log("WebSocket cerrado", event);
+      if (event.wasClean) {
+        console.log(`Conexión cerrada limpiamente, código=${event.code} motivo=${event.reason}`);
+      } else {
+        console.error('Conexión cerrada abruptamente');
+      }
     };
 
     return () => {
-      socket.close();
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.close();
+      }
     };
-  }, [userId]);
+  }, [user?.id]);
 
-  return (
-    <div>
-      <h2>Notificaciones de Actividad</h2>
-      {notifications.length === 0 ? (
-        <p>No hay notificaciones</p>
-      ) : (
-        <ul>
-          {notifications.map((notif, index) => (
-            <li key={index}>{notif.message}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+  return null;
 };
 
-export default ActividadNotifications;
+export default ActividadNotifications;*/}

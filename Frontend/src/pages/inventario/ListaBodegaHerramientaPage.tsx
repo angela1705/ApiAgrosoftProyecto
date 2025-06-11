@@ -6,9 +6,24 @@ import { useBodegaHerramienta, useActualizarBodegaHerramienta, useEliminarBodega
 import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useHerramientas } from "@/hooks/inventario/useHerramientas";
 import ReuModal from "@/components/globales/ReuModal";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
+import { ReuInput } from "@/components/globales/ReuInput";
+import Tabla from "@/components/globales/Tabla";
+import { EditIcon, Trash2 } from 'lucide-react';
+import { useAuth } from "@/context/AuthContext";
+
+const formatCOPNumber = (value: number | string): string => {
+    const num = typeof value === 'string' ? parseInt(value.replace(/\./g, ''), 10) : value;
+    if (isNaN(num)) return '';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
+const parseCOPNumber = (value: string): number => {
+    const cleanValue = value.replace(/[\.$]/g, '');
+    return parseInt(cleanValue, 10) || 0;
+};
 
 const ListaBodegaHerramientaPage: React.FC = () => {
+  const {} = useAuth();
   const [selectedBodegaHerramienta, setSelectedBodegaHerramienta] = useState<BodegaHerramienta | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -20,15 +35,14 @@ const ListaBodegaHerramientaPage: React.FC = () => {
   const deleteMutation = useEliminarBodegaHerramienta();
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    if (selectedBodegaHerramienta) {
-      setSelectedBodegaHerramienta((prev) => ({
-        ...prev!,
-        [name]: Number(value),
-      }));
-    }
-  };
+  const columns = [
+    { name: "Bodega", uid: "bodega" },
+    { name: "Herramienta", uid: "herramienta" },
+    { name: "Cantidad", uid: "cantidad" },
+    { name: "Costo Total", uid: "costo_total" },
+    { name: "Cantidad Prestada", uid: "cantidad_prestada" },
+    { name: "Acciones", uid: "acciones" },
+  ];
 
   const handleEdit = (bodegaHerramienta: BodegaHerramienta) => {
     setSelectedBodegaHerramienta({ ...bodegaHerramienta });
@@ -45,100 +59,93 @@ const ListaBodegaHerramientaPage: React.FC = () => {
       deleteMutation.mutate(selectedBodegaHerramienta.id, {
         onSuccess: () => {
           setIsDeleteModalOpen(false);
+          setSelectedBodegaHerramienta(null);
           refetch();
         },
       });
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedBodegaHerramienta && selectedBodegaHerramienta.id !== undefined) {
-      updateMutation.mutate(selectedBodegaHerramienta, {
-        onSuccess: () => {
-          setIsEditModalOpen(false);
-          refetch();
-        },
-      });
-    }
-  };
+  const transformedData = (bodegaHerramientas ?? []).map((item: BodegaHerramienta) => {
+    const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
+    const herramientaNombre = herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido";
+    
+    const costoTotal = item.costo_total != null ? Number(item.costo_total) : 0;
+    const costoTotalFormatted = isNaN(costoTotal) ? "0" : formatCOPNumber(costoTotal);
 
-  const handleNavigateToRegister = () => {
-    navigate("/inventario/bodegaherramienta/");
-  };
+    return {
+      id: item.id?.toString() || "",
+      bodega: bodegaNombre,
+      herramienta: herramientaNombre,
+      cantidad: item.cantidad,
+      costo_total: `$${costoTotalFormatted}`,
+      cantidad_prestada: item.cantidad_prestada,
+      nombre: `${bodegaNombre} ${herramientaNombre} ${item.cantidad}`,
+      acciones: (
+        <>
+          <button
+            className="text-green-500 hover:underline mr-2"
+            onClick={() => handleEdit(item)}
+          >
+            <EditIcon size={22} color="black" />
+          </button>
+          <button
+            className="text-red-500 hover:underline"
+            onClick={() => handleDelete(item)}
+          >
+            <Trash2 size={22} color="red" />
+          </button>
+        </>
+      ),
+    };
+  });
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Lista de Bodega Herramientas</h2>
-          {isLoading ? (
-            <p className="text-gray-600">Cargando...</p>
-          ) : !bodegaHerramientas || bodegaHerramientas.length === 0 ? (
-            <p className="text-gray-600">No hay datos disponibles.</p>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableColumn>Bodega</TableColumn>
-                  <TableColumn>Herramienta</TableColumn>
-                  <TableColumn>Cantidad</TableColumn>
-                  <TableColumn>Acciones</TableColumn>
-                </TableHeader>
-                <TableBody>
-                  {bodegaHerramientas.map((item: BodegaHerramienta) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        {bodegas?.find((b) => b.id === item.bodega)?.nombre || "Desconocido"}
-                      </TableCell>
-                      <TableCell>
-                        {herramientas?.find((h) => h.id === item.herramienta)?.nombre || "Desconocido"}
-                      </TableCell>
-                      <TableCell>{item.cantidad}</TableCell>
-                      <TableCell>
-                        <button
-                          className="text-green-500 hover:underline mr-2"
-                          onClick={() => handleEdit(item)}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          className="text-red-500 hover:underline"
-                          onClick={() => handleDelete(item)}
-                        >
-                          Eliminar
-                        </button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className="flex justify-end mt-4">
-                <button
-                  className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                  onClick={handleNavigateToRegister}
-                >
-                  Registrar Bodega Herramienta
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+      <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Lista de Bodega Herramientas</h2>
+      <br />
+      <br />
+      <div className="mb-2 flex justify-start">
+        <button
+          className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg 
+                     hover:bg-green-700 transition-all duration-300 ease-in-out 
+                     shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => navigate("/inventario/bodegaherramienta/")}
+        >
+          + Registrar
+        </button>
       </div>
+
+      {isLoading ? (
+        <p className="text-gray-600">Cargando...</p>
+      ) : (
+        <Tabla columns={columns} data={transformedData} />
+      )}
 
       <ReuModal
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         title="Editar Bodega Herramienta"
+        onConfirm={() => {
+          if (selectedBodegaHerramienta && selectedBodegaHerramienta.id !== undefined) {
+            updateMutation.mutate(selectedBodegaHerramienta, {
+              onSuccess: () => {
+                setIsEditModalOpen(false);
+                refetch();
+              },
+            });
+          }
+        }}
       >
         {selectedBodegaHerramienta && (
-          <div className="w-full max-w-xs mx-auto p-4 bg-white rounded-lg shadow-md">
-            <form onSubmit={handleSubmit}>
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Bodega</label>
               <select
                 name="bodega"
                 value={selectedBodegaHerramienta.bodega}
-                onChange={handleChange}
-                className="w-full mb-4 p-2 border rounded"
+                onChange={(e) => setSelectedBodegaHerramienta({ ...selectedBodegaHerramienta, bodega: Number(e.target.value) })}
+                className="w-full p-2 border rounded"
               >
                 <option value="0">Seleccione una Bodega</option>
                 {bodegas?.map((bodega: { id: number; nombre: string }) => (
@@ -147,11 +154,14 @@ const ListaBodegaHerramientaPage: React.FC = () => {
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Herramienta</label>
               <select
                 name="herramienta"
                 value={selectedBodegaHerramienta.herramienta}
-                onChange={handleChange}
-                className="w-full mb-4 p-2 border rounded"
+                onChange={(e) => setSelectedBodegaHerramienta({ ...selectedBodegaHerramienta, herramienta: Number(e.target.value) })}
+                className="w-full p-2 border rounded"
               >
                 <option value="0">Seleccione una Herramienta</option>
                 {herramientas?.map((herramienta: { id: number; nombre: string }) => (
@@ -160,23 +170,39 @@ const ListaBodegaHerramientaPage: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <input
-                type="number"
-                name="cantidad"
-                value={selectedBodegaHerramienta.cantidad}
-                onChange={handleChange}
-                className="w-full mb-4 p-2 border rounded"
-                placeholder="Cantidad"
-              />
-              <Button
-                className="bg-green-600 text-white w-full"
-                type="submit"
-                disabled={updateMutation.isPending}
-              >
-                {updateMutation.isPending ? "Actualizando..." : "Actualizar"}
-              </Button>
-            </form>
-          </div>
+            </div>
+            <ReuInput
+              label="Cantidad"
+              placeholder="Ingrese la cantidad"
+              type="number"
+              value={selectedBodegaHerramienta.cantidad}
+              onChange={(e) => setSelectedBodegaHerramienta({ ...selectedBodegaHerramienta, cantidad: Number(e.target.value) })}
+            />
+            <ReuInput
+              label="Cantidad Prestada"
+              placeholder="Ingrese la cantidad prestada"
+              type="number"
+              value={selectedBodegaHerramienta.cantidad_prestada}
+              onChange={(e) => setSelectedBodegaHerramienta({ ...selectedBodegaHerramienta, cantidad_prestada: Number(e.target.value) })}
+            />
+            <ReuInput
+              label="Costo Total"
+              placeholder="Ej. $1.000"
+              type="text"
+              value={
+                selectedBodegaHerramienta.costo_total != null
+                  ? `$${formatCOPNumber(selectedBodegaHerramienta.costo_total)}`
+                  : "$0"
+              }
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/^\$/, '');
+                setSelectedBodegaHerramienta({
+                  ...selectedBodegaHerramienta,
+                  costo_total: parseCOPNumber(rawValue),
+                });
+              }}
+            />
+          </>
         )}
       </ReuModal>
 

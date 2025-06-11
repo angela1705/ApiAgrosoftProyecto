@@ -6,8 +6,24 @@ import { useRegistrarBodegaInsumo } from "@/hooks/inventario/useBodegaInsumo";
 import { useBodegas } from "@/hooks/inventario/useBodega";
 import { useInsumos } from "@/hooks/inventario/useInsumo";
 import { Insumo } from "@/types/inventario/Insumo";
+import Formulario from "@/components/globales/Formulario";
+import { ReuInput } from "@/components/globales/ReuInput";
+import { ModalBodega } from "@/components/cultivo/ModalBodega";
+import { ModalInsumo } from "@/components/inventario/ModalInsumo";
+import { useAuth } from "@/context/AuthContext";
+import { Plus } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BodegaInsumoPage: React.FC = () => {
+  useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { data: bodegas } = useBodegas();
+  const { data: insumos } = useInsumos();
+  const mutation = useRegistrarBodegaInsumo();
+  const [isBodegaModalOpen, setIsBodegaModalOpen] = useState(false);
+  const [isInsumoModalOpen, setIsInsumoModalOpen] = useState(false);
+
   const [bodegaInsumo, setBodegaInsumo] = useState<BodegaInsumo>({
     id: 0,
     bodega: 0,
@@ -15,16 +31,20 @@ const BodegaInsumoPage: React.FC = () => {
     cantidad: 0,
   });
 
-  const { data: bodegas } = useBodegas();
-  const { data: insumos } = useInsumos();
-  const mutation = useRegistrarBodegaInsumo();
-  const navigate = useNavigate();
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setBodegaInsumo((prev) => ({
       ...prev,
       [name]: Number(value),
+    }));
+  };
+
+  const handleCantidadChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    setBodegaInsumo((prev) => ({
+      ...prev,
+      cantidad: Number(e.target.value),
     }));
   };
 
@@ -38,63 +58,104 @@ const BodegaInsumoPage: React.FC = () => {
     });
   };
 
+  const handleBodegaSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["bodegas"] });
+    setIsBodegaModalOpen(false);
+  };
+
+  const handleInsumoSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["insumos"] });
+    setIsInsumoModalOpen(false);
+  };
+
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center min-h-screen p-6">
-        <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Registro de Bodega Insumo</h2>
-          <form onSubmit={handleSubmit}>
-            <select
-              name="bodega"
-              value={bodegaInsumo.bodega}
-              onChange={handleChange}
-              className="w-full mb-4 p-2 border rounded"
-            >
-              <option value="0">Seleccione una Bodega</option>
-              {bodegas?.map((bodega: { id: number; nombre: string }) => (
-                <option key={bodega.id} value={bodega.id}>
-                  {bodega.nombre}
-                </option>
-              ))}
-            </select>
-            <select
-              name="insumo"
-              value={bodegaInsumo.insumo}
-              onChange={handleChange}
-              className="w-full mb-4 p-2 border rounded"
-            >
-              <option value="0">Seleccione un Insumo</option>
-              {insumos?.map((insumo: Insumo) => (
-                <option key={insumo.id} value={insumo.id}>
-                  {insumo.nombre}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              name="cantidad"
-              value={bodegaInsumo.cantidad}
-              onChange={handleChange}
-              className="w-full mb-4 p-2 border rounded"
-              placeholder="Cantidad"
-            />
+      <Formulario
+        title="Registro de Bodega Insumo"
+        onSubmit={handleSubmit}
+        buttonText="Guardar"
+        isSubmitting={mutation.isPending}
+      >
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Bodega</label>
             <button
-              type="submit"
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg mt-4 hover:bg-green-700"
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? "Registrando..." : "Guardar"}
-            </button>
-            <button
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setIsBodegaModalOpen(true)}
               type="button"
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700"
-              onClick={() => navigate("/inventario/listarbodegainsumos/")}
             >
-              Listar Bodega Insumos
+              <Plus className="h-4 w-4" />
             </button>
-          </form>
+          </div>
+          <select
+            name="bodega"
+            value={bodegaInsumo.bodega}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="0">Seleccione una Bodega</option>
+            {bodegas?.map((bodega: { id: number; nombre: string }) => (
+              <option key={bodega.id} value={bodega.id}>
+                {bodega.nombre}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block text-sm font-medium text-gray-700">Insumo</label>
+            <button
+              className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+              onClick={() => setIsInsumoModalOpen(true)}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+          <select
+            name="insumo"
+            value={bodegaInsumo.insumo}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="0">Seleccione un Insumo</option>
+            {insumos?.map((insumo: Insumo) => (
+              <option key={insumo.id} value={insumo.id}>
+                {insumo.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+        <ReuInput
+          label="Cantidad"
+          placeholder="Ingrese la cantidad"
+          type="number"
+          variant="bordered"
+          radius="md"
+          value={bodegaInsumo.cantidad}
+          onChange={handleCantidadChange}
+        />
+        <div className="col-span-1 sm:col-span-2 flex justify-center">
+          <button
+            type="button"
+            className="px-4 py-2 bg-blue-400 text-white rounded-md hover:bg-blue-500"
+            onClick={() => navigate("/inventario/listarbodegainsumos/")}
+          >
+            Listar Bodega Insumos
+          </button>
+        </div>
+      </Formulario>
+      <ModalBodega
+        isOpen={isBodegaModalOpen}
+        onOpenChange={setIsBodegaModalOpen}
+        onSuccess={handleBodegaSuccess}
+      />
+      <ModalInsumo
+        isOpen={isInsumoModalOpen}
+        onOpenChange={setIsInsumoModalOpen}
+        onSuccess={handleInsumoSuccess}
+      />
+      
     </DefaultLayout>
   );
 };
