@@ -118,7 +118,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Actualizar una asignación existente
 1. En el listado de bodega insumos, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/bodegainsumo/BodegaInsumoAccionEditar.png" alt="Botón de editar bodega insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar bodega insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
@@ -148,7 +148,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 6. Eliminar una asignación de bodega insumo
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/bodegainsumo/BodegaInsumoAccionEliminar.png" alt="Botón de eliminar bodega insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar bodega insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 
