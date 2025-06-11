@@ -12,7 +12,6 @@ import { SensorCharts } from "@/components/Iot/mqtt/SensorCharts";
 import { SensorTable } from "@/components/Iot/mqtt/SensorTable";
 import { DataType, ViewMode } from "@/types/iot/iotmqtt";
 
-// Definir tipos de datos para temperatura y humedad
 const dataTypes: DataType[] = [
   {
     label: "Temperatura (°C)",
@@ -30,7 +29,6 @@ const dataTypes: DataType[] = [
   },
 ];
 
-// Definir modos de vista para tiempo real y todos los datos
 const viewModes: ViewMode[] = [
   { id: "realtime", label: "Tiempo Real" },
   { id: "allData", label: "Todos los Datos" },
@@ -44,10 +42,12 @@ const SensoresPage: React.FC = () => {
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
   const navigate = useNavigate();
 
+  const filteredData = realTimeData.filter((d) => d.device_code === "ESP32_001");
+
   if (isLoading) {
     return (
       <DefaultLayout>
-        <div className="w-full flex flex-col items-center min-h-screen p-6 bg-gray-50">
+        <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gray-50">
           <p className="text-gray-700">Cargando datos...</p>
         </div>
       </DefaultLayout>
@@ -57,7 +57,7 @@ const SensoresPage: React.FC = () => {
   if (error) {
     return (
       <DefaultLayout>
-        <div className="w-full flex flex-col items-center min-h-screen p-6 bg-gray-50">
+        <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gray-50">
           <p className="text-red-500 text-center">{error}</p>
           <button
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -72,21 +72,20 @@ const SensoresPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center bg-gray-50 px-3 py-2">
+      <div className="w-full flex flex-col items-center bg-gray-50 px-3 py-2 min-h-screen">
         <div className="w-full max-w-6xl flex flex-col items-center gap-2">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Datos del Sensor DHT22</h1>
 
-          {/* Fila 1: Tarjetas de datos */}
-          <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
             {dataTypes.map((type, index) => {
-              const latest = realTimeData
+              const latest = filteredData
                 .filter((d) => d[type.key] !== null)
                 .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())[0];
 
               return (
                 <motion.div
                   key={type.key}
-                  className="bg-white rounded-xl shadow-md p-4 text-center w-56 h-32 flex flex-col justify-center items-center"
+                  className="bg-white rounded-xl shadow-md p-4 text-center w-full sm:w-56 h-32 flex flex-col justify-center items-center"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -107,7 +106,7 @@ const SensoresPage: React.FC = () => {
               );
             })}
             <motion.button
-              className="bg-green-600 rounded-xl shadow-md p-4 text-center w-56 h-32 flex flex-col justify-center items-center text-white text-sm font-semibold"
+              className="bg-green-600 rounded-xl shadow-md p-4 text-center w-full sm:w-56 h-32 flex flex-col justify-center items-center text-white text-sm font-semibold"
               onClick={() => navigate("/iot/datosmeteorologicos")}
               whileHover={{ scale: 1.05, backgroundColor: "#059669" }}
               whileTap={{ scale: 0.95 }}
@@ -116,14 +115,12 @@ const SensoresPage: React.FC = () => {
             </motion.button>
           </div>
 
-          {/* Fila 2: Selectores */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
             <DataTypeSelector selectedDataType={selectedDataType} setSelectedDataType={setSelectedDataType} />
             <ViewModeSelector selectedViewMode={selectedViewMode} setSelectedViewMode={setSelectedViewMode} />
           </div>
 
-          {/* Fila 3: Botones de control */}
-          <div className="mb-6 flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 justify-center mb-4">
             <motion.button
               className={`px-3 py-1 text-white text-xs font-semibold rounded-lg shadow-sm hover:shadow-md ${
                 sensorActive ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
@@ -144,15 +141,18 @@ const SensoresPage: React.FC = () => {
             </motion.button>
           </div>
 
-          {/* Renderizar gráficos o estadísticas/tabla según modo */}
-          {selectedViewMode.id === "realtime" ? (
-            <SensorCharts realTimeData={realTimeData} selectedDataType={selectedDataType} />
-          ) : (
-            <>
-              <SensorStats realTimeData={realTimeData} />
-              <SensorTable realTimeData={realTimeData} />
-            </>
-          )}
+          <div className="w-full h-80">
+            {selectedViewMode.id === "realtime" ? (
+              <SensorCharts realTimeData={filteredData} selectedDataType={selectedDataType} />
+            ) : (
+              <div className="flex flex-col gap-2">
+                <SensorStats realTimeData={filteredData} />
+                <div className="max-h-48 overflow-y-auto">
+                  <SensorTable realTimeData={filteredData} />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </DefaultLayout>

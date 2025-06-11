@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { SensorStatsProps } from "@/types/iot/iotmqtt";
 
 export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData }) => {
   // Calcular estadísticas usando useMemo para optimizar
   const stats = useMemo(() => {
-    // Filtrar y mapear valores de temperatura
+    // Filtrar valores de temperatura
     const tempValues = realTimeData
       .filter((d) => d.temperatura != null)
       .map((d) => (typeof d.temperatura === "number" ? d.temperatura : parseFloat(d.temperatura) || 0));
