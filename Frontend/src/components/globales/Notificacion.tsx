@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CircularProgress,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from "@mui/icons-material/Close";
@@ -33,33 +34,61 @@ const Notificacion: React.FC = () => {
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
   const open = Boolean(anchorEl);
 
+  // Cargar notificaciones desde localStorage
   useEffect(() => {
     if (!user?.id) return;
 
     const savedNotifications = localStorage.getItem(`notifications_${user.id}`);
     if (savedNotifications) {
       try {
-        const parsedNotifications = JSON.parse(savedNotifications) as PersistentNotification[];
-        setNotifications(parsedNotifications);
-        setUnreadCount(parsedNotifications.filter((n) => !n.read).length);
+        const parsed = JSON.parse(savedNotifications);
+        if (Array.isArray(parsed)) {
+          const validNotifications = parsed.filter(
+            (n): n is PersistentNotification =>
+              n &&
+              typeof n === "object" &&
+              "id" in n &&
+              typeof n.id === "string" &&
+              "message" in n &&
+              typeof n.message === "string" &&
+              "read" in n &&
+              typeof n.read === "boolean" &&
+              "timestamp" in n &&
+              typeof n.timestamp === "string" &&
+              "source" in n &&
+              typeof n.source === "string"
+          );
+          setNotifications(validNotifications);
+          setUnreadCount(validNotifications.filter((n) => !n.read).length);
+        } else {
+          console.error("Formato de notificaciones inválido en localStorage");
+          localStorage.removeItem(`notifications_${user.id}`);
+        }
       } catch (error) {
-        console.error("Error loading notifications from localStorage:", error);
+        console.error("Error al cargar notificaciones desde localStorage:", error);
+        localStorage.removeItem(`notifications_${user.id}`);
       }
     }
   }, [user?.id]);
 
+  // Guardar notificaciones en localStorage
   useEffect(() => {
     if (user?.id && notifications.length > 0) {
       try {
         localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
       } catch (error) {
-        console.error("Error saving notifications to localStorage:", error);
+        console.error("Error al guardar notificaciones en localStorage:", error);
       }
     }
   }, [notifications, user?.id]);
 
   const addNotification = useCallback(
     (notification: Notification) => {
+      if (!notification?.id || !notification?.message || !notification?.timestamp || !notification?.source) {
+        console.warn("Notificación inválida recibida:", notification);
+        return;
+      }
+
       setNotifications((prev) => {
         const exists = prev.some((n) => n.id === notification.id);
         if (!exists) {
@@ -93,7 +122,11 @@ const Notificacion: React.FC = () => {
         }
 
         if (user?.id) {
-          localStorage.setItem(`notifications_${user.id}`, JSON.stringify(updatedNotifications));
+          try {
+            localStorage.setItem(`notifications_${user.id}`, JSON.stringify(updatedNotifications));
+          } catch (error) {
+            console.error("Error al guardar notificaciones en localStorage:", error);
+          }
         }
 
         return updatedNotifications;
@@ -133,11 +166,13 @@ const Notificacion: React.FC = () => {
     setConfirmClearOpen(false);
   };
 
-  // Solo conectar WebSockets si userId está definido
-  if (user?.id) {
-    useActivityNotifications(user.id, addNotification);
-    useBodegaNotifications(user.id, addNotification);
-    usePlagaNotifications(user.id, addNotification);
+  // Llamar a los hooks de WebSocket en el nivel superior
+  useActivityNotifications(user?.id, addNotification);
+  useBodegaNotifications(user?.id, addNotification);
+  usePlagaNotifications(user?.id, addNotification);
+
+  if (!user?.id) {
+    return null; // O <CircularProgress size={24} />
   }
 
   return (
@@ -169,17 +204,12 @@ const Notificacion: React.FC = () => {
       >
         <Box sx={{ p: 1, borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Notificaciones
-            </Typography>
+            <Typography variant="subtitle1">Notificaciones</Typography>
             {notifications.length > 0 && (
               <Button
                 size="small"
                 color="error"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleClearAllClick();
-                }}
+                onClick={handleClearAllClick}
               >
                 Limpiar todas
               </Button>
@@ -188,7 +218,7 @@ const Notificacion: React.FC = () => {
         </Box>
 
         {notifications.length === 0 ? (
-          <MenuItem dense>
+          <MenuItem>
             <Typography variant="body2">No hay notificaciones</Typography>
           </MenuItem>
         ) : (
@@ -230,7 +260,7 @@ const Notificacion: React.FC = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"¿Limpiar todas las notificaciones?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">¿Limpiar todas las notificaciones?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Esta acción eliminará todas las notificaciones. ¿Estás seguro?
