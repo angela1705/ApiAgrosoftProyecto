@@ -33,7 +33,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 3. Registrar una nueva bodega
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar"**:
 
-   <img src="/public/inventario/bodega/RegistrarBodegaBtn.png" alt="Botón registrar bodega" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/inventario/bodega/RegistrarBodegaBtn.png" alt="Botón registrar bodega" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de bodegas:
 

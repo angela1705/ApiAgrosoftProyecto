@@ -33,7 +33,7 @@ Esta documentación detalla el proceso para registrar, listar, actualizar y gest
 #### 3.1 Acceder al formulario de registro
 1. Desde el listado de ventas, haz clic en el botón **"+ Registrar Venta"**:
 
-   <img src="/public/finanzas/ventas/BotonRegistrarVenta.png" alt="Botón registrar venta" style="display: block; margin: auto; width: 25%; border-radius: 12px;" />
+   <img src="/public/finanzas/ventas/BotonRegistrarVenta.png" alt="Botón registrar venta" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá la interfaz completa de registro de ventas:
 

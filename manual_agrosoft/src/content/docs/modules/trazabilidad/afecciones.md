@@ -33,7 +33,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
 ### 3. Registrar una nueva afección
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar Afección"**:
 
-   <img src="/public/trazabilidad/afecciones/RegistrarAfeccionBtn.png" alt="Botón registrar afección" style="display: block; margin: auto; width: 25%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/RegistrarAfeccionBtn.png" alt="Botón registrar afección" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de afecciones:
 

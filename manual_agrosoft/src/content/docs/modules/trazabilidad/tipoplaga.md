@@ -31,7 +31,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 3. Registrar un nuevo tipo de plaga
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar"**:
 
-   <img src="/public/trazabilidad/tipoplaga/RegistrarTipoPlagaBtn.png" alt="Botón registrar tipo de plaga" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/tipoplaga/RegistrarTipoPlagaBtn.png" alt="Botón registrar tipo de plaga" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de tipos de plaga:
 
