@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Box, Typography } from '@mui/material';
 import UserMenu from '../usuarios/UserMenu';
-
+import Notificacion from "./Notificacion";
+import ErrorBoundary from "./ErrorBoundary";
 interface HeaderProps {
   toggleSidebar?: () => void;
 }
@@ -39,6 +40,9 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         alignItems: 'center', 
         gap: isMobile ? 0 : 0.25 
       }}>
+       <ErrorBoundary>
+          <Notificacion />
+        </ErrorBoundary>
         <Typography 
           className={`text-white ${isMobile ? 'text-xl mx-0.25' : 'text-2xl mx-0.5'} font-light`}
         >
