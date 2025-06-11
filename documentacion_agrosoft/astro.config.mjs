@@ -31,7 +31,6 @@ export default defineConfig({
           items: [
             { label: 'Introducción', slug: 'modules/usuarios/index' },
             { label: 'usuarios', slug: 'modules/usuarios/usuarios' },
-            { label: 'roles', slug: 'modules/usuarios/roles' },
           ],
         },
         {

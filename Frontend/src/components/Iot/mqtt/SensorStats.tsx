@@ -3,16 +3,16 @@ import { motion } from "framer-motion";
 import { SensorStatsProps } from "@/types/iot/iotmqtt";
 
 export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData }) => {
-  // Calcular estadísticas usando useMemo
+  // Calcular estadísticas usando useMemo para optimizar
   const stats = useMemo(() => {
     // Filtrar valores de temperatura
     const tempValues = realTimeData
       .filter((d) => d.temperatura != null)
-      .map((d) => d.temperatura!);
-    // Filtrar valores de humedad
+      .map((d) => (typeof d.temperatura === "number" ? d.temperatura : parseFloat(d.temperatura) || 0));
+    // Filtrar y mapear valores de humedad
     const humValues = realTimeData
       .filter((d) => d.humedad_ambiente != null)
-      .map((d) => d.humedad_ambiente!);
+      .map((d) => (typeof d.humedad_ambiente === "number" ? d.humedad_ambiente : parseFloat(d.humedad_ambiente) || 0));
 
     return {
       temp: {
@@ -27,6 +27,8 @@ export const SensorStats: React.FC<SensorStatsProps> = ({ realTimeData }) => {
       },
     };
   }, [realTimeData]);
+
+  console.log("stats:", stats);
 
   return (
     <motion.div
