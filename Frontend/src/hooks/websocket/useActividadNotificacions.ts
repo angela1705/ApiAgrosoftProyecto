@@ -17,29 +17,26 @@ export const useActivityNotifications = (
       return;
     }
 
+    // Evitar crear un nuevo WebSocket si ya hay uno activo
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       console.log("WebSocket already open, skipping setup");
       return;
     }
 
+    // Limpiar cualquier intento de reconexión previo
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = null;
     }
 
+    // Cerrar WebSocket existente si está en un estado no cerrado
     if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
       wsRef.current.close();
     }
 
     const socketUrl = `ws://${window.location.hostname}:8000/ws/actividades/notificaciones/${userId}/`;
-    let ws: WebSocket;
-    try {
-      ws = new WebSocket(socketUrl);
-      wsRef.current = ws;
-    } catch (error) {
-      console.error("Error creating WebSocket connection:", error);
-      return;
-    }
+    const ws = new WebSocket(socketUrl);
+    wsRef.current = ws;
 
     ws.onopen = () => {
       if (!mountedRef.current) return;
@@ -51,21 +48,6 @@ export const useActivityNotifications = (
       if (!mountedRef.current) return;
       try {
         const data = JSON.parse(event.data);
-        // Validar datos recibidos
-        if (
-          !data ||
-          !data.actividad ||
-          !data.actividad.id ||
-          !data.type ||
-          !data.message ||
-          !data.actividad.tipo_actividad_nombre ||
-          !data.actividad.prioridad ||
-          !data.actividad.descripcion
-        ) {
-          console.warn("Invalid activity notification data:", data);
-          return;
-        }
-
         const newNotification: Notification = {
           id: `notif-${Date.now()}-${data.actividad.id}`,
           type: data.type,
