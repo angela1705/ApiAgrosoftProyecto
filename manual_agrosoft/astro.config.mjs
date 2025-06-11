@@ -96,6 +96,20 @@ export default defineConfig({
             { label: 'Datos Meteorológicos', slug: 'modules/IoT/sensores-en-tiemporeal' }, 
           ],
         },
+        {
+          label: 'Diagrama de funcionalidad del proyecto ',
+          items: [
+            { label: 'Introducción', slug: 'modules/diagramas/index' },
+            { label: 'Diagramas del proyecto', slug: 'modules/diagramas/diagramas_proyecto' },
+          ],
+        },
+        {
+          label: 'Configuracion Tecnica del proyecto ',
+          items: [
+            { label: 'Introducción', slug: 'modules/Configuracion_Tecnica/index' },
+            { label: 'Configuracion tecnica del proyecto', slug: 'modules/Configuracion_Tecnica/configuracion_y_Bases_datos' },
+          ],
+        },
       ],
     }),
   ],
