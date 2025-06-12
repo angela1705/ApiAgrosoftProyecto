@@ -34,6 +34,7 @@ class ActividadSerializer(serializers.ModelSerializer):
     prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)
     tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)
     usuarios = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    cultivo_nombre = serializers.CharField(source='cultivo.nombre', read_only=True) 
     usuarios_data = UsuarioActividadSerializer(source='usuarios', many=True, read_only=True)
     insumos = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
     herramientas = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
