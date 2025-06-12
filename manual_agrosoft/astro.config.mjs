@@ -111,6 +111,7 @@ export default defineConfig({
           items: [
             { label: 'Introducción', slug: 'modules/Configuracion_Tecnica/index' },
             { label: 'Configuracion tecnica del proyecto', slug: 'modules/Configuracion_Tecnica/configuracion_y_Bases_datos' },
+            { label: 'Planteamiento del Problema', slug: 'modules/Configuracion_Tecnica/Planteamiento_del_Problema' },          
           ],
         },
       ],
