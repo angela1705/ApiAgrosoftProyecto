@@ -111,6 +111,7 @@ export default defineConfig({
           items: [
             { label: 'Introducción', slug: 'modules/Configuracion_Tecnica/index' },
             { label: 'Configuracion tecnica del proyecto', slug: 'modules/Configuracion_Tecnica/configuracion_y_Bases_datos' },
+            { label: 'Especificacion de Requerimientos', slug: 'modules/Configuracion_Tecnica/especificacion_requerimiento' },
           ],
         },
       ],
