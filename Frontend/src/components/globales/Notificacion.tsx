@@ -16,7 +16,7 @@ import {
   List,
   ListItem,
   ListItemText,
-} from "@mui/material";
+} from "@mui/material"; 
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from "@mui/icons-material/Close";
 import { useActivityNotifications } from "@/hooks/websocket/useActividadNotificacions";
