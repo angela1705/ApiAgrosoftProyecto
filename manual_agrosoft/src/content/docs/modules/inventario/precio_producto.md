@@ -11,7 +11,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 1. Navegar al módulo de Precios de Productos
 1. En el menú principal, busca el módulo **"Inventario"** y selecciona el subítem **"Precios de Productos"**:
 
-   <img src="/public/inventario/preciosproductos/SidebarPreciosProductos.png" alt="Navegación al módulo de precios de productos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+   <img src="/public/inventario/preciosproductos/SidebarPreciosProductos.png" alt="Navegación al módulo de precios de productos" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
@@ -38,7 +38,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 2. Se abrirá el formulario de registro de precios de productos:
 
-   <img src="/public/inventario/preciosproductos/FormularioRegistroPrecioProducto.png" alt="Formulario de registro de precio de producto" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/inventario/preciosproductos/FormularioRegistroPrecioProducto.png" alt="Formulario de registro de precio de producto" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 3. **Campos del formulario**:
    
@@ -99,7 +99,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 8. Para verificar el registro, haz clic en **"Listar Precios de Productos"** para regresar al listado:
 
-   <img src="/public/inventario/preciosproductos/BotonListarPreciosProductos.png" alt="Botón listar precios de productos" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
+   <img src="/public/inventario/preciosproductos/BotonListarPreciosProductos.png" alt="Botón listar precios de productos" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 9. Confirma que el precio se registró correctamente en la tabla:
 
@@ -137,7 +137,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Actualizar un precio de producto existente
 1. En el listado de precios de productos, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar precio de producto" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar precio de producto" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
@@ -177,7 +177,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 6. Eliminar un precio de producto
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar precio de producto" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar precio de producto" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 

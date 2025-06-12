@@ -81,7 +81,7 @@ Esta documentación detalla el proceso para registrar, listar, actualizar y gest
 
 2. **Editar productos**: Usa el ícono de edición para modificar cantidades:
 
-   <img src="/public/finanzas/ventas/EditarProductoVenta.png" alt="Edición de producto en venta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/finanzas/ventas/EditarProductoVenta.png" alt="Edición de producto en venta" style="display: block; margin: auto; width: 95%; border-radius: 12px;" />
 
    - **Carga automática**: Los datos del producto se cargan en el formulario
    - **Botón actualizar**: Cambia a "Actualizar Producto" durante la edición
@@ -89,7 +89,7 @@ Esta documentación detalla el proceso para registrar, listar, actualizar y gest
 
 3. **Eliminar productos**: Usa el ícono de eliminación para quitar productos:
 
-   <img src="/public/finanzas/ventas/EliminarProductoVenta.png" alt="Eliminar producto de venta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/finanzas/ventas/EliminarProductoVenta.png" alt="Eliminar producto de venta" style="display: block; margin: auto; width: 95%; border-radius: 12px;" />
 
 #### 3.4 Cálculo automático de totales
 1. **Resumen de venta**: El sistema calcula automáticamente los totales:
@@ -112,7 +112,7 @@ Esta documentación detalla el proceso para registrar, listar, actualizar y gest
 
 2. **Validación en tiempo real**: El sistema previene sobreventa:
 
-   <img src="/public/finanzas/ventas/AlertaStockInsuficiente.png" alt="Alerta de stock insuficiente" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/finanzas/ventas/ErrorStockInsuficiente.png" alt="Alerta de stock insuficiente" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 #### 4.2 Lógica de validación
 - **Verificación individual**: Por cada producto agregado
@@ -186,8 +186,6 @@ El tiquete incluye información completa de la transacción:
 2. **Descargar PDF**: Guardar tiquete como archivo PDF
 3. **Cerrar**: Cerrar el modal y continuar con nueva venta
 
-   <img src="/public/finanzas/ventas/OpcionesTiquete.png" alt="Opciones del tiquete" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
-
 ---
 
 ### 7. Visualizar listado de ventas
@@ -215,61 +213,6 @@ Si no hay ventas registradas, se muestra un estado vacío informativo:
 
 ---
 
-### 8. Editar ventas existentes
-#### 8.1 Acceder a la edición
-1. En el listado de ventas, haz clic en el ícono de **Editar** (lápiz):
-
-   <img src="/public/finanzas/ventas/BotonEditarVenta.png" alt="Botón editar venta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
-
-2. Se abrirá el modal de edición de venta:
-
-   <img src="/public/finanzas/ventas/ModalEditarVenta.png" alt="Modal de edición de venta" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
-
-#### 8.2 Campos editables
-**Limitaciones importantes**: Solo se pueden editar ciertos campos:
-- **Monto Entregado**: Modificar la cantidad de dinero recibida
-- **Fecha**: Cambiar la fecha de la transacción
-
-**⚠️ Campos no editables**:
-- **Productos vendidos**: No se pueden modificar los detalles de productos
-- **Cantidades**: No se pueden cambiar las cantidades vendidas
-- **Precios**: Los precios quedan fijos según el momento de la venta
-- **Cambio**: Se recalcula automáticamente según el nuevo monto entregado
-
-#### 8.3 Proceso de actualización
-1. **Modificar campos**: Actualiza monto entregado y/o fecha según necesidad
-2. **Recálculo automático**: El sistema recalcula el cambio automáticamente
-3. **Confirmar cambios**: Haz clic en "Confirmar" para guardar las modificaciones
-
-   <img src="/public/finanzas/ventas/VentaEditadaExito.png" alt="Confirmación de venta editada" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
-
----
-
-### 9. Eliminar ventas
-#### 9.1 Proceso de eliminación
-1. En el listado, haz clic en el ícono de **Eliminar** (basura roja):
-
-   <img src="/public/finanzas/ventas/BotonEliminarVenta.png" alt="Botón eliminar venta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
-
-2. Se mostrará un modal de confirmación:
-
-   <img src="/public/finanzas/ventas/ModalEliminarVenta.png" alt="Modal de confirmación de eliminación" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
-
-#### 9.2 Consideraciones importantes
-**⚠️ Advertencias críticas**:
-- **Acción irreversible**: La eliminación no se puede deshacer
-- **Impacto en inventario**: El stock NO se restaura automáticamente
-- **Impacto financiero**: Se pierde el registro de la transacción
-- **Trazabilidad**: Se elimina el historial de la venta
-
-#### 9.3 Alternativas recomendadas
-En lugar de eliminar, considera:
-- **Anular la venta**: Crear una nota de crédito
-- **Modificar datos**: Usar la función de edición para corregir errores
-- **Marcar como cancelada**: Implementar estado de cancelación
-
----
-
 ### 10. Ver tiquetes de ventas existentes
 #### 10.1 Acceder al tiquete
 1. En el listado de ventas, haz clic en el ícono de **Tiquete**:
@@ -278,7 +221,7 @@ En lugar de eliminar, considera:
 
 2. Se abrirá el modal con el tiquete de la venta seleccionada:
 
-   <img src="/public/finanzas/ventas/TiqueteVentaExistente.png" alt="Tiquete de venta existente" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/finanzas/ventas/TiqueteVentaExistente.png" alt="Tiquete de venta existente" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 #### 10.2 Funcionalidades del tiquete
 - **Reimprimir**: Imprimir nuevamente el tiquete
@@ -406,9 +349,6 @@ El sistema permite seleccionar unidades de medida apropiadas para cada producto:
 #### 16.2 Manejo de errores específicos
 1. **Stock insuficiente**:
    <img src="/public/finanzas/ventas/ErrorStockInsuficiente.png" alt="Error de stock insuficiente" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
-
-2. **Error de conexión**:
-   <img src="/public/finanzas/ventas/ErrorConexion.png" alt="Error de conexión" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 #### 16.3 Recuperación automática
 - **Reintentos automáticos**: Para errores de red temporales

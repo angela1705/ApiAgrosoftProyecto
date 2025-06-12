@@ -11,7 +11,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 1. Navegar al módulo de Bodega Herramientas
 1. En el menú principal, busca el módulo **"Inventario"** y selecciona el subítem **"Bodega Herramientas"**:
 
-   <img src="/public/inventario/bodegaherramienta/SidebarBodegaHerramienta.png" alt="Navegación al módulo de bodega herramientas" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+   <img src="/public/inventario/bodegaherramienta/SidebarBodegaHerramienta.png" alt="Navegación al módulo de bodega herramientas" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
@@ -37,7 +37,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 2. Se abrirá el formulario de registro de bodega herramientas:
 
-   <img src="/public/inventario/bodegaherramienta/FormularioRegistroBodegaHerramienta.png" alt="Formulario de registro de bodega herramienta" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/inventario/bodegaherramienta/FormularioRegistroBodegaHerramienta.png" alt="Formulario de registro de bodega herramienta" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 3. **Campos del formulario**:
    
@@ -45,7 +45,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - Selecciona una bodega existente del menú desplegable
    - Haz clic en el botón **"+"** para registrar una nueva bodega si no existe la que necesitas:
 
-   <img src="/public/inventario/bodegaherramienta/SelectorBodegaConPlus.png" alt="Selector de bodega con botón plus" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/bodegaherramienta/SelectorBodegaConPlus.png" alt="Selector de bodega con botón plus" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
    - Al hacer clic en **"+"**, se abrirá el modal de registro de bodega:
 
@@ -66,7 +66,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 4. **Formulario completado**:
 
-   <img src="/public/inventario/bodegaherramienta/FormularioBodegaHerramientaLleno.png" alt="Formulario de bodega herramienta diligenciado" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/inventario/bodegaherramienta/FormularioBodegaHerramientaLleno.png" alt="Formulario de bodega herramienta diligenciado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 5. **⚠️ Importante**:
    - Todos los campos son obligatorios: **Bodega**, **Herramienta** y **Cantidad**.
@@ -123,7 +123,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Actualizar una asignación existente
 1. En el listado de bodega herramientas, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar bodega herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar bodega herramienta" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
@@ -158,7 +158,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 6. Eliminar una asignación de bodega herramienta
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar bodega herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar bodega herramienta" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 
