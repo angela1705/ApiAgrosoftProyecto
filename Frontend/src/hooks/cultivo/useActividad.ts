@@ -136,34 +136,38 @@ const eliminarActividad = async (id: number) => {
   };
   
 export const useRegistrarActividad = () => {
-    return useMutation({
-        mutationFn: (actividad: Actividad) => registrarActividad(actividad),
-        onSuccess: () => {
-            addToast({
-                title: "Éxito",
-                description: "Actividad registrada con éxito",
-                color:"success"
-            });
-        },
-        onError: (error: any) => {
-          if (error.response?.status === 403) {
-            addToast({
-              title: "Acceso denegado",
-              description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
-              timeout: 3000,
-              color:"warning"
-            });
-          } else {
-            addToast({
-              title: "Error",
-              description: "Error al registrar la actividad",
-              timeout: 3000,
-              color:"danger"
-            });
-          }
-        },
+  const queryClient = useQueryClient(); 
+
+  return useMutation({
+    mutationFn: (actividad: Actividad) => registrarActividad(actividad),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["actividades"] });
+      addToast({
+        title: "Éxito",
+        description: "Actividad registrada con éxito",
+        color: "success"
       });
-    };
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        addToast({
+          title: "Acceso denegado",
+          description: "No tienes permiso para realizar esta acción, contacta a un adminstrador.",
+          timeout: 3000,
+          color: "warning"
+        });
+      } else {
+        addToast({
+          title: "Error",
+          description: "Error al registrar la actividad",
+          timeout: 3000,
+          color: "danger"
+        });
+      }
+    },
+  });
+};
+
   
 
 export const useActualizarActividad = () => {
@@ -199,7 +203,7 @@ export const useActualizarActividad = () => {
     return useMutation({
       mutationFn: (id: number) => eliminarActividad(id),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["Actividad"] });
+        queryClient.invalidateQueries({ queryKey: ["actividades"] });
         addToast({ title: "Éxito", description: "Tipo de actividad eliminado con éxito", timeout: 3000, color:"success" });
       },
       onError: (error: any) => {

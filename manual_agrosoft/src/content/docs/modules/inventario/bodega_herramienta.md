@@ -33,7 +33,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 3. Registrar una nueva asignación de bodega herramienta
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar"**:
 
-   <img src="/public/inventario/bodegaherramienta/RegistrarBodegaHerramientaBtn.png" alt="Botón registrar bodega herramienta" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/inventario/bodegaherramienta/RegistrarBodegaHerramientaBtn.png" alt="Botón registrar bodega herramienta" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de bodega herramientas:
 
@@ -123,7 +123,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Actualizar una asignación existente
 1. En el listado de bodega herramientas, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/bodegaherramienta/BodegaHerramientaAccionEditar.png" alt="Botón de editar bodega herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar bodega herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
@@ -158,7 +158,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 6. Eliminar una asignación de bodega herramienta
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/bodegaherramienta/BodegaHerramientaAccionEliminar.png" alt="Botón de eliminar bodega herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar bodega herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 

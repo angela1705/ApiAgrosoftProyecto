@@ -39,7 +39,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 3. Registrar una nueva herramienta
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar"**:
 
-   <img src="/public/inventario/herramienta/RegistrarHerramientaBtn.png" alt="Botón registrar herramienta" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/inventario/herramienta/RegistrarHerramientaBtn.png" alt="Botón registrar herramienta" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de herramientas:
 
@@ -81,7 +81,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 4. Actualizar una herramienta existente
 1. En el listado de herramientas, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/herramienta/HerramientaAccionEditar.png" alt="Botón de editar herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales de la herramienta:
 
@@ -114,7 +114,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Eliminar una herramienta
 1. En el listado de herramientas, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/herramienta/HerramientaAccionEliminar.png" alt="Botón de eliminar herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar herramienta" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 
