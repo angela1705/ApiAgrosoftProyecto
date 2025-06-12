@@ -88,6 +88,7 @@ export default defineConfig({
             { label: 'Gestión de Pagos', slug: 'modules/finanzas/pagos' },
             { label: 'Gestión de Salario', slug: 'modules/finanzas/salarios' },
             { label: 'Gestión de Ventas', slug: 'modules/finanzas/ventas' },
+            { label: 'Gestión de Costo-Beneficio', slug: 'modules/finanzas/Costo-Beneficio' },
           ],
         },
         {
