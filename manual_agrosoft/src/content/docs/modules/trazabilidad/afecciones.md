@@ -11,7 +11,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
 ### 1. Navegar al módulo de Afecciones
 1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Afecciones"**:
 
-   <img src="/public/trazabilidad/afecciones/SidebarAfecciones.png" alt="Navegación al módulo de afecciones" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/SidebarAfecciones.png" alt="Navegación al módulo de afecciones" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ---
 
@@ -37,7 +37,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
 
 2. Se abrirá el formulario de registro de afecciones:
 
-   <img src="/public/trazabilidad/afecciones/FormularioRegistroAfeccion.png" alt="Formulario de registro de afección" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/FormularioRegistroAfeccion.png" alt="Formulario de registro de afección" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 3. **Campos del formulario**:
    
@@ -49,7 +49,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
    - **Fecha de Detección**: Obligatorio. Fecha cuando se detectó la afección (por defecto fecha actual)
    - **Gravedad**: Obligatorio. Nivel de severidad de la afección
 
-   <img src="/public/trazabilidad/afecciones/SelectorGravedad.png" alt="Selector de gravedad" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/SelectorGravedad.png" alt="Selector de gravedad" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
    Las opciones de gravedad son:
    - **Leve (L)**: Afección menor que no compromete significativamente el cultivo
@@ -69,7 +69,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
 
 4. **Formulario completado**:
 
-   <img src="/public/trazabilidad/afecciones/FormularioAfeccionLleno.png" alt="Formulario de afección diligenciado" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/FormularioAfeccionLleno.png" alt="Formulario de afección diligenciado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 5. **⚠️ Importante**:
    - Todos los campos son obligatorios excepto el reporte adicional.
@@ -86,7 +86,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
 
 8. Para verificar el registro, haz clic en **"Listar Afecciones"** para regresar al listado:
 
-   <img src="/public/trazabilidad/afecciones/BotonListarAfecciones.png" alt="Botón listar afecciones" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/BotonListarAfecciones.png" alt="Botón listar afecciones" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 9. Confirma que la afección se registró correctamente en la tabla:
 
@@ -100,7 +100,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
 #### 4.1 Crear nueva plaga
 1. En el selector de **"Plaga"**, haz clic en el botón **"+"**:
 
-   <img src="/public/trazabilidad/afecciones/BotonPlusPlaga.png" alt="Botón plus para crear plaga" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/BotonPlusPlaga.png" alt="Botón plus para crear plaga" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 2. Se abrirá el modal de creación de plaga:
 
@@ -140,7 +140,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y gest
 
 #### 5.2 Indicadores visuales por estado:
 
-   <img src="/public/trazabilidad/afecciones/EstadosVisuales.png" alt="Indicadores visuales de estados" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/EstadosVisuales.png" alt="Indicadores visuales de estados" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 #### 5.3 Flujo recomendado de estados:
 ```
@@ -160,7 +160,7 @@ Aunque también es posible:
 #### 6.1 Cambiar estado desde la tabla
 1. En la columna **"Acciones"**, haz clic en el icono correspondiente al estado deseado:
 
-   <img src="/public/trazabilidad/afecciones/AccionesCambioEstado.png" alt="Acciones de cambio de estado" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/AccionesCambioEstado.png" alt="Acciones de cambio de estado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
    - **Icono de alerta azul**: Cambiar a "En Control" (solo disponible si está "Activa")
    - Otros cambios requieren el modal de gestión de estados
@@ -168,7 +168,7 @@ Aunque también es posible:
 #### 6.2 Modal de cambio de estado
 1. Se abrirá un modal específico para cambio de estado:
 
-   <img src="/public/trazabilidad/afecciones/ModalCambioEstado.png" alt="Modal de cambio de estado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/ModalCambioEstado.png" alt="Modal de cambio de estado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 2. **Opciones disponibles**:
    - **Estable**: Afección controlada sin progresión
@@ -177,13 +177,13 @@ Aunque también es posible:
 
 3. Selecciona el nuevo estado haciendo clic en el botón correspondiente:
 
-   <img src="/public/trazabilidad/afecciones/SeleccionNuevoEstado.png" alt="Selección de nuevo estado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/SeleccionNuevoEstado.png" alt="Selección de nuevo estado" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 4. Haz clic en **"Confirmar"** para aplicar el cambio.
 
 5. Verás una confirmación del cambio de estado:
 
-   <img src="/public/trazabilidad/afecciones/EstadoCambiadoExito.png" alt="Confirmación de cambio de estado" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/EstadoCambiadoExito.png" alt="Confirmación de cambio de estado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 6. La tabla se actualizará automáticamente mostrando el nuevo estado:
 
@@ -197,7 +197,7 @@ Aunque también es posible:
 #### 7.1 Acceder a los detalles
 1. En la columna **"Acciones"**, haz clic en el icono de **"Ver detalles"** (ojo):
 
-   <img src="/public/trazabilidad/afecciones/BotonVerDetalles.png" alt="Botón ver detalles" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/BotonVerDetalles.png" alt="Botón ver detalles" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 2. Se abrirá el modal de detalle completo:
 
@@ -216,7 +216,7 @@ Aunque también es posible:
 ### 8. Actualizar una afección existente
 1. En el listado de afecciones, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/trazabilidad/afecciones/AfeccionAccionEditar.png" alt="Botón de editar afección" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/AfeccionAccionEditar.png" alt="Botón de editar afección" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
@@ -247,7 +247,7 @@ Aunque también es posible:
 ### 9. Eliminar una afección
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/trazabilidad/afecciones/AfeccionAccionEliminar.png" alt="Botón de eliminar afección" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/afecciones/AfeccionAccionEliminar.png" alt="Botón de eliminar afección" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 

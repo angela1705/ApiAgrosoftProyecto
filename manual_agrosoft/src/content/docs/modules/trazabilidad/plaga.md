@@ -11,7 +11,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 1. Navegar al módulo de Plagas
 1. En el menú principal, busca el módulo **"Cultivo"** y selecciona el subítem **"Plagas"**:
 
-   <img src="/public/trazabilidad/plaga/SidebarPlaga.png" alt="Navegación al módulo de plagas" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/plaga/SidebarPlaga.png" alt="Navegación al módulo de plagas" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 ---
 
@@ -36,7 +36,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 2. Se abrirá el formulario de registro de plagas:
 
-   <img src="/public/trazabilidad/plaga/FormularioRegistroPlaga.png" alt="Formulario de registro de plaga" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/plaga/FormularioRegistroPlaga.png" alt="Formulario de registro de plaga" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 3. **Campos del formulario**:
    
@@ -58,7 +58,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 4. **Formulario completado**:
 
-   <img src="/public/trazabilidad/plaga/FormularioPlagaLleno.png" alt="Formulario de plaga diligenciado" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/plaga/FormularioPlagaLleno.png" alt="Formulario de plaga diligenciado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 5. **⚠️ Importante**:
    - Los campos **Nombre**, **Descripción** y **Tipo de Plaga** son obligatorios.
@@ -75,7 +75,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 8. Para verificar el registro, haz clic en **"Listar Plagas"** para regresar al listado:
 
-   <img src="/public/trazabilidad/plaga/BotonListarPlagas.png" alt="Botón listar plagas" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/plaga/BotonListarPlagas.png" alt="Botón listar plagas" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 9. Confirma que la plaga se registró correctamente en la tabla:
 
@@ -115,7 +115,7 @@ Si necesitas registrar nuevos tipos de plaga:
    - Etapa de desarrollo (larva, adulto, etc.)
    - Comparación de tamaño con objetos conocidos
 
-   <img src="/public/trazabilidad/plaga/EjemploImagenPlagaEspecifica.png" alt="Ejemplo de imagen de plaga específica" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/plaga/EjemploImagenPlagaEspecifica.png" alt="Ejemplo de imagen de plaga específica" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 #### 5.2 Diferencia con imágenes de tipos
 - **Imagen de Tipo de Plaga**: Representación general de la categoría
@@ -133,7 +133,7 @@ Si necesitas registrar nuevos tipos de plaga:
 ### 6. Actualizar una plaga existente
 1. En el listado de plagas, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/trazabilidad/tipoplaga/TipoPlagaAccionEditar.png" alt="Botón de editar plaga" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/tipoplaga/TipoPlagaAccionEditar.png" alt="Botón de editar plaga" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales de la plaga:
 
@@ -167,7 +167,7 @@ Si necesitas registrar nuevos tipos de plaga:
 ### 7. Eliminar una plaga
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/trazabilidad/tipoplaga/TipoPlagaAccionEliminar.png" alt="Botón de eliminar plaga" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/trazabilidad/tipoplaga/TipoPlagaAccionEliminar.png" alt="Botón de eliminar plaga" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 
