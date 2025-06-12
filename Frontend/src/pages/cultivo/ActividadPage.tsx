@@ -113,9 +113,24 @@ const ActividadPage: React.FC = () => {
             }))
         };
 
-        mutation.mutate(payload)
+        mutation.mutate(payload, {
+            onSuccess: () => {
+                setActividad({
+                    descripcion: "",
+                    fecha_inicio: "",
+                    fecha_fin: "",
+                    tipo_actividad: 0,
+                    cultivo: 0,
+                    estado: "PENDIENTE",
+                    prioridad: "MEDIA",
+                    instrucciones_adicionales: "",
+                    usuarios: [],
+                    insumos: [],
+                    herramientas: []
+                });
+            },
+        });
     };
-
     const handleInsumoCantidadChange = (value: number, index: number) => {
         const updatedInsumos = [...actividad.insumos];
         updatedInsumos[index] = { ...updatedInsumos[index], cantidad: value };

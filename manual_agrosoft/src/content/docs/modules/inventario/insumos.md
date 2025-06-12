@@ -11,14 +11,14 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 1. Navegar al módulo de Insumos
 1. En el menú principal, busca el módulo **"Inventario"** y selecciona el subítem **"Insumos"**:
 
-   <img src="/public/inventario/insumo/SidebarInsumo.png" alt="Navegación al módulo de insumos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/Sidebarinsumo.png" alt="Navegación al módulo de insumos" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ---
 
 ### 2. Visualizar el listado de insumos
 - Al entrar en **"Insumos"**, encontrarás una tabla con los insumos registrados. Si no hay registros, verás una tabla vacía:
 
-   <img src="/public/inventario/insumo/ListaInsumoVacia.png" alt="Listado de insumos vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/listainsumo.png" alt="Listado de insumos vacío" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 - La tabla muestra información detallada de cada insumo, incluyendo:
   - **Nombre**
@@ -38,11 +38,11 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 3. Registrar un nuevo insumo
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar"**:
 
-   <img src="/public/inventario/insumo/RegistrarInsumoBtn.png" alt="Botón registrar insumo" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/registrarinsumo.png" alt="Botón registrar insumo" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de insumos:
 
-   <img src="/public/inventario/insumo/FormularioRegistroInsumo.png" alt="Formulario de registro de insumo" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/formulario.png" alt="Formulario de registro de insumo" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 3. **Campos del formulario**:
    
@@ -55,21 +55,21 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - Selecciona una unidad de medida existente del menú desplegable
    - Haz clic en el botón **"+"** para crear una nueva unidad de medida si no existe la que necesitas:
 
-   <img src="/public/inventario/insumo/SelectorUnidadMedidaConPlus.png" alt="Selector de unidad de medida con botón plus" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/+unidad.png" alt="Selector de unidad de medida con botón plus" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
    - Al hacer clic en **"+"**, se abrirá el modal de creación de unidad de medida:
 
-   <img src="/public/inventario/insumo/ModalCrearUnidadMedida.png" alt="Modal de crear unidad de medida" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/modalunidad.png" alt="Modal de crear unidad de medida" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
    **c) Tipo de Insumo**: 
    - Selecciona un tipo de insumo existente del menú desplegable
    - Haz clic en el botón **"+"** para crear un nuevo tipo de insumo si no existe el que necesitas:
 
-   <img src="/public/inventario/insumo/SelectorTipoInsumoConPlus.png" alt="Selector de tipo de insumo con botón plus" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/+tipo.png" alt="Selector de tipo de insumo con botón plus" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
    - Al hacer clic en **"+"**, se abrirá el modal de creación de tipo de insumo:
 
-   <img src="/public/inventario/insumo/ModalCrearTipoInsumo.png" alt="Modal de crear tipo de insumo" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/modaltipo.png" alt="Modal de crear tipo de insumo" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
    **d) Estado y características**:
    - **Activo**: Switch para indicar si el insumo está disponible (activado por defecto)
@@ -84,7 +84,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 4. **Formulario completado**:
 
-   <img src="/public/inventario/insumo/FormularioInsumoLleno.png" alt="Formulario de insumo diligenciado" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/registrarcompleto.png" alt="Formulario de insumo diligenciado" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 5. **⚠️ Importante**:
    - Los campos **Nombre**, **Descripción** y **Cantidad** son obligatorios.
@@ -98,15 +98,15 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 7. Verás un mensaje de éxito como este:
 
-   <img src="/public/inventario/insumo/InsumoRegistradoExito.png" alt="Mensaje de registro exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/mensaje-exito.png" alt="Mensaje de registro exitoso" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 8. Para verificar el registro, haz clic en **"Listar Insumos"** para regresar al listado:
 
-   <img src="/public/inventario/insumo/BotonListarInsumos.png" alt="Botón listar insumos" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/listarinsumoboton.png" alt="Botón listar insumos" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 9. Confirma que el insumo se registró correctamente en la tabla:
 
-   <img src="/public/inventario/insumo/ListaInsumoConRegistros.png" alt="Listado con insumo registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ListaInsumoConRegistros.png" alt="Listado con insumo registrado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
@@ -119,7 +119,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - **Nombre**: Abreviación o nombre corto (ej: kg, L, unidades, sacos)
    - **Descripción**: Descripción detallada de la unidad (ej: "Kilogramos para fertilizantes sólidos")
 
-   <img src="/public/inventario/insumo/ModalUnidadMedidaCompleto.png" alt="Modal de unidad de medida completado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ModalUnidadMedidaCompleto.png" alt="Modal de unidad de medida completado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 3. Haz clic en **"Confirmar"** y la nueva unidad aparecerá automáticamente en el selector principal.
 
@@ -129,7 +129,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - **Nombre**: Nombre del tipo (ej: Fertilizante, Pesticida, Herbicida, Fungicida)
    - **Descripción**: Descripción del tipo y su uso (ej: "Fertilizantes para nutrición de plantas")
 
-   <img src="/public/inventario/insumo/ModalTipoInsumoCompleto.png" alt="Modal de tipo de insumo completado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ModalTipoInsumoCompleto.png" alt="Modal de tipo de insumo completado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 3. Haz clic en **"Confirmar"** y el nuevo tipo aparecerá automáticamente en el selector principal.
 
@@ -138,11 +138,11 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Actualizar un insumo existente
 1. En el listado de insumos, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/insumo/InsumoAccionEditar.png" alt="Botón de editar insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
-   <img src="/public/inventario/insumo/ModalEditarInsumo.png" alt="Modal de edición de insumo" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ModalEditarInsumo.png" alt="Modal de edición de insumo" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 3. **Campos editables**:
    - **Nombre**: Modifica el nombre del insumo
@@ -162,36 +162,36 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - **Formato automático**: Los campos de precio se formatean automáticamente
    - **Selectores dinámicos**: Los menús desplegables se actualizan al crear nuevos elementos
 
-   <img src="/public/inventario/insumo/EditarInsumoModificado.png" alt="Formulario de edición modificado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/EditarInsumoModificado.png" alt="Formulario de edición modificado" style="display: block; margin: auto; width: 70%; border-radius: 12px;" />
 
 5. Si necesitas crear una nueva unidad de medida durante la edición, haz clic en **"Nueva Unidad"**:
 
-   <img src="/public/inventario/insumo/ModalNuevaUnidadEnEdicion.png" alt="Modal nueva unidad en edición" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ModalNuevaUnidadEnEdicion.png" alt="Modal nueva unidad en edición" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 6. Si necesitas crear un nuevo tipo de insumo durante la edición, haz clic en **"Nuevo Tipo"**:
 
-   <img src="/public/inventario/insumo/ModalNuevoTipoEnEdicion.png" alt="Modal nuevo tipo en edición" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ModalNuevoTipoEnEdicion.png" alt="Modal nuevo tipo en edición" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 7. Haz clic en **"Confirmar"** para guardar los cambios.
 
 8. Verás un mensaje de actualización exitosa:
 
-   <img src="/public/inventario/insumo/InsumoActualizadoExito.png" alt="Mensaje de actualización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoActualizadoExito.png" alt="Mensaje de actualización exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 9. La tabla se actualizará automáticamente mostrando los nuevos datos:
 
-   <img src="/public/inventario/insumo/ListaInsumoActualizada.png" alt="Listado actualizado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ListaInsumoActualizada.png" alt="Listado actualizado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 
 ### 6. Eliminar un insumo
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/insumo/InsumoAccionEliminar.png" alt="Botón de eliminar insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 
-   <img src="/public/inventario/insumo/ModalEliminarInsumo.png" alt="Modal de confirmación de eliminación" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/ModalEliminarInsumo.png" alt="Modal de confirmación de eliminación" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 3. **⚠️ Advertencia importante**:
    - La eliminación del insumo es **permanente** y no se puede deshacer.
@@ -202,11 +202,11 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 5. Al confirmar la eliminación, verás un mensaje de éxito:
 
-   <img src="/public/inventario/insumo/InsumoEliminadoExito.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoEliminadoExiton.png" alt="Mensaje de eliminación exitosa" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 6. El registro desaparecerá del listado inmediatamente:
 
-   <img src="/public/inventario/insumo/ListaInsumoDespuesEliminar.png" alt="Listado después de eliminar" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoEliminadoExito.png" alt="Listado después de eliminar" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ---
 

@@ -33,7 +33,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 3. Registrar una nueva bodega
 1. En la parte superior izquierda del listado, haz clic en el botón **"+ Registrar"**:
 
-   <img src="/public/inventario/bodega/RegistrarBodegaBtn.png" alt="Botón registrar bodega" style="display: block; margin: auto; width: 20%; border-radius: 12px;" />
+   <img src="/public/inventario/bodega/RegistrarBodegaBtn.png" alt="Botón registrar bodega" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Se abrirá el formulario de registro de bodegas:
 
@@ -72,7 +72,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 4. Actualizar una bodega existente
 1. En el listado de bodegas, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/bodega/BodegaAccionEditar.png" alt="Botón de editar bodega" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar bodega" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales de la bodega:
 
@@ -104,7 +104,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Eliminar una bodega
 1. En el listado de bodegas, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/bodega/BodegaAccionEliminar.png" alt="Botón de eliminar bodega" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar bodega" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 

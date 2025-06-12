@@ -13,7 +13,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from "@mui/icons-material/Close";
@@ -172,10 +174,10 @@ const Notificacion: React.FC = () => {
   usePlagaNotifications(user?.id, addNotification);
 
   if (!user?.id) {
-    return null; // O <CircularProgress size={24} />
+    return null;
   }
 
-  return (
+ return (
     <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
       <IconButton
         onClick={handleClick}
@@ -235,7 +237,19 @@ const Notificacion: React.FC = () => {
               <Box sx={{ py: 1, width: "100%" }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Box sx={{ flexGrow: 1 }}>
-                    <Typography>{notification.message}</Typography>
+                    <List dense>
+                      {notification.message.split("\n").map((line, index) => (
+                        <ListItem key={index} sx={{ py: 0.5 }}>
+                          <ListItemText
+                            primary={line}
+                            primaryTypographyProps={{
+                              variant: "body2",
+                              fontWeight: line.startsWith("Se te ha asignado") ? "bold" : "normal",
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
                   </Box>
                   <IconButton
                     size="small"
