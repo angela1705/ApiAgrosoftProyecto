@@ -5,6 +5,9 @@ import { useRegistrarCosecha } from "@/hooks/cultivo/usecosecha";
 import { useCultivos } from "@/hooks/cultivo/useCultivo";
 import { useUnidadesMedida } from "@/hooks/inventario/useInsumo";
 import { Cosecha } from "@/types/cultivo/Cosecha";
+import { ModalCultivo } from "./ModalCultivo";
+import { ModalUnidadMedida } from "./ModalUnidadMedida";
+import { Plus } from "lucide-react";
 
 interface ModalCosechaProps {
   isOpen: boolean;
@@ -24,6 +27,8 @@ export const ModalCosecha = ({ isOpen, onOpenChange, onSuccess }: ModalCosechaPr
   const { data: cultivos } = useCultivos();
   const { data: unidadesMedida } = useUnidadesMedida();
   const mutation = useRegistrarCosecha();
+  const [openCultivo, setOpenCultivo] = useState(false);
+  const [openUnidadMedida, setOpenUnidadMedida] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -58,9 +63,26 @@ export const ModalCosecha = ({ isOpen, onOpenChange, onSuccess }: ModalCosechaPr
       confirmText="Guardar"
       cancelText="Cancelar"
     >
+    <ModalCultivo
+    isOpen={openCultivo}
+    onOpenChange={setOpenCultivo}
+    />
+    <ModalUnidadMedida
+    isOpen={openUnidadMedida}
+    onOpenChange={setOpenUnidadMedida}
+    />
       <div className="space-y-4">
         <div>
+        <div className="flex items-center gap-2 mb-1">
           <label className="block text-sm font-medium text-gray-700">Cultivo</label>
+              <button 
+                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                onClick={() => setOpenCultivo(true)}
+                type="button"
+                >
+                <Plus className="h-4 w-4" />
+              </button>
+        </div>
           <select
             name="id_cultivo"
             value={nuevaCosecha.id_cultivo || ""}
@@ -85,8 +107,16 @@ export const ModalCosecha = ({ isOpen, onOpenChange, onSuccess }: ModalCosechaPr
         />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Unidad de Medida</label>
-          <select
+        <div className="flex items-center gap-2 mb-1">
+          <label className="block text-sm font-medium text-gray-700">Unidad de medida</label>
+              <button 
+                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                onClick={() => setOpenUnidadMedida(true)}
+                type="button"
+                >
+                <Plus className="h-4 w-4" />
+              </button>
+        </div>          <select
             name="unidades_de_medida"
             value={nuevaCosecha.unidades_de_medida || ""}
             onChange={handleChange}
