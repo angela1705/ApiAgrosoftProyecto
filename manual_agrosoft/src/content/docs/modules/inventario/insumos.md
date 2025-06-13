@@ -55,7 +55,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - Selecciona una unidad de medida existente del menú desplegable
    - Haz clic en el botón **"+"** para crear una nueva unidad de medida si no existe la que necesitas:
 
-   <img src="/public/inventario/insumos/+unidad.png" alt="Selector de unidad de medida con botón plus" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/+unidad.png" alt="Selector de unidad de medida con botón plus" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
    - Al hacer clic en **"+"**, se abrirá el modal de creación de unidad de medida:
 
@@ -65,7 +65,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - Selecciona un tipo de insumo existente del menú desplegable
    - Haz clic en el botón **"+"** para crear un nuevo tipo de insumo si no existe el que necesitas:
 
-   <img src="/public/inventario/insumos/+tipo.png" alt="Selector de tipo de insumo con botón plus" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/+tipo.png" alt="Selector de tipo de insumo con botón plus" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
    - Al hacer clic en **"+"**, se abrirá el modal de creación de tipo de insumo:
 
@@ -138,7 +138,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Actualizar un insumo existente
 1. En el listado de insumos, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar insumo" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales:
 
@@ -187,7 +187,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 6. Eliminar un insumo
 1. En el listado, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar insumo" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar insumo" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 

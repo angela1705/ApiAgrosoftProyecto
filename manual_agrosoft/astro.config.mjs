@@ -88,6 +88,7 @@ export default defineConfig({
             { label: 'Gestión de Pagos', slug: 'modules/finanzas/pagos' },
             { label: 'Gestión de Salario', slug: 'modules/finanzas/salarios' },
             { label: 'Gestión de Ventas', slug: 'modules/finanzas/ventas' },
+            { label: 'Gestión de Costo-Beneficio', slug: 'modules/finanzas/Costo-Beneficio' },
           ],
         },
         {
@@ -111,6 +112,11 @@ export default defineConfig({
           items: [
             { label: 'Introducción', slug: 'modules/Configuracion_Tecnica/index' },
             { label: 'Configuracion tecnica del proyecto', slug: 'modules/Configuracion_Tecnica/configuracion_y_Bases_datos' },
+            { label: 'Especificacion de Requerimientos', slug: 'modules/Configuracion_Tecnica/especificacion_requerimiento' },
+            { label: 'Planteamiento del Problema', slug: 'modules/Configuracion_Tecnica/Planteamiento_del_Problema' },          
+            { label: 'Prototipado del sistema', slug: 'modules/Configuracion_Tecnica/prototipado_del_sistema' },
+
+
           ],
         },
       ],

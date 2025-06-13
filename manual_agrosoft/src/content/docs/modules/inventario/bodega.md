@@ -11,7 +11,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 1. Navegar al módulo de Bodegas
 1. En el menú principal, busca el módulo **"Inventario"** y selecciona el subítem **"Bodegas"**:
 
-   <img src="/public/inventario/bodega/SidebarBodega.png" alt="Navegación al módulo de bodegas" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+   <img src="/public/inventario/bodega/SidebarBodega.png" alt="Navegación al módulo de bodegas" style="display: block; margin: auto; width: 50%; border-radius: 12px;" />
 
 ---
 
@@ -37,7 +37,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 2. Se abrirá el formulario de registro de bodegas:
 
-   <img src="/public/inventario/bodega/FormularioRegistroBodega.png" alt="Formulario de registro de bodega" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/inventario/bodega/FormularioRegistroBodega.png" alt="Formulario de registro de bodega" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 3. **Campos del formulario**:
    - **Nombre**: Obligatorio. Ingresa el nombre identificativo de la bodega.
@@ -46,7 +46,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
    - **Teléfono**: Obligatorio. Número de contacto de la bodega.
    - **Activo**: Checkbox que indica si la bodega está operativa (marcado por defecto).
 
-   <img src="/public/inventario/bodega/FormularioBodegaLleno.png" alt="Formulario de bodega diligenciado" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+   <img src="/public/inventario/bodega/FormularioBodegaLleno.png" alt="Formulario de bodega diligenciado" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 4. **⚠️ Importante**:
    - Todos los campos son obligatorios excepto el estado **Activo** que viene marcado por defecto.
@@ -61,7 +61,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 
 7. Para verificar el registro, haz clic en **"Listar Bodegas"** para regresar al listado:
 
-   <img src="/public/inventario/bodega/BotonListarBodegas.png" alt="Botón listar bodegas" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
+   <img src="/public/inventario/bodega/BotonListarBodegas.png" alt="Botón listar bodegas" style="display: block; margin: auto; width: 90%; border-radius: 12px;" />
 
 8. Confirma que la bodega se registró correctamente en la tabla:
 
@@ -72,7 +72,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 4. Actualizar una bodega existente
 1. En el listado de bodegas, en la columna **Acciones**, haz clic en el ícono de **Editar** (lápiz):
 
-   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar bodega" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEditar.png" alt="Botón de editar bodega" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se abrirá un modal con el formulario de edición conteniendo los datos actuales de la bodega:
 
@@ -104,7 +104,7 @@ Esta documentación detalla el proceso para listar, registrar, actualizar y elim
 ### 5. Eliminar una bodega
 1. En el listado de bodegas, en la columna **Acciones**, haz clic en el ícono de **Eliminar** (basura roja):
 
-   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar bodega" style="display: block; margin: auto; width: 15%; border-radius: 12px;" />
+   <img src="/public/inventario/insumos/InsumoAccionEliminar.png" alt="Botón de eliminar bodega" style="display: block; margin: auto; width: 40%; border-radius: 12px;" />
 
 2. Se mostrará un modal de confirmación con una advertencia, ya que esta acción es **irreversible**:
 
