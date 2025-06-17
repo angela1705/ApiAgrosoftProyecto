@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { subscribeToMqtt } from "@/components/utils/mqttClient";
-import { SensorData } from "@/types/iot/iotmqtt";  
+import { SensorData } from "@/types/iot/iotmqtt";
 import { addToast } from "@heroui/react";
 import mqtt from "mqtt";
 
@@ -39,6 +39,7 @@ export const useSensores = () => {
 
   useEffect(() => {
     const unsubscribe = subscribeToMqtt(({ realTimeData, isConnected, error }) => {
+      console.log("Datos MQTT recibidos:", realTimeData);  
       setRealTimeData(realTimeData);
       setIsLoading(!isConnected && !error);
       setError(error);
