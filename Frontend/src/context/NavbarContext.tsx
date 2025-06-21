@@ -7,7 +7,7 @@ interface NavbarState {
   setExpandedItems: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>;
   setNavScrollPosition: React.Dispatch<React.SetStateAction<number>>;
 }
- 
+
 const NavbarContext = createContext<NavbarState | undefined>(undefined);
 
 export const useNavbar = () => {

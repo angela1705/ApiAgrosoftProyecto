@@ -7,6 +7,9 @@ const MQTT_USER = 'agrosoft';
 const MQTT_PASSWORD = 'Agrosoft2025!';
 const TOPIC_TEMP = 'sensor/dht22/temperature';
 const TOPIC_HUM = 'sensor/dht22/humidity';
+const TOPIC_SOIL = 'sensor/soil/moisture';
+const TOPIC_AIR = 'sensor/mq135/air_quality';
+const TOPIC_LIGHT = 'sensor/ldr/light';
 
 // Estado global
 let realTimeData: SensorData[] = [];
@@ -36,12 +39,12 @@ client.on('connect', () => {
   isConnected = true;
   error = null;
   setTimeout(() => {
-    client.subscribe([TOPIC_TEMP, TOPIC_HUM], { qos: 0 }, (err) => {
+    client.subscribe([TOPIC_TEMP, TOPIC_HUM, TOPIC_SOIL, TOPIC_AIR, TOPIC_LIGHT], { qos: 0 }, (err) => {
       if (err) {
         console.error('Error al suscribirse:', err);
         error = 'Error al suscribirse a los tópicos: ' + err.message;
       } else {
-        console.log('Suscrito a los tópicos');
+        console.log('Suscrito a los tópicos:', [TOPIC_TEMP, TOPIC_HUM, TOPIC_SOIL, TOPIC_AIR, TOPIC_LIGHT]);
       }
       notifyListeners();
     });
@@ -65,13 +68,17 @@ client.on('message', (topic, message) => {
       return;
     }
     const newData: SensorData = {
-      id: Date.now(),
+      id: Date.now() + Math.random(), // Asegurar ID único
       device_code: device_code,
-      temperatura: topic === TOPIC_TEMP ? value : null,
-      humedad_ambiente: topic === TOPIC_HUM ? value : null,
+      temperatura: topic === TOPIC_TEMP ? value : undefined,
+      humedad_ambiente: topic === TOPIC_HUM ? value : undefined,
+      humedad_suelo: topic === TOPIC_SOIL ? value : undefined,
+      calidad_aire: topic === TOPIC_AIR ? value : undefined,
+      luminosidad: topic === TOPIC_LIGHT ? value : undefined,
       fecha_medicion: new Date().toISOString(),
     };
-    realTimeData = [...realTimeData, newData].slice(-50);
+    // Añadir nuevo registro sin sobrescribir
+    realTimeData = [...realTimeData, newData].slice(-50); // Limitar a los últimos 50 registros
     console.log('Datos procesados:', newData); // Log para depuración
     notifyListeners();
   } catch (err) {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaTemperatureHigh, FaTint } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from "react-icons/fa";
 import DefaultLayout from "@/layouts/default";
 import { useSensores } from "@/hooks/iot/mqtt/useSensores";
 import { usePublishCommand } from "@/hooks/iot/mqtt/usePublishCommand";
@@ -14,18 +14,39 @@ import { DataType, ViewMode } from "@/types/iot/iotmqtt";
 
 const dataTypes: DataType[] = [
   {
-    label: "Temperatura (°C)",
+    nombre: "Temperatura (°C)",
     key: "temperatura",
     icon: <FaTemperatureHigh className="text-red-500" />,
     tipo_sensor: "temperatura",
     decimals: 2,
   },
   {
-    label: "Humedad (%)",
+    nombre: "Humedad Ambiente (%)",
     key: "humedad_ambiente",
     icon: <FaTint className="text-blue-500" />,
     tipo_sensor: "humedad_ambiente",
     decimals: 1,
+  },
+  {
+    nombre: "Humedad Suelo (%)",
+    key: "humedad_suelo",
+    icon: <FaLeaf className="text-green-500" />,
+    tipo_sensor: "humedad_suelo",
+    decimals: 1,
+  },
+  {
+    nombre: "Calidad Aire (PPM)",
+    key: "calidad_aire",
+    icon: <FaWind className="text-yellow-500" />,
+    tipo_sensor: "calidad_aire",
+    decimals: 0,
+  },
+  {
+    nombre: "Luminosidad (lux)",
+    key: "luminosidad",
+    icon: <FaLightbulb className="text-amber-500" />,
+    tipo_sensor: "luminosidad",
+    decimals: 0,
   },
 ];
 
@@ -74,13 +95,13 @@ const SensoresPage: React.FC = () => {
     <DefaultLayout>
       <div className="w-full flex flex-col items-center bg-gray-50 px-3 py-2 min-h-screen">
         <div className="w-full max-w-6xl flex flex-col items-center gap-2">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Datos del Sensor DHT22</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Datos de Sensores</h1>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
             {dataTypes.map((type, index) => {
               const latest = filteredData
-                .filter((d) => d[type.key] !== null)
-                .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())[0];
+                .filter((d) => d[type.key] !== null && d[type.key] !== undefined)
+                .sort((a, b) => new Date(b.fecha_medicion || "").getTime() - new Date(a.fecha_medicion || "").getTime())[0];
 
               return (
                 <motion.div
@@ -91,16 +112,33 @@ const SensoresPage: React.FC = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <p className="text-base font-semibold text-gray-700 flex items-center justify-center gap-2">
-                    {type.icon} {type.label}
+                    {type.icon} {type.nombre}
                   </p>
                   <p
                     className="text-3xl font-bold mt-2"
-                    style={{ color: type.key === "temperatura" ? "#dc2626" : "#2563eb" }}
+                    style={{
+                      color:
+                        type.key === "temperatura"
+                          ? "#dc2626"
+                          : type.key === "humedad_ambiente"
+                          ? "#2563eb"
+                          : type.key === "humedad_suelo"
+                          ? "#10b981"
+                          : type.key === "calidad_aire"
+                          ? "#f59e0b"
+                          : "#f59e0b",
+                    }}
                   >
-                    {latest?.[type.key] !== null && typeof latest?.[type.key] === "number"
-                      ? latest[type.key].toFixed(type.decimals)
+                    {latest && typeof latest[type.key] === "number"
+                      ? latest[type.key]!.toFixed(type.decimals)
                       : "N/A"}{" "}
-                    {type.key === "temperatura" ? "°C" : "%"}
+                    {type.key === "temperatura"
+                      ? "°C"
+                      : type.key === "humedad_ambiente" || type.key === "humedad_suelo"
+                      ? "%"
+                      : type.key === "calidad_aire"
+                      ? "PPM"
+                      : "lux"}
                   </p>
                 </motion.div>
               );
@@ -143,10 +181,10 @@ const SensoresPage: React.FC = () => {
 
           <div className="w-full h-80">
             {selectedViewMode.id === "realtime" ? (
-              <SensorCharts realTimeData={filteredData} selectedDataType={selectedDataType} />
+              <SensorCharts realTimeData={filteredData} selectedDataType={selectedDataType} selectedSensor="todos" />
             ) : (
               <div className="flex flex-col gap-2">
-                <SensorStats realTimeData={filteredData} />
+                <SensorStats realTimeData={filteredData} selectedSensor="todos" />
                 <div className="max-h-48 overflow-y-auto">
                   <SensorTable realTimeData={filteredData} />
                 </div>

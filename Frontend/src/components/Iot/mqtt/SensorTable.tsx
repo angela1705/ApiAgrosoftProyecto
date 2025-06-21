@@ -18,7 +18,7 @@ const columns = [
   columnHelper.accessor("fecha_medicion", {
     header: "Fecha",
     cell: (info) =>
-      new Date(info.getValue()).toLocaleString("es-ES", {
+      new Date(info.getValue() || "").toLocaleString("es-ES", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
@@ -31,14 +31,35 @@ const columns = [
     header: "Temperatura (°C)",
     cell: (info) => {
       const value = info.getValue();
-      return typeof value === "number" ? value.toFixed(3) : "N/A";
+      return typeof value === "number" ? value.toFixed(2) : "N/A";
     },
   }),
   columnHelper.accessor("humedad_ambiente", {
-    header: "Humedad (%)",
+    header: "Humedad Ambiente (%)",
     cell: (info) => {
       const value = info.getValue();
       return typeof value === "number" ? value.toFixed(1) : "N/A";
+    },
+  }),
+  columnHelper.accessor("humedad_suelo", {
+    header: "Humedad Suelo (%)",
+    cell: (info) => {
+      const value = info.getValue();
+      return typeof value === "number" ? value.toFixed(1) : "N/A";
+    },
+  }),
+  columnHelper.accessor("calidad_aire", {
+    header: "Calidad Aire (PPM)",
+    cell: (info) => {
+      const value = info.getValue();
+      return typeof value === "number" ? value.toFixed(0) : "N/A";
+    },
+  }),
+  columnHelper.accessor("luminosidad", {
+    header: "Luminosidad (lux)",
+    cell: (info) => {
+      const value = info.getValue();
+      return typeof value === "number" ? value.toFixed(0) : "N/A";
     },
   }),
 ];

@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { FaTemperatureHigh, FaTint } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { DataType, DataTypeSelectorProps } from "@/types/iot/iotmqtt";
 
@@ -12,14 +12,35 @@ const dataTypes: DataType[] = [
     key: "temperatura",
     icon: <FaTemperatureHigh className="text-red-500" />,
     tipo_sensor: "temperatura",
-    decimals: 3,
+    decimals: 2,
   },
   {
-    label: "Humedad (%)",
+    label: "Humedad Ambiente (%)",
     key: "humedad_ambiente",
     icon: <FaTint className="text-blue-500" />,
     tipo_sensor: "humedad_ambiente",
     decimals: 1,
+  },
+  {
+    label: "Humedad Suelo (%)",
+    key: "humedad_suelo",
+    icon: <FaLeaf className="text-green-500" />,
+    tipo_sensor: "humedad_suelo",
+    decimals: 1,
+  },
+  {
+    label: "Calidad Aire (PPM)",
+    key: "calidad_aire",
+    icon: <FaWind className="text-yellow-500" />,
+    tipo_sensor: "calidad_aire",
+    decimals: 0,
+  },
+  {
+    label: "Luminosidad (lux)",
+    key: "luminosidad",
+    icon: <FaLightbulb className="text-amber-500" />,
+    tipo_sensor: "luminosidad",
+    decimals: 0,
   },
 ];
 
@@ -49,9 +70,7 @@ export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({ selectedData
                 <Listbox.Option
                   key={type.key}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? "bg-blue-100 text-blue-900" : "text-gray-900"
-                    }`
+                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-blue-100 text-blue-900" : "text-gray-900"}`
                   }
                   value={type}
                 >
