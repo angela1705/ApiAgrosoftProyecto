@@ -14,35 +14,35 @@ import { DataType, ViewMode } from "@/types/iot/iotmqtt";
 
 const dataTypes: DataType[] = [
   {
-    label: "Temperatura (°C)",
+    nombre: "Temperatura (°C)",
     key: "temperatura",
     icon: <FaTemperatureHigh className="text-red-500" />,
     tipo_sensor: "temperatura",
     decimals: 2,
   },
   {
-    label: "Humedad Ambiente (%)",
+    nombre: "Humedad Ambiente (%)",
     key: "humedad_ambiente",
     icon: <FaTint className="text-blue-500" />,
     tipo_sensor: "humedad_ambiente",
     decimals: 1,
   },
   {
-    label: "Humedad Suelo (%)",
+    nombre: "Humedad Suelo (%)",
     key: "humedad_suelo",
     icon: <FaLeaf className="text-green-500" />,
     tipo_sensor: "humedad_suelo",
     decimals: 1,
   },
   {
-    label: "Calidad Aire (PPM)",
+    nombre: "Calidad Aire (PPM)",
     key: "calidad_aire",
     icon: <FaWind className="text-yellow-500" />,
     tipo_sensor: "calidad_aire",
     decimals: 0,
   },
   {
-    label: "Luminosidad (lux)",
+    nombre: "Luminosidad (lux)",
     key: "luminosidad",
     icon: <FaLightbulb className="text-amber-500" />,
     tipo_sensor: "luminosidad",
@@ -112,7 +112,7 @@ const SensoresPage: React.FC = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <p className="text-base font-semibold text-gray-700 flex items-center justify-center gap-2">
-                    {type.icon} {type.label}
+                    {type.icon} {type.nombre}
                   </p>
                   <p
                     className="text-3xl font-bold mt-2"
@@ -129,8 +129,8 @@ const SensoresPage: React.FC = () => {
                           : "#f59e0b",
                     }}
                   >
-                    {latest?.[type.key] !== null && latest?.[type.key] !== undefined && typeof latest?.[type.key] === "number"
-                      ? latest[type.key].toFixed(type.decimals)
+                    {latest && typeof latest[type.key] === "number"
+                      ? latest[type.key]!.toFixed(type.decimals)
                       : "N/A"}{" "}
                     {type.key === "temperatura"
                       ? "°C"
