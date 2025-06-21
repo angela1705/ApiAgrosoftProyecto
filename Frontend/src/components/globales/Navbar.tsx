@@ -24,7 +24,7 @@ import Sena from "../../assets/logo sena.png";
 
 const menuItems = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
-  { id: 46, label: "mapa", path: "/mapa", icon: <FaMap /> },
+  { id: 46, label: "Mapa", path: "/mapa", icon: <FaMap /> },
   { id: 3, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
   { id: 4, label: "Calendario", path: "/calendario", icon: <FaCalendarAlt /> },
   {
@@ -95,7 +95,7 @@ const menuItems = [
   { id: 40, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
   {
     id: 41,
-    label: "Graficas",
+    label: "Gráficas",
     icon: <FaChartBar />,
     subItems: [
       { id: 42, label: "Ingresos", path: "/graficas/ingresos" },
@@ -109,7 +109,7 @@ const menuItems = [
 export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) {
   const { expandedItems, setExpandedItems, navScrollPosition, setNavScrollPosition } = useNavbar();
   const navRef = useRef<HTMLElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Detectar si es móvil
   useEffect(() => {
@@ -118,10 +118,10 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
     };
 
     checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
+    window.addEventListener('resize', checkIfMobile);
 
     return () => {
-      window.removeEventListener("resize", checkIfMobile);
+      window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
 
@@ -165,46 +165,51 @@ export default function Navbar({ isOpen, toggleSidebar }: { isOpen: boolean; tog
       {isMobile && (
         <button
           onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-50 p-2 bg-white rounded-full shadow-lg md:hidden"
+          className="fixed top-4 left-4 z-[60] p-2 bg-white rounded-md shadow-lg md:hidden"
         >
           <Menu size={24} />
         </button>
       )}
 
-      <aside
-        className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50 ${
-          isOpen ? "w-64 p-4" : "w-20 p-2"
-        } ${isMobile ? (isOpen ? "block" : "hidden") : ""} rounded-r-2xl`}
-      >
-        {/* Header con logos y barra vertical */}
-        <div className="flex flex-col items-center gap-4">
-          {!isMobile && (
-            <Button isIconOnly variant="light" className="mb-4" onClick={toggleSidebar}>
-              <Menu size={24} />
-            </Button>
-          )}
-          <div className={`flex items-center justify-center gap-4 ${!isOpen ? "hidden" : ""}`}>
-            <img src={LogoSena} alt="Logo Agrosis" className="w-28" />
-            <span className="text-gray-400 text-2xl font-light">|</span>
-            <img src={Sena} alt="Logo Sena" className="w-12" />
+      {/* Sidebar */}
+      {isOpen || !isMobile ? (
+        <aside
+          className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50
+            ${isOpen ? "w-64 p-4" : "w-20 p-2"}
+            ${isMobile ? (isOpen ? "translate-x-0" : "hidden -translate-x-full") : "translate-x-0"}
+            rounded-r-lg`}
+          style={isMobile ? { top: '64px', height: 'calc(100vh - 64px)' } : {}}
+        >
+          {/* Header con logos y barra vertical */}
+          <div className="flex flex-col items-center gap-4">
+            {!isMobile && (
+              <Button isIconOnly variant="light" className="mb-4 rounded-md" onClick={toggleSidebar}>
+                <Menu size={24} />
+              </Button>
+            )}
+            <div className={`flex items-center justify-center gap-4 ${!isOpen ? "hidden" : ""}`}>
+              <img src={LogoSena} alt="Logo Agrosis" className="w-28" />
+              <span className="text-gray-400 text-2xl font-light">|</span>
+              <img src={Sena} alt="Logo Sena" className="w-12" />
+            </div>
           </div>
-        </div>
 
-        {/* Menú */}
-        <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
-          <div className="flex flex-col gap-6">
-            {menuItems.map((item) => (
-              <SidebarItem
-                key={item.id}
-                item={item}
-                isOpen={isOpen}
-                isExpanded={!!expandedItems[item.id]}
-                toggleExpanded={() => toggleExpanded(item.id)}
-              />
-            ))}
-          </div>
-        </nav>
-      </aside>
+          {/* Menú */}
+          <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
+            <div className="flex flex-col gap-4">
+              {menuItems.map((item) => (
+                <SidebarItem
+                  key={item.id}
+                  item={item}
+                  isOpen={isOpen}
+                  isExpanded={!!expandedItems[item.id]}
+                  toggleExpanded={() => toggleExpanded(item.id)}
+                />
+              ))}
+            </div>
+          </nav>
+        </aside>
+      ) : null}
     </>
   );
 }
@@ -224,9 +229,9 @@ function SidebarItem({
     <div>
       <Link
         to={item.path || "#"}
-        className={`flex items-center gap-2 p-3 rounded-full transition-all font-medium cursor-pointer bg-white shadow-md hover:bg-gray-400 hover:text-white ${
-          isOpen ? "w-5/6 mx-auto" : "justify-center w-12 mx-auto"
-        }`}
+        className={`flex items-center gap-2 p-3 rounded-md transition-all font-medium cursor-pointer
+          bg-white shadow-sm hover:bg-gray-400 hover:text-white
+          ${isOpen ? "w-5/6 mx-auto" : "justify-center w-12 mx-auto"}`}
         onClick={(e) => {
           if (item.subItems) {
             e.preventDefault();
@@ -245,7 +250,9 @@ function SidebarItem({
             <Link
               key={subItem.id}
               to={subItem.path}
-              className="flex items-center gap-2 p-2 pl-6 rounded-full transition-all font-medium cursor-pointer bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
+              className="flex items-center gap-2 p-2 pl-6 rounded-md transition-all font-medium cursor-pointer
+                bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto
+                relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
             >
               {subItem.icon && <span className="text-gray-600">{subItem.icon}</span>}
               <span className="text-sm">{subItem.label}</span>

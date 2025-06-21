@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import { NavbarProvider } from "./context/NavbarContext";
 import Navbar from "./components/globales/Navbar";
-import { Header } from "./components/globales/Header";
 import { Toaster } from "react-hot-toast";
 import GlobalStyles from "./components/globales/GlobalStyles";
 import PricingPage from "./pages/globales/pricing";
@@ -110,14 +109,17 @@ const AuthenticatedLayout: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(() => {
     if (!isAuthenticated) return false;
     const isMobile = window.innerWidth < 768;
+    if (isMobile) return false;
     const savedState = localStorage.getItem("sidebarOpen");
-    return isMobile ? false : savedState ? JSON.parse(savedState) : true;
+    return savedState ? JSON.parse(savedState) : true;
   });
 
+  // Sincronizar localStorage
   useEffect(() => {
     localStorage.setItem("sidebarOpen", JSON.stringify(isSidebarOpen));
   }, [isSidebarOpen]);
 
+  // Resetear sidebar si no está autenticado
   useEffect(() => {
     if (!isAuthenticated) {
       setSidebarOpen(false);
@@ -125,13 +127,35 @@ const AuthenticatedLayout: React.FC = () => {
     }
   }, [isAuthenticated]);
 
+  // Manejar redimensionamiento
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && isSidebarOpen) {
+        setSidebarOpen(false);
+        localStorage.setItem("sidebarOpen", "false");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isSidebarOpen]);
+
+  // Sincronizar estado al montar
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile && isSidebarOpen) {
+      setSidebarOpen(false);
+      localStorage.setItem("sidebarOpen", "false");
+    }
+  }, []);
+
   const toggleSidebar = () => {
-    setSidebarOpen((prev: boolean) => !prev);
+    setSidebarOpen((prev) => !prev);
   };
 
   return (
     <div className="flex min-h-screen">
-      {isAuthenticated && <Header toggleSidebar={toggleSidebar} />}
       {isAuthenticated && <Navbar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
       <div
         className={`flex-1 transition-all duration-300 ${
