@@ -1,66 +1,37 @@
-import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import { Box, Typography } from "@mui/material";
 import UserMenu from "../usuarios/UserMenu";
 import Notificacion from "./Notificacion";
 import ErrorBoundary from "./ErrorBoundary";
+import { useNavbar } from "../../context/NavbarContext";
 
-interface HeaderProps {
-  toggleSidebar?: () => void;
-}
+export const Header: React.FC = () => {
+  const { setSidebarOpen } = useNavbar();
 
-export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detectar si es móvil
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-
-    return () => {
-      window.removeEventListener("resize", checkIfMobile);
-    };
-  }, []);
-
-  // Depuración de props
-  console.log("Header props:", { toggleSidebar });
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
 
   return (
-    <header className="fixed top-0 left-0 z-40 bg-green-600 h-16 flex items-center px-2 w-full">
+    <header className="fixed top-0 left-0 z-40 bg-green-700 h-16 flex items-center px-4 w-full shadow-md">
       {/* Botón de toggle para móviles */}
-      {isMobile && toggleSidebar && (
-        <button
-          onClick={toggleSidebar}
-          className="p-2 text-white rounded-full hover:bg-green-700 mr-2"
-        >
-          <Menu size={24} />
-        </button>
-      )}
+      <button
+        onClick={toggleSidebar}
+        className="md:hidden p-2 text-white hover:bg-green-800 rounded-full"
+      >
+        <Menu size={24} />
+      </button>
 
       {/* Espacio flexible para empujar UserMenu y Notificaciones a la derecha */}
       <div className="flex-grow" />
 
-      {/* Menú de usuario y notificaciones a la derecha */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: isMobile ? 0 : 0.25,
-        }}
-      >
+      {/* Menú de usuario y notificaciones */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <ErrorBoundary>
           <Notificacion />
         </ErrorBoundary>
-        <Typography
-          className={`text-white ${isMobile ? "text-xl mx-0.25" : "text-2xl mx-0.5"} font-light`}
-        >
-          |
-        </Typography>
-        <UserMenu hideText={isMobile} />
+        <Typography className="text-white text-2xl font-light hidden md:block">|</Typography>
+        <UserMenu hideText={true} />
       </Box>
     </header>
   );
