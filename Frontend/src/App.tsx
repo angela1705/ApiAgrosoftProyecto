@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { Route, Routes, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import { NavbarProvider } from "./context/NavbarContext";
@@ -12,8 +11,6 @@ import Calendar from "./pages/globales/Calendar";
 import AboutPage from "./pages/globales/about";
 import DashboardPage from "./pages/globales/Dashboard";
 import Mapa from "./pages/globales/Mapa";
-
-// Cultivo
 import TipoEspeciePage from "./pages/cultivo/TipoEspeciePage";
 import TipoActividadPage from "./pages/cultivo/TipoActividadPage";
 import LotesPage from "./pages/cultivo/LotesPage";
@@ -53,8 +50,6 @@ import TipoResiduoPage from "./pages/cultivo/TipoResiduoPage";
 import ResiduoPage from "./pages/cultivo/ResiduosPage";
 import ListaResiduoPage from "./pages/cultivo/ListaResiduosPage";
 import ActividadCostosGraficasPage from "./pages/cultivo/ActividadCostosGraficasPage";
-
-// Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
 import ListaHerramientaPage from "./pages/inventario/ListaHerramientaPage";
 import InsumoPage from "./pages/inventario/InsumoPage";
@@ -67,15 +62,11 @@ import BodegaHerramientaPage from "./pages/inventario/BodegaHerramientaPage";
 import ListaBodegaHerramientaPage from "./pages/inventario/ListaBodegaHerramientaPage";
 import BodegaPage from "./pages/inventario/BodegaPage";
 import ListaBodegaPage from "./pages/inventario/ListaBodegaPage";
-
-// IoT
 import SensoresPage from "./pages/iot/SensoresPage2";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/sensores/RegistrarSensorPage";
 import ListarSensores from "./pages/iot/sensores/ListarSensoresPage";
 import EvapotranspiracionPage from "./pages/iot/EvapotranspiracionPage";
-
-// Usuarios
 import RegisterPage from "./pages/usuarios/RegisterPage";
 import UsuariosPage from "./pages/usuarios/UsuariosPage";
 import PrivateRoute from "./components/usuarios/RutaPrivada";
@@ -84,8 +75,6 @@ import PerfilPage from "./pages/usuarios/PerfilPage";
 import ForgotPasswordPage from "./pages/usuarios/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/usuarios/ResetPasswordPage";
 import UsuariosSecondPage from "./pages/usuarios/RegisterSecondPage";
-
-// Finanzas
 import SalarioPage from "./pages/finanzas/SalarioPage";
 import VentaPage from "./pages/finanzas/VentaPage";
 import ListaVentaPage from "./pages/finanzas/ListaVentaPage";
@@ -95,71 +84,22 @@ import PagoPage from "./pages/finanzas/PagoPage";
 import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
 import DetalleReportePago from "./pages/finanzas/ReporteEgresos";
 import CostoBeneficioPage from "./pages/finanzas/CostoBeneficioPage";
-
-// Reportes
 import Reportes from "./pages/reportes/Reportes";
 import GraficaIngreso from "./pages/reportes/GraficaIngreso";
-import { useAuth } from "./context/AuthContext";
 import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";
+import { useNavbar } from "./context/NavbarContext";
 
 const queryClient = new QueryClient();
 
 const AuthenticatedLayout: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(() => {
-    if (!isAuthenticated) return false;
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) return false;
-    const savedState = localStorage.getItem("sidebarOpen");
-    return savedState ? JSON.parse(savedState) : true;
-  });
-
-  // Sincronizar localStorage
-  useEffect(() => {
-    localStorage.setItem("sidebarOpen", JSON.stringify(isSidebarOpen));
-  }, [isSidebarOpen]);
-
-  // Resetear sidebar si no está autenticado
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setSidebarOpen(false);
-      localStorage.setItem("sidebarOpen", "false");
-    }
-  }, [isAuthenticated]);
-
-  // Manejar redimensionamiento
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      if (isMobile && isSidebarOpen) {
-        setSidebarOpen(false);
-        localStorage.setItem("sidebarOpen", "false");
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isSidebarOpen]);
-
-  // Sincronizar estado al montar
-  useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    if (isMobile && isSidebarOpen) {
-      setSidebarOpen(false);
-      localStorage.setItem("sidebarOpen", "false");
-    }
-  }, []);
-
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
+  const { isSidebarOpen } = useNavbar();
 
   return (
     <div className="flex min-h-screen">
-      {isAuthenticated && <Navbar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+      <Navbar />
       <div
         className={`flex-1 transition-all duration-300 ${
-          isAuthenticated ? (isSidebarOpen ? "md:ml-64" : "md:ml-20") : ""
+          isSidebarOpen ? "md:ml-64" : "md:ml-20"
         }`}
       >
         <Outlet />
