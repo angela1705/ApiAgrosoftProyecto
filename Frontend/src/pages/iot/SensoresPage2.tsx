@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+ 
+import React, { useState, useRef, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from "react-icons/fa";
@@ -7,10 +8,15 @@ import { useSensores } from "@/hooks/iot/mqtt/useSensores";
 import { usePublishCommand } from "@/hooks/iot/mqtt/usePublishCommand";
 import { DataTypeSelector } from "@/components/Iot/mqtt/DataTypeSelector";
 import { ViewModeSelector } from "@/components/Iot/mqtt/ViewModeSelector";
-import { SensorStats } from "@/components/Iot/mqtt/SensorStats";
 import { SensorCharts } from "@/components/Iot/mqtt/SensorCharts";
+import { SensorStats } from "@/components/Iot/mqtt/SensorStats";
 import { SensorTable } from "@/components/Iot/mqtt/SensorTable";
+import { GenerateReport } from "@/components/Iot/mqtt/GenerateReport";
 import { DataType, ViewMode } from "@/types/iot/iotmqtt";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from "chart.js";
+import { debounce } from "lodash";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
 const dataTypes: DataType[] = [
   {
@@ -19,6 +25,8 @@ const dataTypes: DataType[] = [
     icon: <FaTemperatureHigh className="text-red-500" />,
     tipo_sensor: "temperatura",
     decimals: 2,
+    medida_minima: 10,
+    medida_maxima: 40,
   },
   {
     nombre: "Humedad Ambiente (%)",
@@ -26,6 +34,8 @@ const dataTypes: DataType[] = [
     icon: <FaTint className="text-blue-500" />,
     tipo_sensor: "humedad_ambiente",
     decimals: 1,
+    medida_minima: 20,
+    medida_maxima: 90,
   },
   {
     nombre: "Humedad Suelo (%)",
@@ -33,6 +43,8 @@ const dataTypes: DataType[] = [
     icon: <FaLeaf className="text-green-500" />,
     tipo_sensor: "humedad_suelo",
     decimals: 1,
+    medida_minima: 10,
+    medida_maxima: 80,
   },
   {
     nombre: "Calidad Aire (PPM)",
@@ -40,6 +52,8 @@ const dataTypes: DataType[] = [
     icon: <FaWind className="text-yellow-500" />,
     tipo_sensor: "calidad_aire",
     decimals: 0,
+    medida_minima: 0,
+    medida_maxima: 1000,
   },
   {
     nombre: "Luminosidad (lux)",
@@ -47,6 +61,8 @@ const dataTypes: DataType[] = [
     icon: <FaLightbulb className="text-amber-500" />,
     tipo_sensor: "luminosidad",
     decimals: 0,
+    medida_minima: 0,
+    medida_maxima: 10000,
   },
 ];
 
@@ -58,12 +74,16 @@ const viewModes: ViewMode[] = [
 const SensoresPage: React.FC = () => {
   const { realTimeData, isLoading, error, mqttClient } = useSensores();
   const [sensorActive, setSensorActive] = useState(true);
-  const [selectedDataType, setSelectedDataType] = useState(dataTypes[0]);
-  const [selectedViewMode, setSelectedViewMode] = useState(viewModes[0]);
+  const [selectedDataType, setSelectedDataType] = useState<DataType>(dataTypes[0]);
+  const [selectedViewMode, setSelectedViewMode] = useState<ViewMode>(viewModes[0]);
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
   const navigate = useNavigate();
+  const chartRef = useRef<HTMLDivElement>(null);
 
-  const filteredData = realTimeData.filter((d) => d.device_code === "ESP32_001");
+  const debouncedSetSelectedDataType = useCallback(debounce(setSelectedDataType, 300), []);
+
+  // Mantener el filtro por ESP32_001
+  const filteredData = useMemo(() => realTimeData.filter((d) => d.device_code === "ESP32_001"), [realTimeData]);
 
   if (isLoading) {
     return (
@@ -93,44 +113,33 @@ const SensoresPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full flex flex-col items-center bg-gray-50 px-3 py-2 min-h-screen">
-        <div className="w-full max-w-6xl flex flex-col items-center gap-2">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Datos de Sensores</h1>
+      <div className="w-full flex flex-col items-center bg-gray-50 px-4 py-6 min-h-screen">
+        <div className="w-full max-w-7xl flex flex-col items-center gap-8">
+          <h1 className="text-3xl font-bold text-gray-800">Panel de Sensores</h1>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+          {/* Tarjetas de métricas a tiempo real */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full">
             {dataTypes.map((type, index) => {
               const latest = filteredData
                 .filter((d) => d[type.key] !== null && d[type.key] !== undefined)
                 .sort((a, b) => new Date(b.fecha_medicion || "").getTime() - new Date(a.fecha_medicion || "").getTime())[0];
-
               return (
                 <motion.div
                   key={type.key}
-                  className="bg-white rounded-xl shadow-md p-4 text-center w-full sm:w-56 h-32 flex flex-col justify-center items-center"
+                  className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-center items-center h-32"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <p className="text-base font-semibold text-gray-700 flex items-center justify-center gap-2">
-                    {type.icon} {type.nombre}
-                  </p>
+                  <p className="text-sm font-semibold text-gray-600 flex items-center gap-2">{type.icon} {type.nombre}</p>
                   <p
-                    className="text-3xl font-bold mt-2"
+                    className="text-2xl font-bold mt-2"
                     style={{
-                      color:
-                        type.key === "temperatura"
-                          ? "#dc2626"
-                          : type.key === "humedad_ambiente"
-                          ? "#2563eb"
-                          : type.key === "humedad_suelo"
-                          ? "#10b981"
-                          : type.key === "calidad_aire"
-                          ? "#f59e0b"
-                          : "#f59e0b",
+                      color: type.key === "temperatura" ? "#dc2626" : type.key === "humedad_ambiente" ? "#2563eb" : type.key === "humedad_suelo" ? "#10b981" : type.key === "calidad_aire" ? "#f59e0b" : "#f59e0b",
                     }}
                   >
                     {latest && typeof latest[type.key] === "number"
-                      ? latest[type.key]!.toFixed(type.decimals)
+                      ? latest[type.key].toFixed(type.decimals)
                       : "N/A"}{" "}
                     {type.key === "temperatura"
                       ? "°C"
@@ -143,8 +152,32 @@ const SensoresPage: React.FC = () => {
                 </motion.div>
               );
             })}
+          </div>
+
+          {/* Tarjetas de promedios */}
+          <SensorStats realTimeData={filteredData} selectedSensor="todos" />
+
+          {/* Botones */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
             <motion.button
-              className="bg-green-600 rounded-xl shadow-md p-4 text-center w-full sm:w-56 h-32 flex flex-col justify-center items-center text-white text-sm font-semibold"
+              className="bg-white rounded-lg shadow-md p-4 flex items-center justify-center text-lg font-semibold text-gray-700 hover:bg-gray-100 h-32"
+              onClick={() => publishCommand(sensorActive ? "STOP_SENSOR" : "START_SENSOR")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {sensorActive ? "Apagar Sensor" : "Encender Sensor"}
+            </motion.button>
+            <motion.button
+              className="bg-white rounded-lg shadow-md p-4 flex items-center justify-center text-lg font-semibold text-gray-700 hover:bg-gray-100 h-32"
+              onClick={() => publishCommand("RESTART_WIFI")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Reiniciar WiFi
+            </motion.button>
+            <GenerateReport realTimeData={filteredData} dataTypes={dataTypes} />
+            <motion.button
+              className="bg-green-600 text-white rounded-lg shadow-md p-4 flex items-center justify-center text-lg font-semibold h-32"
               onClick={() => navigate("/iot/datosmeteorologicos")}
               whileHover={{ scale: 1.05, backgroundColor: "#059669" }}
               whileTap={{ scale: 0.95 }}
@@ -153,41 +186,21 @@ const SensoresPage: React.FC = () => {
             </motion.button>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
-            <DataTypeSelector selectedDataType={selectedDataType} setSelectedDataType={setSelectedDataType} />
+          {/* Selectores */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+            <DataTypeSelector selectedDataType={selectedDataType} setSelectedDataType={debouncedSetSelectedDataType} />
             <ViewModeSelector selectedViewMode={selectedViewMode} setSelectedViewMode={setSelectedViewMode} />
           </div>
 
-          <div className="flex flex-wrap gap-2 justify-center mb-4">
-            <motion.button
-              className={`px-3 py-1 text-white text-xs font-semibold rounded-lg shadow-sm hover:shadow-md ${
-                sensorActive ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
-              }`}
-              onClick={() => publishCommand(sensorActive ? "STOP_SENSOR" : "START_SENSOR")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {sensorActive ? "Apagar Sensor" : "Encender Sensor"}
-            </motion.button>
-            <motion.button
-              className="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm hover:shadow-md hover:bg-blue-700"
-              onClick={() => publishCommand("RESTART_WIFI")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Reiniciar WiFi
-            </motion.button>
-          </div>
-
-          <div className="w-full h-80">
-            {selectedViewMode.id === "realtime" ? (
+          {/* Gráficas o tabla */}
+          <div className="w-full" ref={chartRef}>
+            {selectedViewMode.id === "realtime" && chartRef.current ? (
               <SensorCharts realTimeData={filteredData} selectedDataType={selectedDataType} selectedSensor="todos" />
+            ) : selectedViewMode.id === "realtime" ? (
+              <p className="text-gray-600 text-center mt-4">No hay datos disponibles para renderizar el gráfico.</p>
             ) : (
-              <div className="flex flex-col gap-2">
-                <SensorStats realTimeData={filteredData} selectedSensor="todos" />
-                <div className="max-h-48 overflow-y-auto">
-                  <SensorTable realTimeData={filteredData} />
-                </div>
+              <div className="flex flex-col gap-6">
+                <SensorTable realTimeData={filteredData} selectedDataType={selectedDataType} />
               </div>
             )}
           </div>
@@ -197,4 +210,4 @@ const SensoresPage: React.FC = () => {
   );
 };
 
-export default SensoresPage;
+export default SensoresPage; 
