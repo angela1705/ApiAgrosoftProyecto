@@ -14,13 +14,13 @@ export interface SensorData {
 }
 
 export interface DataType {
-  nombre: string;  
+  nombre: string;
   key: "temperatura" | "humedad_ambiente" | "humedad_suelo" | "calidad_aire" | "luminosidad";
   icon: React.ReactNode;
   tipo_sensor: string;
   decimals: number;
-  medida_minima?: number;  
-  medida_maxima?: number; 
+  medida_minima?: number;
+  medida_maxima?: number;
 }
 
 export interface ViewMode {
@@ -66,4 +66,5 @@ export interface ViewModeSelectorProps {
 
 export interface SensorTableProps {
   realTimeData: SensorData[];
+  selectedDataType: DataType;
 }

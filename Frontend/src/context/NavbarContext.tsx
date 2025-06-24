@@ -24,6 +24,7 @@ export const NavbarProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const { isAuthenticated } = useAuth();
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(() => {
     // Iniciar abierto por defecto, incluso en móviles
+    
     const savedState = localStorage.getItem("sidebarOpen");
     return savedState ? JSON.parse(savedState) : true;
   });
@@ -43,6 +44,7 @@ export const NavbarProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       setNavScrollPosition(0);
       localStorage.setItem("sidebarOpen", "false");
     }
+    
   }, [isAuthenticated]);
 
   // Opcional: Manejar redimensionamiento para cerrar en móviles
