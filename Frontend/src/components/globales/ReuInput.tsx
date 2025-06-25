@@ -14,6 +14,7 @@ interface ReusableInputProps {
   name?: string;
   required?: boolean;
   disabled?: boolean;
+  classname?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
