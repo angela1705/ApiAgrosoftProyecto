@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { Route, Routes, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import { NavbarProvider } from "./context/NavbarContext";
@@ -12,8 +11,6 @@ import Calendar from "./pages/globales/Calendar";
 import AboutPage from "./pages/globales/about";
 import DashboardPage from "./pages/globales/Dashboard";
 import Mapa from "./pages/globales/Mapa";
-
-// Cultivo
 import TipoEspeciePage from "./pages/cultivo/TipoEspeciePage";
 import TipoActividadPage from "./pages/cultivo/TipoActividadPage";
 import LotesPage from "./pages/cultivo/LotesPage";
@@ -53,31 +50,23 @@ import TipoResiduoPage from "./pages/cultivo/TipoResiduoPage";
 import ResiduoPage from "./pages/cultivo/ResiduosPage";
 import ListaResiduoPage from "./pages/cultivo/ListaResiduosPage";
 import ActividadCostosGraficasPage from "./pages/cultivo/ActividadCostosGraficasPage";
-
-// Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
 import ListaHerramientaPage from "./pages/inventario/ListaHerramientaPage";
 import InsumoPage from "./pages/inventario/InsumoPage";
 import ListaInsumoPage from "./pages/inventario/ListaInsumoPage";
 import Precio_ProductoPage from "./pages/inventario/Precio_ProductoPage";
 import ListaPrecio_ProductoPage from "./pages/inventario/ListaPrecio_ProductoPage";
-import BodegaInsumoPage from './pages/inventario/BodegaInsumoPage';
-import ListaBodegaInsumoPage from './pages/inventario/ListaBodegaInsumoPage';
-import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
-import ListaBodegaHerramientaPage from './pages/inventario/ListaBodegaHerramientaPage';
-import BodegaPage from './pages/inventario/BodegaPage';
-import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
-//import BodegaPrecioProductoPage from "./pages/inventario/BodegaPrecioProductoPage";
-//import ListaBodegaPrecioProductoPage from "./pages/inventario/ListaBodegaPrecioProductoPage";
-
-// IoT
-import SensoresPage from "./pages/iot/SensoresPage";
+import BodegaInsumoPage from "./pages/inventario/BodegaInsumoPage";
+import ListaBodegaInsumoPage from "./pages/inventario/ListaBodegaInsumoPage";
+import BodegaHerramientaPage from "./pages/inventario/BodegaHerramientaPage";
+import ListaBodegaHerramientaPage from "./pages/inventario/ListaBodegaHerramientaPage";
+import BodegaPage from "./pages/inventario/BodegaPage";
+import ListaBodegaPage from "./pages/inventario/ListaBodegaPage";
+import SensoresPage from "./pages/iot/SensoresPage2";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/sensores/RegistrarSensorPage";
-import ListarSensores from "./pages/iot/sensores/ListarSensoresPage"; 
+import ListarSensores from "./pages/iot/sensores/ListarSensoresPage";
 import EvapotranspiracionPage from "./pages/iot/EvapotranspiracionPage";
-
-// Usuarios
 import RegisterPage from "./pages/usuarios/RegisterPage";
 import UsuariosPage from "./pages/usuarios/UsuariosPage";
 import PrivateRoute from "./components/usuarios/RutaPrivada";
@@ -86,8 +75,6 @@ import PerfilPage from "./pages/usuarios/PerfilPage";
 import ForgotPasswordPage from "./pages/usuarios/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/usuarios/ResetPasswordPage";
 import UsuariosSecondPage from "./pages/usuarios/RegisterSecondPage";
-
-// Finanzas
 import SalarioPage from "./pages/finanzas/SalarioPage";
 import VentaPage from "./pages/finanzas/VentaPage";
 import ListaVentaPage from "./pages/finanzas/ListaVentaPage";
@@ -97,47 +84,22 @@ import PagoPage from "./pages/finanzas/PagoPage";
 import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
 import DetalleReportePago from "./pages/finanzas/ReporteEgresos";
 import CostoBeneficioPage from "./pages/finanzas/CostoBeneficioPage";
-// Reportes
 import Reportes from "./pages/reportes/Reportes";
 import GraficaIngreso from "./pages/reportes/GraficaIngreso";
-import { useAuth } from "./context/AuthContext";
 import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";
-
+import { useNavbar } from "./context/NavbarContext";
 
 const queryClient = new QueryClient();
 
 const AuthenticatedLayout: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(() => {
-    if (!isAuthenticated) return false;
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) return false;
-    const savedState = localStorage.getItem("sidebarOpen");
-    // Si el sidebar estaba abierto al recargar, lo cerramos para evitar duplicados
-    return savedState ? false : true;
-  });
-
-  useEffect(() => {
-    localStorage.setItem("sidebarOpen", JSON.stringify(isSidebarOpen));
-  }, [isSidebarOpen]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setSidebarOpen(false);
-      localStorage.setItem("sidebarOpen", "false");
-    }
-  }, [isAuthenticated]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen((prev: boolean) => !prev);
-  };
+  const { isSidebarOpen } = useNavbar();
 
   return (
     <div className="flex min-h-screen">
-      {isAuthenticated && <Navbar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+      <Navbar />
       <div
         className={`flex-1 transition-all duration-300 ${
-          isAuthenticated ? (isSidebarOpen ? "md:ml-64" : "md:ml-20") : ""
+          isSidebarOpen ? "md:ml-64" : "md:ml-20"
         }`}
       >
         <Outlet />
@@ -153,10 +115,6 @@ const App: React.FC = () => {
         <NavbarProvider>
           <GlobalStyles />
           <Toaster position="top-right" reverseOrder={false} />
-
-          {/* Otros componentes */}
-          {/* Más componentes */}
-          
           <Routes>
             {/* Rutas públicas (Usuarios) */}
             <Route path="/login" element={<LoginPage />} />
@@ -184,6 +142,7 @@ const App: React.FC = () => {
               <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
               <Route path="/iot/listar-sensores" element={<ListarSensores />} />
               <Route path="/iot/evapotranspiracion" element={<EvapotranspiracionPage />} />
+
               {/* Cultivo */}
               <Route path="/cultivo/tipoespecie" element={<TipoEspeciePage />} />
               <Route path="/cultivo/listartipoespecie" element={<ListaTipoEspeciePage />} />
@@ -213,7 +172,6 @@ const App: React.FC = () => {
               <Route path="/cultivo/control/" element={<ControlPage />} />
               <Route path="/cultivo/listacontrol/" element={<ListaControlPage />} />
               <Route path="/cultivo/trazabilidad/" element={<TrazabilidadCosecha />} />
-              <Route path="/cultivo/cultivo/" element={<CultivoPage />} />
               <Route path="/cultivo/tiporesiduo/" element={<TipoResiduoPage />} />
               <Route path="/cultivo/residuo/" element={<ResiduoPage />} />
               <Route path="/cultivo/listatiporesiduo/" element={<ListaTipoResiduoPage />} />
@@ -241,8 +199,6 @@ const App: React.FC = () => {
               <Route path="/inventario/listarbodegainsumos" element={<ListaBodegaInsumoPage />} />
               <Route path="/inventario/bodega" element={<BodegaPage />} />
               <Route path="/inventario/listarbodega" element={<ListaBodegaPage />} />
-              {/*<Route path="/inventario/bodegapreciosproductos" element={<BodegaPrecioProductoPage />} />/*}
-              {/*<Route path="/inventario/listarbodegapreciosproductos" element={<ListaBodegaPrecioProductoPage />} />/*}
 
               {/* Finanzas */}
               <Route path="/finanzas/salario" element={<SalarioPage />} />
@@ -254,9 +210,6 @@ const App: React.FC = () => {
               <Route path="/graficas/egresos" element={<EgresoPruebaGraficasPage />} />
               <Route path="/finanzas/reporteEgresos/:id" element={<DetalleReportePago />} />
               <Route path="/finanzas/costo_beneficio/" element={<CostoBeneficioPage />} />
-
-
-              
 
               {/* Reportes */}
               <Route path="/reportes" element={<Reportes />} />

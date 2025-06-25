@@ -7,7 +7,7 @@ import CustomSpinner from "@/components/globales/Spinner";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import { motion } from "framer-motion";
- 
+
 const dataTypes = [
   { label: "Temperatura (°C)", key: "temperatura", icon: <FaTemperatureHigh className="text-red-500" /> },
   { label: "Humedad (%)", key: "humedad_ambiente", icon: <FaTint className="text-blue-500" /> },
@@ -32,7 +32,7 @@ export default function DatosMeteorologicosPage() {
         dato[selectedDataType.key] != null
       )
       .map(dato => ({
-        id: dato.id || "N/A",
+        id: (dato.id || "N/A").toString(),
         sensor: dato.sensor_nombre || "Desconocido",
         bancal: dato.bancal_nombre || "N/A",
         value: dato[selectedDataType.key],
@@ -66,7 +66,7 @@ export default function DatosMeteorologicosPage() {
     return (
       <DefaultLayout>
         <div className="flex justify-center items-center h-screen">
-          <CustomSpinner label="Cargando datos..." color="primary" />
+          <CustomSpinner label="Cargando datos..." color="primary" variant="default" />
         </div>
       </DefaultLayout>
     );
