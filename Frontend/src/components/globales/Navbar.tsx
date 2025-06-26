@@ -21,8 +21,10 @@ import { GiProcessor } from "react-icons/gi";
 import { useNavbar } from "../../context/NavbarContext";
 import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
 import Sena from "../../assets/logo sena.png";
+import { useAuth } from "@/context/AuthContext"; 
 
-const menuItems = [
+
+const menuItemsBase = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
   { id: 46, label: "Mapa", path: "/mapa", icon: <FaMap /> },
   { id: 3, label: "Usuarios", path: "/usuarios", icon: <FaUser /> },
@@ -109,6 +111,18 @@ const menuItems = [
 export default function Navbar() {
   const { isSidebarOpen, setSidebarOpen, expandedItems, setExpandedItems, navScrollPosition, setNavScrollPosition } = useNavbar();
   const navRef = useRef<HTMLElement>(null);
+  const { user } = useAuth(); 
+  const rol = user?.rol?.rol ?? ""; 
+
+const menuItemsFiltrados = menuItemsBase.filter(item => {
+  if (rol === "Pasante") {
+    return ![3, 15, 28, 35, 41].includes(item.id); // Oculta por ID
+  }
+  if (rol === "Invitado") {
+    return [1].includes(item.id); // Solo Inicio
+  }
+  return true;
+});
 
   // Restaurar posición del scroll
   useEffect(() => {
@@ -172,7 +186,7 @@ export default function Navbar() {
       {/* Menú */}
       <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
         <div className="flex flex-col gap-4">
-          {menuItems.map((item) => (
+          {menuItemsFiltrados.map((item) => (
             <SidebarItem
               key={item.id}
               item={item}
