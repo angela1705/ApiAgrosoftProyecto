@@ -137,7 +137,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql', 
         'NAME': 'agrosoft10', 
         'USER': 'postgres',
-        'PASSWORD': 'adso2024',
+        'PASSWORD': 'hate',
         'HOST': 'localhost', 
         'PORT': '5432',
         'OPTIONS': {

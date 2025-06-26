@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { addToast } from "@heroui/toast";
+
 import DefaultLayout from "@/layouts/default";
 import { useRegistrarUsuario } from "@/hooks/usuarios/useRegistrarUsuario";
 import Formulario from "@/components/globales/Formulario";
 import { ReuInput } from "@/components/globales/ReuInput";
-import { addToast } from "@heroui/react";
 
 const UsuariosSecondPage: React.FC = () => {
   const [usuario, setUsuario] = useState({
@@ -19,7 +20,6 @@ const UsuariosSecondPage: React.FC = () => {
   const handleSubmit = async () => {
     const numeroStr = usuario.numero_documento.toString();
 
-    // Verificar campos vacíos
     if (
       !usuario.nombre.trim() ||
       !usuario.apellido.trim() ||
@@ -31,11 +31,12 @@ const UsuariosSecondPage: React.FC = () => {
         timeout: 3000,
         color: "danger",
       });
+
       return;
     }
 
-    // Validar que nombre y apellido no contengan números
     const contieneNumeros = /\d/;
+
     if (contieneNumeros.test(usuario.nombre) || contieneNumeros.test(usuario.apellido)) {
       addToast({
         title: "Error",
@@ -43,10 +44,10 @@ const UsuariosSecondPage: React.FC = () => {
         timeout: 3000,
         color: "danger",
       });
+
       return;
     }
 
-    // Validar número de documento entre 7 y 19 dígitos
     if (
       usuario.numero_documento <= 0 ||
       numeroStr.length < 7 ||
@@ -54,10 +55,11 @@ const UsuariosSecondPage: React.FC = () => {
     ) {
       addToast({
         title: "Error",
-        description: "El número de documento debe tener entre 7 y 19 dígitos.",
+        description: "El número de documento debe tener entre 6 y 19 dígitos.",
         timeout: 3000,
         color: "danger",
       });
+      
       return;
     }
 
@@ -71,8 +73,7 @@ const UsuariosSecondPage: React.FC = () => {
         timeout: 3000,
         color: "success",
       });
-    } catch (error) {
-      console.error("Error al registrar usuario:", error);
+    } catch{
 
       addToast({
         title: "Error",
@@ -86,10 +87,10 @@ const UsuariosSecondPage: React.FC = () => {
   return (
     <DefaultLayout>
       <Formulario
-        title="Registro de Usuario"
-        onSubmit={handleSubmit}
-        buttonText="Registrar Usuario"
-        isSubmitting={isLoading}
+          buttonText="Registrar Usuario"
+          isSubmitting={isLoading}
+          title="Registro de Usuario"
+          onSubmit={handleSubmit}
       >
         <ReuInput
           label="Nombre"
@@ -117,8 +118,8 @@ const UsuariosSecondPage: React.FC = () => {
 
         <div className="col-span-1 md:col-span-2 flex justify-center">
           <button
-            type="button"
             className="w-full max-w-md px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm uppercase tracking-wide"
+            type="button"
             onClick={() => navigate("/usuarios")}
           >
             Listar Usuarios

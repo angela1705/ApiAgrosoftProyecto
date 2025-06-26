@@ -1,17 +1,23 @@
 import React, { useState, useMemo, useEffect } from "react";
-import DefaultLayout from "@/layouts/default";
-import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
-import { useToggleStaff } from "@/hooks/usuarios/useUsuarios";
+import { addToast } from "@heroui/toast";
 import { Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"; 
-import Tabla from "@/components/globales/Tabla";
+import { EditIcon } from "lucide-react";
+
+import DefaultLayout from "@/layouts/default";
+import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
+import { useRegistrarUsuario } from "@/hooks/usuarios/useRegistrarUsuario";
+import { useToggleStaff } from "@/hooks/usuarios/useUsuarios";
 import { useAuth } from "@/context/AuthContext";
-import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
-import { EditIcon, Trash2 } from "lucide-react";
 import RegistroMasivoModal from "@/pages/usuarios/RegistroMasivoModal";
 import Switcher from "@/components/switch";
-import { addToast } from "@heroui/toast";
+import Tabla from "@/components/globales/Tabla";
+import ReuModal from "@/components/globales/ReuModal";
+
+
+
+
 const UsuariosPage: React.FC = () => {
   const { user } = useAuth();
   const {
@@ -20,9 +26,10 @@ const UsuariosPage: React.FC = () => {
     error,
     updateUsuario,
     deleteUsuario,
-    registrarUsuario,
     roles,
   } = useUsuarios();
+
+    const { registrarUsuario } = useRegistrarUsuario(); 
 
   const navigate = useNavigate();
 
@@ -39,19 +46,17 @@ const UsuariosPage: React.FC = () => {
     nombre: "",
     apellido: "",
     email: "",
-    numero_documento: "",
+    numero_documento: 0,
     username: "",
     rol_id: 1, // Por defecto "Aprendiz"
   });
+
 
   // Cuando la data de API cambia, actualizamos el estado local para sincronizar
   useEffect(() => {
     setUsuariosLocal(usuariosAPI);
   }, [usuariosAPI]);
 
-  if (!user || user.rol?.rol.toLowerCase() !== "administrador") {
-    return <Navigate to="/perfil" replace />;
-  }
 
   const columns = [
     { name: "Nombre", uid: "nombre" },
@@ -67,21 +72,18 @@ const UsuariosPage: React.FC = () => {
   const handleEdit = (usuario: any) => {
     setSelectedUsuario({
       ...usuario,
-      rol_id: usuario.rol?.id || "", // Extraemos el ID del rol para que lo tome el select
+      rol_id: usuario.rol?.id || "", 
     });
     setIsEditModalOpen(true);
   };
 
-  const handleDelete = (usuario: any) => {
-    setSelectedUsuario(usuario);
-    setIsDeleteModalOpen(true);
-  };
+ 
 
   const handleConfirmDelete = () => {
     if (selectedUsuario && selectedUsuario.id !== undefined) {
       deleteUsuario(selectedUsuario.id);
       setIsDeleteModalOpen(false);
-      // También actualizamos el estado local eliminando el usuario
+
       setUsuariosLocal((prev) =>
         prev.filter((u) => u.id !== selectedUsuario.id)
       );
@@ -95,7 +97,7 @@ const UsuariosPage: React.FC = () => {
       nombre: "",
       apellido: "",
       email: "",
-      numero_documento: "",
+      numero_documento: 0,
       username: "",
       rol_id: 1,
     });
@@ -115,54 +117,67 @@ const UsuariosPage: React.FC = () => {
       email: usuario.email,
       numero_documento: usuario.numero_documento,
       username: usuario.username || "N/A",
-      is_staff: usuario.is_staff, // ✅ esto faltaba
+      is_staff: usuario.is_staff, 
       rol: usuario.rol?.rol || "Sin rol",
     estado: (
 <Switcher
-  size="sm"
-  isSelected={usuario.is_staff}
   color={usuario.is_staff ? "success" : "danger"}
-  onChange={(e) => {
-    const nuevoValor = e.target.checked;
-    toggleStaff.mutate(
-      { id: usuario.id, nuevoValor },
-      {
-        onSuccess: () => {
-          setUsuariosLocal((prev) =>
-            prev.map((u) =>
-              u.id === usuario.id ? { ...u, is_staff: nuevoValor } : u
-            )
-          );
+  isSelected={usuario.is_staff}
+  size="sm"
+onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+  const nuevoValor = e.target.checked;
+
+  toggleStaff.mutate(
+    { id: usuario.id, nuevoValor },
+    {
+      onSuccess: () => {
+        setUsuariosLocal((prev) =>
+          prev.map((u) => (u.id === usuario.id ? { ...u, estado: nuevoValor } : u))
+        );
+        addToast({
+          title: "Éxito",
+          description: `Estado actualizado a ${nuevoValor ? "Activo" : "Inactivo"}`,
+          timeout: 3000,
+          color: "success",
+        });
+      },
+      onError: (error: any) => {
+        if (error?.response?.status === 403) {
           addToast({
-            title: "Éxito",
-            description: `Estado actualizado a ${nuevoValor ? "Activo" : "Inactivo"}`,
-            timeout: 3000,
-            color: "success",
+            title: "Acción no permitida",
+            description: "No tienes permisos para cambiar el estado de este usuario.",
+            timeout: 4000,
+            color: "warning",
           });
-        },
-        onError: () => {
+        } else {
           addToast({
             title: "Error",
             description: "No se pudo actualizar el estado.",
             timeout: 3000,
             color: "danger",
           });
-        },
-      }
-    );
-  }}
+        }
+      },
+    }
+  );
+}}
 />
     ),
 
       acciones: (
         <>
           <button className="mr-2" onClick={() => handleEdit(usuario)}>
-            <EditIcon size={22} color="black" />
+            <EditIcon color="black" size={22}  />
           </button>
         </>
       ),
     }));
   }, [usuariosLocal]);
+  
+    if (!user || user.rol?.rol.toLowerCase() !== "administrador") {
+  return <Navigate replace to="/perfil" />;
+  }
+
 
   return (
     <DefaultLayout>
@@ -175,8 +190,9 @@ const UsuariosPage: React.FC = () => {
         </button>
 
         <button
-          onClick={() => setModalMasivoAbierto(true)}
           className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={() => setModalMasivoAbierto(true)}
+
         >
           + Registro Masivo
         </button>
@@ -200,10 +216,11 @@ const UsuariosPage: React.FC = () => {
         <Tabla columns={columns} data={formattedData} />
       )}
 
+      
+
       {/* Modal de Edición */}
       <ReuModal
         isOpen={isEditModalOpen}
-        onOpenChange={setIsEditModalOpen}
         title="Editar Usuario"
         onConfirm={() => {
           if (selectedUsuario && selectedUsuario.id !== undefined) {
@@ -211,6 +228,7 @@ const UsuariosPage: React.FC = () => {
             setIsEditModalOpen(false);
           }
         }}
+        onOpenChange={setIsEditModalOpen}
       >
         <ReuInput
           label="Nombre"
@@ -256,9 +274,12 @@ const UsuariosPage: React.FC = () => {
           }
         />
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Rol</label>
+          <label  className="block text-sm font-medium text-gray-700" htmlFor="rol">
+            Rol
+          </label>
           <select
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            id="rol"
             value={selectedUsuario?.rol_id || ""}
             onChange={(e) =>
               setSelectedUsuario({
@@ -266,8 +287,8 @@ const UsuariosPage: React.FC = () => {
                 rol_id: parseInt(e.target.value),
               })
             }
-          >
-            <option value="">Seleccione un rol</option>
+          >            
+  <option value="">Seleccione un rol</option>
             {roles?.map((rol) => (
               <option key={rol.id} value={rol.id}>
                 {rol.rol}
@@ -280,9 +301,9 @@ const UsuariosPage: React.FC = () => {
       {/* Modal de Eliminación */}
       <ReuModal
         isOpen={isDeleteModalOpen}
-        onOpenChange={setIsDeleteModalOpen}
         title="¿Estás seguro de eliminar este usuario?"
         onConfirm={handleConfirmDelete}
+        onOpenChange={setIsDeleteModalOpen}
       >
         <p>Esta acción es irreversible.</p>
       </ReuModal>
@@ -290,9 +311,10 @@ const UsuariosPage: React.FC = () => {
       {/* Modal de Registro Individual */}
       <ReuModal
         isOpen={isRegisterModalOpen}
-        onOpenChange={setIsRegisterModalOpen}
         title="Registrar Usuario"
         onConfirm={handleRegister}
+        onOpenChange={setIsRegisterModalOpen}
+
       >
         <ReuInput
           label="Nombre"
@@ -313,11 +335,11 @@ const UsuariosPage: React.FC = () => {
           onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
         />
         <ReuInput
-          label="Número de documento"
+          label="Números de documento"
           type="number"
           value={newUser.numero_documento}
           onChange={(e) =>
-            setNewUser({ ...newUser, numero_documento: e.target.value })
+            setNewUser({ ...newUser, numero_documento: Number(e.target.value) })
           }
         />
         <ReuInput
@@ -327,14 +349,17 @@ const UsuariosPage: React.FC = () => {
           onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
         />
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Rol</label>
+          <label  className="block text-sm font-medium text-gray-700" htmlFor="rol-select">
+            Rol
+          </label>
           <select
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            id="rol-select"
             value={newUser.rol_id}
             onChange={(e) =>
               setNewUser({ ...newUser, rol_id: parseInt(e.target.value) })
             }
-          >
+          >            
             {roles?.map((rol) => (
               <option key={rol.id} value={rol.id}>
                 {rol.rol}
