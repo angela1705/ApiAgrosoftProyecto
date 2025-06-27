@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import ReuModal from "../globales/ReuModal";
 import { ReuInput } from "../globales/ReuInput";
 import { useRegistrarBodega } from "@/hooks/inventario/useBodega";
@@ -22,13 +22,6 @@ export const ModalBodega = ({ isOpen, onOpenChange, onSuccess }: ModalBodegaProp
 
   const mutation = useRegistrarBodega();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setNuevaBodega((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : name === "capacidad" ? Number(value) : value,
-    }));
-  };
 
   const handleSubmit = () => {
     mutation.mutate(nuevaBodega, {

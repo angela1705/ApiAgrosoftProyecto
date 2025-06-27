@@ -26,7 +26,7 @@ export const PagoModal: React.FC<PagoModalProps> = ({
     setCambio(newAmount - total);
   };
 
-  const handleMontoEntregadoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMontoEntregadoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const value = parseFloat(e.target.value) || 0;
     setMontoEntregado(value);
     setCambio(value - total);
@@ -74,14 +74,13 @@ export const PagoModal: React.FC<PagoModalProps> = ({
           type="number"
           placeholder="Ingrese el monto entregado"
           value={montoEntregado}
-          onChange={handleMontoEntregadoChange}
+          onChange={(handleMontoEntregadoChange)}
         />
 
         <ReuInput
           label="Cambio"
           type="number"
           value={cambio.toFixed(2)}
-          readOnly
         />
 
         <div className="space-y-2">
