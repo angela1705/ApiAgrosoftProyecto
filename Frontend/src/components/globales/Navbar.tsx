@@ -34,9 +34,9 @@ const menuItemsBase = [
     label: "Cultivos",
     icon: <FaLeaf />,
     subItems: [
-      { id: 6, label: "Cultivo", path: "/cultivo/listarcultivos/" },
+      { id: 6, label: "Tipo especies", path: "/cultivo/listartipoespecie/" },
       { id: 7, label: "Especies", path: "/cultivo/listarespecies/" },
-      { id: 8, label: "Tipo Especie", path: "/cultivo/listartipoespecie/" },
+      { id: 8, label: "Cultivo", path: "/cultivo/listarcultivos/" },
       { id: 9, label: "Bancal", path: "/cultivo/listarbancal/" },
       { id: 10, label: "Lotes", path: "/cultivo/listarlotes/" },
       { id: 11, label: "Tipo Actividad", path: "/cultivo/listartipoactividad/" },
