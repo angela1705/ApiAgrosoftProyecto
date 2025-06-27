@@ -1,14 +1,16 @@
 import React, { useState, FormEvent } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useUsuarios, UsuarioUpdate } from "@/hooks/usuarios/useUsuarios";
-import DefaultLayout from "@/layouts/default";
-import { Box, Button, TextField, Typography, Modal, Backdrop, Fade, IconButton, InputAdornment } from "@mui/material";
-import { motion } from "framer-motion";
-import api from "@/components/utils/axios"; 
-import { toast } from "react-hot-toast";
 import { addToast } from "@heroui/toast";
+import { Box, Button, TextField, Typography, Modal, Backdrop, Fade, IconButton, InputAdornment } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { motion } from "framer-motion";
+
+import { useUsuarios, UsuarioUpdate } from "@/hooks/usuarios/useUsuarios";
+import DefaultLayout from "@/layouts/default";
+import { useAuth } from "@/context/AuthContext";
+import api from "@/components/utils/axios"; 
+
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}`;
 
@@ -30,7 +32,7 @@ const PerfilPage: React.FC = () => {
   if (!user || !editUser) {
     return (
       <DefaultLayout>
-        <Typography variant="h6" sx={{ textAlign: "center", mt: 4 }}>
+<Typography sx={{ textAlign: "center", mt: 4 }} variant="h6">
           No se encontró información del usuario. Por favor, inicia sesión.
         </Typography>
       </DefaultLayout>
@@ -72,13 +74,12 @@ const PerfilPage: React.FC = () => {
         username: editUser.username,
         rol_id: editUser.rol?.id || null,
       };
-      console.log("Enviando al backend desde perfil:", usuarioToUpdate);
       const updatedUser = await updateUsuario(usuarioToUpdate);
-      updateUser(updatedUser);
+      
+      updateUser({ ...updatedUser, rol: updatedUser.rol! });
       setIsEditing(false);
       setEditError(null);
     } catch (err: any) {
-      console.error("Error del backend:", err.response?.data);
       setEditError(err.response?.data?.detail || "No se pudo actualizar los datos. Verifica la información.");
     }
   };
@@ -87,10 +88,12 @@ const PerfilPage: React.FC = () => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
       setPasswordError("Las nuevas contraseñas no coinciden.");
+
       return;
     }
   try {
     const token = localStorage.getItem("access_token");
+
     await api.post(
       `${API_URL}/usuarios/change_password/`,
       { current_password: currentPassword, new_password: newPassword },
@@ -111,7 +114,6 @@ const PerfilPage: React.FC = () => {
     addToast({
       title: "Éxito",
       description: "Contraseña actualizada con éxito.",
-      type: "success",
       color:"success"
     });
 
@@ -152,110 +154,110 @@ const PerfilPage: React.FC = () => {
   return (
     <DefaultLayout>
       <Box sx={{ p: 4, maxWidth: "600px", mx: "auto" }}>
-        <Typography variant="h4" sx={{ mb: 4, textAlign: "center" }}>
+        <Typography  sx={{ mb: 4, textAlign: "center" }} variant="h4">
           Mi Perfil
         </Typography>
         {!isEditing ? (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <TextField label="Nombre" value={user.nombre} disabled fullWidth sx={textFieldStyles} />
-            <TextField label="Apellido" value={user.apellido} disabled fullWidth sx={textFieldStyles} />
-            <TextField label="Email" value={user.email} disabled fullWidth sx={textFieldStyles} />
-            <TextField label="Username" value={user.username || ""} disabled fullWidth sx={textFieldStyles} />
-            <TextField label="Rol" value={user.rol?.rol || "Sin rol"} disabled fullWidth sx={textFieldStyles} />
-            <TextField label="Contraseña" value="••••••••" disabled fullWidth sx={textFieldStyles} />
+            <TextField disabled fullWidth label="Nombre" sx={textFieldStyles} value={user.nombre}  />
+            <TextField disabled fullWidth label="Apellido" sx={textFieldStyles} value={user.apellido}  />
+            <TextField disabled fullWidth label="Email" sx={textFieldStyles} value={user.email}  />
+            <TextField disabled fullWidth label="Username" sx={textFieldStyles} value={user.username || ""}  />
+            <TextField disabled fullWidth label="Rol" sx={textFieldStyles} value={user.rol?.rol || "Sin rol"}  />
+            <TextField disabled fullWidth label="Contraseña" sx={textFieldStyles} value="••••••••"  />
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <Button variant="contained" sx={{ backgroundColor: "#2ecc71" }} onClick={handleEdit}>
+              <Button sx={{ backgroundColor: "#2ecc71" }} variant="contained"  onClick={handleEdit}>
                 Editar
               </Button>
             </Box>
           </Box>
         ) : (
-          <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+      <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2.5 }} onSubmit={handleSubmit}>
             {editError && (
-              <Typography variant="body2" sx={{ color: "#f56565", textAlign: "center" }}>
+              <Typography sx={{ color: "#f56565", textAlign: "center" }} variant="body2" >
                 {editError}
               </Typography>
             )}
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-                <TextField
-                  label="Nombre"
-                  value={editUser.nombre}
-                  onChange={(e) => handleChange("nombre", e.target.value)}
-                  fullWidth
-                  required
-                  sx={textFieldStyles}
-                />
+              <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5 }}>
+              <TextField
+                fullWidth
+                label="Nombre"
+                sx={textFieldStyles}
+                value={editUser.nombre}
+                onChange={(e) => handleChange("nombre", e.target.value)}
+              />
               </motion.div>
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+              <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5, delay: 0.2 }}>
                 <TextField
+                  fullWidth
                   label="Apellido"
+                  sx={textFieldStyles}
                   value={editUser.apellido}
                   onChange={(e) => handleChange("apellido", e.target.value)}
-                  fullWidth
-                  required
-                  sx={textFieldStyles}
                 />
               </motion.div>
             </Box>
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+              <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5, delay: 0.4 }}>
                 <TextField
-                  type="email"
+                  fullWidth
                   label="Email"
+                  sx={textFieldStyles}
+                  type="email"
                   value={editUser.email}
                   onChange={(e) => handleChange("email", e.target.value)}
-                  fullWidth
-                  required
-                  sx={textFieldStyles}
                 />
               </motion.div>
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
+              <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5, delay: 0.6 }}>
                 <TextField
+                  fullWidth
                   label="Username"
+                  sx={textFieldStyles}
                   value={editUser.username || ""}
                   onChange={(e) => handleChange("username", e.target.value)}
-                  fullWidth
-                  sx={textFieldStyles}
                 />
               </motion.div>
             </Box>
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
+            <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5, delay: 0.8 }}>
               <TextField
+                disabled
+                fullWidth
                 label="Rol"
+                sx={textFieldStyles}
                 value={editUser.rol?.rol || "Sin rol"}
-                disabled
-                fullWidth
-                sx={textFieldStyles}
               />
             </motion.div>
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 1 }}>
-              <TextField
-                label="Contraseña"
-                value="••••••••"
-                disabled
-                fullWidth
-                InputProps={{
-                  endAdornment: (
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => setOpenModal(true)}
-                      sx={{ ml: 1 }}
-                    >
-                      Cambiar
-                    </Button>
-                  ),
-                }}
-                sx={textFieldStyles}
-              />
+            <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5, delay: 1 }}>
+                            <TextField
+                    disabled
+                    fullWidth
+                    label="Contraseña"
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <Button
+                            size="small"
+                            sx={{ ml: 1 }}
+                            variant="outlined"
+                            onClick={() => setOpenModal(true)}
+                          >
+                            Cambiar
+                          </Button>
+                        ),
+                      },
+                    }}
+                    sx={textFieldStyles}
+                    value="••••••••"
+                  />
+
             </motion.div>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.2 }}>
+            <motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }}  transition={{ duration: 0.5, delay: 1.2 }}>
               <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
-                <Button type="submit" variant="contained" sx={{ backgroundColor: "#2ecc71" }}>
+                <Button sx={{ backgroundColor: "#2ecc71" }} type="submit" variant="contained" >
                   Actualizar datos
                 </Button>
-                <Button variant="outlined" onClick={handleCancel} sx={{ borderColor: "#f56565", color: "#f56565" }}>
+                <Button sx={{ borderColor: "#f56565", color: "#f56565" }} variant="outlined" onClick={handleCancel}>
                   Cancelar
                 </Button>
               </Box>
@@ -263,17 +265,17 @@ const PerfilPage: React.FC = () => {
           </Box>
         )}
 
-        <Modal
-          open={openModal}
-          onClose={() => setOpenModal(false)}
-          closeAfterTransition
-          slots={{ backdrop: Backdrop }}
-          slotProps={{
-            backdrop: {
-              timeout: 500,
-            },
-          }}
-        >
+          <Modal
+            closeAfterTransition
+            open={openModal}
+            slotProps={{
+              backdrop: {
+                timeout: 500,
+              },
+            }}
+            slots={{ backdrop: Backdrop }}
+            onClose={() => setOpenModal(false)}
+          >
           <Fade in={openModal}>
             <Box
               sx={{
@@ -288,86 +290,92 @@ const PerfilPage: React.FC = () => {
                 borderRadius: 2,
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+              <Typography sx={{ mb: 2, textAlign: "center" }}variant="h6" >
                 Cambiar Contraseña
               </Typography>
               {passwordError && (
-                <Typography variant="body2" sx={{ color: "#f56565", textAlign: "center", mb: 2 }}>
+                <Typography sx={{ color: "#f56565", textAlign: "center", mb: 2 }} variant="body2" >
                   {passwordError}
                 </Typography>
               )}
-              <Box component="form" onSubmit={handlePasswordChange} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <TextField
-                  label="Contraseña Actual"
-                  type={showCurrentPassword ? "text" : "password"}
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  fullWidth
-                  required
-                  InputProps={{
+              <Box component="form"  sx={{ display: "flex", flexDirection: "column", gap: 2 }} onSubmit={handlePasswordChange}>
+              
+              <TextField
+                fullWidth
+                label="Contraseña Actual"
+                slotProps={{
+                  input: {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
                           aria-label="toggle password visibility"
-                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                           edge="end"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                         >
                           {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
                     ),
+                  },
+                }}
+                sx={textFieldStyles}
+                type={showCurrentPassword ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+
+                <TextField
+                  fullWidth
+                  label="Nueva Contraseña"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            edge="end"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                          >
+                            {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                   sx={textFieldStyles}
-                />
-                <TextField
-                  label="Nueva Contraseña"
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  fullWidth
-                  required
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
-                          edge="end"
-                        >
-                          {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={textFieldStyles}
                 />
-                <TextField
-                  label="Confirmar Nueva Contraseña"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmNewPassword}
-                  onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  fullWidth
-                  required
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          edge="end"
-                        >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={textFieldStyles}
-                />
+
+                      <TextField
+                        fullWidth
+                        label="Confirmar Nueva Contraseña"
+                        slotProps={{
+                          input: {
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  edge="end"
+                                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          },
+                        }}
+                        sx={textFieldStyles}
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmNewPassword}
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      />
                 <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
-                  <Button type="submit" variant="contained" sx={{ backgroundColor: "#2ecc71" }}>
+                  <Button sx={{ backgroundColor: "#2ecc71" }} type="submit" variant="contained" >
                     Cambiar
                   </Button>
-                  <Button variant="outlined" onClick={() => setOpenModal(false)} sx={{ borderColor: "#f56565", color: "#f56565" }}>
+                  <Button sx={{ borderColor: "#f56565", color: "#f56565" }} variant="outlined"  onClick={() => setOpenModal(false)}>
                     Cancelar
                   </Button>
                 </Box>

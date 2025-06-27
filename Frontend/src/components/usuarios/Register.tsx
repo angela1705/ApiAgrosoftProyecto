@@ -1,9 +1,7 @@
 import React, { useState, FormEvent } from 'react';
-import { Box, Button, TextField, Typography, IconButton, InputAdornment } from '@mui/material';
+import { Box, Button, TextField, Typography} from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}`;
 
@@ -27,6 +25,7 @@ const Register: React.FC = () => {
     if (!nombre || !apellido || !email ||!numero_documento) {
       setError('Todos los campos son requeridos');
       setLoading(false);
+      
       return;
     }
 
@@ -44,6 +43,7 @@ const Register: React.FC = () => {
       if (!response.ok) {
         if (data) {
           const parsedErrors: { [key: string]: string } = {};
+          
           Object.entries(data).forEach(([key, value]) => {
             parsedErrors[key] = Array.isArray(value) ? value.join(', ') : String(value);
           });
@@ -83,21 +83,27 @@ const Register: React.FC = () => {
  return (
   <Box
     component="form"
-    onSubmit={handleSubmit}
     sx={{
       display: 'flex',
       flexDirection: 'column',
       gap: 2.5,
       width: '100%',
     }}
+    onSubmit={handleSubmit}
   >
     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
+      <motion.div  animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }}>
 <TextField
+  fullWidth
+  error={!!fieldErrors.nombre}
+  helperText={fieldErrors.nombre}
   label="Nombre"
+  
+  sx={textFieldStyles}
   value={nombre}
   onChange={(e) => {
     const value = e.target.value;
+
     if (/^[a-zA-Z\s]*$/.test(value)) {
       setNombre(value);
       setFieldErrors((prev) => ({ ...prev, nombre: '' }));
@@ -105,19 +111,19 @@ const Register: React.FC = () => {
       setFieldErrors((prev) => ({ ...prev, nombre: 'Solo se permiten letras y espacios' }));
     }
   }}
-  fullWidth
-  required
-  error={!!fieldErrors.nombre}
-  helperText={fieldErrors.nombre}
-  sx={textFieldStyles}
 />
       </motion.div>
-    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
+    <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5, delay: 0.8 }}>
 <TextField
+  fullWidth
+  error={!!fieldErrors.apellido}
+  helperText={fieldErrors.apellido}
   label="Apellido"
+  sx={textFieldStyles}
   value={apellido}
   onChange={(e) => {
     const value = e.target.value;
+
     if (/^[a-zA-Z\s]*$/.test(value)) {
       setApellido(value);
       setFieldErrors((prev) => ({ ...prev, apellido: '' }));
@@ -125,80 +131,74 @@ const Register: React.FC = () => {
       setFieldErrors((prev) => ({ ...prev, apellido: 'Solo se permiten letras y espacios' }));
     }
   }}
-  fullWidth
-  required
-  error={!!fieldErrors.apellido}
-  helperText={fieldErrors.apellido}
-  sx={textFieldStyles}
 />
         </motion.div>
     </Box>
 
 
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.5, delay: 0.6 }}
       >
-        <TextField
-          type="number"
-          label="Numero de documento"
-          value={numero_documento ?? ''}
-          onChange={(e) => {
-            const value = e.target.value;
-            setNumero_documento(value === '' ? undefined : Number(value));
-          }}
-          fullWidth
-          required
-          error={!!fieldErrors.numero_documento}
-          helperText={fieldErrors.numero_documento}
-          sx={textFieldStyles}
-        />
+    <TextField
+      fullWidth
+      error={!!fieldErrors.numero_documento}
+      helperText={fieldErrors.numero_documento}
+      label="Numero de documento"
+      sx={textFieldStyles}
+      type="number"
+      value={numero_documento ?? ''}
+      onChange={(e) => {
+        const value = e.target.value;
+
+        setNumero_documento(value === '' ? undefined : Number(value));
+      }}
+    />
       </motion.div>
 
-    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
+    <motion.div animate={{ opacity: 1, x: 0 }} initial={{ opacity: 0, x: -20 }}  transition={{ duration: 0.5, delay: 0.8 }}>
       <TextField
-        type="email"
-        label="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
         fullWidth
-        required
         error={!!fieldErrors.email}
         helperText={fieldErrors.email}
+        label="Email"
         sx={textFieldStyles}
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
     </motion.div>
 
     {error && (
-      <Typography variant="body2" sx={{ color: '#f56565', textAlign: 'center', fontSize: '0.875rem' }}>
+      <Typography  sx={{ color: '#f56565', textAlign: 'center', fontSize: '0.875rem' }} variant="body2">
         {error}
       </Typography>
     )}
     {success && (
-      <Typography variant="body2" sx={{ color: '#2ecc71', textAlign: 'center', fontSize: '0.875rem' }}>
+      <Typography sx={{ color: '#2ecc71', textAlign: 'center', fontSize: '0.875rem' }} variant="body2">
         {success}
       </Typography>
     )}
 
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1 }}>
+    <motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }}  transition={{ duration: 0.5, delay: 1 }}>
       <Button
-        type="submit"
-        disabled={loading}
-        variant="contained"
         fullWidth
+        disabled={loading}
         sx={{ backgroundColor: '#2ecc71' }}
+        type="submit"
+        variant="contained"
       >
         {loading ? 'Registrando...' : 'Registrarse'}
       </Button>
     </motion.div>
 
     <Typography
-      variant="body2"
       sx={{ textAlign: 'center', color: '#718096', fontSize: '0.9rem', mt: 1 }}
+      variant="body2"
     >
       ¿Ya tienes cuenta?{' '}
-      <Link to="/login" style={{ color: '#27a35e', textDecoration: 'none' }}>
+      <Link style={{ color: '#27a35e', textDecoration: 'none' }} to="/login" >
         Iniciar sesión
       </Link>
     </Typography>

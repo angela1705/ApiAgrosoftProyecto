@@ -1,8 +1,11 @@
 import React, { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { addToast } from "@heroui/react";
+
 import ReuModal from '@/components/globales/ReuModal';
 import api from "@/components/utils/axios"; 
-import { addToast } from "@heroui/react";
+
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}`;
 
@@ -31,8 +34,8 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
 }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
 
-  const [usuariosRegistrados, setUsuariosRegistrados] = useState<Usuario[]>([]);
-  const [errores, setErrores] = useState<ErrorFila[]>([]);
+  const [, setUsuariosRegistrados] = useState<Usuario[]>([]);
+  const [, setErrores] = useState<ErrorFila[]>([]);
 
   const [usuariosEjemplo] = useState<Usuario[]>([
     { nombre: '', apellido: '', numero_documento: '' }
@@ -44,9 +47,11 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
 
   const handleArchivoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const archivo = e.target.files?.[0];
+
     if (!archivo) return;
 
     const formData = new FormData();
+
     formData.append('archivo', archivo);
 
     try {
@@ -80,7 +85,6 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
       // No cerramos el modal para que vean resultados
 
     } catch (error: any) {
-      console.error('Error al enviar el archivo:', error);
 
       addToast({
         title: "Error",
@@ -101,10 +105,10 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
 
       const libro = XLSX.utils.book_new();
       const hojaExcel = XLSX.utils.json_to_sheet(hoja);
+
       XLSX.utils.book_append_sheet(libro, hojaExcel, 'Usuarios');
       XLSX.writeFile(libro, 'registro_usuarios.xlsx');
-    } catch (error) {
-      console.error("❌ Error al exportar Excel:", error);
+    } catch  {
 
       addToast({
         title: "Error",
@@ -117,31 +121,33 @@ const RegistroMasivoModal: React.FC<RegistroMasivoModalProps> = ({
 
   return (
     <ReuModal
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      title="Registro Masivo de Usuarios"
-      confirmText="Cerrar"
-      cancelText=""
+    cancelText=""
+    confirmText="Cerrar"
+    isOpen={isOpen}
+    title="Registro Masivo de Usuarios"
+    onOpenChange={onOpenChange}
+
     >
       <div className="grid grid-cols-2 gap-4 mb-4">
         <button
-          onClick={handleSeleccionarArchivo}
           className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={handleSeleccionarArchivo}
+
         >
           Enviar Excel
         </button>
 
         <input
-          type="file"
-          accept=".xlsx, .xls"
           ref={inputFileRef}
-          onChange={handleArchivoChange}
+          accept=".xlsx, .xls"
           style={{ display: 'none' }}
+          type="file"
+          onChange={handleArchivoChange}
         />
 
         <button
-          onClick={exportarAExcel}
           className="px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+          onClick={exportarAExcel}
         >
           Generar Excel
         </button>

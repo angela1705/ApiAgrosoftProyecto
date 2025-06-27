@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { Box, Typography, TextField, Button, IconButton, InputAdornment } from "@mui/material";
-import { motion } from "framer-motion";
-import AgrosisLogotic from "../../assets/def_AGROSIS_LOGOTIC.png";
-import LogoSena from "../../assets/logo2.png";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Box, Typography, TextField, Button, IconButton, InputAdornment } from "@mui/material";
+import { motion } from "framer-motion";
 import { addToast } from "@heroui/react";
+
+import AgrosisLogotic from "../../assets/def_AGROSIS_LOGOTIC.png";
+import LogoSena from "../../assets/logo2.png";
+
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}`;
 
@@ -28,6 +30,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       timeout: 3000,
       color: "danger",
     });
+
     return;
     }
 try {
@@ -57,7 +60,7 @@ try {
       color: "warning",
     });
   }
-} catch (error) {
+} catch  {
   addToast({
     title: "Error",
     description: "Error al conectar con el servidor.",
@@ -109,25 +112,25 @@ try {
         }}
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1440 320"
-          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
           preserveAspectRatio="none"
+          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+          viewBox="0 0 1440 320"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
+            d="M0,0 L0,160 Q360,140 720,160 Q1080,180 1440,160 L1440,0 Z"
             fill="#fff"
             fillOpacity="1"
-            d="M0,0 L0,160 Q360,140 720,160 Q1080,180 1440,160 L1440,0 Z"
           />
         </svg>
       </Box>
 
       <Box sx={{ position: "absolute", top: 16, left: 16, zIndex: 1 }}>
-        <img src={AgrosisLogotic} alt="AGROSIS Logotic Small" style={{ width: "140px", height: "auto" }} />
+        <img alt="AGROSIS Logotic Small" src={AgrosisLogotic}  style={{ width: "140px", height: "auto" }} />
       </Box>
 
       <Box sx={{ position: "absolute", bottom: 16, left: 16, zIndex: 1 }}>
-        <img src={LogoSena} alt="Logo SENA" style={{ width: "100px", height: "auto" }} />
+        <img alt="Logo SENA" src={LogoSena}  style={{ width: "100px", height: "auto" }} />
       </Box>
 
       <Box
@@ -144,72 +147,73 @@ try {
         }}
       >
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <Typography
-            variant="h4"
             gutterBottom
             sx={{ fontWeight: "bold", color: "#1a202c", textAlign: "center", mb: 1 }}
+            variant="h4"
           >
             Restablecer Contraseña
           </Typography>
           <Typography
-            variant="subtitle1"
             sx={{ color: "#718096", textAlign: "center", mb: 3 }}
+            variant="subtitle1"
           >
             Ingresa tu nueva contraseña
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2 }}  onSubmit={handleSubmit}>
             <TextField
+              fullWidth
               label="Nueva Contraseña"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        edge="end"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              fullWidth
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={textFieldStyles}
             />
             <TextField
+              fullWidth
               label="Confirmar Contraseña"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        edge="end"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              sx={textFieldStyles}
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              fullWidth
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      edge="end"
-                    >
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={textFieldStyles}
             />
             <Button
+              sx={{ backgroundColor: "#27a35e", "&:hover": { backgroundColor: "#218c4e" }, py: 1.5 }}
               type="submit"
               variant="contained"
-              sx={{ backgroundColor: "#27a35e", "&:hover": { backgroundColor: "#218c4e" }, py: 1.5 }}
             >
               Restablecer
             </Button>
