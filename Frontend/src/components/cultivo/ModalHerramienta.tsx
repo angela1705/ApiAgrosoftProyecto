@@ -20,20 +20,12 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
     estado: "Disponible",
     fecha_registro: new Date().toISOString().slice(0, 16),
     activo: true,
-    precio: 0
+    precio: 0,
+    cantidad_disponible: 0,
   });
 
   const mutation = useRegistrarHerramienta();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    
-    setHerramienta(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : 
-              name === 'cantidad' ? Number(value) : value
-    }));
-  };
 
   const handleSubmit = () => {
     mutation.mutate({
@@ -49,13 +41,14 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
           estado: "Disponible",
           fecha_registro: new Date().toISOString().slice(0, 16),
           activo: true,
-          precio: 0
-
+          precio: 0,
+          cantidad_disponible: 0,
         });
         onSuccess?.();
       }
     });
   };
+
   const formatPrice = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, "");
     return numericValue ? Number(numericValue) : 0;

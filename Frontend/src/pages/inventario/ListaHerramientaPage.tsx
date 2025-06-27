@@ -27,6 +27,7 @@ const ListaHerramientaPage: React.FC = () => {
         { name: "Activo", uid: "activo" },
         { name: "Fecha Registro", uid: "fecha_registro" },
         { name: "Precio", uid: "precio" },
+        { name: "Costo Total", uid: "costo_total" },
         { name: "Acciones", uid: "acciones" },
     ];
 
@@ -71,6 +72,7 @@ const ListaHerramientaPage: React.FC = () => {
             activo: herramienta.activo ? "Sí" : "No",
             fecha_registro: new Date(herramienta.fecha_registro).toISOString().split("T")[0],
             precio: `$${Number(herramienta.precio).toLocaleString("es-CO")}`,
+            costo_total: `$${(herramienta.cantidad * herramienta.precio).toLocaleString("es-CO")}`,
             acciones: (
                 <>
                     <button className="text-green-500 hover:underline mr-2" onClick={() => handleEdit(herramienta)}>
@@ -90,7 +92,8 @@ const ListaHerramientaPage: React.FC = () => {
             estado: "",
             activo: "",
             fecha_registro: "",
-            precio: `$${totalValor.toLocaleString("es-CO")}`,
+            precio: "",
+            costo_total: `$${totalValor.toLocaleString("es-CO")}`,
             acciones: "",
         },
     ];
@@ -168,7 +171,7 @@ const ListaHerramientaPage: React.FC = () => {
                             value={selectedHerramienta.precio.toLocaleString("es-CO")}
                             onChange={(e) => setSelectedHerramienta({ ...selectedHerramienta, precio: formatPrice(e.target.value) })}
                         />
-                         <div className="flex items-center">
+                        <div className="flex items-center">
                             <Switch
                                 color="success"
                                 size="sm"
@@ -176,7 +179,7 @@ const ListaHerramientaPage: React.FC = () => {
                                 onChange={(e) => setSelectedHerramienta({ ...selectedHerramienta, activo: e.target.checked })}
                             />
                             <label className="ml-2 text-sm font-medium text-gray-700">Activo</label>
-                         </div>
+                        </div>
                     </>
                 )}
             </ReuModal>

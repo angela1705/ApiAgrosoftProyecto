@@ -66,39 +66,53 @@ const ListaBodegaHerramientaPage: React.FC = () => {
     }
   };
 
-  const transformedData = (bodegaHerramientas ?? []).map((item: BodegaHerramienta) => {
-    const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
-    const herramientaNombre = herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido";
-    
-    const costoTotal = item.costo_total != null ? Number(item.costo_total) : 0;
-    const costoTotalFormatted = isNaN(costoTotal) ? "0" : formatCOPNumber(costoTotal);
+  const totalCosto = (bodegaHerramientas ?? []).reduce((sum, item) => sum + (item.costo_total != null ? Number(item.costo_total) : 0), 0);
 
-    return {
-      id: item.id?.toString() || "",
-      bodega: bodegaNombre,
-      herramienta: herramientaNombre,
-      cantidad: item.cantidad,
-      costo_total: `$${costoTotalFormatted}`,
-      cantidad_prestada: item.cantidad_prestada,
-      nombre: `${bodegaNombre} ${herramientaNombre} ${item.cantidad}`,
-      acciones: (
-        <>
-          <button
-            className="text-green-500 hover:underline mr-2"
-            onClick={() => handleEdit(item)}
-          >
-            <EditIcon size={22} color="black" />
-          </button>
-          <button
-            className="text-red-500 hover:underline"
-            onClick={() => handleDelete(item)}
-          >
-            <Trash2 size={22} color="red" />
-          </button>
-        </>
-      ),
-    };
-  });
+  const transformedData = [
+    ...(bodegaHerramientas ?? []).map((item: BodegaHerramienta) => {
+      const bodegaNombre = bodegas?.find((b: { id: number }) => b.id === item.bodega)?.nombre || "Desconocido";
+      const herramientaNombre = herramientas?.find((h: { id: number }) => h.id === item.herramienta)?.nombre || "Desconocido";
+      
+      const costoTotal = item.costo_total != null ? Number(item.costo_total) : 0;
+      const costoTotalFormatted = isNaN(costoTotal) ? "0" : formatCOPNumber(costoTotal);
+
+      return {
+        id: item.id?.toString() || "",
+        bodega: bodegaNombre,
+        herramienta: herramientaNombre,
+        cantidad: item.cantidad,
+        costo_total: `$${costoTotalFormatted}`,
+        cantidad_prestada: item.cantidad_prestada,
+        nombre: `${bodegaNombre} ${herramientaNombre} ${item.cantidad}`,
+        acciones: (
+          <>
+            <button
+              className="text-green-500 hover:underline mr-2"
+              onClick={() => handleEdit(item)}
+            >
+              <EditIcon size={22} color="black" />
+            </button>
+            <button
+              className="text-red-500 hover:underline"
+              onClick={() => handleDelete(item)}
+            >
+              <Trash2 size={22} color="red" />
+            </button>
+          </>
+        ),
+      };
+    }),
+    {
+      id: "total",
+      bodega: "Total",
+      herramienta: "",
+      cantidad: "",
+      costo_total: `$${formatCOPNumber(totalCosto)}`,
+      cantidad_prestada: "",
+      nombre: "",
+      acciones: "",
+    },
+  ];
 
   return (
     <DefaultLayout>
