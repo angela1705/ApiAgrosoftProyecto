@@ -195,7 +195,13 @@ const handleConfirmEstado = () => {
         onConfirm={() => {
           if (selectedAfeccion) {
             actualizarMutation.mutate(
-              { id: selectedAfeccion.id, afeccion: selectedAfeccion },
+              { id: selectedAfeccion.id,
+              afeccion: {
+                ...selectedAfeccion,
+                reporte: selectedAfeccion.reporte?.id ?? null,
+                plaga_id: selectedAfeccion.plaga.id,
+                cultivo_id: selectedAfeccion.cultivo.id,
+                bancal_id: selectedAfeccion.bancal.id, }},
               {
                 onSuccess: () => {
                   setIsEditModalOpen(false);
