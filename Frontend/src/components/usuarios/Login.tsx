@@ -1,9 +1,10 @@
 import React, { useState, FormEvent } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import { Box, Button, TextField, Typography, IconButton, InputAdornment } from '@mui/material';
 import { motion } from 'framer-motion';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+import { useAuth } from '../../context/AuthContext';
 
 const Login: React.FC = () => {
   const [numeroDeDocumento, setNumeroDeDocumento] = useState<string>('');
@@ -20,7 +21,7 @@ const Login: React.FC = () => {
 
     try {
       await login(Number(numeroDeDocumento), password);
-    } catch (err) {
+    } catch  {
       setError('Error de autenticación. Verifica tus credenciales.');
     } finally {
       setLoading(false);
@@ -49,72 +50,70 @@ const Login: React.FC = () => {
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
       sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, width: '100%' }}
+      onSubmit={handleSubmit}
     >
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <TextField
-          type="number"
-          label="Número de documento"
-          value={numeroDeDocumento}
-          onChange={(e) => setNumeroDeDocumento(e.target.value)}
-          variant="outlined"
           fullWidth
-          required
+          label="Número de documento"
           sx={textFieldStyles}
+          type="number"
+          value={numeroDeDocumento}
+          variant="outlined"
+          onChange={(e) => setNumeroDeDocumento(e.target.value)}
         />
       </motion.div>
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.5, delay: 0.4 }}
       >
-        <TextField
-          type={showPassword ? 'text' : 'password'}
-          label="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          variant="outlined"
-          fullWidth
-          required
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={() => setShowPassword(!showPassword)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={textFieldStyles}
-        />
+<TextField
+  fullWidth
+  label="Contraseña"
+  slotProps={{
+    input: {
+      endAdornment: (
+        <InputAdornment position="end">
+          <IconButton
+            aria-label="toggle password visibility"
+            edge="end"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      ),
+    },
+  }}
+  sx={textFieldStyles}
+  type={showPassword ? 'text' : 'password'}
+  value={password}
+  variant="outlined"
+  onChange={(e) => setPassword(e.target.value)}
+/>
       </motion.div>
       {error && (
         <Typography
-          variant="body2"
           sx={{ color: '#f56565', textAlign: 'center', fontSize: '0.875rem' }}
+          variant="body2"
         >
           {error}
         </Typography>
       )}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.5, delay: 0.6 }}
       >
         <Button
-          type="submit"
-          disabled={loading}
-          variant="contained"
           fullWidth
+          disabled={loading}
           sx={{
             backgroundColor: '#2ecc71',
             color: '#fff',
@@ -134,6 +133,8 @@ const Login: React.FC = () => {
               color: '#a0aec0',
             },
           }}
+          type="submit"
+          variant="contained"
         >
           {loading ? 'Cargando...' : 'Ingresar'}
         </Button>

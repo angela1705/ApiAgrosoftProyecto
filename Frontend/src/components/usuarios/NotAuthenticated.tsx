@@ -5,32 +5,32 @@ import { Box, Typography, Button } from '@mui/material';
 const NotAuthenticated: React.FC = () => {
   return (
     <Box
+      alignItems="center"
       display="flex"
       flexDirection="column"
-      alignItems="center"
       justifyContent="center"
       minHeight="100vh"
-      textAlign="center"
       p={3}
+      textAlign="center"
     >
-      <Typography variant="h5" color="textSecondary" gutterBottom>
+      <Typography gutterBottom color="textSecondary"variant="h5"  >
         No tienes acceso a esta página. Por favor, inicia sesión.
       </Typography>
       <Button
+        color="primary"
         component={Link}
+        sx={{ mt: 2 }}
         to="/login"
         variant="contained"
-        color="primary"
-        sx={{ mt: 2 }}
       >
         Iniciar sesión
       </Button>
       <Button
+        color="primary"
         component={Link}
+        sx={{ mt: 2 }}
         to="/register"
         variant="contained"
-        color="primary"
-        sx={{ mt: 2 }}
       >
         Registar usuario
       </Button>
