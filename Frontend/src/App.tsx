@@ -11,6 +11,8 @@ import Calendar from "./pages/globales/Calendar";
 import AboutPage from "./pages/globales/about";
 import DashboardPage from "./pages/globales/Dashboard";
 import Mapa from "./pages/globales/Mapa";
+
+// Cultivo
 import TipoEspeciePage from "./pages/cultivo/TipoEspeciePage";
 import TipoActividadPage from "./pages/cultivo/TipoActividadPage";
 import LotesPage from "./pages/cultivo/LotesPage";
@@ -50,6 +52,8 @@ import TipoResiduoPage from "./pages/cultivo/TipoResiduoPage";
 import ResiduoPage from "./pages/cultivo/ResiduosPage";
 import ListaResiduoPage from "./pages/cultivo/ListaResiduosPage";
 import ActividadCostosGraficasPage from "./pages/cultivo/ActividadCostosGraficasPage";
+
+// Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
 import ListaHerramientaPage from "./pages/inventario/ListaHerramientaPage";
 import InsumoPage from "./pages/inventario/InsumoPage";
@@ -62,11 +66,15 @@ import BodegaHerramientaPage from "./pages/inventario/BodegaHerramientaPage";
 import ListaBodegaHerramientaPage from "./pages/inventario/ListaBodegaHerramientaPage";
 import BodegaPage from "./pages/inventario/BodegaPage";
 import ListaBodegaPage from "./pages/inventario/ListaBodegaPage";
+
+// IoT
 import SensoresPage from "./pages/iot/SensoresPage2";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/sensores/RegistrarSensorPage";
 import ListarSensores from "./pages/iot/sensores/ListarSensoresPage";
 import EvapotranspiracionPage from "./pages/iot/EvapotranspiracionPage";
+
+// Usuarios
 import RegisterPage from "./pages/usuarios/RegisterPage";
 import UsuariosPage from "./pages/usuarios/UsuariosPage";
 import PrivateRoute from "./components/usuarios/RutaPrivada";
@@ -75,6 +83,8 @@ import PerfilPage from "./pages/usuarios/PerfilPage";
 import ForgotPasswordPage from "./pages/usuarios/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/usuarios/ResetPasswordPage";
 import UsuariosSecondPage from "./pages/usuarios/RegisterSecondPage";
+
+// Finanzas
 import SalarioPage from "./pages/finanzas/SalarioPage";
 import VentaPage from "./pages/finanzas/VentaPage";
 import ListaVentaPage from "./pages/finanzas/ListaVentaPage";
@@ -84,6 +94,8 @@ import PagoPage from "./pages/finanzas/PagoPage";
 import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
 import DetalleReportePago from "./pages/finanzas/ReporteEgresos";
 import CostoBeneficioPage from "./pages/finanzas/CostoBeneficioPage";
+
+// Reportes
 import Reportes from "./pages/reportes/Reportes";
 import GraficaIngreso from "./pages/reportes/GraficaIngreso";
 import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";

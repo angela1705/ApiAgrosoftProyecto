@@ -22,6 +22,7 @@ export interface Afeccion {
       id: number;
       usuario: string;
     } | null;
+    
     plaga: {
       id: number;
       nombre: string;

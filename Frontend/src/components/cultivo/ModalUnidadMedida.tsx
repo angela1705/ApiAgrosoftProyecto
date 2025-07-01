@@ -53,7 +53,6 @@ export const ModalUnidadMedida = ({
             onConfirm={handleSubmit}
             confirmText={unidadEditar ? "Actualizar" : "Crear"}
             cancelText="Cancelar"
-            isSubmitting={crearMutation.isPending}
         >
             <div className="space-y-4">
                 <ReuInput
