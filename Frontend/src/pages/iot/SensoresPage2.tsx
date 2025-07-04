@@ -5,7 +5,7 @@ import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from "react-ic
 import DefaultLayout from "@/layouts/default";
 import { useSensores } from "@/hooks/iot/mqtt/useSensores";
 import { usePublishCommand } from "@/hooks/iot/mqtt/usePublishCommand";
-import { useRegistrarDatosMeteorologicos } from "@/hooks/iot/datos_sensores/useRegistrarDatosMeteorologicos"; // Importar el hook
+import { useRegistrarDatosMeteorologicos } from "@/hooks/iot/datos_sensores/useRegistrarDatosMeteorologicos";
 import { DataTypeSelector } from "@/components/Iot/mqtt/DataTypeSelector";
 import { ViewModeSelector } from "@/components/Iot/mqtt/ViewModeSelector";
 import { SensorCharts } from "@/components/Iot/mqtt/SensorCharts";
@@ -76,9 +76,9 @@ const SensoresPage: React.FC = () => {
   const [sensorActive, setSensorActive] = useState(true);
   const [selectedDataType, setSelectedDataType] = useState<DataType>(dataTypes[0]);
   const [selectedViewMode, setSelectedViewMode] = useState<ViewMode>(viewModes[0]);
-  const [bufferedData, setBufferedData] = useState<any[]>([]); // Buffer para acumular datos
+  const [bufferedData, setBufferedData] = useState<any[]>([]);
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
-  const { mutate: registrarDatos } = useRegistrarDatosMeteorologicos(); // Hook para registrar datos
+  const { mutate: registrarDatos } = useRegistrarDatosMeteorologicos();
   const navigate = useNavigate();
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -138,7 +138,7 @@ const SensoresPage: React.FC = () => {
         device_code: "ESP32_001",
         temperatura: averages.temperatura.count > 0 ? averages.temperatura.sum / averages.temperatura.count : null,
         humedad_ambiente: averages.humedad_ambiente.count > 0 ? averages.humedad_ambiente.sum / averages.humedad_ambiente.count : null,
-        humedad_suelo: averages.humedad_ambiente.count > 0 ? averages.humedad_suelo.sum / averages.humedad_suelo.count : null,
+        humedad_suelo: averages.humedad_suelo.count > 0 ? averages.humedad_suelo.sum / averages.humedad_suelo.count : null,
         calidad_aire: averages.calidad_aire.count > 0 ? averages.calidad_aire.sum / averages.calidad_aire.count : null,
         luminosidad: averages.luminosidad.count > 0 ? averages.luminosidad.sum / averages.luminosidad.count : null,
         fecha_medicion: new Date().toISOString(),
@@ -194,6 +194,7 @@ const SensoresPage: React.FC = () => {
               const latest = filteredData
                 .filter((d) => d[type.key] !== null && d[type.key] !== undefined)
                 .sort((a, b) => new Date(b.fecha_medicion || "").getTime() - new Date(a.fecha_medicion || "").getTime())[0];
+              const value = latest && typeof latest[type.key] === "number" ? latest[type.key] : null;
               return (
                 <motion.div
                   key={type.key}
@@ -209,9 +210,7 @@ const SensoresPage: React.FC = () => {
                       color: type.key === "temperatura" ? "#dc2626" : type.key === "humedad_ambiente" ? "#2563eb" : type.key === "humedad_suelo" ? "#10b981" : type.key === "calidad_aire" ? "#f59e0b" : "#f59e0b",
                     }}
                   >
-                    {latest && typeof latest[type.key] === "number"
-                      ? latest[type.key].toFixed(type.decimals)
-                      : "N/A"}{" "}
+                    {typeof value === "number" ? value.toFixed(type.decimals) : "N/A"}{" "}
                     {type.key === "temperatura"
                       ? "°C"
                       : type.key === "humedad_ambiente" || type.key === "humedad_suelo"
@@ -265,10 +264,8 @@ const SensoresPage: React.FC = () => {
 
           {/* Gráficas o tabla */}
           <div className="w-full" ref={chartRef}>
-            {selectedViewMode.id === "realtime" && chartRef.current ? (
+            {selectedViewMode.id === "realtime" ? (
               <SensorCharts realTimeData={filteredData} selectedDataType={selectedDataType} selectedSensor="todos" />
-            ) : selectedViewMode.id === "realtime" ? (
-              <p className="text-gray-600 text-center mt-4">No hay datos disponibles para renderizar el gráfico.</p>
             ) : (
               <div className="flex flex-col gap-6">
                 <SensorTable realTimeData={filteredData} selectedDataType={selectedDataType} />
