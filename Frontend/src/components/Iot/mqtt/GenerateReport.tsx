@@ -14,7 +14,9 @@ interface GenerateReportProps {
 }
 
 export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, dataTypes }) => {
-  const chartRefs = useRef<React.RefObject<HTMLDivElement>[]>(dataTypes.map(() => React.createRef<HTMLDivElement>()));
+  const chartRefs = useRef<Array<React.RefObject<HTMLDivElement | null>>>(
+    dataTypes.map(() => React.createRef<HTMLDivElement | null>())
+  );
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Filtro por ESP32_001
@@ -56,20 +58,20 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
         const values = filteredData
           .filter((d) => d[type.key] !== null && d[type.key] !== undefined)
           .map((d) => d[type.key] as number);
-        const max = values.length ? Math.max(...values) : "N/A";
-        const min = values.length ? Math.min(...values) : "N/A";
+        const max = values.length ? Math.max(...values).toFixed(type.decimals) : "N/A";
+        const min = values.length ? Math.min(...values).toFixed(type.decimals) : "N/A";
         const avg = values.length ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(type.decimals) : "N/A";
         const outOfRange = values.filter(
           (v) => (type.medida_minima !== undefined && v < type.medida_minima) || (type.medida_maxima !== undefined && v > type.medida_maxima)
         ).length;
         return [
           type.nombre,
-          max !== "N/A" ? max.toFixed(type.decimals) : "N/A",
-          min !== "N/A" ? min.toFixed(type.decimals) : "N/A",
+          max,
+          min,
           avg,
           type.medida_minima?.toFixed(type.decimals) ?? "N/A",
           type.medida_maxima?.toFixed(type.decimals) ?? "N/A",
-          outOfRange,
+          outOfRange.toString(),
         ];
       }),
     ];
@@ -107,7 +109,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
     const purposeText = [
       `Descripción: ${type.nombre} mide ${getSensorDescription(type.key)}`,
       `Propósito: Visualizar tendencias de ${type.nombre.toLowerCase()} para identificar picos, caídas o desviaciones que afecten el crecimiento de cultivos.`,
-      `Qué se espera: Detectar anomalías para ajustar condiciones como riego, ventilación o iluminación, optimizando la productividad agrícola.`
+      `Qué se espera: Detectar anomalías para ajustar condiciones como riego, ventilación o iluminación, optimizando la productividad agrícola.`,
     ];
     doc.text(purposeText, margin, yPosition, { maxWidth: 190 });
     yPosition += 18;
@@ -198,7 +200,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const currentDate = new Date().toLocaleString("es-ES", { dateStyle: "full", timeStyle: "medium" });
       const margin = 10;
-      let yPosition = 30; // Subir cabecera para centrar
+      let yPosition = 30;
 
       // Portada y Resumen Estadístico
       doc.setFillColor(245, 245, 245);
@@ -222,7 +224,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
       doc.text(
         [
           "Este reporte presenta datos meteorológicos recopilados por sensores IoT (ESP32_001) para optimizar condiciones agrícolas.",
-          "Incluye estadísticas, gráficos de tendencias y recomendaciones basadas en umbrales definidos."
+          "Incluye estadísticas, gráficos de tendencias y recomendaciones basadas en umbrales definidos.",
         ],
         margin,
         yPosition,
@@ -243,7 +245,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
         [
           "- Proveer análisis detallado de condiciones ambientales.",
           "- Identificar valores fuera de rango para acciones correctivas.",
-          "- Optimizar riego, ventilación e iluminación para maximizar la productividad."
+          "- Optimizar riego, ventilación e iluminación para maximizar la productividad.",
         ],
         margin,
         yPosition,
@@ -266,7 +268,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
         "- Humedad Ambiente (%): Humedad relativa del aire en % (rango: 20–90 %).",
         "- Humedad Suelo (%): Humedad del suelo en % (rango: 10–80 %).",
         "- Calidad Aire (PPM): Parámetro ambiental.",
-        "- Luminosidad (lux): Intensidad lumínica en lux (rango: 100–100000 lux)."
+        "- Luminosidad (lux): Intensidad lumínica en lux (rango: 100–100000 lux).",
       ];
       doc.text(sensorDescriptions, margin, yPosition, { maxWidth: 190 });
       yPosition += sensorDescriptions.length * 6 + 6;
@@ -315,7 +317,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
           "Acciones generales:",
           "- Implementar ajustes en riego según niveles de humedad del suelo.",
           "- Monitorear calidad del aire y viento para proteger cultivos.",
-          "- Realizar mantenimiento periódico de sensores para garantizar precisión."
+          "- Realizar mantenimiento periódico de sensores para garantizar precisión.",
         ],
         margin,
         yPosition,
@@ -339,10 +341,10 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
           ).length;
           return [
             type.nombre,
-            outOfRange,
-            getSpecificRecommendation(type, outOfRange, "N/A")
+            outOfRange.toString(),
+            getSpecificRecommendation(type, outOfRange, "N/A"),
           ];
-        }).filter(row => row[1] > 0)
+        }).filter((row) => Number(row[1]) > 0),
       ];
       if (anomalyTable.length > 1) {
         autoTable(doc, {
@@ -377,16 +379,26 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
   // Función para obtener descripción del sensor
   const getSensorDescription = (key: string) => {
     switch (key) {
-      case "temperatura": return "Temperatura ambiental en °C (rango: 0–50 °C).";
-      case "humedad_ambiente": return "Humedad relativa del aire en % (rango: 20–90 %).";
-      case "humedad_suelo": return "Humedad del suelo en % (rango: 10–80 %).";
-      case "calidad_aire": return "Parámetro ambiental.";
-      case "luminosidad": return "Intensidad lumínica en lux (rango: 100–100000 lux).";
-      case "lluvia": return "Precipitación en mm (rango: 0–50 mm).";
-      case "velocidad_viento": return "Velocidad del viento en m/s (rango: 0–20 m/s).";
-      case "direccion_viento": return "Dirección del viento en grados (0–360°).";
-      case "ph_suelo": return "Acidez del suelo en pH (rango: 5.5–7.5).";
-      default: return "Parámetro ambiental.";
+      case "temperatura":
+        return "Temperatura ambiental en °C (rango: 0–50 °C).";
+      case "humedad_ambiente":
+        return "Humedad relativa del aire en % (rango: 20–90 %).";
+      case "humedad_suelo":
+        return "Humedad del suelo en % (rango: 10–80 %).";
+      case "calidad_aire":
+        return "Parámetro ambiental.";
+      case "luminosidad":
+        return "Intensidad lumínica en lux (rango: 100–100000 lux).";
+      case "lluvia":
+        return "Precipitación en mm (rango: 0–50 mm).";
+      case "velocidad_viento":
+        return "Velocidad del viento en m/s (rango: 0–20 m/s).";
+      case "direccion_viento":
+        return "Dirección del viento en grados (0–360°).";
+      case "ph_suelo":
+        return "Acidez del suelo en pH (rango: 5.5–7.5).";
+      default:
+        return "Parámetro ambiental.";
     }
   };
 
