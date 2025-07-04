@@ -10,12 +10,25 @@ export interface SensorData {
   humedad_suelo?: number | null;
   calidad_aire?: number | null;
   luminosidad?: number | null;
+  lluvia?: number | null;
+  velocidad_viento?: number | null;
+  direccion_viento?: number | null;
+  ph_suelo?: number | null;
   fecha_medicion?: string;
 }
 
 export interface DataType {
   nombre: string;
-  key: "temperatura" | "humedad_ambiente" | "humedad_suelo" | "calidad_aire" | "luminosidad";
+  key:
+    | "temperatura"
+    | "humedad_ambiente"
+    | "humedad_suelo"
+    | "calidad_aire"
+    | "luminosidad"
+    | "lluvia"
+    | "velocidad_viento"
+    | "direccion_viento"
+    | "ph_suelo";
   icon: React.ReactNode;
   tipo_sensor: string;
   decimals: number;

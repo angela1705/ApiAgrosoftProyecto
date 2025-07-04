@@ -1,3 +1,4 @@
+// useControl.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToast } from "@heroui/react";
 import { Control, ControlDetalle } from "@/types/cultivo/Control";
@@ -58,7 +59,6 @@ export const useControl = (id: number) => {
   });
 };
 
-
 export const useCrearControl = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -70,14 +70,14 @@ export const useCrearControl = () => {
           title: "Éxito",
           description: "Control registrado correctamente",
           timeout: 3000,
-          color:"success"
+          color: "success",
         });
       } else {
         addToast({
           title: "Error",
           description: "No se pudo registrar el control",
           timeout: 3000,
-          color:"danger"
+          color: "danger",
         });
       }
     },
@@ -87,26 +87,36 @@ export const useCrearControl = () => {
           title: "Acceso denegado",
           description: "No tienes permiso para realizar esta acción, contacta a un administrador.",
           timeout: 3000,
-          color:"warning"
+          color: "warning",
         });
       } else {
         addToast({
           title: "Error",
           description: "Error al registrar el control",
           timeout: 3000,
-          color:"danger"
+          color: "danger",
         });
       }
     },
   });
 };
 
-
 export const useActualizarControl = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, control }: { id: number; control: Partial<Control> }) =>
-      actualizarControl(id, control),
+    mutationFn: ({ id, control }: { id: number; control: ControlDetalle }) => {
+      const controlTransformado: Partial<Control> = {
+        afeccion_id: control.afeccion.id,
+        tipo_control_id: control.tipo_control.id,
+        producto_id: control.producto.id,
+        responsable_id: control.responsable.id,
+        descripcion: control.descripcion,
+        fecha_control: control.fecha_control,
+        efectividad: control.efectividad,
+        observaciones: control.observaciones,
+      };
+      return actualizarControl(id, controlTransformado);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["controles"] });
       addToast({

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import DefaultLayout from "@/layouts/default";
 import CustomSpinner from "@/components/globales/Spinner";
 import CustomCard from "@/components/globales/Card";
@@ -8,6 +9,7 @@ import { Cosecha } from "@/types/cultivo/Cosecha";
 
 const formatNumber = (value: number | undefined): string => {
   if (value === undefined) return '0';
+
   return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
@@ -38,29 +40,31 @@ const CostoBeneficioPage: React.FC = () => {
 
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <input
-            type="text"
+            className="border rounded px-3 py-2 w-full md:w-1/3"
             placeholder="Buscar por nombre"
+            type="text"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            className="border rounded px-3 py-2 w-full md:w-1/3"
+
           />
           <input
+            className="border rounded px-3 py-2 w-full md:w-1/3"
             type="date"
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
-            className="border rounded px-3 py-2 w-full md:w-1/3"
+
           />
           <button
-            onClick={() => refetch()}
             className="bg-blue-600 text-white px-4 py-2 rounded"
+            onClick={() => refetch()}
           >
             Buscar
           </button>
         </div>
 
         {loading ? (
-          <div className="flex justify-center">
-          </div>
+          <div className="flex justify-center" />
+          
         ) : error ? (
           <div className="text-center text-red-500">
             Error al buscar las cosechas
@@ -72,34 +76,37 @@ const CostoBeneficioPage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 {cosechas.map((item) => (
-  <div
-    key={item.id}
-    onClick={() => handleCardClick(item.cosecha)} // Accede a la cosecha anidada
-    className="cursor-pointer hover:scale-105 transition-transform duration-200"
+  <button
+    key={item.cosecha.id}
+    className="w-full text-left cursor-pointer hover:scale-105 transition-transform duration-200"
+    onClick={() => handleCardClick(item.cosecha)}
+
   >
     <CustomCard
-      title={`Cosecha #${item.cosecha.id}`}
-      subtitle={`Cultivo: ${item.cosecha.cultivo_nombre}`}
       image="/images/default-cosecha.jpg"
+      subtitle={`Cultivo: ${item.cosecha.cultivo_nombre}`}
+      title={`Cosecha #${item.cosecha.id}`}
+      tracks=""
     />
-  </div>
+  </button>
 ))}
           </div>
         )}
 
         <ReuModal
           isOpen={modalOpen}
-          onOpenChange={setModalOpen}
-          title={`Análisis de Costo-Beneficio - Cosecha #${selectedCosecha?.id}`}
           size="lg"
+          title={`Análisis de Costo-Beneficio - Cosecha #${selectedCosecha?.id}`}
+          onOpenChange={setModalOpen}
+
         >
           {loadingAnalisis ? (
             <div className="flex justify-center py-8">
               <CustomSpinner
-                label="Calculando análisis..."
-                color="primary"
-                variant="spinner"
                 className="text-primary"
+                color="primary"
+                label="Calculando análisis..."
+                variant="spinner"
               />
             </div>
           ) : errorAnalisis ? (

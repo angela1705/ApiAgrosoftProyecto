@@ -167,11 +167,13 @@ const Notificacion: React.FC = () => {
   const handleCancelClear = () => {
     setConfirmClearOpen(false);
   };
+  const userId = user?.id?.toString();
 
-  // Llamar a los hooks de WebSocket en el nivel superior
-  useActivityNotifications(user?.id, addNotification);
-  useBodegaNotifications(user?.id, addNotification);
-  usePlagaNotifications(user?.id, addNotification);
+
+    // Llamar a los hooks de WebSocket en el nivel superior
+  useActivityNotifications(userId, addNotification);
+  useBodegaNotifications(userId, addNotification);
+  usePlagaNotifications(userId, addNotification);
 
   if (!user?.id) {
     return null;

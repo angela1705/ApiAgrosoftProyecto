@@ -17,5 +17,7 @@ export interface ReportePagoDetalle {
     total_pago: number;
     fecha_pago: string;
     mes: string; 
+    estado: string;
+    observaciones: string;
   }
   

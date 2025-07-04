@@ -7,7 +7,7 @@ interface UseModalSensorFormProps {
   sensor: Sensor;  
   tipoSensores: TipoSensor[] | undefined;
   bancales: Bancal[] | undefined;
-  onConfirm: (editedSensor: Sensor | null) => void;
+  onConfirm: (editedSensor: Sensor | null) => void; 
   isDelete?: boolean;
 }
 
@@ -31,7 +31,7 @@ export const useModalSensorForm = ({
       return;
     }
 
-    const tipoSensor = tipoSensores.find((type) => type.nombre === sensor.tipo_sensor) || null;
+    const tipoSensor = tipoSensores.find((type) => type.label === sensor.tipo_sensor) || null;
     const updatedSensor: Sensor = {
       ...sensor,
       tipo_sensor_id: tipoSensor ? tipoSensor.tipo_sensor_id : sensor.tipo_sensor_id || 0,
@@ -60,7 +60,7 @@ export const useModalSensorForm = ({
         return prev;
       }
       if (field === "tipo_sensor") {
-        const tipoSensor = tipoSensores?.find((type) => type.nombre === value);
+        const tipoSensor = tipoSensores?.find((type) => type.label === value);
         console.log("[useModalSensorForm] Buscando tipo de sensor: ", { value, tipoSensor, tipoSensores });
         if (!tipoSensor) {
           console.error("[useModalSensorForm] Tipo de sensor no encontrado: ", value);
