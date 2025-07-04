@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  frontend:
+    image: wmauriciodev/agrosoft_frontend:latest
+    ports:
+      - "5173:5173"
+    stdin_open: true
+    tty: true
+
+  backend:
+    image: wmauriciodev/agrosoft_backend:latest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DB=agrosoft
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - DB_HOST=db
+      - DB_PORT=5432
+
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_DB: agrosoft
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
