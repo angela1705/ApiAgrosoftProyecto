@@ -27,12 +27,12 @@ export const ReuInput: React.FC<ReuInputProps> = ({
           {...props}
         />
         {showPasswordToggle && (
-          <InputAdornment position="end" className="absolute right-2 top-1/2 transform -translate-y-1/2">
+          <InputAdornment  className="absolute right-2 top-1/2 transform -translate-y-1/2" position="end">
             <IconButton
               aria-label="toggle password visibility"
-              onClick={onTogglePassword}
-              edge="end"
               className="p-1"
+              edge="end"
+              onClick={onTogglePassword}
             >
               {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
             </IconButton>

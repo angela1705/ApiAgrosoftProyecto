@@ -32,8 +32,26 @@ inicio_año = datetime(hoy.year, 1, 1)
 class UsuariosViewSet(ModelViewSet):
     serializer_class = UsuariosSerializer
     def get_queryset(self):
-        return Usuarios.objects.all()   
-     
+        return Usuarios.objects.all()
+
+    def update(self, request, *args, **kwargs):
+        instancia = self.get_object()
+        if instancia.id == 1:
+            return Response(
+                {'error': 'Este usuario no se puede modificar.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instancia = self.get_object()
+        if instancia.id == 1:
+            return Response(
+                {'error': 'Este usuario no se puede eliminar.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().destroy(request, *args, **kwargs)   
+    
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
 
@@ -289,3 +307,4 @@ class ChangePasswordView(APIView):
             {'message': 'Contraseña actualizada con éxito'},
             status=status.HTTP_200_OK
         )
+    

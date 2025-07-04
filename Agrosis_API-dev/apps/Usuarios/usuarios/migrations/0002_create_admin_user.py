@@ -13,7 +13,7 @@ def create_admin_user(apps, schema_editor):
     Usuarios.objects.get_or_create(
         email='admin01@gmail.com',
         defaults={
-            'username': '@admin#',
+            'username': 'admin',
             'nombre': 'Administer',
             'apellido': 'Userauth',
             'numero_documento':123456,
