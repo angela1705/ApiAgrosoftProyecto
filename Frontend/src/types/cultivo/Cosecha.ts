@@ -6,3 +6,5 @@ export interface Cosecha {
     unidades_de_medida: number; 
     fecha: string;
   }
+
+  
