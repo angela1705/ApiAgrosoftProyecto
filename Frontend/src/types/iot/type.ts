@@ -1,7 +1,7 @@
 import React from "react";
 
 export interface SensorData {
-  id?: number | string; 
+  id?: number | string;
   fk_sensor: number;
   sensor_nombre?: string;
   fk_bancal?: number | null;
@@ -15,7 +15,7 @@ export interface SensorData {
   direccion_viento?: number | null;
   ph_suelo?: number | null;
   fecha_medicion: string;
-  [key: string]: number | null | undefined | string;  
+  [key: string]: number | null | undefined | string;
 }
 
 export interface Sensor {
@@ -35,14 +35,14 @@ export interface Sensor {
 
 export interface TipoSensor {
   id?: number;
-  nombre: string; 
+  label: string;
   key: string;
   icon: React.ReactNode;
   tipo_sensor_id: number;
   decimals: number;
   unidad_medida?: string;
-  medida_minima?: number;  
-  medida_maxima?: number;  
+  medida_minima?: number;
+  medida_maxima?: number;
 }
 
 export interface Bancal {
@@ -59,7 +59,7 @@ export interface EvapotranspiracionData {
   id: number;
   fk_bancal: number;
   fecha: string;
-  valor: number; 
+  valor: number;
   creado: string;
 }
 
