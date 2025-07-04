@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import Navbar from "@/components/globales/Navbar";
 import { Header } from "@/components/globales/Header";
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
@@ -24,7 +23,6 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
 
  return (
     <div className="relative flex h-screen">
-      <Navbar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div
   className={`
     flex flex-col flex-grow transition-all duration-300 
@@ -34,7 +32,7 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
   `}
 >
 
-        <Header isSidebarOpen={isSidebarOpen} />
+        <Header  />
         <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 flex-grow pt-16 sm:pt-20">
           {children}
         </main>

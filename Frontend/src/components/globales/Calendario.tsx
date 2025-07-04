@@ -169,7 +169,6 @@ const Calendario = () => {
         selectable={true}
         dateClick={handleDateClick}
         eventClick={handleEventClick}
-        events={events}
         eventDisplay="block"
         eventTimeFormat={{
           hour: '2-digit',

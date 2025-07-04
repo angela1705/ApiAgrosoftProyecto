@@ -5,7 +5,7 @@ interface CustomSpinnerProps {
   variant: "default" | "simple" | "gradient" | "spinner" | "wave" | "dots";
   size?: 'lg' | 'sm' | 'md'
   className?: string;
-  color : "foreground"  | "primary"  |  "secondary"  | "success"  | "warning" | "danger"
+  color : "primary"  |  "secondary"  | "success"  | "warning" | "danger"
 }
 
 export default function CustomSpinner({ label, variant, className, color}: CustomSpinnerProps) {
