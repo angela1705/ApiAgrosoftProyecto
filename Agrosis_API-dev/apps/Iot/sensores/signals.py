@@ -13,6 +13,7 @@ def create_tipo_sensores(sender, **kwargs):
         {"nombre": "direccion_viento", "unidad_medida": "°", "medida_minima": 0, "medida_maxima": 360, "descripcion": "Mide la dirección del viento"},
         {"nombre": "humedad_suelo", "unidad_medida": "%", "medida_minima": 0, "medida_maxima": 100, "descripcion": "Mide la humedad del suelo"},
         {"nombre": "ph_suelo", "unidad_medida": "", "medida_minima": 0, "medida_maxima": 14, "descripcion": "Mide el pH del suelo"},
+        {"nombre": "calidad_aire", "unidad_medida": "PPM", "medida_minima": 10, "medida_maxima": 1000, "descripcion": "Mide la calidad del aire (MQ-135)"},
     ]
     for tipo in tipos:
         TipoSensor.objects.get_or_create(

@@ -1,11 +1,11 @@
- 
-import React, { useState, useRef, useMemo, useCallback } from "react";
+import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from "react-icons/fa";
 import DefaultLayout from "@/layouts/default";
 import { useSensores } from "@/hooks/iot/mqtt/useSensores";
 import { usePublishCommand } from "@/hooks/iot/mqtt/usePublishCommand";
+import { useRegistrarDatosMeteorologicos } from "@/hooks/iot/datos_sensores/useRegistrarDatosMeteorologicos"; // Importar el hook
 import { DataTypeSelector } from "@/components/Iot/mqtt/DataTypeSelector";
 import { ViewModeSelector } from "@/components/Iot/mqtt/ViewModeSelector";
 import { SensorCharts } from "@/components/Iot/mqtt/SensorCharts";
@@ -76,14 +76,85 @@ const SensoresPage: React.FC = () => {
   const [sensorActive, setSensorActive] = useState(true);
   const [selectedDataType, setSelectedDataType] = useState<DataType>(dataTypes[0]);
   const [selectedViewMode, setSelectedViewMode] = useState<ViewMode>(viewModes[0]);
+  const [bufferedData, setBufferedData] = useState<any[]>([]); // Buffer para acumular datos
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
+  const { mutate: registrarDatos } = useRegistrarDatosMeteorologicos(); // Hook para registrar datos
   const navigate = useNavigate();
   const chartRef = useRef<HTMLDivElement>(null);
 
   const debouncedSetSelectedDataType = useCallback(debounce(setSelectedDataType, 300), []);
 
-  // Mantener el filtro por ESP32_001
+  // Filtrar datos por ESP32_001
   const filteredData = useMemo(() => realTimeData.filter((d) => d.device_code === "ESP32_001"), [realTimeData]);
+
+  // Acumular datos en el buffer cada vez que se reciben nuevos datos
+  useEffect(() => {
+    if (filteredData.length > 0) {
+      setBufferedData((prev) => [...prev, ...filteredData]);
+    }
+  }, [filteredData]);
+
+  // Calcular promedio y registrar cada 2 minutos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (bufferedData.length === 0) return;
+
+      // Calcular promedios
+      const averages = bufferedData.reduce(
+        (acc, curr) => {
+          if (curr.temperatura != null) {
+            acc.temperatura.sum += curr.temperatura;
+            acc.temperatura.count += 1;
+          }
+          if (curr.humedad_ambiente != null) {
+            acc.humedad_ambiente.sum += curr.humedad_ambiente;
+            acc.humedad_ambiente.count += 1;
+          }
+          if (curr.humedad_suelo != null) {
+            acc.humedad_suelo.sum += curr.humedad_suelo;
+            acc.humedad_suelo.count += 1;
+          }
+          if (curr.calidad_aire != null) {
+            acc.calidad_aire.sum += curr.calidad_aire;
+            acc.calidad_aire.count += 1;
+          }
+          if (curr.luminosidad != null) {
+            acc.luminosidad.sum += curr.luminosidad;
+            acc.luminosidad.count += 1;
+          }
+          return acc;
+        },
+        {
+          temperatura: { sum: 0, count: 0 },
+          humedad_ambiente: { sum: 0, count: 0 },
+          humedad_suelo: { sum: 0, count: 0 },
+          calidad_aire: { sum: 0, count: 0 },
+          luminosidad: { sum: 0, count: 0 },
+        }
+      );
+
+      // Preparar payload para el registro
+      const payload = {
+        device_code: "ESP32_001",
+        temperatura: averages.temperatura.count > 0 ? averages.temperatura.sum / averages.temperatura.count : null,
+        humedad_ambiente: averages.humedad_ambiente.count > 0 ? averages.humedad_ambiente.sum / averages.humedad_ambiente.count : null,
+        humedad_suelo: averages.humedad_ambiente.count > 0 ? averages.humedad_suelo.sum / averages.humedad_suelo.count : null,
+        calidad_aire: averages.calidad_aire.count > 0 ? averages.calidad_aire.sum / averages.calidad_aire.count : null,
+        luminosidad: averages.luminosidad.count > 0 ? averages.luminosidad.sum / averages.luminosidad.count : null,
+        fecha_medicion: new Date().toISOString(),
+      };
+
+      // Registrar los datos promedio
+      if (Object.values(payload).some((value) => value !== null && value !== "ESP32_001")) {
+        registrarDatos(payload);
+      }
+
+      // Limpiar el buffer
+      setBufferedData([]);
+    }, 120000); // 2 minutos en milisegundos
+
+    return () => clearInterval(interval);
+  }, [bufferedData, registrarDatos]);
 
   if (isLoading) {
     return (
@@ -160,7 +231,7 @@ const SensoresPage: React.FC = () => {
           {/* Botones */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
             <motion.button
-              className="bg-white rounded-lg shadow-md p-4 flex items-center justify-center text-lg font-semibold text-gray-700 hover:bg-gray-100 h-32"
+              className="bg-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold text-gray-700 hover:bg-gray-100 h-16"
               onClick={() => publishCommand(sensorActive ? "STOP_SENSOR" : "START_SENSOR")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -168,7 +239,7 @@ const SensoresPage: React.FC = () => {
               {sensorActive ? "Apagar Sensor" : "Encender Sensor"}
             </motion.button>
             <motion.button
-              className="bg-white rounded-lg shadow-md p-4 flex items-center justify-center text-lg font-semibold text-gray-700 hover:bg-gray-100 h-32"
+              className="bg-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold text-gray-700 hover:bg-gray-100 h-16"
               onClick={() => publishCommand("RESTART_WIFI")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -177,7 +248,7 @@ const SensoresPage: React.FC = () => {
             </motion.button>
             <GenerateReport realTimeData={filteredData} dataTypes={dataTypes} />
             <motion.button
-              className="bg-green-600 text-white rounded-lg shadow-md p-4 flex items-center justify-center text-lg font-semibold h-32"
+              className="bg-green-600 text-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold h-16"
               onClick={() => navigate("/iot/datosmeteorologicos")}
               whileHover={{ scale: 1.05, backgroundColor: "#059669" }}
               whileTap={{ scale: 0.95 }}
@@ -210,4 +281,4 @@ const SensoresPage: React.FC = () => {
   );
 };
 
-export default SensoresPage; 
+export default SensoresPage;
