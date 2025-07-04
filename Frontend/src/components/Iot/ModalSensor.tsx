@@ -77,8 +77,8 @@ export const ModalSensor = ({ isOpen, onOpenChange, sensor, onConfirm, isDelete 
             >
               <option value="">Seleccione un tipo de sensor</option>
               {tipoSensores.map((tipoSensor) => (
-                <option key={tipoSensor.id} value={tipoSensor.nombre}>
-                  {tipoSensor.nombre}
+                <option key={tipoSensor.id} value={tipoSensor.label}>
+                  {tipoSensor.label} 
                 </option>
               ))}
             </select>
