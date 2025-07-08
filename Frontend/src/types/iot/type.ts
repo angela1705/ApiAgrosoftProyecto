@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface SensorData {
   id?: number | string;
   fk_sensor: number;

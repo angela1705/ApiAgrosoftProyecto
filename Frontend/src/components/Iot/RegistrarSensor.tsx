@@ -17,7 +17,7 @@ interface Sensor {
 
 const RegistrarSensor: React.FC = () => {
   const [sensor, setSensor] = useState<Sensor>({
-    nombre: "",
+    nombre: "", 
     tipo_sensor: "",
     unidad_medida: "",
     descripcion: "",

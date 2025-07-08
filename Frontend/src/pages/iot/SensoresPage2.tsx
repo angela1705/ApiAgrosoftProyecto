@@ -94,10 +94,13 @@ const SensoresPage: React.FC = () => {
     }
   }, [filteredData]);
 
-  // Calcular promedio y registrar cada 2 minutos
+  // Calcular promedio y registrar cada 1 minuto
   useEffect(() => {
     const interval = setInterval(() => {
-      if (bufferedData.length === 0) return;
+      if (bufferedData.length === 0) {
+        console.log("[SensoresPage] No hay datos en el buffer para calcular promedios.");
+        return;
+      }
 
       // Calcular promedios
       const averages = bufferedData.reduce(
@@ -136,22 +139,58 @@ const SensoresPage: React.FC = () => {
       // Preparar payload para el registro
       const payload = {
         device_code: "ESP32_001",
-        temperatura: averages.temperatura.count > 0 ? averages.temperatura.sum / averages.temperatura.count : null,
-        humedad_ambiente: averages.humedad_ambiente.count > 0 ? averages.humedad_ambiente.sum / averages.humedad_ambiente.count : null,
-        humedad_suelo: averages.humedad_suelo.count > 0 ? averages.humedad_suelo.sum / averages.humedad_suelo.count : null,
-        calidad_aire: averages.calidad_aire.count > 0 ? averages.calidad_aire.sum / averages.calidad_aire.count : null,
-        luminosidad: averages.luminosidad.count > 0 ? averages.luminosidad.sum / averages.luminosidad.count : null,
+        fk_bancal_id: null,
+        temperatura:
+          averages.temperatura.count > 0
+            ? parseFloat((averages.temperatura.sum / averages.temperatura.count).toFixed(2))
+            : null,
+        humedad_ambiente:
+          averages.humedad_ambiente.count > 0
+            ? parseFloat((averages.humedad_ambiente.sum / averages.humedad_ambiente.count).toFixed(2))
+            : null,
+        humedad_suelo:
+          averages.humedad_suelo.count > 0
+            ? parseFloat((averages.humedad_suelo.sum / averages.humedad_suelo.count).toFixed(2))
+            : null,
+        calidad_aire:
+          averages.calidad_aire.count > 0
+            ? parseFloat((averages.calidad_aire.sum / averages.calidad_aire.count).toFixed(2))
+            : null,
+        luminosidad:
+          averages.luminosidad.count > 0
+            ? parseFloat((averages.luminosidad.sum / averages.luminosidad.count).toFixed(2))
+            : null,
+        lluvia: null,
+        velocidad_viento: null,
+        direccion_viento: null,
+        ph_suelo: null,
         fecha_medicion: new Date().toISOString(),
       };
 
-      // Registrar los datos promedio
-      if (Object.values(payload).some((value) => value !== null && value !== "ESP32_001")) {
-        registrarDatos(payload);
+      // Registrar los datos promedio si hay al menos un valor no nulo
+      if (
+        payload.temperatura !== null ||
+        payload.humedad_ambiente !== null ||
+        payload.humedad_suelo !== null ||
+        payload.calidad_aire !== null ||
+        payload.luminosidad !== null
+      ) {
+        console.log("[SensoresPage] Enviando datos promedio para registro:", payload);
+        registrarDatos(payload, {
+          onSuccess: () => {
+            console.log("[SensoresPage] Datos promedio registrados con éxito.");
+          },
+          onError: (error: any) => {
+            console.error("[SensoresPage] Error al registrar datos promedio:", error.message);
+          },
+        });
+      } else {
+        console.log("[SensoresPage] No hay datos válidos para registrar.");
       }
 
       // Limpiar el buffer
       setBufferedData([]);
-    }, 120000); // 2 minutos en milisegundos
+    }, 60000); // 1 minuto en milisegundos
 
     return () => clearInterval(interval);
   }, [bufferedData, registrarDatos]);
