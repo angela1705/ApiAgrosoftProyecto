@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import {
   IconButton,
@@ -16,170 +16,204 @@ import {
   List,
   ListItem,
   ListItemText,
-} from "@mui/material"; 
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from "@mui/icons-material/Close";
-import { useActivityNotifications } from "@/hooks/websocket/useActividadNotificacions";
-import { useBodegaNotifications } from "@/hooks/websocket/useBodegaNotification";
-import { usePlagaNotifications } from "@/hooks/websocket/useReportePlaga";
-import { Notification } from "@/types/notificacion";
-
-type PersistentNotification = Notification & {
-  read: boolean;
-};
+import { useNotifications, Notification } from "@/hooks/websocket/useNotifications";
+import axios from "@/api/axios";
+import { debounce } from "lodash";
 
 const Notificacion: React.FC = () => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<PersistentNotification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const open = Boolean(anchorEl);
+  const isFetching = useRef(false);
 
-  // Cargar notificaciones desde localStorage
-  useEffect(() => {
-    if (!user?.id) return;
+  const fetchNotifications = useCallback(async () => {
+    if (!user?.id || isFetching.current) {
+      console.log("No user ID or already fetching, skipping");
+      return;
+    }
 
-    const savedNotifications = localStorage.getItem(`notifications_${user.id}`);
-    if (savedNotifications) {
-      try {
-        const parsed = JSON.parse(savedNotifications);
-        if (Array.isArray(parsed)) {
-          const validNotifications = parsed.filter(
-            (n): n is PersistentNotification =>
-              n &&
-              typeof n === "object" &&
-              "id" in n &&
-              typeof n.id === "string" &&
-              "message" in n &&
-              typeof n.message === "string" &&
-              "read" in n &&
-              typeof n.read === "boolean" &&
-              "timestamp" in n &&
-              typeof n.timestamp === "string" &&
-              "source" in n &&
-              typeof n.source === "string"
-          );
-          setNotifications(validNotifications);
-          setUnreadCount(validNotifications.filter((n) => !n.read).length);
-        } else {
-          console.error("Formato de notificaciones inválido en localStorage");
-          localStorage.removeItem(`notifications_${user.id}`);
-        }
-      } catch (error) {
-        console.error("Error al cargar notificaciones desde localStorage:", error);
-        localStorage.removeItem(`notifications_${user.id}`);
-      }
+    isFetching.current = true;
+    try {
+      console.log(`Fetching notifications for user ${user.id}`);
+      const response = await axios.get("http://localhost:8000/api/notificaciones/");
+      const fetchedNotifications: Notification[] = response.data.map((n: any) => ({
+        id: n.id,
+        type: n.notification_type,
+        message: n.message,
+        data: n.data,
+        created_at: n.created_at,
+        read: n.is_read,
+      }));
+      console.log(`Loaded ${fetchedNotifications.length} notifications`, fetchedNotifications);
+      setNotifications(fetchedNotifications);
+      setUnreadCount(fetchedNotifications.filter((n) => !n.read).length);
+    } catch (error: any) {
+      const errorMessage = `Error al cargar las notificaciones: ${error.message}`;
+      setError(errorMessage);
+      console.error(errorMessage, error);
+    } finally {
+      isFetching.current = false;
     }
   }, [user?.id]);
 
-  // Guardar notificaciones en localStorage
+  const fetchNotificationsDebounced = useCallback(
+    debounce(fetchNotifications, 1000),
+    [fetchNotifications]
+  );
+
   useEffect(() => {
-    if (user?.id && notifications.length > 0) {
-      try {
-        localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
-      } catch (error) {
-        console.error("Error al guardar notificaciones en localStorage:", error);
-      }
-    }
-  }, [notifications, user?.id]);
-
-  const addNotification = useCallback(
-    (notification: Notification) => {
-      if (!notification?.id || !notification?.message || !notification?.timestamp || !notification?.source) {
-        console.warn("Notificación inválida recibida:", notification);
-        return;
-      }
-
-      setNotifications((prev) => {
-        const exists = prev.some((n) => n.id === notification.id);
-        if (!exists) {
-          const newNotification: PersistentNotification = {
-            ...notification,
-            read: false,
-          };
-          const updatedNotifications = [newNotification, ...prev].slice(0, 50);
-          setUnreadCount((prevUnread) => prevUnread + 1);
-          return updatedNotifications;
+    console.log("useEffect triggered, user?.id:", user?.id);
+    if (user?.id) {
+      fetchNotificationsDebounced();
+    } else {
+      console.log("User ID not available yet, retrying...");
+      const timer = setInterval(() => {
+        if (user?.id) {
+          fetchNotificationsDebounced();
+          clearInterval(timer);
         }
-        return prev;
-      });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [fetchNotificationsDebounced, user?.id]);
+
+  const addNotification = useCallback((notification: Notification) => {
+    setNotifications((prev) => {
+      const exists = prev.some((n) => n.id === notification.id);
+      if (!exists) {
+        console.log("Adding new notification:", notification);
+        const updatedNotifications = [notification, ...prev].slice(0, 50);
+        setUnreadCount((prevUnread) => prevUnread + (notification.read ? 0 : 1));
+        return updatedNotifications;
+      }
+      console.log("Notification already exists:", notification.id);
+      return prev;
+    });
+  }, []);
+
+  const markAsRead = useCallback(
+    async (id: string) => {
+      try {
+        console.log(`Marking notification ${id} as read`);
+        await axios.post("http://localhost:8000/api/notificaciones/", { action: "mark_read", notification_id: id });
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === id && !n.read ? { ...n, read: true } : n
+          )
+        );
+        setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
+      } catch (error: any) {
+        const errorMessage = `Error al marcar la notificación como leída: ${error.message}`;
+        setError(errorMessage);
+        console.error(errorMessage, error);
+      }
     },
     []
   );
 
-  const markAllAsRead = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => (n.read ? n : { ...n, read: true })));
-    setUnreadCount(0);
-  }, []);
-
   const deleteNotification = useCallback(
-    (id: string) => {
-      setNotifications((prev) => {
-        const notificationToDelete = prev.find((n) => n.id === id);
-        const updatedNotifications = prev.filter((n) => n.id !== id);
-
-        if (notificationToDelete && !notificationToDelete.read) {
-          setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
-        }
-
-        if (user?.id) {
-          try {
-            localStorage.setItem(`notifications_${user.id}`, JSON.stringify(updatedNotifications));
-          } catch (error) {
-            console.error("Error al guardar notificaciones en localStorage:", error);
+    async (id: string) => {
+      try {
+        console.log(`Deleting notification ${id}`);
+        await axios.post("http://localhost:8000/api/notificaciones/", { action: "delete", notification_id: id });
+        setNotifications((prev) => {
+          const notificationToDelete = prev.find((n) => n.id === id);
+          const updatedNotifications = prev.filter((n) => n.id !== id);
+          if (notificationToDelete && !notificationToDelete.read) {
+            setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
           }
-        }
-
-        return updatedNotifications;
-      });
+          return updatedNotifications;
+        });
+      } catch (error: any) {
+        const errorMessage = `Error al eliminar la notificación: ${error.message}`;
+        setError(errorMessage);
+        console.error(errorMessage, error);
+      }
     },
-    [user?.id]
+    []
   );
 
-  const clearAllNotifications = useCallback(() => {
-    setNotifications([]);
-    setUnreadCount(0);
-
-    if (user?.id) {
-      localStorage.removeItem(`notifications_${user.id}`);
+  const clearAllNotifications = useCallback(async () => {
+    try {
+      console.log("Clearing all notifications");
+      await axios.post("http://localhost:8000/api/notificaciones/", { action: "clear_all" });
+      setNotifications([]);
+      setUnreadCount(0);
+      setConfirmClearOpen(false);
+    } catch (error: any) {
+      const errorMessage = `Error al limpiar todas las notificaciones: ${error.message}`;
+      setError(errorMessage);
+      console.error(errorMessage, error);
     }
-  }, [user?.id]);
+  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    console.log("Opening notification menu");
     setAnchorEl(event.currentTarget);
-    markAllAsRead();
   };
 
   const handleClose = () => {
+    console.log("Closing notification menu");
     setAnchorEl(null);
   };
 
   const handleClearAllClick = () => {
+    console.log("Opening clear all confirmation dialog");
     setConfirmClearOpen(true);
   };
 
   const handleConfirmClear = () => {
     clearAllNotifications();
-    setConfirmClearOpen(false);
   };
 
   const handleCancelClear = () => {
+    console.log("Canceling clear all");
     setConfirmClearOpen(false);
   };
+
+  const handleError = (error: string) => {
+    console.error("Notification error:", error);
+    setError(error);
+  };
+
+  const handleCloseError = () => {
+    console.log("Closing error snackbar");
+    setError(null);
+  };
+
+  const handleRedirect = (notification: Notification) => {
+    console.log(`Redirecting for notification ${notification.id} (${notification.type})`);
+    if (!notification.read) {
+      markAsRead(notification.id);
+    }
+    if (notification.type === "ACTIVIDAD_ASIGNADA") {
+      window.location.href = `/actividades/${notification.data.actividad_id}`;
+    } else if (notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") {
+      window.location.href = `/insumos/${notification.data.insumo_id}`;
+    } else if (notification.type === "PEST_ALERT") {
+      window.location.href = `/plagas/${notification.data.plaga_id}`;
+    }
+  };
+
   const userId = user?.id?.toString();
 
-
-    // Llamar a los hooks de WebSocket en el nivel superior
-  useActivityNotifications(userId, addNotification);
-  useBodegaNotifications(userId, addNotification);
-  usePlagaNotifications(userId, addNotification);
+  useNotifications(userId, addNotification, handleError);
 
   if (!user?.id) {
+    console.log("No user logged in, hiding notifications");
     return null;
   }
 
- return (
+  return (
     <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
       <IconButton
         onClick={handleClick}
@@ -246,12 +280,32 @@ const Notificacion: React.FC = () => {
                             primary={line}
                             primaryTypographyProps={{
                               variant: "body2",
-                              fontWeight: line.startsWith("Se te ha asignado") ? "bold" : "normal",
+                              fontWeight:
+                                line.startsWith("Se te ha asignado") ||
+                                line.startsWith("El insumo") ||
+                                line.startsWith("Se ha detectado una plaga")
+                                  ? "bold"
+                                  : "normal",
                             }}
                           />
                         </ListItem>
                       ))}
                     </List>
+                    {notification.type !== "OTHER" ? (
+                      <Button
+                        size="small"
+                        onClick={() => handleRedirect(notification)}
+                      >
+                        {notification.type === "ACTIVIDAD_ASIGNADA" && "Ver Actividad"}
+                        {(notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") &&
+                          "Ver Insumo"}
+                        {notification.type === "PEST_ALERT" && "Ver Plaga"}
+                      </Button>
+                    ) : (
+                      <Button size="small" disabled>
+                        Sin acción
+                      </Button>
+                    )}
                   </Box>
                   <IconButton
                     size="small"
@@ -291,8 +345,18 @@ const Notificacion: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+      >
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
 
-export default Notificacion;
+export default React.memo(Notificacion);
