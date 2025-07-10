@@ -1,67 +1,53 @@
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from ..models import Insumo
-import hashlib
+from apps.Inventario.insumos.api.serializers import InsumoSerializer
+from apps.Cultivo.Notificacion.api.signals import send_notification
 from django.utils import timezone
-import json
+from apps.Usuarios.usuarios.models import Usuarios
 
-# Caché en memoria para notificaciones
-NOTIFICATION_CACHE = {}  # {user_id: {notification_id: notification_data}}
+def notificar_insumo_estado(insumo, usuarios_ids):
+    serializer = InsumoSerializer(insumo)
+    insumo_data = serializer.data
+    
+    nombre_insumo = insumo_data.get('nombre', 'Desconocido')
+    cantidad = insumo_data.get('cantidad', 0)
+    unidad_medida = insumo_data.get('unidad_medida', {}).get('nombre', 'Sin asignar')
+    tipo_insumo = insumo_data.get('tipo_insumo', {}).get('nombre', 'Sin asignar')
+    fecha_caducidad = insumo.fecha_caducidad
+    umbral_cantidad = 10  # Umbral para considerar el insumo agotado o bajo
+    dias_caducidad = 7    # Días para considerar que el insumo está próximo a caducar
 
-@receiver(post_save, sender=Insumo)
-def notify_stock_change(sender, instance, **kwargs):
-    channel_layer = get_channel_layer()
-    today = timezone.now().date()
-    umbral_cantidad = 10
-    umbral_dias = 7
-    notifications = []
-    timestamp = str(int(timezone.now().timestamp() * 1000))
+    # Verificar si los usuarios_ids son válidos
+    usuarios_ids = [uid for uid in usuarios_ids if Usuarios.objects.filter(id=uid, rol='ADMIN').exists()]
+    if not usuarios_ids:
+        return  # No enviar notificaciones si no hay usuarios válidos
 
-    # Usar el contexto de la solicitud para obtener el usuario autenticado
-    # Esto depende de cómo se activa el post_save (p.ej., desde InsumoViewSet)
-    # Por ahora, usamos un user_id por defecto (1) si no hay contexto
-    user_id = getattr(instance, '_user_id', 1)  # Ajusta según tu sistema
-
-    if instance.activo:
-        if instance.cantidad <= umbral_cantidad:
-            insumo_hash = hashlib.md5(f"{instance.id}low_stock".encode()).hexdigest()
-            if user_id not in NOTIFICATION_CACHE or insumo_hash not in NOTIFICATION_CACHE.get(user_id, {}):
-                notification = {
-                    'id': insumo_hash,
-                    'type': 'low_stock',
-                    'message': f"El insumo {instance.nombre} está bajo en stock: {instance.cantidad} {instance.unidad_medida} restantes.",
-                    'timestamp': timestamp,
-                    'insumo_id': instance.id,
-                    'source': 'bodega'
-                }
-                if user_id not in NOTIFICATION_CACHE:
-                    NOTIFICATION_CACHE[user_id] = {}
-                NOTIFICATION_CACHE[user_id][insumo_hash] = notification
-                notifications.append(notification)
-
-        if instance.fecha_caducidad and (instance.fecha_caducidad - today).days <= umbral_dias:
-            insumo_hash = hashlib.md5(f"{instance.id}expiring".encode()).hexdigest()
-            if user_id not in NOTIFICATION_CACHE or insumo_hash not in NOTIFICATION_CACHE.get(user_id, {}):
-                notification = {
-                    'id': insumo_hash,
-                    'type': 'expiring',
-                    'message': f"El insumo {instance.nombre} está próximo a vencer: {instance.fecha_caducidad}.",
-                    'timestamp': timestamp,
-                    'insumo_id': instance.id,
-                    'source': 'bodega'
-                }
-                if user_id not in NOTIFICATION_CACHE:
-                    NOTIFICATION_CACHE[user_id] = {}
-                NOTIFICATION_CACHE[user_id][insumo_hash] = notification
-                notifications.append(notification)
-
-    for notif in notifications:
-        async_to_sync(channel_layer.group_send)(
-            f'insumo_user_{user_id}',
-            {
-                'type': 'send_notification',
-                'data': notif
-            }
+    # Verificar si el insumo está agotado o bajo de stock
+    if cantidad <= umbral_cantidad:
+        mensaje = (
+            f"El insumo {nombre_insumo} está bajo de stock.\n"
+            f"Cantidad actual: {cantidad} {unidad_medida}\n"
+            f"Tipo de insumo: {tipo_insumo}\n"
         )
+        send_notification(
+            recipient_ids=usuarios_ids,
+            notification_type='INSUMO_AGOTADO',
+            message=mensaje,
+            data={'insumo_id': insumo.id, 'insumo': insumo_data}
+        )
+
+    # Verificar si el insumo está próximo a caducar
+    if fecha_caducidad:
+        hoy = timezone.now().date()
+        dias_para_caducar = (fecha_caducidad - hoy).days
+        if 0 < dias_para_caducar <= dias_caducidad:
+            mensaje = (
+                f"El insumo {nombre_insumo} está próximo a caducar.\n"
+                f"Fecha de caducidad: {fecha_caducidad.strftime('%Y-%m-%d')}\n"
+                f"Días restantes: {dias_para_caducar}\n"
+                f"Tipo de insumo: {tipo_insumo}\n"
+            )
+            send_notification(
+                recipient_ids=usuarios_ids,
+                notification_type='INSUMO_CADUCANDO',
+                message=mensaje,
+                data={'insumo_id': insumo.id, 'insumo': insumo_data}
+            )

@@ -16,7 +16,6 @@ const fetchBodegas = async (): Promise<Bodega[]> => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -42,7 +41,6 @@ const registrarBodega = async (bodega: Omit<Bodega, "id">) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -93,7 +91,6 @@ const actualizarBodega = async (id: number, bodega: Omit<Bodega, "id">) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -136,7 +133,6 @@ const eliminarBodega = async (id: number) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };

@@ -14,10 +14,8 @@ const fetchBodegaInsumos = async (): Promise<BodegaInsumo[]> => {
         const response = await api.get(API_URL, {
             headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("📌 Bodega Insumos recibidos:", response.data);
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -40,8 +38,6 @@ const registrarBodegaInsumo = async (bodegaInsumo: Omit<BodegaInsumo, "id">) => 
         cantidad: Number(bodegaInsumo.cantidad),
     };
 
-    console.log("📌 Enviando al backend:", payload);
-
     try {
         const response = await api.post(API_URL, payload, {
             headers: {
@@ -51,7 +47,6 @@ const registrarBodegaInsumo = async (bodegaInsumo: Omit<BodegaInsumo, "id">) => 
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -64,7 +59,7 @@ export const useRegistrarBodegaInsumo = () => {
             queryClient.invalidateQueries({ queryKey: ["bodega_insumos"] });
             addToast({ title: "Éxito", description: "Bodega insumo registrado con éxito", timeout: 3000, color: "success" });
         },
-    onError: (error: any) => {
+        onError: (error: any) => {
             if (error.response?.status === 403) {
                 addToast({
                     title: "Acceso denegado",
@@ -99,8 +94,6 @@ const actualizarBodegaInsumo = async (id: number, bodegaInsumo: Omit<BodegaInsum
         cantidad: Number(bodegaInsumo.cantidad),
     };
 
-    console.log("📌 Enviando al backend:", payload);
-
     try {
         const response = await api.put(`${API_URL}${id}/`, payload, {
             headers: {
@@ -110,7 +103,6 @@ const actualizarBodegaInsumo = async (id: number, bodegaInsumo: Omit<BodegaInsum
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -153,7 +145,6 @@ const eliminarBodegaInsumo = async (id: number) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
