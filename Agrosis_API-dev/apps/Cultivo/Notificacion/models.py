@@ -13,7 +13,7 @@ class Notification(models.Model):
     recipient = models.ForeignKey(Usuarios, on_delete=models.CASCADE, related_name='notifications')
     notification_type = models.CharField(max_length=50, choices=TYPE_CHOICES)
     message = models.TextField()
-    data = models.JSONField(default=dict, blank=True)  # Para datos adicionales (ej. actividad_id, insumo_id)
+    data = models.JSONField(default=dict, blank=True)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
