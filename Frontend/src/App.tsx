@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import { NavbarProvider } from "./context/NavbarContext";
 import Navbar from "./components/globales/Navbar";
+import { Header } from "./components/globales/Header";
 import { Toaster } from "react-hot-toast";
 import GlobalStyles from "./components/globales/GlobalStyles";
 import PricingPage from "./pages/globales/pricing";
@@ -107,14 +108,17 @@ const AuthenticatedLayout: React.FC = () => {
   const { isSidebarOpen } = useNavbar();
 
   return (
-    <div className="flex min-h-screen">
-      <Navbar />
-      <div
-        className={`flex-1 transition-all duration-300 ${
-          isSidebarOpen ? "md:ml-64" : "md:ml-20"
-        }`}
-      >
-        <Outlet />
+    <div className="flex min-h-screen flex-col">
+      <Header /> {/* Añadir Header aquí */}
+      <div className="flex flex-1">
+        <Navbar />
+        <div
+          className={`flex-1 transition-all duration-300 ${
+            isSidebarOpen ? "md:ml-64" : "md:ml-20"
+          } pt-16`} // pt-16 para dejar espacio al header fijo
+        >
+          <Outlet />
+        </div>
       </div>
     </div>
   );
@@ -134,7 +138,7 @@ const App: React.FC = () => {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-            {/* Rutas protegidas con Navbar */}
+            {/* Rutas protegidas con Navbar y Header */}
             <Route element={<PrivateRoute><AuthenticatedLayout /></PrivateRoute>}>
               {/* Dashboard (Globales) */}
               <Route path="/" element={<DashboardPage />} />
@@ -176,18 +180,18 @@ const App: React.FC = () => {
               <Route path="/cultivo/listartipoplaga" element={<ListaTipoPlagaPage />} />
               <Route path="/cultivo/plaga" element={<PlagaPage />} />
               <Route path="/cultivo/listarplaga" element={<ListaPlagasPage />} />
-              <Route path="/cultivo/reportarplaga/" element={<RegistroReportePlaga />} />
-              <Route path="/cultivo/listareporteplaga/" element={<ListaReportePlaga />} />
+              <Route path="/cultivo/reportarplaga" element={<RegistroReportePlaga />} />
+              <Route path="/cultivo/listareporteplaga" element={<ListaReportePlaga />} />
               <Route path="/cultivo/detallereporteplaga/:id" element={<DetalleReportePlaga />} />
-              <Route path="/cultivo/afecciones/" element={<AfeccionesPage />} />
-              <Route path="/cultivo/listafecciones/" element={<ListaAfecciones />} />
-              <Route path="/cultivo/control/" element={<ControlPage />} />
-              <Route path="/cultivo/listacontrol/" element={<ListaControlPage />} />
-              <Route path="/cultivo/trazabilidad/" element={<TrazabilidadCosecha />} />
-              <Route path="/cultivo/tiporesiduo/" element={<TipoResiduoPage />} />
-              <Route path="/cultivo/residuo/" element={<ResiduoPage />} />
-              <Route path="/cultivo/listatiporesiduo/" element={<ListaTipoResiduoPage />} />
-              <Route path="/cultivo/listaresiduo/" element={<ListaResiduoPage />} />
+              <Route path="/cultivo/afecciones" element={<AfeccionesPage />} />
+              <Route path="/cultivo/listafecciones" element={<ListaAfecciones />} />
+              <Route path="/cultivo/control" element={<ControlPage />} />
+              <Route path="/cultivo/listacontrol" element={<ListaControlPage />} />
+              <Route path="/cultivo/trazabilidad" element={<TrazabilidadCosecha />} />
+              <Route path="/cultivo/tiporesiduo" element={<TipoResiduoPage />} />
+              <Route path="/cultivo/residuo" element={<ResiduoPage />} />
+              <Route path="/cultivo/listatiporesiduo" element={<ListaTipoResiduoPage />} />
+              <Route path="/cultivo/listaresiduo" element={<ListaResiduoPage />} />
               <Route path="/graficas/actividadcosto" element={<ActividadCostosGraficasPage />} />
               <Route path="/mapa" element={<Mapa />} />
               <Route path="/cultivo/cosecha" element={<CosechaPage />} />
@@ -221,7 +225,7 @@ const App: React.FC = () => {
               <Route path="/finanzas/pago" element={<PagoPage />} />
               <Route path="/graficas/egresos" element={<EgresoPruebaGraficasPage />} />
               <Route path="/finanzas/reporteEgresos/:id" element={<DetalleReportePago />} />
-              <Route path="/finanzas/costo_beneficio/" element={<CostoBeneficioPage />} />
+              <Route path="/finanzas/costo_beneficio" element={<CostoBeneficioPage />} />
 
               {/* Reportes */}
               <Route path="/reportes" element={<Reportes />} />

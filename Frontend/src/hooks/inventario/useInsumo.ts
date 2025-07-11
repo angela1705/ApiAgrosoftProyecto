@@ -70,7 +70,6 @@ const registrarInsumo = async (insumo: Omit<Insumo, "id" | "unidad_medida" | "ti
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -121,7 +120,6 @@ const actualizarInsumo = async (id: number, insumo: ActualizarInsumoParams["insu
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -164,7 +162,6 @@ const eliminarInsumo = async (id: number) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -207,7 +204,6 @@ const crearUnidadMedida = async (unidad: Omit<UnidadMedida, "id" | "fecha_creaci
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -241,7 +237,6 @@ const crearTipoInsumo = async (tipo: Omit<TipoInsumo, "id" | "fecha_creacion" | 
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -284,7 +279,6 @@ const usarEnActividad = async (id: number, data: { cantidad_usada: number; activ
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };

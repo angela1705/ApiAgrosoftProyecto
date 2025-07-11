@@ -44,6 +44,7 @@ from apps.Iot.datos_meteorologicos.api.routers import DatosMeteorologicosRouter
 from apps.Iot.sensores.api.routers import SensoresRouter
 from apps.Iot.evapotranspiracion.api.routers import evapotranspiracionrouter
 from apps.mapa.api.routers import maparouter
+from apps.Cultivo.Notificacion.api.urls import urlpatterns
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -134,6 +135,7 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('mapa/', include(routermapa.urls)),
+    path('api/notificaciones/', include('apps.Cultivo.Notificacion.api.urls')),
 
 ]
 if settings.DEBUG:

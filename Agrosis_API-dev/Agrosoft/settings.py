@@ -78,7 +78,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'apps.Iot.evapotranspiracion',
-    'apps.mapa'
+    'apps.mapa',
+    'apps.Cultivo.Notificacion',
 ]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -135,7 +136,7 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',  
-        'NAME': 'agrosoft12',  
+        'NAME': 'agrosoft_db1',  
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost', 
