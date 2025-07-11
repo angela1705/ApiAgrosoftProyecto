@@ -16,11 +16,16 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
   Snackbar,
   Alert,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from "@mui/icons-material/Close";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import WarningIcon from "@mui/icons-material/Warning";
+import TimerIcon from "@mui/icons-material/Timer";
+import BugReportIcon from "@mui/icons-material/BugReport";
 import { useNotifications, Notification } from "@/hooks/websocket/useNotifications";
 import axios from "@/api/axios";
 import { debounce } from "lodash";
@@ -37,13 +42,11 @@ const Notificacion: React.FC = () => {
 
   const fetchNotifications = useCallback(async () => {
     if (!user?.id || isFetching.current) {
-      console.log("No user ID or already fetching, skipping");
       return;
     }
 
     isFetching.current = true;
     try {
-      console.log(`Fetching notifications for user ${user.id}`);
       const response = await axios.get("http://localhost:8000/api/notificaciones/");
       const fetchedNotifications: Notification[] = response.data.map((n: any) => ({
         id: n.id,
@@ -53,13 +56,14 @@ const Notificacion: React.FC = () => {
         created_at: n.created_at,
         read: n.is_read,
       }));
-      console.log(`Loaded ${fetchedNotifications.length} notifications`, fetchedNotifications);
-      setNotifications(fetchedNotifications);
-      setUnreadCount(fetchedNotifications.filter((n) => !n.read).length);
+      // Filtrar duplicados basados en ID
+      const uniqueNotifications = fetchedNotifications.filter(
+        (n, index, self) => self.findIndex((x) => x.id === n.id) === index
+      );
+      setNotifications(uniqueNotifications);
+      setUnreadCount(uniqueNotifications.filter((n) => !n.read).length);
     } catch (error: any) {
-      const errorMessage = `Error al cargar las notificaciones: ${error.message}`;
-      setError(errorMessage);
-      console.error(errorMessage, error);
+      setError(`Error al cargar las notificaciones: ${error.message}`);
     } finally {
       isFetching.current = false;
     }
@@ -71,11 +75,9 @@ const Notificacion: React.FC = () => {
   );
 
   useEffect(() => {
-    console.log("useEffect triggered, user?.id:", user?.id);
     if (user?.id) {
       fetchNotificationsDebounced();
     } else {
-      console.log("User ID not available yet, retrying...");
       const timer = setInterval(() => {
         if (user?.id) {
           fetchNotificationsDebounced();
@@ -88,14 +90,15 @@ const Notificacion: React.FC = () => {
 
   const addNotification = useCallback((notification: Notification) => {
     setNotifications((prev) => {
-      const exists = prev.some((n) => n.id === notification.id);
+      // Verificar duplicados por ID y created_at
+      const exists = prev.some(
+        (n) => n.id === notification.id && n.created_at === notification.created_at
+      );
       if (!exists) {
-        console.log("Adding new notification:", notification);
         const updatedNotifications = [notification, ...prev].slice(0, 50);
         setUnreadCount((prevUnread) => prevUnread + (notification.read ? 0 : 1));
         return updatedNotifications;
       }
-      console.log("Notification already exists:", notification.id);
       return prev;
     });
   }, []);
@@ -103,7 +106,6 @@ const Notificacion: React.FC = () => {
   const markAsRead = useCallback(
     async (id: string) => {
       try {
-        console.log(`Marking notification ${id} as read`);
         await axios.post("http://localhost:8000/api/notificaciones/", { action: "mark_read", notification_id: id });
         setNotifications((prev) =>
           prev.map((n) =>
@@ -112,9 +114,7 @@ const Notificacion: React.FC = () => {
         );
         setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
       } catch (error: any) {
-        const errorMessage = `Error al marcar la notificación como leída: ${error.message}`;
-        setError(errorMessage);
-        console.error(errorMessage, error);
+        setError(`Error al marcar la notificación como leída: ${error.message}`);
       }
     },
     []
@@ -123,7 +123,6 @@ const Notificacion: React.FC = () => {
   const deleteNotification = useCallback(
     async (id: string) => {
       try {
-        console.log(`Deleting notification ${id}`);
         await axios.post("http://localhost:8000/api/notificaciones/", { action: "delete", notification_id: id });
         setNotifications((prev) => {
           const notificationToDelete = prev.find((n) => n.id === id);
@@ -134,9 +133,7 @@ const Notificacion: React.FC = () => {
           return updatedNotifications;
         });
       } catch (error: any) {
-        const errorMessage = `Error al eliminar la notificación: ${error.message}`;
-        setError(errorMessage);
-        console.error(errorMessage, error);
+        setError(`Error al eliminar la notificación: ${error.message}`);
       }
     },
     []
@@ -144,30 +141,24 @@ const Notificacion: React.FC = () => {
 
   const clearAllNotifications = useCallback(async () => {
     try {
-      console.log("Clearing all notifications");
       await axios.post("http://localhost:8000/api/notificaciones/", { action: "clear_all" });
       setNotifications([]);
       setUnreadCount(0);
       setConfirmClearOpen(false);
     } catch (error: any) {
-      const errorMessage = `Error al limpiar todas las notificaciones: ${error.message}`;
-      setError(errorMessage);
-      console.error(errorMessage, error);
+      setError(`Error al limpiar todas las notificaciones: ${error.message}`);
     }
   }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log("Opening notification menu");
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    console.log("Closing notification menu");
     setAnchorEl(null);
   };
 
   const handleClearAllClick = () => {
-    console.log("Opening clear all confirmation dialog");
     setConfirmClearOpen(true);
   };
 
@@ -176,22 +167,18 @@ const Notificacion: React.FC = () => {
   };
 
   const handleCancelClear = () => {
-    console.log("Canceling clear all");
     setConfirmClearOpen(false);
   };
 
   const handleError = (error: string) => {
-    console.error("Notification error:", error);
     setError(error);
   };
 
   const handleCloseError = () => {
-    console.log("Closing error snackbar");
     setError(null);
   };
 
   const handleRedirect = (notification: Notification) => {
-    console.log(`Redirecting for notification ${notification.id} (${notification.type})`);
     if (!notification.read) {
       markAsRead(notification.id);
     }
@@ -200,7 +187,22 @@ const Notificacion: React.FC = () => {
     } else if (notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") {
       window.location.href = `/insumos/${notification.data.insumo_id}`;
     } else if (notification.type === "PEST_ALERT") {
-      window.location.href = `/plagas/${notification.data.plaga_id}`;
+      window.location.href = `/cultivo/detallereporteplaga/${notification.data.reporte_plaga_id}`;
+    }
+  };
+
+  const getIconForNotification = (type: string) => {
+    switch (type) {
+      case "ACTIVIDAD_ASIGNADA":
+        return <AssignmentIcon sx={{ color: "#2e7d32" }} />;
+      case "INSUMO_CADUCANDO":
+        return <TimerIcon sx={{ color: "#ffb300" }} />;
+      case "INSUMO_AGOTADO":
+        return <WarningIcon sx={{ color: "#d32f2f" }} />;
+      case "PEST_ALERT":
+        return <BugReportIcon sx={{ color: "#d81b60" }} />;
+      default:
+        return <NotificationsIcon sx={{ color: "#757575" }} />;
     }
   };
 
@@ -209,7 +211,6 @@ const Notificacion: React.FC = () => {
   useNotifications(userId, addNotification, handleError);
 
   if (!user?.id) {
-    console.log("No user logged in, hiding notifications");
     return null;
   }
 
@@ -217,11 +218,28 @@ const Notificacion: React.FC = () => {
     <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
       <IconButton
         onClick={handleClick}
-        sx={{ color: "#fff" }}
+        sx={{ color: "#fff", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.1)" } }}
         aria-label="notificaciones"
       >
-        <Badge badgeContent={unreadCount} color="error">
-          <NotificationsIcon sx={{ color: "#fff" }} />
+        <Badge
+          badgeContent={unreadCount > 0 ? "!" : null}
+          color="error"
+          sx={{
+            "& .MuiBadge-badge": {
+              width: 16,
+              height: 16,
+              borderRadius: "50%",
+              top: 6,
+              right: 6,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 12,
+              fontWeight: "bold",
+            },
+          }}
+        >
+          <NotificationsIcon sx={{ fontSize: 28, color: "#fff" }} />
         </Badge>
       </IconButton>
 
@@ -237,17 +255,23 @@ const Notificacion: React.FC = () => {
             maxHeight: 500,
             overflow: "auto",
             mt: 1,
+            bgcolor: "#f5f5f5",
+            borderRadius: 2,
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
           },
         }}
       >
-        <Box sx={{ p: 1, borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}>
+        <Box sx={{ p: 2, borderBottom: "1px solid rgba(0, 0, 0, 0.12)", bgcolor: "#fff" }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="subtitle1">Notificaciones</Typography>
+            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#2e7d32" }}>
+              Notificaciones
+            </Typography>
             {notifications.length > 0 && (
               <Button
                 size="small"
                 color="error"
                 onClick={handleClearAllClick}
+                sx={{ textTransform: "none", fontWeight: "medium" }}
               >
                 Limpiar todas
               </Button>
@@ -256,8 +280,10 @@ const Notificacion: React.FC = () => {
         </Box>
 
         {notifications.length === 0 ? (
-          <MenuItem>
-            <Typography variant="body2">No hay notificaciones</Typography>
+          <MenuItem sx={{ justifyContent: "center", py: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              No hay notificaciones
+            </Typography>
           </MenuItem>
         ) : (
           notifications.map((notification) => (
@@ -265,59 +291,76 @@ const Notificacion: React.FC = () => {
               key={notification.id}
               dense
               sx={{
-                borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
                 "&:last-child": { borderBottom: "none" },
-                bgcolor: notification.read ? "background.paper" : "action.selected",
+                bgcolor: notification.read ? "#fff" : "#e8f5e9",
+                "&:hover": { bgcolor: notification.read ? "#f5f5f5" : "#c8e6c9" },
+                py: 1.5,
               }}
             >
-              <Box sx={{ py: 1, width: "100%" }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <List dense>
-                      {notification.message.split("\n").map((line, index) => (
-                        <ListItem key={index} sx={{ py: 0.5 }}>
-                          <ListItemText
-                            primary={line}
-                            primaryTypographyProps={{
-                              variant: "body2",
-                              fontWeight:
-                                line.startsWith("Se te ha asignado") ||
-                                line.startsWith("El insumo") ||
-                                line.startsWith("Se ha detectado una plaga")
-                                  ? "bold"
-                                  : "normal",
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                    {notification.type !== "OTHER" ? (
-                      <Button
-                        size="small"
-                        onClick={() => handleRedirect(notification)}
-                      >
-                        {notification.type === "ACTIVIDAD_ASIGNADA" && "Ver Actividad"}
-                        {(notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") &&
-                          "Ver Insumo"}
-                        {notification.type === "PEST_ALERT" && "Ver Plaga"}
-                      </Button>
-                    ) : (
-                      <Button size="small" disabled>
-                        Sin acción
-                      </Button>
-                    )}
-                  </Box>
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteNotification(notification.id);
-                    }}
-                    sx={{ ml: 1 }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
+              <Box sx={{ display: "flex", alignItems: "flex-start", width: "100%" }}>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {getIconForNotification(notification.type)}
+                </ListItemIcon>
+                <Box sx={{ flexGrow: 1 }}>
+                  <List dense sx={{ p: 0 }}>
+                    {notification.message.split("\n").map((line, index) => (
+                      <ListItem key={index} sx={{ py: 0.25 }}>
+                        <ListItemText
+                          primary={line}
+                          primaryTypographyProps={{
+                            variant: "body2",
+                            fontWeight:
+                              line.startsWith("Se te ha asignado") ||
+                              line.startsWith("El insumo") ||
+                              line.startsWith("Se ha detectado una plaga") ||
+                              line.startsWith("Nuevo reporte de plaga") ||
+                              line.startsWith("El estado del reporte de plaga")
+                                ? "bold"
+                                : "normal",
+                            color: "#333",
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                  {notification.type !== "OTHER" ? (
+                    <Button
+                      size="small"
+                      onClick={() => handleRedirect(notification)}
+                      sx={{
+                        textTransform: "none",
+                        color: "#2e7d32",
+                        fontWeight: "medium",
+                        mt: 0.5,
+                        "&:hover": { bgcolor: "rgba(46, 125, 50, 0.1)" },
+                      }}
+                    >
+                      {notification.type === "ACTIVIDAD_ASIGNADA" && "Ver Actividad"}
+                      {(notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") &&
+                        "Ver Insumo"}
+                      {notification.type === "PEST_ALERT" && "Ver Reporte"}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      disabled
+                      sx={{ textTransform: "none", color: "#757575", mt: 0.5 }}
+                    >
+                      Sin acción
+                    </Button>
+                  )}
                 </Box>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteNotification(notification.id);
+                  }}
+                  sx={{ ml: 1, color: "#757575", "&:hover": { color: "#d32f2f" } }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
               </Box>
             </MenuItem>
           ))
@@ -329,18 +372,29 @@ const Notificacion: React.FC = () => {
         onClose={handleCancelClear}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        sx={{ "& .MuiDialog-paper": { borderRadius: 2, p: 2 } }}
       >
-        <DialogTitle id="alert-dialog-title">¿Limpiar todas las notificaciones?</DialogTitle>
+        <DialogTitle id="alert-dialog-title" sx={{ fontWeight: "bold", color: "#2e7d32" }}>
+          ¿Limpiar todas las notificaciones?
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" sx={{ color: "#333" }}>
             Esta acción eliminará todas las notificaciones. ¿Estás seguro?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelClear} color="primary">
+          <Button
+            onClick={handleCancelClear}
+            sx={{ textTransform: "none", color: "#757575" }}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleConfirmClear} color="error" autoFocus>
+          <Button
+            onClick={handleConfirmClear}
+            color="error"
+            sx={{ textTransform: "none", fontWeight: "medium" }}
+            autoFocus
+          >
             Limpiar
           </Button>
         </DialogActions>
@@ -350,8 +404,13 @@ const Notificacion: React.FC = () => {
         open={!!error}
         autoHideDuration={6000}
         onClose={handleCloseError}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }}>
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          sx={{ width: "100%", bgcolor: "#d32f2f", color: "#fff" }}
+        >
           {error}
         </Alert>
       </Snackbar>
