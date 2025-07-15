@@ -8,6 +8,7 @@ export interface Notification {
   data: any;
   created_at: string;
   read: boolean;
+  recipient_id?: string; // Agregar recipient_id
 }
 
 export const useNotifications = (
@@ -20,10 +21,16 @@ export const useNotifications = (
 
   const handleNotification = useCallback(
     (notification: Notification) => {
+      if (notification.recipient_id && notification.recipient_id !== userId) {
+        console.warn(
+          `[useNotifications] Notificación ignorada: destinada a recipient_id ${notification.recipient_id}, pero userId es ${userId}`
+        );
+        return;
+      }
       console.log("[useNotifications] Recibiendo notificación:", notification);
       addNotification(notification);
     },
-    [addNotification]
+    [addNotification, userId]
   );
 
   const handleError = useCallback(
@@ -36,7 +43,8 @@ export const useNotifications = (
 
   useEffect(() => {
     if (!userId) {
-      console.log("[useNotifications] No se proporcionó userId, omitiendo configuración de WebSocket");
+      console.error("[useNotifications] No se proporcionó userId, omitiendo configuración de WebSocket");
+      onError("No se proporcionó un ID de usuario válido");
       return;
     }
 
