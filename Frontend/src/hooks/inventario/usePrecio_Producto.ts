@@ -12,16 +12,15 @@ const fetchPreciosProductos = async (): Promise<PrecioProducto[]> => {
     const response = await api.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Datos de la API (preciosProductos):", response.data);
     return response.data.map((item: any) => ({
         id: item.id,
-cosecha: item.nombre_producto
-  ? {
-      id: item.Producto_id,
-      nombre: item.nombre_producto || ""
-    }
-  : null,
-        nombre_cultivo: item.nombre_producto|| "",
+        cosecha: item.nombre_producto
+            ? {
+                  id: item.Producto_id,
+                  nombre: item.nombre_producto || ""
+              }
+            : null,
+        nombre_cultivo: item.nombre_producto || "",
         unidad_medida: item.unidad_medida
             ? {
                   id: item.unidad_medida.id,
@@ -43,7 +42,7 @@ export const usePreciosProductos = () => {
         queryKey: ["preciosProductos"],
         queryFn: fetchPreciosProductos,
         staleTime: 1000 * 60,
-        refetchInterval:1000,
+        refetchInterval: 1000,
     });
 };
 
@@ -83,13 +82,11 @@ const registrarPrecioProducto = async (
             stock: precioProducto.stock,
             fecha_caducidad: precioProducto.fecha_caducidad,
         };
-        console.log("Payload enviado (registrar):", payload);
         const response = await api.post(API_URL, payload, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -108,16 +105,6 @@ export const useRegistrarPrecioProducto = () => {
             });
         },
         onError: (error: any) => {
-            console.error("Error completo:", error.response?.data);
-            addToast({
-                title: "Error",
-                description:
-                    error.response?.data?.detail ||
-                    error.response?.data?.message ||
-                    "Error al registrar el precio de producto",
-                timeout: 3000,
-                color: "danger"
-            });
             if (error.response?.status === 403) {
                 addToast({
                     title: "Acceso denegado",
@@ -128,7 +115,10 @@ export const useRegistrarPrecioProducto = () => {
             } else {
                 addToast({
                     title: "Error",
-                    description: "Error al registrar el precio del producto",
+                    description:
+                        error.response?.data?.detail ||
+                        error.response?.data?.message ||
+                        "Error al registrar el precio de producto",
                     timeout: 3000,
                     color: "danger"
                 });
@@ -152,13 +142,11 @@ const actualizarPrecioProducto = async (
             stock: precioProducto.stock,
             fecha_caducidad: precioProducto.fecha_caducidad,
         };
-        console.log("Payload enviado (actualizar):", data);
         const response = await api.put(`${API_URL}${id}/`, data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -183,16 +171,6 @@ export const useActualizarPrecioProducto = () => {
             });
         },
         onError: (error: any) => {
-            console.error("Error completo:", error.response?.data);
-            addToast({
-                title: "Error",
-                description:
-                    error.response?.data?.detail ||
-                    error.response?.data?.message ||
-                    "Error al actualizar el precio de producto",
-                timeout: 3000,
-                color: "danger"
-            });
             if (error.response?.status === 403) {
                 addToast({
                     title: "Acceso denegado",
@@ -203,7 +181,10 @@ export const useActualizarPrecioProducto = () => {
             } else {
                 addToast({
                     title: "Error",
-                    description: "Error al actualizar el precio del producto",
+                    description:
+                        error.response?.data?.detail ||
+                        error.response?.data?.message ||
+                        "Error al actualizar el precio de producto",
                     timeout: 3000,
                     color: "danger"
                 });
@@ -221,7 +202,6 @@ const eliminarPrecioProducto = async (id: number) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -240,16 +220,6 @@ export const useEliminarPrecioProducto = () => {
             });
         },
         onError: (error: any) => {
-            console.error("Error completo:", error.response?.data);
-            addToast({
-                title: "Error",
-                description:
-                    error.response?.data?.detail ||
-                    error.response?.data?.message ||
-                    "No se pudo eliminar el precio de producto",
-                timeout: 3000,
-                color: "danger"
-            });
             if (error.response?.status === 403) {
                 addToast({
                     title: "Acceso denegado",
@@ -260,7 +230,10 @@ export const useEliminarPrecioProducto = () => {
             } else {
                 addToast({
                     title: "Error",
-                    description: "Error al eliminar el precio del producto",
+                    description:
+                        error.response?.data?.detail ||
+                        error.response?.data?.message ||
+                        "Error al eliminar el precio de producto",
                     timeout: 3000,
                     color: "danger"
                 });
@@ -284,7 +257,6 @@ const crearUnidadMedida = async (
         );
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -303,16 +275,6 @@ export const useCrearUnidadMedida = () => {
             });
         },
         onError: (error: any) => {
-            console.error("Error completo:", error.response?.data);
-            addToast({
-                title: "Error",
-                description:
-                    error.response?.data?.detail ||
-                    error.response?.data?.message ||
-                    "Error al crear la unidad de medida",
-                timeout: 3000,
-                color: "danger"
-            });
             if (error.response?.status === 403) {
                 addToast({
                     title: "Acceso denegado",
@@ -323,7 +285,10 @@ export const useCrearUnidadMedida = () => {
             } else {
                 addToast({
                     title: "Error",
-                    description: "Error al crear unidad de medida",
+                    description:
+                        error.response?.data?.detail ||
+                        error.response?.data?.message ||
+                        "Error al crear la unidad de medida",
                     timeout: 3000,
                     color: "danger"
                 });

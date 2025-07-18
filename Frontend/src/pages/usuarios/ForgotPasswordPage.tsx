@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { addToast } from "@heroui/react";
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
 import LogoSena from '../../assets/logob.png';
@@ -167,6 +168,15 @@ const ForgotPasswordPage: React.FC = () => {
     Enviar Correo
   </Button>
 </Box>
+ <Box mt={2} textAlign="center" >
+  <Link
+    style={{ color: '#27a35e', textDecoration: 'none' }}
+    to="/login"
+  >
+    Iniciar sesión
+  </Link>
+</Box>
+
         </motion.div>
       </Box>
     </Box>
