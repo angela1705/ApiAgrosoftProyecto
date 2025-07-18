@@ -25,17 +25,12 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
     serializer_class = Datos_metereologicosSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['fk_sensor_id', 'fk_bancal_id', 'fecha_medicion']
-
-    def get_authenticators(self):
-        # No aplicar autenticación para la acción 'create'
-        if self.action == 'create':
-            return []
-        return [JWTAuthentication()]
+    authentication_classes = [JWTAuthentication]  # Definir autenticación por defecto
 
     def get_permissions(self):
         if self.action == 'create':
-            return [AllowAny()]
-        return [IsAuthenticated()]
+            return [AllowAny()]  # Permitir acción 'create' sin autenticación
+        return [IsAuthenticated()]  # Requerir autenticación para otras acciones
 
     def get_queryset(self):
         try:
