@@ -1,0 +1,3 @@
+pywin32==308
+pypiwin32==223
+PyAudio==0.2.14
