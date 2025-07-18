@@ -22,10 +22,11 @@ export class WebSocketService {
     return WebSocketService.instance;
   }
 
-  public connect(userId: string) {
-    console.log(`[WebSocketService] Intento de conexión para userId: ${userId}, isConnecting: ${this.isConnecting}`);
+  public connect(userId: string | number) {
+    const userIdStr = userId.toString(); // Convertir userId a string
+    console.log(`[WebSocketService] Intento de conexión para userId: ${userIdStr}, isConnecting: ${this.isConnecting}`);
 
-    if (!userId) {
+    if (!userIdStr) {
       this.notifyError("No se proporcionó userId, omitiendo configuración de WebSocket");
       console.log("[WebSocketService] No userId provided");
       return;
@@ -33,7 +34,7 @@ export class WebSocketService {
 
     if (this.isConnecting) {
       console.log("[WebSocketService] Conexión en curso, almacenando userId para intento posterior");
-      this.pendingConnectUserId = userId;
+      this.pendingConnectUserId = userIdStr;
       return;
     }
 
@@ -44,7 +45,7 @@ export class WebSocketService {
 
     if (this.ws && this.ws.readyState === WebSocket.CONNECTING) {
       console.log("[WebSocketService] WebSocket en estado CONNECTING, esperando...");
-      this.pendingConnectUserId = userId;
+      this.pendingConnectUserId = userIdStr;
       return;
     }
 
@@ -60,13 +61,13 @@ export class WebSocketService {
 
     this.isConnecting = true;
     console.log("[WebSocketService] Iniciando nueva conexión WebSocket");
-    const socketUrl = `ws://${window.location.hostname}:8000/ws/notifications/${userId}/`;
+    const socketUrl = `ws://${window.location.hostname}:8000/ws/notifications/${userIdStr}/`;
     this.ws = new WebSocket(socketUrl);
 
     this.ws.onopen = () => {
       this.reconnectAttempts = 0;
       this.isConnecting = false;
-      console.log(`[WebSocketService] WebSocket conectado para userId: ${userId}`);
+      console.log(`[WebSocketService] WebSocket conectado para userId: ${userIdStr}`);
       this.pingInterval = setInterval(() => {
         if (this.ws?.readyState === WebSocket.OPEN) {
           this.ws.send(JSON.stringify({ type: "ping" }));
@@ -74,7 +75,7 @@ export class WebSocketService {
         }
       }, 30000);
 
-      if (this.pendingConnectUserId && this.pendingConnectUserId !== userId) {
+      if (this.pendingConnectUserId && this.pendingConnectUserId !== userIdStr) {
         console.log("[WebSocketService] Reintentando conexión pendiente para userId:", this.pendingConnectUserId);
         this.connect(this.pendingConnectUserId);
       }
@@ -83,7 +84,8 @@ export class WebSocketService {
 
     this.ws.onmessage = (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const data = JSON.parse(event.data); // Corregir parseo de event.data
+        console.log("[WebSocketService] Datos crudos recibidos:", data);
         if (data.type === "pong") {
           console.log("[WebSocketService] Recibido pong");
           return;
@@ -95,8 +97,9 @@ export class WebSocketService {
           data: data.data || {},
           created_at: data.created_at,
           read: false,
+          recipient_id: data.recipient_id,
         };
-        console.log("[WebSocketService] Notificación recibida:", notification);
+        console.log("[WebSocketService] Notificación procesada:", notification);
         this.listeners.forEach((listener) => listener(notification));
       } catch (error) {
         this.notifyError("Error al procesar la notificación");
@@ -107,12 +110,12 @@ export class WebSocketService {
     this.ws.onerror = (error) => {
       this.isConnecting = false;
       this.notifyError("Error de conexión WebSocket");
-      console.error(`[WebSocketService] Error de WebSocket para userId: ${userId}`, error);
+      console.error(`[WebSocketService] Error de WebSocket para userId: ${userIdStr}`, error);
     };
 
     this.ws.onclose = (event) => {
       this.isConnecting = false;
-      console.log(`[WebSocketService] WebSocket cerrado para userId: ${userId}, código: ${event.code}, razón: ${event.reason}`);
+      console.log(`[WebSocketService] WebSocket cerrado para userId: ${userIdStr}, código: ${event.code}, razón: ${event.reason}`);
       if (this.pingInterval) {
         clearInterval(this.pingInterval);
         this.pingInterval = null;
@@ -124,7 +127,7 @@ export class WebSocketService {
         console.log(`[WebSocketService] Intentando reconectar en ${delay}ms (intento ${this.reconnectAttempts + 1})`);
         this.reconnectTimeout = setTimeout(() => {
           this.reconnectAttempts++;
-          this.connect(userId);
+          this.connect(userIdStr);
         }, delay);
       } else {
         this.notifyError("Se alcanzó el máximo de intentos de reconexión");
@@ -150,7 +153,7 @@ export class WebSocketService {
 
   public removeErrorListener(listener: (error: string) => void) {
     console.log("[WebSocketService] Eliminando listener de error");
-    this.errorListeners = this.errorListeners.filter((l) => l !== listener);
+    this.errorListeners = this.errorListeners.filter((l) => l !== listener); // Corregir uso de errorListeners
   }
 
   private notifyError(error: string) {
