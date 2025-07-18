@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL = `${BASE_URL}/iot/datosmeteorologicos`;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://192.168.1.12:8000";
+const API_URL = `${BASE_URL}/iot/datosmeteorologicos/`;
 
 const registrarDatosMeteorologicos = async (data: any) => {
   console.log("[useRegistrarDatosMeteorologicos] Iniciando registro con datos:", data);
@@ -28,7 +28,11 @@ const registrarDatosMeteorologicos = async (data: any) => {
 
   console.log("[useRegistrarDatosMeteorologicos] Enviando POST a", API_URL, "con payload:", payload);
   try {
-    const response = await api.post(API_URL, payload);
+    const response = await api.post(API_URL, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     console.log("[useRegistrarDatosMeteorologicos] Respuesta exitosa:", response.data);
     return response.data;
   } catch (error: any) {

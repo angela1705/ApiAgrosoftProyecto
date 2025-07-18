@@ -20,32 +20,25 @@ const fetchTipoSensores = async (): Promise<TipoSensor[]> => {
   }
 
   console.log('[useGetTipoSensores] Enviando GET a:', API_URL);
-  try {
-    const response = await api.get(API_URL, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log('[useGetTipoSensores] Respuesta:', response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error('[useGetTipoSensores] Error en GET:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    const errorMessage =
-      error.response?.data?.detail ||
-      Object.entries(error.response?.data || {})
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(', ') ||
-      'Error al cargar los tipos de sensores.';
-    addToast({
-      title: 'Error',
-      description: errorMessage,
-      timeout: 5000,
-      color: 'danger',
-    });
-    throw error;
-  }
+  const response = await api.get(API_URL, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  console.log('[useGetTipoSensores] Respuesta cruda:', response.data);
+  
+  const mappedData: TipoSensor[] = response.data.map((item: any) => ({
+    id: item.id ?? 0,
+    label: item.nombre ?? 'Desconocido',
+    key: item.nombre ? item.nombre.toLowerCase().replace(/\s/g, '_') : `sensor_${item.id ?? 0}`,
+    icon: '📏', // Usamos una cadena en lugar de JSX
+    tipo_sensor_id: item.id ?? 0,
+    decimals: item.decimals ?? 2,
+    unidad_medida: item.unidad_medida ?? '',
+    medida_minima: Number(item.medida_minima) ?? 0,
+    medida_maxima: Number(item.medida_maxima) ?? 0,
+  }));
+  
+  console.log('[useGetTipoSensores] Datos mapeados:', mappedData);
+  return mappedData;
 };
 
 export const useGetTipoSensores = () => {

@@ -23,10 +23,14 @@ logger = logging.getLogger(__name__)
 class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
     queryset = Datos_metereologicos.objects.all()
     serializer_class = Datos_metereologicosSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['fk_sensor_id', 'fk_bancal_id', 'fecha_medicion']
+
+    def get_authenticators(self):
+        # No aplicar autenticación para la acción 'create'
+        if self.action == 'create':
+            return []
+        return [JWTAuthentication()]
 
     def get_permissions(self):
         if self.action == 'create':
@@ -66,13 +70,18 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             logger.error(f"Error en get_queryset: {str(e)}")
             raise
 
-    def list(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         try:
-            logger.info("Ejecutando list")
-            return super().list(request, *args, **kwargs)
+            logger.info(f"Ejecutando create con datos: {request.data}")
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            logger.info(f"Datos registrados con éxito: {serializer.data}")
+            return Response(serializer.data, status=201, headers=headers)
         except Exception as e:
-            logger.error(f"Error en list: {str(e)}")
-            raise
+            logger.error(f"Error en create: {str(e)}")
+            return Response({"error": str(e)}, status=400)
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
