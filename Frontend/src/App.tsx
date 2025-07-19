@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { Route, Routes, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import { NavbarProvider } from "./context/NavbarContext";
 import Navbar from "./components/globales/Navbar";
+import { Header } from "./components/globales/Header";
 import { Toaster } from "react-hot-toast";
 import GlobalStyles from "./components/globales/GlobalStyles";
 import PricingPage from "./pages/globales/pricing";
@@ -61,20 +61,18 @@ import InsumoPage from "./pages/inventario/InsumoPage";
 import ListaInsumoPage from "./pages/inventario/ListaInsumoPage";
 import Precio_ProductoPage from "./pages/inventario/Precio_ProductoPage";
 import ListaPrecio_ProductoPage from "./pages/inventario/ListaPrecio_ProductoPage";
-import BodegaInsumoPage from './pages/inventario/BodegaInsumoPage';
-import ListaBodegaInsumoPage from './pages/inventario/ListaBodegaInsumoPage';
-import BodegaHerramientaPage from './pages/inventario/BodegaHerramientaPage';
-import ListaBodegaHerramientaPage from './pages/inventario/ListaBodegaHerramientaPage';
-import BodegaPage from './pages/inventario/BodegaPage';
-import ListaBodegaPage from './pages/inventario/ListaBodegaPage';
-//import BodegaPrecioProductoPage from "./pages/inventario/BodegaPrecioProductoPage";
-//import ListaBodegaPrecioProductoPage from "./pages/inventario/ListaBodegaPrecioProductoPage";
+import BodegaInsumoPage from "./pages/inventario/BodegaInsumoPage";
+import ListaBodegaInsumoPage from "./pages/inventario/ListaBodegaInsumoPage";
+import BodegaHerramientaPage from "./pages/inventario/BodegaHerramientaPage";
+import ListaBodegaHerramientaPage from "./pages/inventario/ListaBodegaHerramientaPage";
+import BodegaPage from "./pages/inventario/BodegaPage";
+import ListaBodegaPage from "./pages/inventario/ListaBodegaPage";
 
 // IoT
 import SensoresPage from "./pages/iot/SensoresPage2";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/sensores/RegistrarSensorPage";
-import ListarSensores from "./pages/iot/sensores/ListarSensoresPage"; 
+import ListarSensores from "./pages/iot/sensores/ListarSensoresPage";
 import EvapotranspiracionPage from "./pages/iot/EvapotranspiracionPage";
 
 // Usuarios
@@ -97,50 +95,30 @@ import PagoPage from "./pages/finanzas/PagoPage";
 import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
 import DetalleReportePago from "./pages/finanzas/ReporteEgresos";
 import CostoBeneficioPage from "./pages/finanzas/CostoBeneficioPage";
+
 // Reportes
 import Reportes from "./pages/reportes/Reportes";
 import GraficaIngreso from "./pages/reportes/GraficaIngreso";
-import { useAuth } from "./context/AuthContext";
 import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";
-
+import { useNavbar } from "./context/NavbarContext";
 
 const queryClient = new QueryClient();
 
 const AuthenticatedLayout: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(() => {
-    if (!isAuthenticated) return false;
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) return false;
-    const savedState = localStorage.getItem("sidebarOpen");
-    // Si el sidebar estaba abierto al recargar, lo cerramos para evitar duplicados
-    return savedState ? false : true;
-  });
-
-  useEffect(() => {
-    localStorage.setItem("sidebarOpen", JSON.stringify(isSidebarOpen));
-  }, [isSidebarOpen]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setSidebarOpen(false);
-      localStorage.setItem("sidebarOpen", "false");
-    }
-  }, [isAuthenticated]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen((prev: boolean) => !prev);
-  };
+  const { isSidebarOpen } = useNavbar();
 
   return (
-    <div className="flex min-h-screen">
-      {isAuthenticated && <Navbar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
-      <div
-        className={`flex-1 transition-all duration-300 ${
-          isAuthenticated ? (isSidebarOpen ? "md:ml-64" : "md:ml-20") : ""
-        }`}
-      >
-        <Outlet />
+    <div className="flex min-h-screen flex-col">
+      <Header /> {/* Añadir Header aquí */}
+      <div className="flex flex-1">
+        <Navbar />
+        <div
+          className={`flex-1 transition-all duration-300 ${
+            isSidebarOpen ? "md:ml-64" : "md:ml-20"
+          } pt-16`} // pt-16 para dejar espacio al header fijo
+        >
+          <Outlet />
+        </div>
       </div>
     </div>
   );
@@ -153,10 +131,6 @@ const App: React.FC = () => {
         <NavbarProvider>
           <GlobalStyles />
           <Toaster position="top-right" reverseOrder={false} />
-
-          {/* Otros componentes */}
-          {/* Más componentes */}
-          
           <Routes>
             {/* Rutas públicas (Usuarios) */}
             <Route path="/login" element={<LoginPage />} />
@@ -164,7 +138,7 @@ const App: React.FC = () => {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-            {/* Rutas protegidas con Navbar */}
+            {/* Rutas protegidas con Navbar y Header */}
             <Route element={<PrivateRoute><AuthenticatedLayout /></PrivateRoute>}>
               {/* Dashboard (Globales) */}
               <Route path="/" element={<DashboardPage />} />
@@ -184,6 +158,7 @@ const App: React.FC = () => {
               <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
               <Route path="/iot/listar-sensores" element={<ListarSensores />} />
               <Route path="/iot/evapotranspiracion" element={<EvapotranspiracionPage />} />
+
               {/* Cultivo */}
               <Route path="/cultivo/tipoespecie" element={<TipoEspeciePage />} />
               <Route path="/cultivo/listartipoespecie" element={<ListaTipoEspeciePage />} />
@@ -205,19 +180,18 @@ const App: React.FC = () => {
               <Route path="/cultivo/listartipoplaga" element={<ListaTipoPlagaPage />} />
               <Route path="/cultivo/plaga" element={<PlagaPage />} />
               <Route path="/cultivo/listarplaga" element={<ListaPlagasPage />} />
-              <Route path="/cultivo/reportarplaga/" element={<RegistroReportePlaga />} />
-              <Route path="/cultivo/listareporteplaga/" element={<ListaReportePlaga />} />
+              <Route path="/cultivo/reportarplaga" element={<RegistroReportePlaga />} />
+              <Route path="/cultivo/listareporteplaga" element={<ListaReportePlaga />} />
               <Route path="/cultivo/detallereporteplaga/:id" element={<DetalleReportePlaga />} />
-              <Route path="/cultivo/afecciones/" element={<AfeccionesPage />} />
-              <Route path="/cultivo/listafecciones/" element={<ListaAfecciones />} />
-              <Route path="/cultivo/control/" element={<ControlPage />} />
-              <Route path="/cultivo/listacontrol/" element={<ListaControlPage />} />
-              <Route path="/cultivo/trazabilidad/" element={<TrazabilidadCosecha />} />
-              <Route path="/cultivo/cultivo/" element={<CultivoPage />} />
-              <Route path="/cultivo/tiporesiduo/" element={<TipoResiduoPage />} />
-              <Route path="/cultivo/residuo/" element={<ResiduoPage />} />
-              <Route path="/cultivo/listatiporesiduo/" element={<ListaTipoResiduoPage />} />
-              <Route path="/cultivo/listaresiduo/" element={<ListaResiduoPage />} />
+              <Route path="/cultivo/afecciones" element={<AfeccionesPage />} />
+              <Route path="/cultivo/listafecciones" element={<ListaAfecciones />} />
+              <Route path="/cultivo/control" element={<ControlPage />} />
+              <Route path="/cultivo/listacontrol" element={<ListaControlPage />} />
+              <Route path="/cultivo/trazabilidad" element={<TrazabilidadCosecha />} />
+              <Route path="/cultivo/tiporesiduo" element={<TipoResiduoPage />} />
+              <Route path="/cultivo/residuo" element={<ResiduoPage />} />
+              <Route path="/cultivo/listatiporesiduo" element={<ListaTipoResiduoPage />} />
+              <Route path="/cultivo/listaresiduo" element={<ListaResiduoPage />} />
               <Route path="/graficas/actividadcosto" element={<ActividadCostosGraficasPage />} />
               <Route path="/mapa" element={<Mapa />} />
               <Route path="/cultivo/cosecha" element={<CosechaPage />} />
@@ -241,8 +215,6 @@ const App: React.FC = () => {
               <Route path="/inventario/listarbodegainsumos" element={<ListaBodegaInsumoPage />} />
               <Route path="/inventario/bodega" element={<BodegaPage />} />
               <Route path="/inventario/listarbodega" element={<ListaBodegaPage />} />
-              {/*<Route path="/inventario/bodegapreciosproductos" element={<BodegaPrecioProductoPage />} />/*}
-              {/*<Route path="/inventario/listarbodegapreciosproductos" element={<ListaBodegaPrecioProductoPage />} />/*}
 
               {/* Finanzas */}
               <Route path="/finanzas/salario" element={<SalarioPage />} />
@@ -253,10 +225,7 @@ const App: React.FC = () => {
               <Route path="/finanzas/pago" element={<PagoPage />} />
               <Route path="/graficas/egresos" element={<EgresoPruebaGraficasPage />} />
               <Route path="/finanzas/reporteEgresos/:id" element={<DetalleReportePago />} />
-              <Route path="/finanzas/costo_beneficio/" element={<CostoBeneficioPage />} />
-
-
-              
+              <Route path="/finanzas/costo_beneficio" element={<CostoBeneficioPage />} />
 
               {/* Reportes */}
               <Route path="/reportes" element={<Reportes />} />

@@ -4,10 +4,11 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}`;
 
 
-interface Rol {
+export interface Rol {
   id: number;
-  nombre: 'admin' | 'aprendiz';
-  permisos: string[];
+  rol: string;
+   nombre?: string;
+  permisos?: string[];
 }
 
 export interface User {

@@ -17,26 +17,6 @@ class UsuariosSerializer(serializers.ModelSerializer):
         model = Usuarios
         fields = ['id', 'nombre', 'apellido', 'email', 'username', 'numero_documento', 'rol', 'rol_id','is_staff']
 
-def update(self, instance, validated_data):
-    nuevo_rol = validated_data.get("rol", instance.rol)
-    nuevo_is_staff = validated_data.get("is_staff", instance.is_staff)
-
-    if nuevo_rol and nuevo_rol.id == 4:
-        instance.is_superuser = True
-        instance.is_staff = True
-    else:
-        instance.is_staff = nuevo_is_staff
-        instance.is_superuser = False
-
-    if 'is_staff' in validated_data:
-        validated_data.pop('is_staff')
-    if 'is_superuser' in validated_data:
-        validated_data.pop('is_superuser')
-
-    instance = super().update(instance, validated_data)
-    instance.save(update_fields=["is_superuser", "is_staff"])
-    return instance
-
 
 class RegistroUsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(

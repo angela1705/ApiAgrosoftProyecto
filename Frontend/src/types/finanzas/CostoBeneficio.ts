@@ -4,6 +4,10 @@ export interface AnalisisCostoBeneficio {
       cantidad: number;
       fecha: string;
       cultivo: string;
+      cultivo_nombre: string;
+      id_cultivo: number;
+      unidades_de_medida: number;
+
     };
     costos: {
       mano_obra: number;

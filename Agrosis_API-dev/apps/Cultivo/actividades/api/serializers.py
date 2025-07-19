@@ -7,7 +7,6 @@ from apps.Inventario.bodega_herramienta.models import BodegaHerramienta
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 from django.utils import timezone
-from .signals import notificar_asignacion_actividad
 
 class UsuarioActividadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +24,7 @@ class PrestamoInsumoSerializer(serializers.ModelSerializer):
 class PrestamoHerramientaSerializer(serializers.ModelSerializer):
     herramienta_nombre = serializers.CharField(source='herramienta.nombre', read_only=True)
     bodega_herramienta_cantidad = serializers.IntegerField(source='bodega_herramienta.cantidad', read_only=True)
+
     class Meta:
         model = PrestamoHerramienta
         fields = '__all__'
@@ -34,6 +34,7 @@ class ActividadSerializer(serializers.ModelSerializer):
     prestamos_herramientas = PrestamoHerramientaSerializer(many=True, read_only=True)
     tipo_actividad_nombre = serializers.CharField(source='tipo_actividad.nombre', read_only=True)
     usuarios = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    cultivo_nombre = serializers.CharField(source='cultivo.nombre', read_only=True) 
     usuarios_data = UsuarioActividadSerializer(source='usuarios', many=True, read_only=True)
     insumos = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
     herramientas = serializers.ListField(child=serializers.DictField(), write_only=True, required=False)
@@ -78,7 +79,6 @@ class ActividadSerializer(serializers.ModelSerializer):
             usuarios = Usuarios.objects.filter(id__in=usuario_ids)
             actividad.usuarios.set(usuarios)
 
-            # Procesar insumos (se mantiene igual)
             for insumo_entry in insumos_data:
                 insumo = get_object_or_404(Insumo, id=insumo_entry['insumo'])
                 cantidad_usada = insumo_entry.get('cantidad_usada', 0)
@@ -90,7 +90,6 @@ class ActividadSerializer(serializers.ModelSerializer):
                     cantidad_usada=cantidad_usada
                 )
 
-            # Procesar herramientas (actualizado)
             for herramienta_entry in herramientas_data:
                 herramienta = get_object_or_404(Herramienta, id=herramienta_entry['herramienta'])
                 cantidad_entregada = herramienta_entry.get('cantidad_entregada', 1)
@@ -112,7 +111,9 @@ class ActividadSerializer(serializers.ModelSerializer):
                     fecha_devolucion=herramienta_entry.get('fecha_devolucion', None)
                 )
 
+            from apps.Cultivo.actividades.api.signals import notificar_asignacion_actividad
             notificar_asignacion_actividad(actividad, usuario_ids)
+
             return actividad
 
     def update(self, instance, validated_data):
@@ -121,18 +122,17 @@ class ActividadSerializer(serializers.ModelSerializer):
             insumos_data = validated_data.pop('insumos', None)
             herramientas_data = validated_data.pop('herramientas', None)
 
-            # Actualizar campos de la actividad (se mantiene igual)
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
-            # Actualizar usuarios (se mantiene igual)
             if usuario_ids is not None:
                 usuarios = Usuarios.objects.filter(id__in=usuario_ids)
                 instance.usuarios.set(usuarios)
+
+                from apps.Cultivo.actividades.api.signals import notificar_asignacion_actividad
                 notificar_asignacion_actividad(instance, usuario_ids)
 
-            # Actualizar insumos (se mantiene igual)
             if insumos_data is not None:
                 instance.prestamos_insumos.all().delete()
                 for insumo_entry in insumos_data:
@@ -146,9 +146,7 @@ class ActividadSerializer(serializers.ModelSerializer):
                         cantidad_usada=cantidad_usada
                     )
 
-            # Actualizar herramientas (actualizado)
             if herramientas_data is not None:
-                # Primero devolvemos las herramientas prestadas actuales
                 prestamos_actuales = instance.prestamos_herramientas.all()
                 for prestamo in prestamos_actuales:
                     if prestamo.bodega_herramienta and not prestamo.devuelta:
@@ -156,10 +154,8 @@ class ActividadSerializer(serializers.ModelSerializer):
                         prestamo.bodega_herramienta.cantidad_prestada -= prestamo.cantidad_entregada
                         prestamo.bodega_herramienta.save()
                 
-                # Eliminamos los préstamos antiguos
                 instance.prestamos_herramientas.all().delete()
-                
-                # Creamos los nuevos préstamos
+
                 for herramienta_entry in herramientas_data:
                     herramienta = get_object_or_404(Herramienta, id=herramienta_entry['herramienta'])
                     cantidad_entregada = herramienta_entry.get('cantidad_entregada', 1)
@@ -183,7 +179,6 @@ class ActividadSerializer(serializers.ModelSerializer):
 
             return instance
 
-
 class FinalizarActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actividad
@@ -201,7 +196,6 @@ class FinalizarActividadSerializer(serializers.ModelSerializer):
             instance.estado = 'COMPLETADA'
             instance.save()
 
-            # Devolver herramientas automáticamente (actualizado)
             prestamos_herramientas = instance.prestamos_herramientas.filter(devuelta=False)
             for prestamo in prestamos_herramientas:
                 if prestamo.bodega_herramienta:
@@ -216,7 +210,7 @@ class FinalizarActividadSerializer(serializers.ModelSerializer):
                 prestamo.save()
 
             return instance
-        
+
 class ActividadCostosSerializer(serializers.ModelSerializer):
     tipo_actividad = serializers.CharField(source='tipo_actividad.nombre')
     costo_total = serializers.SerializerMethodField()

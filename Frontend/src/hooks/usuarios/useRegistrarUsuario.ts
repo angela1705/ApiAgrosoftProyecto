@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/components/utils/axios"; 
-import { addToast } from "@heroui/react";
+
+import api from "@/components/utils/axios";
+
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/usuarios/`;
@@ -8,10 +9,10 @@ const API_URL = `${BASE_URL}/usuarios/`;
 export interface NuevoUsuario {
   nombre: string;
   apellido: string;
-  email: string;
+  email?: string;
   numero_documento: number;
   username?: string;
-  password: string;
+  password?: string;
 }
   
 export const useRegistrarUsuario = () => {
@@ -22,6 +23,7 @@ export const useRegistrarUsuario = () => {
       ...usuario,
       rol_id: 1,
     });
+    
     return response.data;
   };
 
@@ -31,7 +33,7 @@ export const useRegistrarUsuario = () => {
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
     },
     onError: () => {
-      // Sin notificaciones, solo se maneja desde el componente
+      
     },
   });
 

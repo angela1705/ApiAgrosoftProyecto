@@ -78,7 +78,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'apps.Iot.evapotranspiracion',
-    'apps.mapa'
+    'apps.mapa',
+    'apps.Cultivo.Notificacion',
 ]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -134,17 +135,15 @@ CORS_ALLOWED_ORIGINS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql', 
-        'NAME': 'testdb12', 
-        'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': 'localhost', 
-        'PORT': '5432',
-        'OPTIONS': {
-            'client_encoding': 'UTF8',
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'agrosoft'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'root'),
+        'HOST': os.getenv('DB_HOST', 'db'),  
+        'PORT': os.getenv('DB_PORT', '5432'), 
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

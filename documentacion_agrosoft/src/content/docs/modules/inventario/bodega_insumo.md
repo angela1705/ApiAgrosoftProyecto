@@ -6,18 +6,25 @@ description: "Documentación de la API para la gestión de bodegas e insumos en 
 
 # **Gestión de Bodega Insumo**
 
-Los **registros de Bodega Insumo** documentan la relación entre insumos y bodegas, incluyendo la cantidad disponible de cada insumo en una bodega específica. Esta documentación cubre los endpoints RESTful y las conexiones WebSocket para su gestión.
+Los **registros de Bodega Insumo** documentan la relación entre insumos y bodegas, incluyendo la cantidad disponible de cada insumo en una bodega específica. Esta documentación cubre los endpoints RESTful para su gestión completa.
+
+---
 
 ## **Endpoints de la API**
 
 ### **Obtener todas las relaciones entre bodegas e insumos**
 
-**Método:** `GET`
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span></p>
 
-**URL:**
-```
-http://127.0.0.1:8000/inventario/bodega_insumo/
-```
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/bodega_insumo/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/bodega_insumo/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Parámetros opcionales:**
 - `?bodega=1`: Filtra por ID de bodega.
@@ -39,12 +46,17 @@ http://127.0.0.1:8000/inventario/bodega_insumo/
 
 ### **Obtener una relación específica por ID**
 
-**Método:** `GET`
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span></p>
 
-**URL:**
-```
-http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
-```
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/bodega_insumo/{id}/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/bodega_insumo/{id}/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -60,12 +72,17 @@ http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
 
 ### **Registrar una nueva relación entre bodega e insumo**
 
-**Método:** `POST`
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span></p>
 
-**URL:**
-```
-http://127.0.0.1:8000/inventario/bodega_insumo/
-```
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/bodega_insumo/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/bodega_insumo/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Ejemplo de solicitud:**
 ```json
@@ -78,9 +95,10 @@ http://127.0.0.1:8000/inventario/bodega_insumo/
 
 **Validaciones:**
 - Campos obligatorios: `bodega`, `insumo`
-- `cantidad` debe ser un entero
+- `cantidad` debe ser un entero positivo
+- **Nueva validación:** La cantidad no puede exceder la cantidad disponible del insumo en el inventario
 
-**Ejemplo de respuesta (201 Created):**
+**Ejemplo de respuesta exitosa (201 Created):**
 ```json
 {
   "id": 2,
@@ -90,16 +108,30 @@ http://127.0.0.1:8000/inventario/bodega_insumo/
 }
 ```
 
+**Ejemplo de error de validación (400 Bad Request):**
+```json
+{
+  "cantidad": [
+    "La cantidad ingresada (20) excede la cantidad disponible (15) para el insumo Fertilizante Orgánico."
+  ]
+}
+```
+
 ---
 
 ### **Actualizar una relación entre bodega e insumo**
 
-**Método:** `PUT`
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span></p>
 
-**URL:**
-```
-http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
-```
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/bodega_insumo/{id}/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/bodega_insumo/{id}/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Ejemplo de solicitud:**
 ```json
@@ -110,6 +142,7 @@ http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
 
 **Restricciones:**
 - Solo se puede modificar `cantidad`
+- **Nueva validación:** La cantidad actualizada no puede exceder la cantidad disponible del insumo más la cantidad actual en la relación
 
 **Ejemplo de respuesta (200 OK):**
 ```json
@@ -125,12 +158,17 @@ http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
 
 ### **Eliminar una relación entre bodega e insumo**
 
-**Método:** `DELETE`
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span></p>
 
-**URL:**
-```
-http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
-```
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/bodega_insumo/{id}/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/bodega_insumo/{id}/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
 **Ejemplo de respuesta exitosa (204 No Content):**
 ```json
@@ -139,52 +177,44 @@ http://127.0.0.1:8000/inventario/bodega_insumo/{id}/
 
 ---
 
-## **WebSocket**
+### **Generar reporte PDF de bodega de insumos**
 
-**Conexión:**
-```
-ws://127.0.0.1:8000/inventario/bodega_insumo/
-```
+<p><strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span></p>
 
-Permite actualizaciones en tiempo real de las relaciones entre bodegas e insumos.
+URL:
+<section id="tab-panel-58" aria-labelledby="tab-58" role="tabpanel">
+  <div class="expressive-code">
+    <figure class="frame not-content">
+      <pre data-language="http" tabindex="0"><code><div class="ec-line"><div class="code">http://127.0.0.1:8000/inventario/bodega_insumo/reporte_pdf/</div></div></code></pre>
+      <div class="copy"><button title="Copiar al portapapeles" data-copied="¡Copiado!" data-code="http://127.0.0.1:8000/inventario/bodega_insumo/reporte_pdf/"><div></div></button></div>
+    </figure>
+  </div>
+</section>
 
-### **Estado inicial:**
-```json
-{
-  "action": "initial_state",
-  "bodega_status": [
-    {
-      "id": 1,
-      "bodega": "Bodega Central",
-      "insumo": "Fertilizante",
-      "cantidad": 10
-    }
-  ]
-}
-```
+**Descripción:** 
+Genera un reporte completo en formato PDF con el inventario de insumos por bodega.
 
-### **Eventos en tiempo real:**
+**Descripción:**
+Genera un reporte PDF completo con el inventario de insumos por bodega, incluyendo:
+- Información detallada de cada relación bodega-insumo
+- Resumen estadístico del inventario
+- Formato profesional con logotipo empresarial
 
-#### **Creación/Actualización:**
-```json
-{
-  "message_id": "create-1-uuid-aqui",
-  "id": 1,
-  "bodega": "Bodega Central",
-  "insumo": "Fertilizante",
-  "cantidad": 10,
-  "accion": "create"
-}
+**Headers requeridos:**
+```http
+Authorization: Bearer <jwt_token>
 ```
 
-#### **Eliminación:**
-```json
-{
-  "message_id": "delete-1-uuid-aqui",
-  "id": 1,
-  "accion": "delete"
-}
-```
+**Ejemplo de respuesta:**
+- **Content-Type:** `application/pdf`
+- **Content-Disposition:** `attachment; filename="reporte_bodega_insumos.pdf"`
+
+**Contenido del PDF:**
+- Encabezado con logo de la empresa
+- Fecha de generación del reporte
+- Objetivo del documento
+- Tabla detallada con ID, Bodega, Insumo y Cantidad
+- Resumen general con totales
 
 ---
 
@@ -205,21 +235,45 @@ Permite actualizaciones en tiempo real de las relaciones entre bodegas e insumos
 }
 ```
 
+### **Ejemplo de error de validación de cantidad:**
+```json
+{
+  "cantidad": [
+    "La cantidad ingresada (25) excede la cantidad disponible (20) para el insumo Pesticida Natural."
+  ]
+}
+```
+
+### **Ejemplo de error de autenticación (401 Unauthorized):**
+```json
+{
+  "detail": "No se han proporcionado las credenciales de autenticación."
+}
+```
+
 ---
 
 ## **Buenas Prácticas**
+
 ✔️ **Registro inmediato:** Actualizar la cantidad tras cada movimiento de insumos.  
+✔️ **Validación de inventario:** Asegurar que las cantidades asignadas no excedan el stock disponible.  
 ✔️ **Detalles específicos:** Verificar que la cantidad coincida con el inventario físico.  
-✔️ **Sincronización:** Usar WebSocket para reflejar cambios en tiempo real en el frontend.  
+✔️ **Reportes regulares:** Generar reportes PDF periódicamente para auditoría.  
+✔️ **Seguridad:** Mantener tokens JWT actualizados y seguros.  
+✔️ **Trazabilidad:** Documentar todas las asignaciones y movimientos de insumos por bodega.
 
 ---
 
 ## **Integraciones Comunes**
+
 ▸ **Notificaciones:** Alertas cuando la cantidad de insumos cae por debajo de un umbral.  
 ▸ **Inventario:** Actualización automática del stock en `Insumo` al modificar `BodegaInsumo`.  
+▸ **Validación cruzada:** Verificación automática de disponibilidad antes de asignaciones.  
 ▸ **Reportes:**  
-  - Disponibilidad por bodega  
-  - Histórico de movimientos de insumos  
+    • Disponibilidad por bodega  
+    • Histórico de movimientos de insumos  
+    • Reportes PDF automatizados con logo empresarial  
+▸ **Auditoría:** Registro de cambios con validaciones de integridad de inventario.
 
 ---
 
@@ -228,5 +282,49 @@ Permite actualizaciones en tiempo real de las relaciones entre bodegas e insumos
 graph TD
     A[Bodega] --> B[BodegaInsumo]
     C[Insumo] --> B
+    B --> D[Validación de Cantidad]
+    D --> E[Stock Disponible]
+    B --> F[Reporte PDF]
 ```
 
+---
+
+## **Casos de Uso Ejemplos**
+
+### **Escenario 1: Asignación válida**
+```json
+{
+  "bodega": 1,
+  "insumo": 3,
+  "cantidad": 20  
+}
+```
+
+### **Escenario 2: Asignación inválida**
+```json
+/
+{
+  "bodega": 1,
+  "insumo": 3,
+  "cantidad": 25 
+}
+```
+
+### **Escenario 3: Actualización con cantidad previa**
+```json
+{
+  "cantidad": 35
+}
+```
+
+---
+
+## **Configuración de Autenticación**
+
+**Requerido:** JWT Authentication  
+**Permisos:** IsAuthenticated  
+**Headers necesarios:**
+```http
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+```

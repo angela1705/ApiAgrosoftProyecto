@@ -22,6 +22,8 @@ interface SelectedOption {
   cantidad?: number;
   cantidad_entregada?: number;
   devuelta?: boolean;
+  unidad_medida?: string; 
+
 }
 
 const ActividadPage: React.FC = () => {
@@ -76,7 +78,9 @@ const ActividadPage: React.FC = () => {
     const insumoOptions = insumos?.map(i => ({ 
         value: i.id, 
         label: `${i.nombre} (Disponible: ${i.cantidad})`,
-        cantidad: 0 
+        cantidad: 0,
+        unidad_medida: i.unidad_medida?.nombre || 'N/A'
+ 
     })) || [];
     const herramientaOptions = herramientas?.map(h => ({ 
         value: h.id, 
@@ -113,9 +117,24 @@ const ActividadPage: React.FC = () => {
             }))
         };
 
-        mutation.mutate(payload)
+        mutation.mutate(payload, {
+            onSuccess: () => {
+                setActividad({
+                    descripcion: "",
+                    fecha_inicio: "",
+                    fecha_fin: "",
+                    tipo_actividad: 0,
+                    cultivo: 0,
+                    estado: "PENDIENTE",
+                    prioridad: "MEDIA",
+                    instrucciones_adicionales: "",
+                    usuarios: [],
+                    insumos: [],
+                    herramientas: []
+                });
+            },
+        });
     };
-
     const handleInsumoCantidadChange = (value: number, index: number) => {
         const updatedInsumos = [...actividad.insumos];
         updatedInsumos[index] = { ...updatedInsumos[index], cantidad: value };
@@ -297,47 +316,48 @@ const ActividadPage: React.FC = () => {
                         </div>
 
                         <div>
-                             <div className="flex items-center gap-2 mb-1">
-                                <label className="block text-sm font-medium text-gray-700">Insumos Requeridos</label>
-                                <button 
-                                    className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    onClick={() => setOpenInsumoModal(true)}
-                                    type="button"
-                                >
-                                    <Plus className="h-4 w-4" />
-                                </button>
-                            </div>
-                            <Select
-                                isMulti
-                                options={filteredInsumos}
-                                value={actividad.insumos}
-                                onChange={(selected) => setActividad({ ...actividad, insumos: selected as SelectedOption[] })}
-                                onInputChange={setSearchInsumo}
-                                placeholder="Buscar insumos..."
-                                components={animatedComponents}
-                                className="basic-multi-select"
-                                classNamePrefix="select"
-                                noOptionsMessage={() => "No hay insumos disponibles"}
-                            />
-
-                            {actividad.insumos.length > 0 && (
-                                <div className="mt-2 space-y-2">
-                                    {actividad.insumos.map((insumo, index) => (
-                                        <div key={insumo.value} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                            <span className="text-sm">{insumo.label.split('(')[0]}</span>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                value={insumo.cantidad || 0}
-                                                onChange={(e) => handleInsumoCantidadChange(Number(e.target.value), index)}
-                                                className="w-20 px-2 py-1 border rounded text-sm"
-                                                placeholder="Cantidad"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                        <div className="flex items-center gap-2 mb-1">
+                            <label className="block text-sm font-medium text-gray-700">Insumos Requeridos</label>
+                            <button 
+                                className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                onClick={() => setOpenInsumoModal(true)}
+                                type="button"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </button>
                         </div>
+                        <Select
+                            isMulti
+                            options={filteredInsumos}
+                            value={actividad.insumos}
+                            onChange={(selected) => setActividad({ ...actividad, insumos: selected as SelectedOption[] })}
+                            onInputChange={setSearchInsumo}
+                            placeholder="Buscar insumos..."
+                            components={animatedComponents}
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                            noOptionsMessage={() => "No hay insumos disponibles"}
+                        />
+
+                        {actividad.insumos.length > 0 && (
+                            <div className="mt-2 space-y-2">
+                                {actividad.insumos.map((insumo, index) => (
+                                    <div key={insumo.value} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                        <span className="text-sm">{insumo.label.split(' (')[0]} ({insumo.unidad_medida})</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={insumo.cantidad || 0}
+                                            onChange={(e) => handleInsumoCantidadChange(Number(e.target.value), index)}
+                                            className="w-20 px-2 py-1 border rounded text-sm"
+                                            placeholder="Cantidad"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
 
                 <div>
                     <div className="flex items-center gap-2 mb-1">

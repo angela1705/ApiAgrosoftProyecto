@@ -1,8 +1,9 @@
 import React from "react";
-import { useAuth } from "@/context/AuthContext";
 import { IconButton, Menu, MenuItem, Typography, Box } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link } from "react-router-dom";
+
+import { useAuth } from "@/context/AuthContext";
 
 interface UserMenuProps {
   hideText?: boolean;  
@@ -13,7 +14,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ hideText }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  console.log("Usuario en UserMenu:", user);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -30,27 +30,27 @@ const UserMenu: React.FC<UserMenuProps> = ({ hideText }) => {
 
   return (
     <Box>
-      <IconButton onClick={handleClick} sx={{ ml: 1, color: "#fff" }}>
+      <IconButton  sx={{ ml: 1, color: "#fff" }} onClick={handleClick}>
         <AccountCircleIcon />
         {!hideText && (
-          <Typography variant="body1" sx={{ ml: 1, color: "#fff" }}>
+          <Typography  sx={{ ml: 1, color: "#fff" }} variant="body1">
             {user ? user.nombre : "Usuario"}
           </Typography>
         )}
       </IconButton>
       <Menu
         anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        open={open}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
+        onClose={handleClose}
       >
         <MenuItem disabled>
           <Box>
             <Typography variant="subtitle1">
               {user ? `${user.nombre} ${user.apellido}` : "Usuario"}
             </Typography>
-            <Typography variant="body1" color="textSecondary">
+            <Typography  color="textSecondary" variant="body1">
               {user ? user.email : "correo@ejemplo.com"}
             </Typography>
           </Box>

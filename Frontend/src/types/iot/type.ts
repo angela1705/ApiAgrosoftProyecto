@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface SensorData {
   id?: number | string;
   fk_sensor: number;
@@ -15,7 +13,7 @@ export interface SensorData {
   direccion_viento?: number | null;
   ph_suelo?: number | null;
   fecha_medicion: string;
-  [key: string]: number | null | undefined | string;  
+  [key: string]: number | null | undefined | string;
 }
 
 export interface Sensor {
@@ -41,6 +39,8 @@ export interface TipoSensor {
   tipo_sensor_id: number;
   decimals: number;
   unidad_medida?: string;
+  medida_minima?: number;
+  medida_maxima?: number;
 }
 
 export interface Bancal {
@@ -57,7 +57,7 @@ export interface EvapotranspiracionData {
   id: number;
   fk_bancal: number;
   fecha: string;
-  valor: string;
+  valor: number;
   creado: string;
 }
 

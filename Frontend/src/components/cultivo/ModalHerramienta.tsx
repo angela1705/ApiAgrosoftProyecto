@@ -3,6 +3,7 @@ import { ReuInput } from "../globales/ReuInput";
 import { useRegistrarHerramienta } from "@/hooks/inventario/useHerramientas";
 import { useState } from "react";
 import { Herramienta } from "@/types/inventario/Herramientas";
+import { Switch } from "@heroui/react";
 
 interface ModalHerramientaProps {
   isOpen: boolean;
@@ -19,20 +20,12 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
     estado: "Disponible",
     fecha_registro: new Date().toISOString().slice(0, 16),
     activo: true,
-    precio: 0
+    precio: 0,
+    cantidad_disponible: 0,
   });
 
   const mutation = useRegistrarHerramienta();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    
-    setHerramienta(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : 
-              name === 'cantidad' ? Number(value) : value
-    }));
-  };
 
   const handleSubmit = () => {
     mutation.mutate({
@@ -48,13 +41,14 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
           estado: "Disponible",
           fecha_registro: new Date().toISOString().slice(0, 16),
           activo: true,
-          precio: 0
-
+          precio: 0,
+          cantidad_disponible: 0,
         });
         onSuccess?.();
       }
     });
   };
+
   const formatPrice = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, "");
     return numericValue ? Number(numericValue) : 0;
@@ -128,16 +122,15 @@ export const ModalHerramienta = ({ isOpen, onOpenChange, onSuccess }: ModalHerra
           onChange={(e)=> setHerramienta({...herramienta, fecha_registro: e.target.value})}
         />
 
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="activo"
-            checked={herramienta.activo}
-            onChange={handleChange}
-            className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-          />
-          <span className="text-sm text-gray-700">Activo</span>
-        </label>
+        <div className="flex items-center">
+            <Switch
+                color="success"
+                size="sm"
+                isSelected={herramienta.activo}
+                onChange={(e) => setHerramienta({ ...herramienta, activo: e.target.checked })}
+            />
+            <label className="ml-2 text-sm font-medium text-gray-700">Activo</label>
+        </div>
       </div>
     </ReuModal>
   );

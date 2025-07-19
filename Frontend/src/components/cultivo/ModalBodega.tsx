@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import ReuModal from "../globales/ReuModal";
 import { ReuInput } from "../globales/ReuInput";
 import { useRegistrarBodega } from "@/hooks/inventario/useBodega";
 import { Bodega } from "@/types/inventario/Bodega";
+import { Switch } from "@heroui/react";
 
 interface ModalBodegaProps {
   isOpen: boolean;
@@ -21,13 +22,6 @@ export const ModalBodega = ({ isOpen, onOpenChange, onSuccess }: ModalBodegaProp
 
   const mutation = useRegistrarBodega();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setNuevaBodega((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : name === "capacidad" ? Number(value) : value,
-    }));
-  };
 
   const handleSubmit = () => {
     mutation.mutate(nuevaBodega, {
@@ -83,16 +77,15 @@ export const ModalBodega = ({ isOpen, onOpenChange, onSuccess }: ModalBodegaProp
           value={nuevaBodega.telefono}
           onChange={(e) => setNuevaBodega({ ...nuevaBodega, telefono: e.target.value })}
         />
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="activo"
-            checked={nuevaBodega.activo}
-            onChange={handleChange}
-            className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-          />
-          <span className="text-sm text-gray-700">Activo</span>
-        </label>
+        <div className="flex items-center">
+            <Switch
+                color="success"
+                size="sm"
+                isSelected={nuevaBodega.activo}
+                onChange={(e) => setNuevaBodega({ ...nuevaBodega, activo: e.target.checked })}
+            />
+            <label className="ml-2 text-sm font-medium text-gray-700">Activo</label>
+        </div>
       </div>
     </ReuModal>
   );

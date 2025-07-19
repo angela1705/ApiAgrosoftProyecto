@@ -4,7 +4,7 @@ import { Sensor, TipoSensor } from "@/types/iot/type";
 import { Bancal } from "@/types/cultivo/Bancal";
 
 interface UseModalSensorFormProps {
-  sensor: Sensor;  
+  sensor: Sensor | null;
   tipoSensores: TipoSensor[] | undefined;
   bancales: Bancal[] | undefined;
   onConfirm: (editedSensor: Sensor | null) => void;
@@ -19,144 +19,134 @@ export const useModalSensorForm = ({
   isDelete = false,
 }: UseModalSensorFormProps) => {
   const [editedSensor, setEditedSensor] = useState<Sensor | null>(null);
-  const [tipoSensoresError, setTipoSensoresError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("[useModalSensorForm] Sensor recibido: ", sensor);
-    console.log("[useModalSensorForm] Tipos de sensores disponibles: ", tipoSensores);
-
-    if (!sensor || !tipoSensores) {
-      console.error("[useModalSensorForm] Sensor o tipoSensores no disponibles: ", { sensor, tipoSensores });
-      setTipoSensoresError(new Error("Datos necesarios no disponibles."));
+    if (!isDelete && (!sensor || !sensor.id || !sensor.tipo_sensor)) {
+      console.error("[useModalSensorForm] Sensor inválido:", sensor);
+      setError("Sensor no proporcionado o datos incompletos.");
+      setEditedSensor(null);
       return;
     }
 
-    const tipoSensor = tipoSensores.find((type) => type.nombre === sensor.tipo_sensor) || null;
-    const updatedSensor = {
+    if (!isDelete && (!tipoSensores || tipoSensores.length === 0)) {
+      console.error("[useModalSensorForm] tipoSensores no disponible:", tipoSensores);
+      setError("No hay tipos de sensores disponibles.");
+      addToast({
+        title: "Error",
+        description: "No se encontraron tipos de sensores.",
+        timeout: 5000,
+        color: "danger",
+      });
+      return;
+    }
+
+    if (isDelete || !sensor || !sensor.tipo_sensor) {
+      setEditedSensor(sensor);
+      return;
+    }
+
+    const tipoSensor = tipoSensores?.find(
+      (type) => type.label.toLowerCase() === sensor.tipo_sensor?.toLowerCase()
+    );
+
+    if (!tipoSensor) {
+      console.warn("[useModalSensorForm] No se encontró tipoSensor para:", sensor.tipo_sensor);
+      addToast({
+        title: "Advertencia",
+        description: `Tipo de sensor "${sensor.tipo_sensor}" no encontrado. Seleccione uno válido.`,
+        timeout: 5000,
+        color: "warning",
+      });
+    }
+
+    const updatedSensor: Sensor = {
       ...sensor,
-      tipo_sensor_id: tipoSensor ? tipoSensor.id : sensor.tipo_sensor_id || 0,
-      unidad_medida: tipoSensor ? tipoSensor.unidad_medida : sensor.unidad_medida || "",
+      tipo_sensor_id: tipoSensor?.id ?? sensor.tipo_sensor_id ?? 0,
+      tipo_sensor: tipoSensor?.label ?? sensor.tipo_sensor,
+      unidad_medida: tipoSensor?.unidad_medida ?? sensor.unidad_medida ?? "",
+      medida_minima: Number(sensor.medida_minima) ?? 0,
+      medida_maxima: Number(sensor.medida_maxima) ?? 0,
+      nombre: sensor.nombre ?? "",
+      descripcion: sensor.descripcion ?? "",
+      device_code: sensor.device_code ?? null,
+      estado: sensor.estado ?? "inactivo",
+      bancal_id: sensor.bancal_id ?? null,
+      bancal_nombre: sensor.bancal_nombre ?? "",
     };
 
-    console.log("[useModalSensorForm] Actualizando editedSensor: ", updatedSensor);
+    console.log("[useModalSensorForm] Inicializando editedSensor:", updatedSensor);
     setEditedSensor(updatedSensor);
-  }, [sensor, tipoSensores]);
+    setError(null);
+  }, [sensor, tipoSensores, isDelete]);
 
   const handleChange = (
     field: keyof Sensor,
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const value = e.target.value;
-    console.log(`[useModalSensorForm] Cambio en el campo ${field}: `, value);
     setEditedSensor((prev) => {
-      if (!prev) {
-        console.error("[useModalSensorForm] editedSensor es null al intentar cambiar el campo: ", field);
-        addToast({
-          title: "Error",
-          description: "No se puede modificar el sensor. Intente de nuevo.",
-          timeout: 3000,
-          color: "danger",
-        });
-        return prev;
-      }
+      if (!prev) return prev;
       if (field === "tipo_sensor") {
-        const tipoSensor = tipoSensores?.find((type) => type.nombre === value);
-        console.log("[useModalSensorForm] Buscando tipo de sensor: ", { value, tipoSensor, tipoSensores });
+        const tipoSensor = tipoSensores?.find(
+          (type) => type.label.toLowerCase() === value.toLowerCase()
+        );
         if (!tipoSensor) {
-          console.error("[useModalSensorForm] Tipo de sensor no encontrado: ", value);
           addToast({
             title: "Error",
-            description: `El tipo de sensor "${value}" no es válido.`,
+            description: `Tipo de sensor "${value}" no válido.`,
             timeout: 3000,
             color: "danger",
           });
           return prev;
         }
-        const newSensor = {
+        return {
           ...prev,
-          tipo_sensor: value,
-          tipo_sensor_id: tipoSensor.id,
-          unidad_medida: tipoSensor.unidad_medida || "",
-          medida_minima: tipoSensor.medida_minima || 0,
-          medida_maxima: tipoSensor.medida_maxima || 0,
+          tipo_sensor: tipoSensor.label,
+          tipo_sensor_id: tipoSensor.id ?? 0,
+          unidad_medida: tipoSensor.unidad_medida ?? "",
+          medida_minima: Number(tipoSensor.medida_minima) ?? prev.medida_minima,
+          medida_maxima: Number(tipoSensor.medida_maxima) ?? prev.medida_maxima,
         };
-        console.log("[useModalSensorForm] Nuevo estado de editedSensor tras cambio de tipo_sensor: ", newSensor);
-        return newSensor;
       }
-      const newSensor = {
+      return {
         ...prev,
         [field]:
           field === "medida_minima" || field === "medida_maxima"
-            ? Number(value)
+            ? Number(value) || 0
             : field === "bancal_id"
-            ? value === ""
-              ? null
-              : Number(value)
+            ? value === "" ? null : Number(value)
             : value,
       };
-      console.log("[useModalSensorForm] Nuevo estado de editedSensor: ", newSensor);
-      return newSensor;
     });
   };
 
   const handleConfirm = () => {
-    console.log("[useModalSensorForm] Confirmando acción. isDelete: ", isDelete, "editedSensor: ", editedSensor);
-    if (!isDelete) {
-      if (!editedSensor) {
-        console.error("[useModalSensorForm] Validación fallida: editedSensor es null");
-        addToast({
-          title: "Error",
-          description: "No se puede guardar. El sensor no está inicializado.",
-          timeout: 3000,
-          color: "danger",
-        });
-        return;
-      }
-      if (!editedSensor.tipo_sensor || !editedSensor.tipo_sensor_id || editedSensor.tipo_sensor_id <= 0) {
-        console.error("[useModalSensorForm] Validación fallida: tipo_sensor o tipo_sensor_id inválido", {
-          tipo_sensor: editedSensor.tipo_sensor,
-          tipo_sensor_id: editedSensor.tipo_sensor_id,
-        });
-        addToast({
-          title: "Error",
-          description: "Por favor, seleccione un tipo de sensor válido.",
-          timeout: 3000,
-          color: "danger",
-        });
-        return;
-      }
-      if (editedSensor.bancal_id && !bancales?.some((b) => b.id === editedSensor.bancal_id)) {
-        console.error("[useModalSensorForm] Validación fallida: bancal_id no existe", {
-          bancal_id: editedSensor.bancal_id,
-          bancales,
-        });
-        addToast({
-          title: "Error",
-          description: "El bancal seleccionado no existe.",
-          timeout: 3000,
-          color: "danger",
-        });
-        return;
-      }
-      if (!editedSensor.nombre) {
-        console.error("[useModalSensorForm] Validación fallida: nombre es obligatorio");
-        addToast({
-          title: "Error",
-          description: "El nombre del sensor es obligatorio.",
-          timeout: 3000,
-          color: "danger",
-        });
-        return;
-      }
+    if (isDelete) {
+      onConfirm(editedSensor);
+      return;
+    }
+    if (!editedSensor || !editedSensor.id || !editedSensor.tipo_sensor || !editedSensor.nombre) {
+      console.error("[useModalSensorForm] Validación fallida:", editedSensor);
+      addToast({
+        title: "Error",
+        description: "Por favor, complete todos los campos obligatorios.",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
+    }
+    if (editedSensor.bancal_id && !bancales?.some((b) => b.id === editedSensor.bancal_id)) {
+      addToast({
+        title: "Error",
+        description: "El bancal seleccionado no existe.",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
     }
     onConfirm(editedSensor);
   };
 
-  return {
-    editedSensor,
-    handleChange,
-    handleConfirm,
-    tipoSensoresError,
-    setTipoSensoresError,
-  };
+  return { editedSensor, handleChange, handleConfirm, error };
 };

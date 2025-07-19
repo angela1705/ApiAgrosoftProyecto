@@ -1,18 +1,18 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import Register from '../../components/usuarios/Register';
 
 import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
 import LogoSena from '../../assets/logob.png';
+import Register from '../../components/usuarios/Register';
+import { useAuth } from '../../context/AuthContext';
 
 const RegisterPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace={true} />;
+    return <Navigate replace={true} to="/"  />;
   }
 
   return (
@@ -24,10 +24,9 @@ const RegisterPage: React.FC = () => {
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: '#27a35e', // Verde más oscuro
+        backgroundColor: '#27a35e', 
       }}
     >
-      {/* Fondo con línea horizontal curva (~) */}
       <Box
         sx={{
           position: 'absolute',
@@ -39,8 +38,7 @@ const RegisterPage: React.FC = () => {
         }}
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
           style={{
             position: 'absolute',
             top: 0,
@@ -48,17 +46,17 @@ const RegisterPage: React.FC = () => {
             width: '100%',
             height: '100%',
           }}
-          preserveAspectRatio="none"
+          viewBox="0 0 1440 320"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            fill="#fff" // Mitad superior blanca
+            d="M0,0 L0,160 Q360,140 720,160 Q1080,180 1440,160 L1440,0 Z" 
+            fill="#fff" 
             fillOpacity="1"
-            d="M0,0 L0,160 Q360,140 720,160 Q1080,180 1440,160 L1440,0 Z" // Curva menos pronunciada
           />
         </svg>
       </Box>
 
-      {/* Logo AGROSIS en la esquina superior izquierda del fondo */}
       <Box
         sx={{
           position: 'absolute',
@@ -68,8 +66,8 @@ const RegisterPage: React.FC = () => {
         }}
       >
         <img
-          src={AgrosisLogotic}
           alt="AGROSIS Logotic Small"
+          src={AgrosisLogotic}
           style={{
             width: '140px',
             height: 'auto',
@@ -77,7 +75,6 @@ const RegisterPage: React.FC = () => {
         />
       </Box>
 
-      {/* Logo SENA en la esquina inferior izquierda del fondo */}
       <Box
         sx={{
           position: 'absolute',
@@ -87,8 +84,8 @@ const RegisterPage: React.FC = () => {
         }}
       >
         <img
-          src={LogoSena}
           alt="Logo SENA" 
+          src={LogoSena}
           style={{
             width:'130px',
             height: 'auto',
@@ -96,7 +93,6 @@ const RegisterPage: React.FC = () => {
         />
       </Box>
 
-      {/* Contenedor principal: Solo el formulario */}
       <Box
         sx={{
           width: { xs: '90%', sm: '70%', md: '50%' },
@@ -111,12 +107,11 @@ const RegisterPage: React.FC = () => {
         }}
       >
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
           <Typography
-            variant="h4"
             gutterBottom
             sx={{
               fontWeight: 'bold',
@@ -124,16 +119,17 @@ const RegisterPage: React.FC = () => {
               textAlign: 'center',
               mb: 1,
             }}
+            variant="h4"
           >
             Registrar
           </Typography>
           <Typography
-            variant="subtitle1"
             sx={{
               color: '#718096',
               textAlign: 'center',
               mb: 3,
             }}
+            variant="subtitle1"
           >
             Ingresa tus credenciales para registrarte
           </Typography>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import {
   IconButton,
@@ -13,140 +13,145 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from "@mui/icons-material/Close";
-import { useActivityNotifications } from "@/hooks/websocket/useActividadNotificacions";
-import { useBodegaNotifications } from "@/hooks/websocket/useBodegaNotification";
-import { usePlagaNotifications } from "@/hooks/websocket/useReportePlaga";
-import { Notification } from "@/types/notificacion";
-
-type PersistentNotification = Notification & {
-  read: boolean;
-};
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import WarningIcon from "@mui/icons-material/Warning";
+import TimerIcon from "@mui/icons-material/Timer";
+import BugReportIcon from "@mui/icons-material/BugReport";
+import { useNotifications, Notification } from "@/hooks/websocket/useNotifications";
+import axios from "@/api/axios";
+import { debounce } from "lodash";
 
 const Notificacion: React.FC = () => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<PersistentNotification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const open = Boolean(anchorEl);
+  const isFetching = useRef(false);
 
-  // Cargar notificaciones desde localStorage
-  useEffect(() => {
-    if (!user?.id) return;
+  const fetchNotifications = useCallback(async () => {
+    if (!user?.id || isFetching.current) {
+      return;
+    }
 
-    const savedNotifications = localStorage.getItem(`notifications_${user.id}`);
-    if (savedNotifications) {
-      try {
-        const parsed = JSON.parse(savedNotifications);
-        if (Array.isArray(parsed)) {
-          const validNotifications = parsed.filter(
-            (n): n is PersistentNotification =>
-              n &&
-              typeof n === "object" &&
-              "id" in n &&
-              typeof n.id === "string" &&
-              "message" in n &&
-              typeof n.message === "string" &&
-              "read" in n &&
-              typeof n.read === "boolean" &&
-              "timestamp" in n &&
-              typeof n.timestamp === "string" &&
-              "source" in n &&
-              typeof n.source === "string"
-          );
-          setNotifications(validNotifications);
-          setUnreadCount(validNotifications.filter((n) => !n.read).length);
-        } else {
-          console.error("Formato de notificaciones inválido en localStorage");
-          localStorage.removeItem(`notifications_${user.id}`);
-        }
-      } catch (error) {
-        console.error("Error al cargar notificaciones desde localStorage:", error);
-        localStorage.removeItem(`notifications_${user.id}`);
-      }
+    isFetching.current = true;
+    try {
+      const response = await axios.get("http://localhost:8000/api/notificaciones/");
+      const fetchedNotifications: Notification[] = response.data.map((n: any) => ({
+        id: n.id,
+        type: n.notification_type,
+        message: n.message,
+        data: n.data,
+        created_at: n.created_at,
+        read: n.is_read,
+      }));
+      // Filtrar duplicados basados en ID
+      const uniqueNotifications = fetchedNotifications.filter(
+        (n, index, self) => self.findIndex((x) => x.id === n.id) === index
+      );
+      setNotifications(uniqueNotifications);
+      setUnreadCount(uniqueNotifications.filter((n) => !n.read).length);
+    } catch (error: any) {
+      setError(`Error al cargar las notificaciones: ${error.message}`);
+    } finally {
+      isFetching.current = false;
     }
   }, [user?.id]);
 
-  // Guardar notificaciones en localStorage
+  const fetchNotificationsDebounced = useCallback(
+    debounce(fetchNotifications, 1000),
+    [fetchNotifications]
+  );
+
   useEffect(() => {
-    if (user?.id && notifications.length > 0) {
-      try {
-        localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
-      } catch (error) {
-        console.error("Error al guardar notificaciones en localStorage:", error);
-      }
-    }
-  }, [notifications, user?.id]);
-
-  const addNotification = useCallback(
-    (notification: Notification) => {
-      if (!notification?.id || !notification?.message || !notification?.timestamp || !notification?.source) {
-        console.warn("Notificación inválida recibida:", notification);
-        return;
-      }
-
-      setNotifications((prev) => {
-        const exists = prev.some((n) => n.id === notification.id);
-        if (!exists) {
-          const newNotification: PersistentNotification = {
-            ...notification,
-            read: false,
-          };
-          const updatedNotifications = [newNotification, ...prev].slice(0, 50);
-          setUnreadCount((prevUnread) => prevUnread + 1);
-          return updatedNotifications;
+    if (user?.id) {
+      fetchNotificationsDebounced();
+    } else {
+      const timer = setInterval(() => {
+        if (user?.id) {
+          fetchNotificationsDebounced();
+          clearInterval(timer);
         }
-        return prev;
-      });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [fetchNotificationsDebounced, user?.id]);
+
+  const addNotification = useCallback((notification: Notification) => {
+    setNotifications((prev) => {
+      // Verificar duplicados por ID y created_at
+      const exists = prev.some(
+        (n) => n.id === notification.id && n.created_at === notification.created_at
+      );
+      if (!exists) {
+        const updatedNotifications = [notification, ...prev].slice(0, 50);
+        setUnreadCount((prevUnread) => prevUnread + (notification.read ? 0 : 1));
+        return updatedNotifications;
+      }
+      return prev;
+    });
+  }, []);
+
+  const markAsRead = useCallback(
+    async (id: string) => {
+      try {
+        await axios.post("http://localhost:8000/api/notificaciones/", { action: "mark_read", notification_id: id });
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === id && !n.read ? { ...n, read: true } : n
+          )
+        );
+        setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
+      } catch (error: any) {
+        setError(`Error al marcar la notificación como leída: ${error.message}`);
+      }
     },
     []
   );
 
-  const markAllAsRead = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => (n.read ? n : { ...n, read: true })));
-    setUnreadCount(0);
-  }, []);
-
   const deleteNotification = useCallback(
-    (id: string) => {
-      setNotifications((prev) => {
-        const notificationToDelete = prev.find((n) => n.id === id);
-        const updatedNotifications = prev.filter((n) => n.id !== id);
-
-        if (notificationToDelete && !notificationToDelete.read) {
-          setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
-        }
-
-        if (user?.id) {
-          try {
-            localStorage.setItem(`notifications_${user.id}`, JSON.stringify(updatedNotifications));
-          } catch (error) {
-            console.error("Error al guardar notificaciones en localStorage:", error);
+    async (id: string) => {
+      try {
+        await axios.post("http://localhost:8000/api/notificaciones/", { action: "delete", notification_id: id });
+        setNotifications((prev) => {
+          const notificationToDelete = prev.find((n) => n.id === id);
+          const updatedNotifications = prev.filter((n) => n.id !== id);
+          if (notificationToDelete && !notificationToDelete.read) {
+            setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
           }
-        }
-
-        return updatedNotifications;
-      });
+          return updatedNotifications;
+        });
+      } catch (error: any) {
+        setError(`Error al eliminar la notificación: ${error.message}`);
+      }
     },
-    [user?.id]
+    []
   );
 
-  const clearAllNotifications = useCallback(() => {
-    setNotifications([]);
-    setUnreadCount(0);
-
-    if (user?.id) {
-      localStorage.removeItem(`notifications_${user.id}`);
+  const clearAllNotifications = useCallback(async () => {
+    try {
+      await axios.post("http://localhost:8000/api/notificaciones/", { action: "clear_all" });
+      setNotifications([]);
+      setUnreadCount(0);
+      setConfirmClearOpen(false);
+    } catch (error: any) {
+      setError(`Error al limpiar todas las notificaciones: ${error.message}`);
     }
-  }, [user?.id]);
+  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-    markAllAsRead();
   };
 
   const handleClose = () => {
@@ -159,31 +164,82 @@ const Notificacion: React.FC = () => {
 
   const handleConfirmClear = () => {
     clearAllNotifications();
-    setConfirmClearOpen(false);
   };
 
   const handleCancelClear = () => {
     setConfirmClearOpen(false);
   };
 
-  // Llamar a los hooks de WebSocket en el nivel superior
-  useActivityNotifications(user?.id, addNotification);
-  useBodegaNotifications(user?.id, addNotification);
-  usePlagaNotifications(user?.id, addNotification);
+  const handleError = (error: string) => {
+    setError(error);
+  };
+
+  const handleCloseError = () => {
+    setError(null);
+  };
+
+  const handleRedirect = (notification: Notification) => {
+    if (!notification.read) {
+      markAsRead(notification.id);
+    }
+    if (notification.type === "ACTIVIDAD_ASIGNADA") {
+      window.location.href = `/actividades/${notification.data.actividad_id}`;
+    } else if (notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") {
+      window.location.href = `/insumos/${notification.data.insumo_id}`;
+    } else if (notification.type === "PEST_ALERT") {
+      window.location.href = `/cultivo/detallereporteplaga/${notification.data.reporte_plaga_id}`;
+    }
+  };
+
+  const getIconForNotification = (type: string) => {
+    switch (type) {
+      case "ACTIVIDAD_ASIGNADA":
+        return <AssignmentIcon sx={{ color: "#2e7d32" }} />;
+      case "INSUMO_CADUCANDO":
+        return <TimerIcon sx={{ color: "#ffb300" }} />;
+      case "INSUMO_AGOTADO":
+        return <WarningIcon sx={{ color: "#d32f2f" }} />;
+      case "PEST_ALERT":
+        return <BugReportIcon sx={{ color: "#d81b60" }} />;
+      default:
+        return <NotificationsIcon sx={{ color: "#757575" }} />;
+    }
+  };
+
+  const userId = user?.id?.toString();
+
+  useNotifications(userId, addNotification, handleError);
 
   if (!user?.id) {
-    return null; // O <CircularProgress size={24} />
+    return null;
   }
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
       <IconButton
         onClick={handleClick}
-        sx={{ color: "#fff" }}
+        sx={{ color: "#fff", "&:hover": { bgcolor: "rgba(255, 255, 255, 0.1)" } }}
         aria-label="notificaciones"
       >
-        <Badge badgeContent={unreadCount} color="error">
-          <NotificationsIcon sx={{ color: "#fff" }} />
+        <Badge
+          badgeContent={unreadCount > 0 ? "!" : null}
+          color="error"
+          sx={{
+            "& .MuiBadge-badge": {
+              width: 16,
+              height: 16,
+              borderRadius: "50%",
+              top: 6,
+              right: 6,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 12,
+              fontWeight: "bold",
+            },
+          }}
+        >
+          <NotificationsIcon sx={{ fontSize: 28, color: "#fff" }} />
         </Badge>
       </IconButton>
 
@@ -199,17 +255,23 @@ const Notificacion: React.FC = () => {
             maxHeight: 500,
             overflow: "auto",
             mt: 1,
+            bgcolor: "#f5f5f5",
+            borderRadius: 2,
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
           },
         }}
       >
-        <Box sx={{ p: 1, borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}>
+        <Box sx={{ p: 2, borderBottom: "1px solid rgba(0, 0, 0, 0.12)", bgcolor: "#fff" }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="subtitle1">Notificaciones</Typography>
+            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#2e7d32" }}>
+              Notificaciones
+            </Typography>
             {notifications.length > 0 && (
               <Button
                 size="small"
                 color="error"
                 onClick={handleClearAllClick}
+                sx={{ textTransform: "none", fontWeight: "medium" }}
               >
                 Limpiar todas
               </Button>
@@ -218,8 +280,10 @@ const Notificacion: React.FC = () => {
         </Box>
 
         {notifications.length === 0 ? (
-          <MenuItem>
-            <Typography variant="body2">No hay notificaciones</Typography>
+          <MenuItem sx={{ justifyContent: "center", py: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              No hay notificaciones
+            </Typography>
           </MenuItem>
         ) : (
           notifications.map((notification) => (
@@ -227,27 +291,76 @@ const Notificacion: React.FC = () => {
               key={notification.id}
               dense
               sx={{
-                borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
                 "&:last-child": { borderBottom: "none" },
-                bgcolor: notification.read ? "background.paper" : "action.selected",
+                bgcolor: notification.read ? "#fff" : "#e8f5e9",
+                "&:hover": { bgcolor: notification.read ? "#f5f5f5" : "#c8e6c9" },
+                py: 1.5,
               }}
             >
-              <Box sx={{ py: 1, width: "100%" }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography>{notification.message}</Typography>
-                  </Box>
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteNotification(notification.id);
-                    }}
-                    sx={{ ml: 1 }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
+              <Box sx={{ display: "flex", alignItems: "flex-start", width: "100%" }}>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {getIconForNotification(notification.type)}
+                </ListItemIcon>
+                <Box sx={{ flexGrow: 1 }}>
+                  <List dense sx={{ p: 0 }}>
+                    {notification.message.split("\n").map((line, index) => (
+                      <ListItem key={index} sx={{ py: 0.25 }}>
+                        <ListItemText
+                          primary={line}
+                          primaryTypographyProps={{
+                            variant: "body2",
+                            fontWeight:
+                              line.startsWith("Se te ha asignado") ||
+                              line.startsWith("El insumo") ||
+                              line.startsWith("Se ha detectado una plaga") ||
+                              line.startsWith("Nuevo reporte de plaga") ||
+                              line.startsWith("El estado del reporte de plaga")
+                                ? "bold"
+                                : "normal",
+                            color: "#333",
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                  {notification.type !== "OTHER" ? (
+                    <Button
+                      size="small"
+                      onClick={() => handleRedirect(notification)}
+                      sx={{
+                        textTransform: "none",
+                        color: "#2e7d32",
+                        fontWeight: "medium",
+                        mt: 0.5,
+                        "&:hover": { bgcolor: "rgba(46, 125, 50, 0.1)" },
+                      }}
+                    >
+                      {notification.type === "ACTIVIDAD_ASIGNADA" && "Ver Actividad"}
+                      {(notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") &&
+                        "Ver Insumo"}
+                      {notification.type === "PEST_ALERT" && "Ver Reporte"}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      disabled
+                      sx={{ textTransform: "none", color: "#757575", mt: 0.5 }}
+                    >
+                      Sin acción
+                    </Button>
+                  )}
                 </Box>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteNotification(notification.id);
+                  }}
+                  sx={{ ml: 1, color: "#757575", "&:hover": { color: "#d32f2f" } }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
               </Box>
             </MenuItem>
           ))
@@ -259,24 +372,50 @@ const Notificacion: React.FC = () => {
         onClose={handleCancelClear}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        sx={{ "& .MuiDialog-paper": { borderRadius: 2, p: 2 } }}
       >
-        <DialogTitle id="alert-dialog-title">¿Limpiar todas las notificaciones?</DialogTitle>
+        <DialogTitle id="alert-dialog-title" sx={{ fontWeight: "bold", color: "#2e7d32" }}>
+          ¿Limpiar todas las notificaciones?
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" sx={{ color: "#333" }}>
             Esta acción eliminará todas las notificaciones. ¿Estás seguro?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelClear} color="primary">
+          <Button
+            onClick={handleCancelClear}
+            sx={{ textTransform: "none", color: "#757575" }}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleConfirmClear} color="error" autoFocus>
+          <Button
+            onClick={handleConfirmClear}
+            color="error"
+            sx={{ textTransform: "none", fontWeight: "medium" }}
+            autoFocus
+          >
             Limpiar
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          sx={{ width: "100%", bgcolor: "#d32f2f", color: "#fff" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
 
-export default Notificacion;
+export default React.memo(Notificacion);

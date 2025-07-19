@@ -8,8 +8,7 @@ import { Herramienta } from "@/types/inventario/Herramientas";
 import { Switch } from "@heroui/react";
 
 const HerramientaPage: React.FC = () => {
-  const [herramienta, setHerramienta] = useState<Herramienta>({
-    id: 0,
+  const [herramienta, setHerramienta] = useState<Omit<Herramienta, "id">>({
     nombre: "",
     descripcion: "",
     cantidad: 0,
@@ -17,6 +16,7 @@ const HerramientaPage: React.FC = () => {
     fecha_registro: new Date().toISOString(),
     activo: true,
     precio: 0,
+    cantidad_disponible: 0,
   });
 
   const mutation = useRegistrarHerramienta();
@@ -27,7 +27,6 @@ const HerramientaPage: React.FC = () => {
     mutation.mutate(herramienta, {
       onSuccess: () => {
         setHerramienta({
-          id: 0,
           nombre: "",
           descripcion: "",
           cantidad: 0,
@@ -35,11 +34,11 @@ const HerramientaPage: React.FC = () => {
           fecha_registro: new Date().toISOString(),
           activo: true,
           precio: 0,
+          cantidad_disponible: 0,
         });
       },
     });
   };
-
   const formatPrice = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, "");
     return numericValue ? Number(numericValue) : 0;

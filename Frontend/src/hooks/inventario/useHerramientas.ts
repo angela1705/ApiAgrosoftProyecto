@@ -16,7 +16,6 @@ const fetchHerramientas = async (): Promise<Herramienta[]> => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -42,7 +41,6 @@ const registrarHerramienta = async (herramienta: Omit<Herramienta, "id">) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -93,7 +91,6 @@ const actualizarHerramienta = async (id: number, herramienta: Omit<Herramienta, 
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
@@ -136,7 +133,6 @@ const eliminarHerramienta = async (id: number) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data);
         throw error;
     }
 };
