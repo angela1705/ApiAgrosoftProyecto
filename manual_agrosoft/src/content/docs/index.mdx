@@ -1,23 +1,18 @@
 ---
-title: Bienvenido a agrosis API
-description: Get started building your docs site with Starlight.
+title: Bienvenido a agrosis API 
+description: Get started building tu sitio con Starlight.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
   image:
     file: ../../assets/houston.webp
-  actions:
-    - text: Ir a la documentación
-      link: /guides/example/
-      icon: right-arrow
-    - text: Ir a manual de usuarios
-      link: /second/second_guides/intro/
-      icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+<div style="display: flex; gap: 1rem; margin-top: 1.5rem">
+  <a href="http://localhost:4321/guides/intro/" style="padding: 0.75rem 1.5rem; background-color: rgba(39, 163, 95, 0.15); color: #27643a; border: 2px solid #27a35f; border-radius: 0.5rem; text-decoration: none;">
+    Ir a la documentación
+  </a>
+  <a href="http://localhost:4322/guides/intro/" style="padding: 0.75rem 1.5rem; background-color: rgba(33, 140, 78, 0.15); color: #1e5936; border: 2px solid #218c4e; border-radius: 0.5rem; text-decoration: none;">
+    Ir al manual de usuario
+  </a>
+</div>
 
