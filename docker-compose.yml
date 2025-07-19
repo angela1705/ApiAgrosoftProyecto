@@ -9,7 +9,7 @@ services:
     tty: true
 
   backend:
-    image: juan66016/agrosoft_backend:latest
+    image: WMauricioDev/agrosoft_backend:latest
     ports:
       - "8000:8000"
     depends_on:
@@ -34,9 +34,15 @@ services:
       - "5433:5432"
 
   documentacion:
-    image: juan66016/agrosoft_documentacion:latest
+    image: juan66016/agrosoft_documentacion:1
     ports:
       - "4321:4321"
+    restart: unless-stopped
+
+  manual:
+    image: juan66016/agrosoft_manual:1
+    ports:
+      - "4322:4322"
     restart: unless-stopped
 
 volumes:
