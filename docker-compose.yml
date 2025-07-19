@@ -8,11 +8,13 @@ services:
 
   backend:
     image: wmauriciodev/backend_agrosoft:3
+
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
+
     environment:
       - POSTGRES_DB=agrosoft
       - POSTGRES_USER=postgres
@@ -24,6 +26,7 @@ services:
     volumes:
       - ./Agrosis_API-dev:/app
     command: daphne -b 0.0.0.0 -p 8000 Agrosoft.asgi:application
+
 
   db:
     image: postgres:17
@@ -37,12 +40,25 @@ services:
     ports:
       - "5433:5432"
 
+  documentacion:
+    image: juan66016/agrosoft_documentacion:3
+    ports:
+      - "4321:4321"
+    restart: unless-stopped
+
+  manual:
+    image: juan66016/agrosoft_manual:3
+    ports:
+      - "4322:4322"
+    restart: unless-stopped
+
   redis:
     image: redis:7
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+
 
 volumes:
   postgres_data:
