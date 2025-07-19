@@ -4,7 +4,6 @@ import { useSensores } from "@/hooks/iot/sensores/useSensores";
 import { useUpdateSensor } from "@/hooks/iot/sensores/usePutSensor";
 import { useDeleteSensor } from "@/hooks/iot/sensores/useDeleteSensor";
 import { useToggleSensor } from "@/hooks/iot/sensores/useToggleSensor";
-import { useBancales } from "@/hooks/cultivo/usebancal";
 import { useNavigate } from "react-router-dom";
 import Tabla from "@/components/globales/Tabla";
 import { ModalSensor } from "@/components/Iot/ModalSensor";
@@ -21,7 +20,6 @@ export default function ListarSensoresPage() {
   const updateSensor = useUpdateSensor();
   const deleteSensor = useDeleteSensor();
   const toggleSensor = useToggleSensor();
-  const { data: bancales } = useBancales();
   const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

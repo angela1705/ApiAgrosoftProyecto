@@ -1,6 +1,6 @@
 import ReuModal from "@/components/globales/ReuModal";
 import { ReuInput } from "@/components/globales/ReuInput";
-import { Sensor, TipoSensor } from "@/types/iot/type";
+import { Sensor } from "@/types/iot/type";
 import { useBancales } from "@/hooks/cultivo/usebancal";
 import { useGetTipoSensores } from "@/hooks/iot/sensores/useGetTipoSensores";
 import { useModalSensorForm } from "@/hooks/iot/sensores/useModalSensorForm";
