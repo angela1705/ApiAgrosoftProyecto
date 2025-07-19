@@ -16,7 +16,7 @@ class Sensor(models.Model):
     tipo_sensor = models.ForeignKey(
         TipoSensor,
         on_delete=models.PROTECT,
-        related_name='sensores'
+        related_name='sensores' 
     )
     descripcion = models.TextField(blank=True)
     bancal = models.ForeignKey(
