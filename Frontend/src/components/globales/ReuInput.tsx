@@ -33,9 +33,13 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
   onChange,
 }) => {
   return (
-    <div className="w-full px-1 sm:px-0">
+    <div className="w-full px-1 sm:px-0 mb-4">
+      {label && (
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
       <Input
-        label={label}
         type={type}
         placeholder={placeholder}
         variant={variant}
@@ -48,7 +52,6 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
         name={name}
         required={required}
         className="text-sm sm:text-base"
-        labelPlacement="outside"
       />
     </div>
   );
