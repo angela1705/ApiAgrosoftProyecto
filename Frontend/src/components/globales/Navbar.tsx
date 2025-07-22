@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/button";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -18,7 +18,6 @@ import {
   FaMap,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
-import { useNavbar } from "../../context/NavbarContext";
 import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
 import Sena from "../../assets/logo sena.png";
 import { useAuth } from "@/context/AuthContext"; 
@@ -109,57 +108,31 @@ const menuItemsBase = [
 ];
 
 export default function Navbar() {
-  const { isSidebarOpen, setSidebarOpen, expandedItems, setExpandedItems, navScrollPosition, setNavScrollPosition } = useNavbar();
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [expandedItems, setExpandedItems] = useState<{ [key: number]: boolean }>({});
   const navRef = useRef<HTMLElement>(null);
-  const { user } = useAuth(); 
-  const rol = user?.rol?.rol ?? ""; 
+  const { user } = useAuth();
+  const rol = user?.rol?.rol ?? "";
 
-const menuItemsFiltrados = menuItemsBase.filter(item => {
-  if (rol === "Pasante") {
-    return ![3, 15, 28, 35, 41].includes(item.id); // Oculta por ID
-  }
-  if (rol === "Invitado") {
-    return [1].includes(item.id); // Solo Inicio
-  }
-  return true;
-});
-
-  // Restaurar posición del scroll
-  useEffect(() => {
-    if (navRef.current) {
-      navRef.current.scrollTop = navScrollPosition;
+  const menuItemsFiltrados = menuItemsBase.filter(item => {
+    if (rol === "Pasante") {
+      return ![3, 15, 28, 35, 41].includes(item.id); // Oculta por ID
     }
-  }, [navScrollPosition]);
-
-  // Actualizar posición del scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      if (navRef.current) {
-        setNavScrollPosition(navRef.current.scrollTop);
-      }
-    };
-
-    const navElement = navRef.current;
-    if (navElement) {
-      navElement.addEventListener("scroll", handleScroll);
+    if (rol === "Invitado") {
+      return [1].includes(item.id); // Solo Inicio
     }
-
-    return () => {
-      if (navElement) {
-        navElement.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
+    return true;
+  });
 
   const toggleExpanded = (itemId: number) => {
-    setExpandedItems((prev) => ({
+    setExpandedItems((prev: { [key: number]: boolean }) => ({
       ...prev,
       [itemId]: !prev[itemId],
     }));
   };
 
   const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
+    setSidebarOpen((prev: boolean) => !prev);
   };
 
   return (
