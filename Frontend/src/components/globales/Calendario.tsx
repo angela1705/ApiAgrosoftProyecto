@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -6,19 +6,10 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import esLocale from '@fullcalendar/core/locales/es';
 import ReuModal from './ReuModal';
 import { addToast } from "@heroui/react";
+import { useEventosCalendario, useRegistrarEvento, useEliminarEvento } from '@/hooks/cultivo/useCalendario';
+import { CalendarioEventos } from '@/types/cultivo/Calendario';
 
 type EventType = 'timed' | 'allDay';
-
-interface CalendarEvent {
-  id: number;
-  title: string;
-  start: string;
-  allDay: boolean;
-  backgroundColor: string;
-  extendedProps: {
-    description?: string;
-  };
-}
 
 interface DateClickArg {
   dateStr: string;
@@ -36,44 +27,31 @@ interface EventClickArg {
 }
 
 const Calendario = () => {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const { data: events = [], isLoading, error } = useEventosCalendario();
+  const registrarEvento = useRegistrarEvento();
+  const eliminarEvento = useEliminarEvento();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<DateClickArg | null>(null);
-
   const [title, setTitle] = useState('');
   const [eventType, setEventType] = useState<EventType>('timed');
   const [time, setTime] = useState('');
   const [description, setDescription] = useState('');
 
-  useEffect(() => {
-    const savedEvents = localStorage.getItem('calendarEvents');
-    if (savedEvents) {
-      try {
-        const parsedEvents = JSON.parse(savedEvents);
-        setEvents(parsedEvents);
-      } catch (error) {
-        console.error('Error parsing saved events:', error);
-      }
-    }
-  }, []);
+  const [hasShownError, setHasShownError] = useState(false);
+  const [hasShownLoading, setHasShownLoading] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem('calendarEvents', JSON.stringify(events));
-  }, [events]);
+  if (isLoading && !hasShownLoading) {
+    addToast({ title: "Cargando", description: "Cargando eventos...", timeout: 2000, color: "default" });
+    setHasShownLoading(true);
+  }
 
-  const showToast = (options: {
-    title: string;
-    description?: string;
-    color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
-    timeout?: number;
-  }) => {
-    addToast({
-      title: options.title,
-      description: options.description,
-      color: options.color || "default",
-      timeout: options.timeout || 3000,
-    });
-  };
+  if (error && !hasShownError) {
+    addToast({ title: "Error", description: error.message || "Error al cargar los eventos", timeout: 4000, color: "danger" });
+    setHasShownError(true);
+  }
+
+  if (!isLoading && hasShownLoading) setHasShownLoading(false);
+  if (!error && hasShownError) setHasShownError(false);
 
   const handleDateClick = (arg: DateClickArg) => {
     setSelectedDate(arg);
@@ -86,11 +64,11 @@ const Calendario = () => {
       color: "danger",
       timeout: 5000,
       description: (
-        <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
           <button
             onClick={() => {
-              setEvents(events.filter(event => event.id !== parseInt(clickInfo.event.id)));
-              showToast({ title: 'Recordatorio eliminado', color: 'success' });
+              eliminarEvento.mutate(clickInfo.event.id);
+              clickInfo.event.remove();
             }}
             style={{
               padding: '6px 12px',
@@ -105,7 +83,7 @@ const Calendario = () => {
           </button>
           <button
             onClick={() => {
-              showToast({ title: 'Operación cancelada', color: 'secondary' });
+              addToast({ title: 'Operación cancelada', color: 'secondary' });
             }}
             style={{
               padding: '6px 12px',
@@ -125,31 +103,29 @@ const Calendario = () => {
 
   const handleModalConfirm = () => {
     if (!selectedDate || !title.trim() || (eventType === 'timed' && !time)) {
-      showToast({ title: 'Por favor llena todos los campos obligatorios.', color: 'danger' });
+      addToast({ title: 'Por favor llena todos los campos obligatorios.', color: 'danger' });
       return;
     }
 
-    const newEvent: CalendarEvent = {
-      id: Date.now(),
+    const newEvent: Omit<CalendarioEventos, 'id'> = {
       title: title.trim(),
       start: selectedDate.dateStr + (eventType === 'timed' ? `T${time}` : ''),
       allDay: eventType === 'allDay',
       backgroundColor: eventType === 'allDay' ? '#1890ff' : '#52c41a',
-      extendedProps: {
-        description
-      }
+      description: description,
     };
 
-    setEvents([...events, newEvent]);
-
-    setTitle('');
-    setEventType('timed');
-    setTime('');
-    setDescription('');
-    setIsModalVisible(false);
-
-    showToast({ title: 'Recordatorio agregado', color: 'success' });
+    registrarEvento.mutate(newEvent, {
+      onSuccess: () => {
+        setTitle('');
+        setEventType('timed');
+        setTime('');
+        setDescription('');
+        setIsModalVisible(false);
+      },
+    });
   };
+
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Calendario de Recordatorios</h1>
@@ -169,11 +145,12 @@ const Calendario = () => {
         selectable={true}
         dateClick={handleDateClick}
         eventClick={handleEventClick}
+        events={events}
         eventDisplay="block"
         eventTimeFormat={{
           hour: '2-digit',
           minute: '2-digit',
-          meridiem: false
+          meridiem: false,
         }}
       />
 

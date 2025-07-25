@@ -8,7 +8,7 @@ export interface Notification {
   data: any;
   created_at: string;
   read: boolean;
-  recipient_id?: string; // Agregar recipient_id
+  recipient_id?: string;
 }
 
 export const useNotifications = (
