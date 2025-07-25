@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useCosechaGraficas } from "@/hooks/cultivo/usecosechagrafica";
+import { useCosechaGraficas } from "@/hooks/graficas/usecosechagrafica";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { addToast } from "@heroui/react";

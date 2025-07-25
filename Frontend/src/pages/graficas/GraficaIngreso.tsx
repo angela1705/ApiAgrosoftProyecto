@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useVentaGraficas } from "@/hooks/reportes/useGraficaIngresos";
+import { useVentaGraficas } from "@/hooks/graficas/useGraficaIngresos";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { addToast } from "@heroui/react";

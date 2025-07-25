@@ -50,7 +50,7 @@ const actualizarTipoControl = async (id: number, tipoControl: TipoControl) => {
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error en la API:", error.response?.data);
+    // ...
     throw error;
   }
 };
