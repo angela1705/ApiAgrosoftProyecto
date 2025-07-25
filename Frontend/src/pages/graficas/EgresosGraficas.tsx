@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePagoGraficas } from "@/hooks/finanzas/useEgresosGrafica";
+import { usePagoGraficas } from "@/hooks/graficas/useEgresosGrafica";
 import DefaultLayout from "@/layouts/default";
 import { ReuInput } from "@/components/globales/ReuInput";
 import { addToast } from "@heroui/react";
