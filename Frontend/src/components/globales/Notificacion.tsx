@@ -336,10 +336,6 @@ const Notificacion: React.FC = () => {
                         "&:hover": { bgcolor: "rgba(46, 125, 50, 0.1)" },
                       }}
                     >
-                      {notification.type === "ACTIVIDAD_ASIGNADA" && "Ver Actividad"}
-                      {(notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") &&
-                        "Ver Insumo"}
-                      {notification.type === "PEST_ALERT" && "Ver Reporte"}
                     </Button>
                   ) : (
                     <Button

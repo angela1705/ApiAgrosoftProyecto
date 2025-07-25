@@ -43,8 +43,6 @@ export const useNotifications = (
 
   useEffect(() => {
     if (!userId) {
-      console.error("[useNotifications] No se proporcionó userId, omitiendo configuración de WebSocket");
-      onError("No se proporcionó un ID de usuario válido");
       return;
     }
 
