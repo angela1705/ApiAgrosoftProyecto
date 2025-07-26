@@ -26,7 +26,7 @@ const registrarCultivo = async (cultivo: Cultivo) => {
     }
 
     try {
-        console.log("Enviando datos al backend:", cultivo); 
+        // ...
         const response = await api.post(API_URL, cultivo, {
             headers: {
                 "Content-Type": "application/json",
@@ -35,7 +35,7 @@ const registrarCultivo = async (cultivo: Cultivo) => {
         });
         return response.data;
     } catch (error: any) {
-        console.error("Error en la API:", error.response?.data); 
+        // ...
         throw error;
     }
 };
@@ -90,7 +90,7 @@ const actualizarCultivo = async (id: number, cultivo: any) => {
       });
       return response.data;
     } catch (error: any) {
-      console.error("Error en la API:", error.response?.data);
+      // ...
       throw error;
     }
   };

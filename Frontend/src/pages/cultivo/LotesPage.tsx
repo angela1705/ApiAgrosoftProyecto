@@ -34,11 +34,10 @@ const LotesPage: React.FC = () => {
     latitud: isNaN(latitud) ? 0 : latitud,
     longitud: isNaN(longitud) ? 0 : longitud,
   };
-  console.log("Lote a enviar:", loteFinal);
+  // ...
 
   mutation.mutate(loteFinal, {
     onError: (error: any) => {
-      console.error("Error al registrar lote:", error.response?.data || error.message);
       alert("Error al registrar lote: " + JSON.stringify(error.response?.data));
     }
   });

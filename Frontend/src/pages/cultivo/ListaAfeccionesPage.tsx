@@ -56,8 +56,7 @@ const handleConfirmEstado = () => {
     estadoMutation.mutate(
       { id: selectedAfeccion.id, estado: nuevoEstado },
       {
-        onSuccess: (data) => {
-          console.log("Estado cambiado exitosamente:", data);
+        onSuccess: () => {
           setIsEstadoModalOpen(false);
           // Actualiza específicamente la afección modificada
           queryClient.setQueryData(['afecciones'], (old: AfeccionDetalle[] | undefined) => {
@@ -70,7 +69,6 @@ const handleConfirmEstado = () => {
           });
         },
         onError: (error) => {
-          console.error("Error al cambiar estado:", error);
           addToast({
             title: "Error",
             description: error.message || "No se pudo cambiar el estado",

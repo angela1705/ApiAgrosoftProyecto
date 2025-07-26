@@ -33,8 +33,8 @@ const InsumoPage: React.FC = () => {
     });
 
     const formatPrice = (value: string) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    return numericValue ? Number(numericValue) : 0;
+        const numericValue = value.replace(/[^0-9]/g, "");
+        return numericValue ? Number(numericValue) : 0;
     };
 
     const [nuevaUnidad, setNuevaUnidad] = useState<Omit<UnidadMedida, "id" | "fecha_creacion" | "creada_por_usuario">>({
@@ -76,8 +76,6 @@ const InsumoPage: React.FC = () => {
                 setIsUnidadModalOpen(false);
                 setNuevaUnidad({ nombre: "", descripcion: "" });
             },
-            onError: () => {
-            },
         });
     };
 
@@ -86,8 +84,6 @@ const InsumoPage: React.FC = () => {
             onSuccess: () => {
                 setIsTipoModalOpen(false);
                 setNuevoTipo({ nombre: "", descripcion: "" });
-            },
-            onError: () => {
             },
         });
     };

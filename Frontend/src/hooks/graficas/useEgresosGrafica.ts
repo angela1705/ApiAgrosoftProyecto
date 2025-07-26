@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
-import { Ingreso } from "@/types/reportes/Ingreso";
+import { PagoGraficaData } from "@/types/graficas/EgresosGrafica";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const API_URL = `${BASE_URL}/finanzas/venta/datos_graficas/`;
+const API_URL = `${BASE_URL}/finanzas/pago/datos_graficas`;
 
-const fetchVentaGraficas = async (fechaInicio: string, fechaFin: string): Promise<Ingreso> => {
+const fetchPagoGraficas = async (fechaInicio: string, fechaFin: string): Promise<PagoGraficaData> => {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No se encontró el token de autenticación.");
   
@@ -17,20 +17,20 @@ const fetchVentaGraficas = async (fechaInicio: string, fechaFin: string): Promis
   return response.data;
 };
 
-export const useVentaGraficas = (fechaInicio: string, fechaFin: string) => {
-  return useQuery<Ingreso, Error>({
-    queryKey: ["ventaGraficas", fechaInicio, fechaFin],
-    queryFn: () => fetchVentaGraficas(fechaInicio, fechaFin),
+export const usePagoGraficas = (fechaInicio: string, fechaFin: string) => {
+  return useQuery<PagoGraficaData, Error>({
+    queryKey: ["pagoGraficas", fechaInicio, fechaFin],
+    queryFn: () => fetchPagoGraficas(fechaInicio, fechaFin),
     meta: {
-      errorMessage: "Error al cargar los datos de ventas para las gráficas"
+      errorMessage: "Error al cargar los datos para las gráficas de pagos"
     },
     throwOnError: (error) => {
       addToast({ 
         title: "Error", 
-        description: error.message || "Error al cargar los datos de ventas", 
+        description: error.message || "Error al cargar los datos", 
         timeout: 3000 
       });
-      return false; 
+      return false;
     }
   });
 };
