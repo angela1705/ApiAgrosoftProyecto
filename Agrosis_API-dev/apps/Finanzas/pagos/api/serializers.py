@@ -42,6 +42,15 @@ class CalculoPagoSerializer(serializers.Serializer):
         fecha_inicio = validated_data['fecha_inicio']
         fecha_fin = validated_data['fecha_fin']
 
+        # Validar que no exista ya un pago para este usuario y rango de fechas
+        pago_existente = Pago.objects.filter(
+            usuario=usuario,
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin
+        ).exists()
+        if pago_existente:
+            raise ValidationError("Ya existe un pago calculado para este usuario y rango de fechas.")
+
         actividades = Actividad.objects.filter(
             usuarios=usuario,
             estado='COMPLETADA',
@@ -81,5 +90,4 @@ class CalculoPagoSerializer(serializers.Serializer):
             salario=salario
         )
         pago.actividades.set(actividades)
-        
         return pago

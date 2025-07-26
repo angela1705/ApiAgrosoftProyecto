@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Menu } from "lucide-react";
 import { Box, Typography } from "@mui/material";
 import UserMenu from "../usuarios/UserMenu";
@@ -7,10 +6,6 @@ import ErrorBoundary from "./ErrorBoundary";
 
 export const Header: React.FC = () => {
 
-  useEffect(() => {
-    console.log("[Header] Componente montado");
-    return () => console.log("[Header] Componente desmontado");
-  }, []);
 
 
   return (
