@@ -6,8 +6,6 @@ from apps.Cultivo.ReportePlaga.api.signals import notificar_reporte_plaga, notif
 @receiver(post_save, sender=ReportePlaga)
 def handle_reporte_plaga_save(sender, instance, created, **kwargs):
     if created:
-        # Notificar cuando se crea un nuevo reporte
         notificar_reporte_plaga(instance)
     else:
-        # Notificar cuando se actualiza el estado
         notificar_cambio_estado_plaga(instance)
