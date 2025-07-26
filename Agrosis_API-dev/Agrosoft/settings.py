@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'apps.Iot.evapotranspiracion',
     'apps.mapa',
     'apps.Cultivo.Notificacion',
+    'apps.Cultivo.calendario',
 ]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
