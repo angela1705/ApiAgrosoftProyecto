@@ -5,7 +5,7 @@ import { ReuInput } from "@/components/globales/ReuInput";
 import { addToast } from "@heroui/react";
 import Plot from "react-plotly.js";
 import Tabla from "@/components/globales/Tabla";
-import { ActividadCosto, ActividadConsolidada, PlotData } from "@/types/cultivo/ActividadCosto";
+import { ActividadCosto, ActividadConsolidada, PlotData } from "@/types/graficas/ActividadCosto";
 
 const ActividadCostosGraficasPage: React.FC = () => {
   const [fechaInicio, setFechaInicio] = useState<string>(

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/components/utils/axios"; 
 import { addToast } from "@heroui/react";
-import { CosechaGraficaData } from "@/types/cultivo/CosechaGraficas";
+import { CosechaGraficaData } from "@/types/graficas/CosechaGraficas";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/cultivo/cosechas/datos_graficas/`;
 

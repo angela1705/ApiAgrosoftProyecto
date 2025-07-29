@@ -92,7 +92,7 @@ const actualizarTipoActividad = async (id: number, tipoActividad: TipoActividad)
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error en la API:", error.response?.data);
+    // ...
     throw error;
   }
 };

@@ -46,8 +46,6 @@ const cambiarEstadoAfeccion = async (id: number, estado: 'ST' | 'EC' | 'EL') => 
   const token = localStorage.getItem("access_token");
   
   const url = `${API_URL}${id}/cambiar_estado/`;
-  console.log("URL de la petición:", url);
-  
   try {
     const response = await api.post(url, { estado }, {
       headers: { 
@@ -57,7 +55,6 @@ const cambiarEstadoAfeccion = async (id: number, estado: 'ST' | 'EC' | 'EL') => 
     });
     return response.data;
   } catch (error) {
-    console.error("Error en la petición:", error);
     throw error;
   }
 };

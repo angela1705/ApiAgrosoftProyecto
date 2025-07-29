@@ -18,7 +18,6 @@ import TipoActividadPage from "./pages/cultivo/TipoActividadPage";
 import LotesPage from "./pages/cultivo/LotesPage";
 import BancalPage from "./pages/cultivo/BancalPage";
 import EspeciePage from "./pages/cultivo/EspeciePage";
-import ProgramacionPage from "./pages/cultivo/ProgramacionPage";
 import CultivoPage from "./pages/cultivo/CultivoPage";
 import ActividadPage from "./pages/cultivo/ActividadPage";
 import ListaTipoEspeciePage from "./pages/cultivo/ListaTipoEspeciePage";
@@ -27,7 +26,6 @@ import ListarLotesPage from "./pages/cultivo/ListaLotesPage";
 import ListaBancalPage from "./pages/cultivo/ListaBancalPage";
 import ListaEspeciePage from "./pages/cultivo/ListaEspeciePage";
 import ListarCultivoPage from "./pages/cultivo/ListaCultivoPage";
-import ListaProgramacion from "./pages/cultivo/ListaProgramacion";
 import ListaActividadPage from "./pages/cultivo/ListaActividadPage";
 import TipoPlagaPage from "./pages/cultivo/TipoPlagaPage";
 import ListaTipoPlagaPage from "./pages/cultivo/ListaTipoPlagaPage";
@@ -37,9 +35,7 @@ import CosechaPage from "./pages/cultivo/CosechaPage";
 import ListaCosechasPage from "./pages/cultivo/ListaCosechaPage";
 import TipoControlPage from "./pages/cultivo/TipoControlPage";
 import ListaTipoControlPage from "./pages/cultivo/ListaTipoControlPage";
-import ProductosControlPage from "./pages/cultivo/ProductosControlPage";
-import ListaProductoControlPage from "./pages/cultivo/ListaProductosControlPage";
-import CosechaGraficasPage from "./pages/cultivo/CosechasGraficasPage";
+import CosechaGraficasPage from "./pages/graficas/CosechasGraficasPage";
 import RegistroReportePlaga from "./pages/cultivo/ReportePlaga";
 import ListaReportePlaga from "./pages/cultivo/ListaReportePlaga";
 import DetalleReportePlaga from "./pages/cultivo/DetalleReportePlaga";
@@ -51,7 +47,7 @@ import { TrazabilidadCosecha } from "./pages/cultivo/TrazabilidadCosecha";
 import TipoResiduoPage from "./pages/cultivo/TipoResiduoPage";
 import ResiduoPage from "./pages/cultivo/ResiduosPage";
 import ListaResiduoPage from "./pages/cultivo/ListaResiduosPage";
-import ActividadCostosGraficasPage from "./pages/cultivo/ActividadCostosGraficasPage";
+import ActividadCostosGraficasPage from "./pages/graficas/ActividadCostosGraficasPage";
 
 // Inventario
 import HerramientasPage from "./pages/inventario/HerramientasPage";
@@ -91,13 +87,13 @@ import ListaVentaPage from "./pages/finanzas/ListaVentaPage";
 import ListaSalarioPage from "./pages/finanzas/ListaSalarioPage";
 import ListaPagoPage from "./pages/finanzas/ListaPagoPage";
 import PagoPage from "./pages/finanzas/PagoPage";
-import EgresoPruebaGraficasPage from "./pages/finanzas/EgresosGraficas";
+import EgresoPruebaGraficasPage from "./pages/graficas/EgresosGraficas";
 import DetalleReportePago from "./pages/finanzas/ReporteEgresos";
 import CostoBeneficioPage from "./pages/finanzas/CostoBeneficioPage";
 
 // Reportes
 import Reportes from "./pages/reportes/Reportes";
-import GraficaIngreso from "./pages/reportes/GraficaIngreso";
+import GraficaIngreso from "./pages/graficas/GraficaIngreso";
 import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";
 
 const queryClient = new QueryClient();
@@ -165,8 +161,6 @@ const App: React.FC = () => {
             <Route path="/cultivo/listarbancal" element={<ListaBancalPage />} />
             <Route path="/cultivo/especies" element={<EspeciePage />} />
             <Route path="/cultivo/listarespecies" element={<ListaEspeciePage />} />
-            <Route path="/cultivo/programacion" element={<ProgramacionPage />} />
-            <Route path="/cultivo/listarprogramaciones" element={<ListaProgramacion />} />
             <Route path="/cultivo/cultivo" element={<CultivoPage />} />
             <Route path="/cultivo/listarcultivos" element={<ListarCultivoPage />} />
             <Route path="/cultivo/actividad" element={<ActividadPage />} />
@@ -193,8 +187,6 @@ const App: React.FC = () => {
             <Route path="/cultivo/listarcosechas" element={<ListaCosechasPage />} />
             <Route path="/cultivo/tipo_control" element={<TipoControlPage />} />
             <Route path="/cultivo/listartipocontrol" element={<ListaTipoControlPage />} />
-            <Route path="/cultivo/productoscontrol" element={<ProductosControlPage />} />
-            <Route path="/cultivo/listarproductoscontrol" element={<ListaProductoControlPage />} />
             <Route path="/graficas/cosechas" element={<CosechaGraficasPage />} />
 
             {/* Inventario */}

@@ -2,15 +2,18 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from apps.Cultivo.Notificacion.models import Notification
 from apps.Cultivo.ReportePlaga.api.serializers import ReportePlagaSerializer
+from apps.Usuarios.usuarios.models import Usuarios
+from apps.Usuarios.roles.models import Roles
 
-def notificar_reporte_plaga(reporte_plaga, usuarios_ids=None):
+def notificar_reporte_plaga(reporte_plaga, usuarios_ids=None):    
     channel_layer = get_channel_layer()
     
     serializer = ReportePlagaSerializer(reporte_plaga)
     reporte_data = serializer.data
     
     if usuarios_ids is None:
-        usuarios_ids = [reporte_plaga.usuario.id]
+        admin_instructor_roles = Roles.objects.filter(nombre__in=['administrador', 'instructor']).values_list('id', flat=True)
+        usuarios_ids = Usuarios.objects.filter(rol__id__in=admin_instructor_roles, is_active=True).values_list('id', flat=True)
     
     mensaje = (
         f"Nuevo reporte de plaga: {reporte_plaga.plaga.nombre} en bancal {reporte_plaga.bancal.nombre}\n"
@@ -19,7 +22,6 @@ def notificar_reporte_plaga(reporte_plaga, usuarios_ids=None):
     )
     
     for user_id in usuarios_ids:
-        # Crear notificación en la base de datos
         notification = Notification.objects.create(
             recipient_id=user_id,
             notification_type='PEST_ALERT',
@@ -27,9 +29,8 @@ def notificar_reporte_plaga(reporte_plaga, usuarios_ids=None):
             data={'reporte_plaga_id': reporte_plaga.id, 'reporte': reporte_data}
         )
         
-        # Enviar notificación por WebSocket
         async_to_sync(channel_layer.group_send)(
-            f'user_{user_id}',  # Usar el grupo existente
+            f'user_{user_id}',
             {
                 'type': 'send_notification',
                 'id': str(notification.id),
@@ -47,7 +48,8 @@ def notificar_cambio_estado_plaga(reporte_plaga, usuarios_ids=None):
     reporte_data = serializer.data
     
     if usuarios_ids is None:
-        usuarios_ids = [reporte_plaga.usuario.id]
+        admin_instructor_roles = Roles.objects.filter(nombre__in=['administrador', 'instructor']).values_list('id', flat=True)
+        usuarios_ids = Usuarios.objects.filter(rol__id__in=admin_instructor_roles, is_active=True).values_list('id', flat=True)
     
     mensaje = (
         f"El estado del reporte de plaga {reporte_plaga.plaga.nombre} en bancal {reporte_plaga.bancal.nombre} "
@@ -56,7 +58,6 @@ def notificar_cambio_estado_plaga(reporte_plaga, usuarios_ids=None):
     )
     
     for user_id in usuarios_ids:
-        # Crear notificación en la base de datos
         notification = Notification.objects.create(
             recipient_id=user_id,
             notification_type='PEST_ALERT',
@@ -64,9 +65,8 @@ def notificar_cambio_estado_plaga(reporte_plaga, usuarios_ids=None):
             data={'reporte_plaga_id': reporte_plaga.id, 'reporte': reporte_data}
         )
         
-        # Enviar notificación por WebSocket
         async_to_sync(channel_layer.group_send)(
-            f'user_{user_id}',  # Usar el grupo existente
+            f'user_{user_id}',
             {
                 'type': 'send_notification',
                 'id': str(notification.id),

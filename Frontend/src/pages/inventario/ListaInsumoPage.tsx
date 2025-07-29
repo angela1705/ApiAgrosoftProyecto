@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/default";
 import { useInsumos, useActualizarInsumo, useEliminarInsumo, useUnidadesMedida, useCrearUnidadMedida, useTiposInsumo, useCrearTipoInsumo } from "@/hooks/inventario/useInsumo";
 import ReuModal from "@/components/globales/ReuModal";
@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Insumo, UnidadMedida, TipoInsumo } from "@/types/inventario/Insumo";
 import { Plus } from 'lucide-react';
 import { Switch } from "@heroui/react";
+
 const formatCOPNumber = (value: number | string): string => {
     const num = typeof value === 'string' ? parseFloat(value.replace(/\./g, '')) : value;
     if (isNaN(num)) return '';
@@ -44,15 +45,6 @@ const ListaInsumoPage: React.FC = () => {
     const crearUnidadMedida = useCrearUnidadMedida();
     const crearTipoInsumo = useCrearTipoInsumo();
     const navigate = useNavigate();
-    const location = useLocation();
-
-    useEffect(() => {
-        console.log("Componente montado en:", location.pathname);
-        console.log("isLoading:", isLoading);
-        console.log("insumos:", insumos);
-        console.log("error:", error);
-        return () => console.log("Componente desmontado desde:", location.pathname);
-    }, [location.pathname, isLoading, insumos, error]);
 
     const columns = [
         { name: "Nombre", uid: "nombre" },
@@ -103,8 +95,6 @@ const ListaInsumoPage: React.FC = () => {
                 setIsUnidadModalOpen(false);
                 setNuevaUnidad({ nombre: "", descripcion: "" });
             },
-            onError: () => {
-            },
         });
     };
 
@@ -113,8 +103,6 @@ const ListaInsumoPage: React.FC = () => {
             onSuccess: () => {
                 setIsTipoModalOpen(false);
                 setNuevoTipo({ nombre: "", descripcion: "" });
-            },
-            onError: () => {
             },
         });
     };
@@ -230,7 +218,7 @@ const ListaInsumoPage: React.FC = () => {
                                         ...selectedInsumo,
                                         tipo_insumo: tiposInsumo?.find(t => t.id === Number(e.target.value)) || null
                                     })}
-                                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled.opacity-50"
                                     disabled={isLoadingTipos}
                                 >
                                     <option value="">Seleccione un tipo</option>
@@ -243,7 +231,7 @@ const ListaInsumoPage: React.FC = () => {
                             </div>
                             <button
                                 className="p-1 h-6 w-6 flex items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                onClick={() => setIsUnidadModalOpen(true)}
+                                onClick={() => setIsTipoModalOpen(true)}
                                 type="button"
                             >
                                 <Plus className="h-4 w-4" />
@@ -359,7 +347,7 @@ const ListaInsumoPage: React.FC = () => {
                 title="¿Estás seguro de eliminar este insumo?"
                 onConfirm={() => {
                     if (selectedInsumo && selectedInsumo.id !== undefined) {
-                        eliminarMutation.mutate(selectedInsumo.id, );
+                        eliminarMutation.mutate(selectedInsumo.id);
                     }
                 }}
             >
