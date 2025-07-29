@@ -11,13 +11,15 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,  
   ChartOptions,
   ChartData,
   ChartDataset,
 } from "chart.js";
 import { SensorChartsProps } from "@/types/iot/iotmqtt";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+// Registrar el plugin Filler
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, Filler);
 
 export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, selectedDataType, selectedSensor = "todos" }) => {
   // Datos para el gráfico de barras
@@ -27,6 +29,7 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
         (dato) =>
           dato[selectedDataType.key] !== null &&
           dato[selectedDataType.key] !== undefined &&
+          !isNaN(dato[selectedDataType.key]) && // Validar que el valor sea numérico
           (selectedSensor === "todos" || dato.device_code === selectedSensor.toString())
       )
       .sort((a, b) => (new Date(b.fecha_medicion || "").getTime() - new Date(a.fecha_medicion || "").getTime()))
@@ -55,6 +58,17 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
             : selectedDataType.key === "calidad_aire"
             ? "rgba(245, 158, 11, 0.2)"
             : "rgba(245, 158, 11, 0.2)",
+        borderColor:
+          selectedDataType.key === "temperatura"
+            ? "#dc2626"
+            : selectedDataType.key === "humedad_ambiente"
+            ? "#2563eb"
+            : selectedDataType.key === "humedad_suelo"
+            ? "#10b981"
+            : selectedDataType.key === "calidad_aire"
+            ? "#f59e0b"
+            : "#f59e0b",
+        borderWidth: 1,
       },
     ];
 
@@ -68,6 +82,7 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
         (dato) =>
           dato[selectedDataType.key] !== null &&
           dato[selectedDataType.key] !== undefined &&
+          !isNaN(dato[selectedDataType.key]) && // Validar que el valor sea numérico
           (selectedSensor === "todos" || dato.device_code === selectedSensor.toString())
       )
       .sort((a, b) => (new Date(b.fecha_medicion || "").getTime() - new Date(a.fecha_medicion || "").getTime()))
@@ -152,6 +167,8 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
       y: {
         title: { display: true, text: selectedDataType.nombre },
         grid: { color: "rgba(0, 0, 0, 0.1)" },
+        min: selectedDataType.medida_minima,
+        max: selectedDataType.medida_maxima,
       },
       x: {
         title: { display: true, text: "Hora" },

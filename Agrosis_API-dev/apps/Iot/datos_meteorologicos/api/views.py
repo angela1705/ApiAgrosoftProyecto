@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -25,63 +25,67 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
     serializer_class = Datos_metereologicosSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['fk_sensor_id', 'fk_bancal_id', 'fecha_medicion']
-    authentication_classes = [JWTAuthentication]  # Definir autenticación por defecto
+    authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
-        if self.action == 'create':
-            return [AllowAny()]  # Permitir acción 'create' sin autenticación
-        return [IsAuthenticated()]  # Requerir autenticación para otras acciones
+        # Permitir creación sin autenticación, resto de acciones requieren autenticación
+        if self.request.method == 'POST':
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         try:
-            logger.info("Ejecutando get_queryset")
+            logger.info("[DatosMeteorologicosViewSet] Ejecutando get_queryset")
             queryset = super().get_queryset()
-            logger.info(f"Total de registros en queryset: {queryset.count()}")
+            logger.info(f"[DatosMeteorologicosViewSet] Total de registros en queryset: {queryset.count()}")
 
-            fecha_inicio = self.request.query_params.get('fecha_inicio', None)
-            fecha_fin = self.request.query_params.get('fecha_fin', None)
+            fecha_inicio = self.request.query_params.get('fecha_inicio')
+            fecha_fin = self.request.query_params.get('fecha_fin')
             if fecha_inicio and fecha_fin:
                 try:
-                    logger.info(f"Filtrando por rango de fechas: {fecha_inicio} a {fecha_fin}")
+                    logger.info(f"[DatosMeteorologicosViewSet] Filtrando por rango de fechas: {fecha_inicio} a {fecha_fin}")
                     fecha_inicio_dt = datetime.strptime(fecha_inicio, '%Y-%m-%d')
                     fecha_fin_dt = datetime.strptime(fecha_fin, '%Y-%m-%d') + timedelta(days=1)
                     queryset = queryset.filter(
                         fecha_medicion__gte=fecha_inicio_dt,
                         fecha_medicion__lt=fecha_fin_dt
                     )
-                    logger.info(f"Registros después de filtrar por fechas: {queryset.count()}")
+                    logger.info(f"[DatosMeteorologicosViewSet] Registros después de filtrar por fechas: {queryset.count()}")
                 except ValueError as e:
-                    logger.error(f"Formato de fecha inválido: {fecha_inicio} o {fecha_fin}, error: {str(e)}")
+                    logger.error(f"[DatosMeteorologicosViewSet] Formato de fecha inválido: {fecha_inicio} o {fecha_fin}, error: {str(e)}")
                     pass
 
-            fk_bancal_id = self.request.query_params.get('fk_bancal_id', None)
+            fk_bancal_id = self.request.query_params.get('fk_bancal_id')
             if fk_bancal_id:
-                logger.info(f"Filtrando por fk_bancal_id: {fk_bancal_id}")
+                logger.info(f"[DatosMeteorologicosViewSet] Filtrando por fk_bancal_id: {fk_bancal_id}")
                 queryset = queryset.filter(fk_bancal_id=fk_bancal_id)
-                logger.info(f"Registros después de filtrar por bancal: {queryset.count()}")
+                logger.info(f"[DatosMeteorologicosViewSet] Registros después de filtrar por bancal: {queryset.count()}")
 
             return queryset.order_by('-fecha_medicion')
         except Exception as e:
-            logger.error(f"Error en get_queryset: {str(e)}")
+            logger.error(f"[DatosMeteorologicosViewSet] Error en get_queryset: {str(e)}")
             raise
 
     def create(self, request, *args, **kwargs):
         try:
-            logger.info(f"Ejecutando create con datos: {request.data}")
+            logger.info(f"[DatosMeteorologicosViewSet] Ejecutando create con datos: {request.data}")
             serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            logger.info(f"Datos registrados con éxito: {serializer.data}")
-            return Response(serializer.data, status=201, headers=headers)
+            if serializer.is_valid(raise_exception=True):
+                self.perform_create(serializer)
+                headers = self.get_success_headers(serializer.data)
+                logger.info(f"[DatosMeteorologicosViewSet] Datos registrados con éxito: {serializer.data}")
+                return Response(serializer.data, status=201, headers=headers)
+            else:
+                logger.error(f"[DatosMeteorologicosViewSet] Datos inválidos: {serializer.errors}")
+                return Response({"error": serializer.errors}, status=400)
         except Exception as e:
-            logger.error(f"Error en create: {str(e)}")
+            logger.error(f"[DatosMeteorologicosViewSet] Error en create: {str(e)}")
             return Response({"error": str(e)}, status=400)
 
     @action(detail=False, methods=['get'])
     def reporte_pdf(self, request):
         try:
-            logger.info("Ejecutando reporte_pdf a las %s", datetime.now().strftime('%H:%M:%S'))
+            logger.info("[DatosMeteorologicosViewSet] Ejecutando reporte_pdf a las %s", datetime.now().strftime('%H:%M:%S'))
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="reporte_datos_meteorologicos.pdf"'
 
@@ -91,7 +95,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
 
             logo_path = "media/logo/def_AGROSIS_LOGOTIC.png"
             if not os.path.exists(logo_path):
-                logger.error(f"Logo no encontrado en {logo_path}")
+                logger.error(f"[DatosMeteorologicosViewSet] Logo no encontrado en {logo_path}")
                 return Response({"error": "Logo no encontrado"}, status=500)
 
             logo = Image(logo_path, width=50, height=35)
@@ -120,7 +124,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
 
             datos = self.get_queryset()
             total_datos = datos.count()
-            logger.info(f"Total de datos para el reporte: {total_datos}")
+            logger.info(f"[DatosMeteorologicosViewSet] Total de datos para el reporte: {total_datos}")
 
             daily_averages = datos.annotate(date=TruncDate('fecha_medicion')).values('date').annotate(
                 avg_temp=Avg('temperatura'),
@@ -142,8 +146,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
                     fecha = dato.fecha_medicion.strftime('%Y-%m-%d %H:%M') if dato.fecha_medicion else "N/A"
                     sensor_nombre = dato.fk_sensor.nombre if dato.fk_sensor and hasattr(dato.fk_sensor, 'nombre') else "N/A"
                     bancal_nombre = dato.fk_bancal.nombre if dato.fk_bancal and hasattr(dato.fk_bancal, 'nombre') else "N/A"
-                    if bancal_nombre.lower() == "tataat":
-                        bancal_nombre = "tataaf"
                     data_datos.append([
                         str(dato.id),
                         sensor_nombre,
@@ -153,7 +155,7 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
                         fecha
                     ])
                 except Exception as e:
-                    logger.error(f"Error al procesar dato {dato.id}: {str(e)}")
+                    logger.error(f"[DatosMeteorologicosViewSet] Error al procesar dato {dato.id}: {str(e)}")
                     continue
 
             tabla_datos = Table(data_datos, colWidths=[30, 60, 60, 40, 40, 80])
@@ -205,8 +207,8 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(Paragraph(resumen_texto, styles['Normal']))
 
             doc.build(elementos)
-            logger.info("Reporte PDF generado exitosamente")
+            logger.info("[DatosMeteorologicosViewSet] Reporte PDF generado exitosamente")
             return response
         except Exception as e:
-            logger.error(f"Error en reporte_pdf: {str(e)}")
+            logger.error(f"[DatosMeteorologicosViewSet] Error en reporte_pdf: {str(e)}")
             return Response({"error": str(e)}, status=500)
