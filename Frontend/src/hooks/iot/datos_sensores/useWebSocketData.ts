@@ -8,7 +8,6 @@ export const useWebSocketData = (sensores: Sensor[]) => {
   useEffect(() => {
     const ws = new WebSocket("ws://192.168.1.12:8000/ws/realtime/");
     ws.onopen = () => {
-      console.log("Conexión WebSocket establecida");
       addToast({
         title: "Éxito",
         description: "Conexión WebSocket establecida",
@@ -17,7 +16,6 @@ export const useWebSocketData = (sensores: Sensor[]) => {
       });
     };
     ws.onmessage = (event: MessageEvent) => {
-      console.log("Mensaje recibido del WebSocket:", event.data);
       try {
         const message = JSON.parse(event.data);
         if (message.type === "weather_data") {
@@ -34,7 +32,6 @@ export const useWebSocketData = (sensores: Sensor[]) => {
           }
         }
       } catch (error) {
-        console.error("Error al parsear mensaje WebSocket:", error);
         addToast({
           title: "Error",
           description: "Error al procesar datos en tiempo real",
@@ -43,8 +40,7 @@ export const useWebSocketData = (sensores: Sensor[]) => {
         });
       }
     };
-    ws.onerror = (error) => {
-      console.error("Error en WebSocket:", error);
+    ws.onerror = () => {
       addToast({
         title: "Error",
         description: "Error en la conexión WebSocket",
@@ -53,7 +49,6 @@ export const useWebSocketData = (sensores: Sensor[]) => {
       });
     };
     ws.onclose = () => {
-      console.log("Conexión WebSocket cerrada");
       addToast({
         title: "Advertencia",
         description: "Conexión WebSocket cerrada, intentando reconectar...",

@@ -28,14 +28,12 @@ export const useSensores = () => {
     );
 
     client.on('connect', () => {
-      console.log('[useSensores] Conectado a MQTT');
       setMqttClient(client);
       setIsLoading(false);
       setError(null);
     });
 
-    client.on('error', (err) => {
-      console.error('[useSensores] Error MQTT:', err);
+    client.on('error', () => {
       addToast({
         title: 'Error',
         description: 'No se pudo conectar al broker MQTT',
@@ -53,7 +51,6 @@ export const useSensores = () => {
 
   useEffect(() => {
     const unsubscribe = subscribeToMqtt(({ realTimeData, isConnected, error }) => {
-      console.log('[useSensores] Datos MQTT recibidos:', realTimeData);
       setRealTimeData(realTimeData);
       setIsLoading(!isConnected && !error);
       setError(error);
@@ -66,9 +63,6 @@ export const useSensores = () => {
         Date.now() - lastDataTimestampRef.current > DATA_TIMEOUT
       ) {
         setRealTimeData([]);
-        console.warn(
-          '[useSensores] No se han recibido datos en 15 segundos, limpiando tarjetas.'
-        );
       }
     }, 1000);
 

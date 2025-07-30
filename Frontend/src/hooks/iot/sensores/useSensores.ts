@@ -8,16 +8,13 @@ const API_URL = `${BASE_URL}/iot/sensores/`;
 const fetchSensores = async (): Promise<Sensor[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) {
-    console.error("[useSensores] No se encontró el token de autenticación.");
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  console.log("[useSensores] Enviando GET a /iot/sensores/");
   try {
     const response = await api.get(API_URL, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("[useSensores] Respuesta de GET /iot/sensores/: ", response.data);
     return response.data.map((sensor: any) => ({
       id: sensor.id || 0,
       nombre: sensor.nombre || "Sin nombre",
@@ -33,11 +30,6 @@ const fetchSensores = async (): Promise<Sensor[]> => {
       bancal_nombre: sensor.bancal_nombre || "Sin bancal",
     }));
   } catch (error: any) {
-    console.error("[useSensores] Error en GET /iot/sensores/: ", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
     throw error;
   }
 };
@@ -46,12 +38,6 @@ export const useSensores = () => {
   const sensoresQuery = useQuery<Sensor[], Error>({
     queryKey: ["sensores"],
     queryFn: fetchSensores,
-  });
-
-  console.log("[useSensores] Estado actual: ", {
-    sensores: sensoresQuery.data,
-    isLoading: sensoresQuery.isLoading,
-    error: sensoresQuery.error,
   });
 
   return {

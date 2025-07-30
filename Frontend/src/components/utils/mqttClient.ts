@@ -34,18 +34,15 @@ const client = mqtt.connect(MQTT_HOST, {
 });
 
 // Manejo de eventos
-client.on('connect', () => {
-  console.log('Conectado a HiveMQ por MQTT');
+client.on('connect', () => { 
   isConnected = true;
   error = null;
   setTimeout(() => {
     client.subscribe([TOPIC_TEMP, TOPIC_HUM, TOPIC_SOIL, TOPIC_AIR, TOPIC_LIGHT], { qos: 0 }, (err) => {
-      if (err) {
-        console.error('Error al suscribirse:', err);
+      if (err) { 
         error = 'Error al suscribirse a los tópicos: ' + err.message;
       } else {
-        console.log('Suscrito a los tópicos:', [TOPIC_TEMP, TOPIC_HUM, TOPIC_SOIL, TOPIC_AIR, TOPIC_LIGHT]);
-      }
+ }
       notifyListeners();
     });
   }, 1000);
@@ -56,15 +53,13 @@ client.on('message', (topic, message) => {
     const payload = message.toString();
     // Separar device_code y valor
     const parts = payload.split(':');
-    if (parts.length !== 2) {
-      console.error(`Formato inválido en ${topic}: ${payload}`);
+    if (parts.length !== 2) { 
       return;
     }
     const device_code = parts[0].trim();
     const valueStr = parts[1].trim();
     const value = parseFloat(valueStr);
-    if (isNaN(value)) {
-      console.error(`Valor numérico inválido en ${topic}: ${valueStr}`);
+    if (isNaN(value)) { 
       return;
     }
     const newData: SensorData = {
@@ -78,25 +73,21 @@ client.on('message', (topic, message) => {
       fecha_medicion: new Date().toISOString(),
     };
     // Añadir nuevo registro sin sobrescribir
-    realTimeData = [...realTimeData, newData].slice(-50); // Limitar a los últimos 50 registros
-    console.log('Datos procesados:', newData); // Log para depuración
+    realTimeData = [...realTimeData, newData].slice(-50); // Limitar a los últimos 50 registros 
     notifyListeners();
-  } catch (err) {
-    console.error(`Error procesando mensaje MQTT en ${topic}:`, err);
+  } catch (err) { 
     error = 'Error al procesar datos MQTT';
     notifyListeners();
   }
 });
 
-client.on('error', (err) => {
-  console.error('Error MQTT:', err);
+client.on('error', (err) => { 
   error = 'Error de conexión MQTT: ' + err.message;
   isConnected = false;
   notifyListeners();
 });
 
-client.on('close', () => {
-  console.log('Conexión MQTT cerrada');
+client.on('close', () => { 
   isConnected = false;
   error = 'Conexión MQTT cerrada, intentando reconectar...';
   notifyListeners();
