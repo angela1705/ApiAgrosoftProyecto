@@ -11,26 +11,29 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler,  
+  Filler,
   ChartOptions,
   ChartData,
   ChartDataset,
 } from "chart.js";
 import { SensorChartsProps } from "@/types/iot/iotmqtt";
 
-// Registrar el plugin Filler
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, Filler);
 
 export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, selectedDataType, selectedSensor = "todos" }) => {
-  // Datos para el gráfico de barras
   const barChartData: ChartData<"bar", number[], string> = useMemo(() => {
     const filteredData = realTimeData
       .filter(
-        (dato) =>
-          dato[selectedDataType.key] !== null &&
-          dato[selectedDataType.key] !== undefined &&
-          !isNaN(dato[selectedDataType.key]) && // Validar que el valor sea numérico
-          (selectedSensor === "todos" || dato.device_code === selectedSensor.toString())
+        (dato) => {
+          const value = dato[selectedDataType.key];
+          return (
+            value !== null &&
+            value !== undefined &&
+            !isNaN(value) &&
+            typeof value === "number" &&
+            (selectedSensor === "todos" || dato.device_code === selectedSensor.toString())
+          );
+        }
       )
       .sort((a, b) => (new Date(b.fecha_medicion || "").getTime() - new Date(a.fecha_medicion || "").getTime()))
       .slice(0, 20);
@@ -75,15 +78,19 @@ export const SensorCharts: React.FC<SensorChartsProps> = ({ realTimeData, select
     return { labels, datasets };
   }, [realTimeData, selectedDataType, selectedSensor]);
 
-  // Datos para el gráfico de líneas
   const lineChartData: ChartData<"line", number[], string> = useMemo(() => {
     const filteredData = realTimeData
       .filter(
-        (dato) =>
-          dato[selectedDataType.key] !== null &&
-          dato[selectedDataType.key] !== undefined &&
-          !isNaN(dato[selectedDataType.key]) && // Validar que el valor sea numérico
-          (selectedSensor === "todos" || dato.device_code === selectedSensor.toString())
+        (dato) => {
+          const value = dato[selectedDataType.key];
+          return (
+            value !== null &&
+            value !== undefined &&
+            !isNaN(value) &&
+            typeof value === "number" &&
+            (selectedSensor === "todos" || dato.device_code === selectedSensor.toString())
+          );
+        }
       )
       .sort((a, b) => (new Date(b.fecha_medicion || "").getTime() - new Date(a.fecha_medicion || "").getTime()))
       .slice(0, 20);

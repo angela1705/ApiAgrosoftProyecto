@@ -82,15 +82,18 @@ const SensoresPage: React.FC = () => {
 
   const filteredData = useMemo(() => {
     return realTimeData.filter(
-      (d) =>
-        d.device_code === 'ESP32_001' &&
-        (d.temperatura != null ||
-         d.humedad_ambiente != null ||
-         d.humedad_suelo != null ||
-         d.calidad_aire != null ||
-         d.luminosidad != null)
+      (d) => {
+        const value = d[selectedDataType.key];
+        return (
+          d.device_code === 'ESP32_001' &&
+          value !== null &&
+          value !== undefined &&
+          !isNaN(value) &&
+          typeof value === 'number'
+        );
+      }
     );
-  }, [realTimeData]);
+  }, [realTimeData, selectedDataType]);
 
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
 
@@ -126,13 +129,17 @@ const SensoresPage: React.FC = () => {
         <div className='w-full max-w-7xl flex flex-col items-center gap-8'>
           <h1 className='text-3xl font-bold text-gray-800'>Panel de Sensores</h1>
 
-          {/* Tarjetas de métricas en tiempo real */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full'>
             {dataTypes.map((type, index) => {
               const latest = filteredData
-                .filter((d) => d[type.key] !== null && d[type.key] !== undefined && !isNaN(d[type.key]))
+                .filter(
+                  (d) => {
+                    const value = d[type.key];
+                    return value !== null && value !== undefined && !isNaN(value) && typeof value === 'number';
+                  }
+                )
                 .sort((a, b) => new Date(b.fecha_medicion || '').getTime() - new Date(a.fecha_medicion || '').getTime())[0];
-              const value = latest && typeof latest[type.key] === 'number' ? latest[type.key] : null;
+              const value = latest ? latest[type.key] as number : null;
               return (
                 <motion.div
                   key={type.key}
@@ -159,7 +166,7 @@ const SensoresPage: React.FC = () => {
                           : '#f59e0b',
                     }}
                   >
-                    {typeof value === 'number' ? value.toFixed(type.decimals) : 'N/A'}{' '}
+                    {value !== null ? value.toFixed(type.decimals) : 'N/A'}{' '}
                     {type.key === 'temperatura'
                       ? '°C'
                       : type.key === 'humedad_ambiente' || type.key === 'humedad_suelo'
@@ -173,10 +180,8 @@ const SensoresPage: React.FC = () => {
             })}
           </div>
 
-          {/* Tarjetas de promedios */}
-          <SensorStats realTimeData={filteredData} selectedSensor='todos' />
+          <SensorStats realTimeData={filteredData} selectedSensor='todos' selectedDataType={selectedDataType} />
 
-          {/* Botones */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full'>
             <motion.button
               className='bg-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold text-gray-700 hover:bg-gray-100 h-16'
@@ -205,7 +210,6 @@ const SensoresPage: React.FC = () => {
             </motion.button>
           </div>
 
-          {/* Selectores */}
           <div className='flex flex-col sm:flex-row items-center justify-center gap-4 w-full'>
             <DataTypeSelector
               selectedDataType={selectedDataType}
@@ -217,7 +221,6 @@ const SensoresPage: React.FC = () => {
             />
           </div>
 
-          {/* Gráficas o tabla */}
           <div className='w-full' ref={chartRef}>
             {selectedViewMode.id === 'realtime' ? (
               <SensorCharts
