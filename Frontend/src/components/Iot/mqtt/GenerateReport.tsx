@@ -5,7 +5,7 @@ import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
 import { SensorData, DataType } from "@/types/iot/iotmqtt";
 import { SensorCharts } from "./SensorCharts";
-import agrosoftLogo from "../../../assets/def_AGROSIS_LOGOTIC.png";
+import agrosoftLogo from "../../../assets/Agrosoft_Logo.png";
 import senaLogo from "../../../assets/logo sena.png";
 
 interface GenerateReportProps {
@@ -27,8 +27,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
     try {
       doc.addImage(agrosoftLogo, "PNG", margin, yPosition, 30, 15);
       doc.addImage(senaLogo, "PNG", 170, yPosition, 30, 15);
-    } catch (error) {
-      console.warn("Error al cargar los logos:", error);
+    } catch (error) { 
       doc.setFontSize(8);
       doc.text("No se pudieron cargar los logos.", margin, yPosition + 18);
     }
@@ -156,14 +155,12 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
         chartRef.current.style.opacity = "0";
         chartRef.current.style.position = "absolute";
         yPosition += imgHeight + 6;
-      } catch (error) {
-        console.error(`Error al capturar gráfico para ${type.nombre}:`, error);
+      } catch (error) { 
         doc.setFontSize(9);
         doc.text(`No se pudo generar el gráfico para ${type.nombre}.`, margin, yPosition);
         yPosition += 10;
       }
-    } else {
-      console.warn(`Ref no encontrado para el gráfico de ${type.nombre}`);
+    } else { 
       doc.setFontSize(9);
       doc.text(`No se encontró el gráfico para ${type.nombre}.`, margin, yPosition);
       yPosition += 10;
@@ -368,9 +365,7 @@ export const GenerateReport: React.FC<GenerateReportProps> = ({ realTimeData, da
       addPageNumber(doc, doc.getNumberOfPages());
 
       doc.save(`reporte_meteorologico_${new Date().toISOString().split("T")[0]}.pdf`);
-    } catch (error) {
-      console.error("Error al generar el PDF:", error);
-      alert("No se pudo generar el reporte. Verifique la consola para más detalles.");
+    } catch (error) { 
     } finally {
       setIsGenerating(false);
     }

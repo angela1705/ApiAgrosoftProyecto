@@ -161,7 +161,7 @@ El sistema listará las herramientas registradas, brindando al usuario la posibi
 El sistema deberá procesar y mostrar en tiempo real los datos de los sensores instalados en el sector agrícola, en un panel organizado y fácil de interpretar. Las métricas que se deben visualizar incluyen humedad, temperatura, luminosidad y otras variables clave. Cada variable debe actualizarse en tiempo real y mostrarse en cuadros independientes, con iconos representativos que faciliten la rápida identificación.
 
 #### **Diseño:**  
-![Ventana de Sensores en Tiempo Real](/public/prototipado_del_sistema/SensoresTiempoReal.png)  
+![Ventana de Sensores en Tiempo Real](/public/prototipado_del_sistema/11SENSORESTIEMPOREAL.jpeg)  
 
 ---
 
@@ -171,7 +171,7 @@ El sistema deberá procesar y mostrar en tiempo real los datos de los sensores i
 El sistema utilizará tecnología IoT para recopilar y transmitir en tiempo real los datos sobre la humedad en las eras. Esta información será presentada de manera clara y accesible, permitiendo a los usuarios monitorear y gestionar eficientemente la humedad del suelo en las áreas de cultivo.
 
 #### **Diseño:**  
-![Ventana de Humedad de las Eras](/public/prototipado_del_sistema/Humedad.png)  
+![Ventana de Humedad de las Eras](/public/prototipado_del_sistema/12.jpeg)  
 
 ---
 
@@ -181,7 +181,7 @@ El sistema utilizará tecnología IoT para recopilar y transmitir en tiempo real
 El sistema mostrará la información sobre la humedad ambiente recopilada mediante sensores IoT, presentando los datos en tiempo real para ofrecer información precisa y actualizada sobre los niveles de humedad en el entorno.
 
 #### **Diseño:**  
-![Ventana de Humedad Ambiente](/public/prototipado_del_sistema/HumedadAmbiente.png)  
+![Ventana de Humedad Ambiente](/public/prototipado_del_sistema/13.png)  
 
 ---
 
@@ -191,7 +191,7 @@ El sistema mostrará la información sobre la humedad ambiente recopilada median
 La información sobre la luminosidad se obtiene mediante sensores distribuidos en varios puntos, que envían datos en tiempo real a la base de datos. Estos datos son procesados y presentados de forma clara, facilitando la gestión de las condiciones de iluminación en el campo.
 
 #### **Diseño:**  
-![Ventana de Luminosidad](/public/prototipado_del_sistema/Luminosidad.png)  
+![Ventana de Luminosidad](/public/prototipado_del_sistema/14.png)  
 
 ---
 
@@ -211,7 +211,7 @@ Mediante un pluviómetro, se medirá la cantidad de lluvia en un área específi
 El sistema medirá y mostrará la temperatura en las áreas de cultivo utilizando sensores IoT. Los datos se recopilarán en tiempo real y se presentarán de manera clara, permitiendo a los usuarios monitorear las condiciones térmicas y optimizar la gestión de los recursos agrícolas.
 
 #### **Diseño:**  
-![Ventana de Temperatura](/public/prototipado_del_sistema/Temperatura.png)  
+![Ventana de Temperatura](/public/prototipado_del_sistema/16.png)  
 
 ---
 
@@ -251,8 +251,7 @@ El sistema integrará sensores y algoritmos para estimar la evapotranspiración 
 El sistema debe almacenar los datos capturados por los sensores en una base de datos, permitiendo su consulta y análisis histórico para la optimización agrícola y la detección de tendencias.
 
 #### **Diseño:**  
-![Ventana de Gestión Histórica de Datos](/public/prototipado_del_sistema/HistoricaDatos.png)  
-
+![Ventana de Gestión Histórica de Datos](/public/prototipado_del_sistema/20.1.png)  
 ---
 
 ### **2.21 Ventana de Registro, Listado y Edición de un Cultivo**
