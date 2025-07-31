@@ -4,7 +4,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { SensorData, TipoSensor, Sensor } from '@/types/iot/type';
-import { SensorCharts } from '@/components/Iot/sensores/SensorCharts'; // Cambiado de mqtt a sensores
+import { SensorCharts } from '@/components/Iot/sensores/SensorCharts'; 
 import agrosoftLogo from '@/assets/def_AGROSIS_LOGOTIC.png';
 import senaLogo from '@/assets/logo sena.png';
 

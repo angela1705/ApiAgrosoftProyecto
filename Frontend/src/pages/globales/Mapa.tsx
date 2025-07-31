@@ -83,16 +83,8 @@ const MapaPage: React.FC = () => {
   const [selectedPunto, setSelectedPunto] = useState<PuntoMapa | null>(null);
   const [infoPunto, setInfoPunto] = useState<PuntoMapa | null>(null); 
 
-  const { data: puntos, isLoading, error, refetch } = usePuntosMapa();
+  const { data: puntos, isLoading, refetch } = usePuntosMapa();
   const eliminarMutation = useEliminarPuntoMapa();
-
-  useEffect(() => {
-    console.log("Estado de puntos:", {
-      puntos,
-      isLoading,
-      error: error?.message || error,
-    });
-  }, [puntos, isLoading, error]);
 
   const columns = [
     { name: "Nombre", uid: "nombre", sortable: true },
@@ -132,7 +124,6 @@ const MapaPage: React.FC = () => {
   };
 
   const handleDelete = (punto: PuntoMapa) => {
-    console.log("Abriendo modal de eliminacion para punto:", punto);
     setSelectedPunto(punto);
     setIsDeleteModalOpen(true);
   };
@@ -144,21 +135,16 @@ const MapaPage: React.FC = () => {
 
   const handleConfirmDelete = () => {
     if (!selectedPunto?.id) {
-      console.error("No hay ID de punto seleccionado para eliminar");
       return;
     }
 
-    console.log("Eliminando punto con ID:", selectedPunto.id);
     eliminarMutation.mutate(selectedPunto.id, {
       onSuccess: () => {
-        console.log("Punto eliminado con exito");
         setIsDeleteModalOpen(false);
         setSelectedPunto(null);
         refetch();
       },
-      onError: (error: any) => {
-        console.error("Error eliminando punto:", error.response?.data || error.message);
-      },
+      onError: () => {},
     });
   };
 
@@ -168,9 +154,9 @@ const MapaPage: React.FC = () => {
     }
   }, [isRegisterModalOpen]);
 
-  if (error) return (
+  if (isLoading) return (
     <DefaultLayout>
-      <p className="text-red-500">Error cargando puntos: {error.message}</p>
+      <p className="text-gray-500">Cargando...</p>
     </DefaultLayout>
   );
 
