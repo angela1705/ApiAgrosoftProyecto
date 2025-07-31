@@ -6,7 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import Login from '../../components/usuarios/Login';
 import { useAuth } from '../../context/AuthContext';
-import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
+import AgrosisLogotic from '../../assets/Agrosoft_Logo.png';
 import LogoSena from '../../assets/logob.png';
 
 const LoginPage: React.FC = () => {

@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 
-import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
+import AgrosisLogotic from '../../assets/Agrosoft_Logo.png';
 import LogoSena from '../../assets/logob.png';
 import Register from '../../components/usuarios/Register';
 import { useAuth } from '../../context/AuthContext';
