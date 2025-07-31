@@ -102,15 +102,11 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("localhost", 6379)],
+            "hosts": [("redis", 6379)],
         },
     },
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Frontend Vite
-    "http://127.0.0.1:5173",
-]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settizngs/#databases
@@ -122,7 +118,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB', 'agrosoft_db1'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'root'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),  
+        'HOST': os.getenv('DB_HOST', 'db'),  
         'PORT': os.getenv('DB_PORT', '5432'), 
 
     }
