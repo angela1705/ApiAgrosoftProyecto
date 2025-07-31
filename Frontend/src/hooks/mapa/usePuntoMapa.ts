@@ -14,7 +14,6 @@ const fetchPuntosMapa = async (): Promise<PuntoMapa[]> => {
     const response = await api.get(API_URL, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("GET /mapa/puntos response:", response.data);
     // Parsear coordenadas a numeros
     return response.data.map((punto: any) => ({
       ...punto,
@@ -22,7 +21,6 @@ const fetchPuntosMapa = async (): Promise<PuntoMapa[]> => {
       longitud: parseFloat(punto.longitud),
     }));
   } catch (error: any) {
-    console.error("Error fetching puntos:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -32,7 +30,6 @@ const registrarPuntoMapa = async (punto: PuntoMapa) => {
   if (!token) throw new Error("No se encontro el token de autenticacion.");
 
   try {
-    console.log("Enviando POST a:", API_URL, "con datos:", JSON.stringify(punto, null, 2));
     const response = await api.post(API_URL, punto, {
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +39,6 @@ const registrarPuntoMapa = async (punto: PuntoMapa) => {
     return response.data;
   } catch (error: any) {
     const errorDetail = error.response?.data ? JSON.stringify(error.response.data, null, 2) : error.message;
-    console.error("Error en POST /mapa/puntos:", errorDetail);
     throw new Error(errorDetail);
   }
 };
@@ -57,7 +53,6 @@ const actualizarPuntoMapa = async ({ id, punto }: { id: number; punto: PuntoMapa
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error en PUT /mapa/puntos:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -72,7 +67,6 @@ const eliminarPuntoMapa = async (id: number) => {
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error en DELETE /mapa/puntos:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -98,7 +92,6 @@ export const useRegistrarPuntoMapa = () => {
       });
     },
     onError: (error: any) => {
-      console.error("Error registrando punto:", error.message);
       addToast({
         title: "Error",
         description: `Error al registrar el punto: ${error.message}`,
@@ -121,7 +114,6 @@ export const useActualizarPuntoMapa = () => {
       });
     },
     onError: (error: any) => {
-      console.error("Error actualizando punto:", error.response?.data || error.message);
       addToast({
         title: "Error",
         description: `Error al actualizar el punto: ${JSON.stringify(error.response?.data || error.message)}`,
@@ -144,7 +136,6 @@ export const useEliminarPuntoMapa = () => {
       });
     },
     onError: (error: any) => {
-      console.error("Error eliminando punto:", error.response?.data || error.message);
       addToast({
         title: "Error",
         description: `Error al eliminar el punto: ${JSON.stringify(error.response?.data || error.message)}`,
