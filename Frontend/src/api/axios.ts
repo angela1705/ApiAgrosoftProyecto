@@ -1,16 +1,16 @@
-
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000/",
+  baseURL: import.meta.env.VITE_API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8000`,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Interceptor para actualizar el token en cada petición
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access_token");
     if (token) {
-      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     } else if (config.headers) {
       delete config.headers.Authorization;
