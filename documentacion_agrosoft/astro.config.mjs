@@ -47,7 +47,6 @@ export default defineConfig({
             { label: 'Cosecha', slug: 'modules/trazabilidad/cosecha' },
             { label: 'Plaga', slug: 'modules/trazabilidad/plaga' },
             { label: 'Tipo de plaga', slug: 'modules/trazabilidad/tipoplaga' },
-            { label: 'Control de Productos', slug: 'modules/trazabilidad/productoscontrol' },
 
 
 

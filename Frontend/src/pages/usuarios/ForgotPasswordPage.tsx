@@ -5,7 +5,7 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-import AgrosisLogotic from '../../assets/def_AGROSIS_LOGOTIC.png';
+import AgrosisLogotic from '../../assets/Agrosoft_Logo.png';
 import LogoSena from '../../assets/logob.png';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
