@@ -20,12 +20,10 @@ const fetchDatosMeteorologicos = async (sensorId: number): Promise<SensorData[]>
   }
 
   try {
-    console.log(`Fetching data for sensor ${sensorId}`);
     const response = await api.get(API_URL, {
       params: { fk_sensor_id: sensorId },
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Response from /iot/datosmeteorologicos/:", response.data);
     return response.data.map((item: any) => ({
       id: item.id,
       fk_sensor: item.fk_sensor,
@@ -48,12 +46,10 @@ const fetchDatosMeteorologicos = async (sensorId: number): Promise<SensorData[]>
       try {
         const newToken = await obtenerNuevoToken(refreshToken);
         localStorage.setItem("access_token", newToken);
-        console.log(`Fetching data for sensor ${sensorId} with new token`);
         const response = await api.get(API_URL, {
           params: { fk_sensor_id: sensorId },
           headers: { Authorization: `Bearer ${newToken}` },
         });
-        console.log("Response from /iot/datosmeteorologicos/:", response.data);
         return response.data.map((item: any) => ({
           id: item.id,
           fk_sensor: item.fk_sensor,

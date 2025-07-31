@@ -11,8 +11,7 @@ export const obtenerNuevoToken = async (refreshToken: string | null) => {
     });
 
     return response.data.access; 
-  } catch (error) {
-    console.error("Error al refrescar el token", error);
+  } catch (error) { 
     throw new Error("No se pudo refrescar el token");
   }
 };

@@ -11,7 +11,6 @@ const API_URL = `${BASE_URL}/iot/datosmeteorologicos/`;
 const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) {
-    console.error("[useDatosMeteorologicosHistoricos] No se encontró el token de autenticación.");
     addToast({
       title: "Sesión expirada",
       description: "No se encontró el token de autenticación, por favor inicia sesión nuevamente.",
@@ -21,13 +20,10 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
     throw new Error("No se encontró el token de autenticación.");
   }
 
-  console.log("[useDatosMeteorologicosHistoricos] Enviando GET a /iot/datosmeteorologicos/");
   try {
     const response = await api.get(API_URL, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
-    console.log("[useDatosMeteorologicosHistoricos] Respuesta de GET /iot/datosmeteorologicos/: ", response.data);
 
     return response.data.map((item: any) => ({
       id: item.id || 0,
@@ -44,8 +40,6 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
       fecha_medicion: item.fecha_medicion || "",
     }));
   } catch (error: any) {
-    console.error("[useDatosMeteorologicosHistoricos] Error en GET /iot/datosmeteorologicos/: ", error);
-
     if (error.response?.status === 401) {
       const refreshToken = localStorage.getItem("refresh_token");
       if (!refreshToken) {
@@ -60,12 +54,10 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
       try {
         const newToken = await obtenerNuevoToken(refreshToken);
         localStorage.setItem("access_token", newToken);
-        console.log("[useDatosMeteorologicosHistoricos] Reintentando con nuevo token");
         const response = await api.get(API_URL, {
           headers: { Authorization: `Bearer ${newToken}` },
         });
 
-        console.log("[useDatosMeteorologicosHistoricos] Respuesta de reintento: ", response.data);
         return response.data.map((item: any) => ({
           id: item.id || 0,
           sensor_nombre: item.sensor_nombre || "Desconocido",
@@ -81,7 +73,6 @@ const fetchDatosHistoricos = async (): Promise<SensorData[]> => {
           fecha_medicion: item.fecha_medicion || "",
         }));
       } catch (refreshError: any) {
-        console.error("[useDatosMeteorologicosHistoricos] Error al refrescar token: ", refreshError);
         addToast({
           title: "Sesión expirada",
           description: "No se pudo refrescar el token, por favor inicia sesión nuevamente.",
