@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import DefaultLayout from "@/layouts/default";
 import { useDatosMeteorologicosHistoricos } from "@/hooks/iot/datos_sensores/useDatosMeteorologicosHistoricos";
-import { useSensores } from "@/hooks/iot/sensores/useSensores";
 import Tabla from "@/components/globales/Tabla";
 import CustomSpinner from "@/components/globales/Spinner";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -43,22 +42,12 @@ const dataTypes = [
 
 export default function DatosMeteorologicosPage() {
   const [selectedDataType, setSelectedDataType] = useState(dataTypes[0]);
-  const [selectedSensor, setSelectedSensor] = useState<number | "todos">("todos");
   const { data: historicos = [], isLoading } = useDatosMeteorologicosHistoricos();
-  const { sensores = [], isLoading: sensoresLoading } = useSensores();
-
-  // Filtrar sensores por el tipo seleccionado
-  const filteredSensores = useMemo(() => {
-    return sensores.filter(sensor => sensor.tipo_sensor === selectedDataType.key);
-  }, [sensores, selectedDataType]);
 
   // Datos para la tabla
   const tableData = useMemo(() => {
     return historicos
-      .filter(dato => 
-        (selectedSensor === "todos" || dato.sensor_nombre === filteredSensores.find(s => s.id === selectedSensor)?.nombre) &&
-        dato[selectedDataType.key] != null
-      )
+      .filter(dato => dato[selectedDataType.key] != null)
       .map(dato => ({
         id: (dato.id || "N/A").toString(),
         sensor: dato.sensor_nombre || "Desconocido",
@@ -68,7 +57,7 @@ export default function DatosMeteorologicosPage() {
           year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
         })
       }));
-  }, [historicos, selectedSensor, selectedDataType, filteredSensores]);
+  }, [historicos, selectedDataType]);
 
   // Datos para el gráfico (últimos 50 registros)
   const chartData = useMemo(() => {
@@ -90,7 +79,7 @@ export default function DatosMeteorologicosPage() {
     { name: "Fecha de Medición", uid: "fecha_medicion" },
   ];
 
-  if (isLoading || sensoresLoading) {
+  if (isLoading) {
     return (
       <DefaultLayout>
         <div className="flex justify-center items-center h-screen">
@@ -115,10 +104,7 @@ export default function DatosMeteorologicosPage() {
                 className={`p-4 rounded-lg flex flex-col items-center justify-center transition-all ${
                   selectedDataType.key === type.key ? "bg-blue-100 border-2 border-blue-500" : "bg-white border border-gray-200 hover:bg-gray-50"
                 }`}
-                onClick={() => {
-                  setSelectedDataType(type);
-                  setSelectedSensor("todos");
-                }}
+                onClick={() => setSelectedDataType(type)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -127,23 +113,6 @@ export default function DatosMeteorologicosPage() {
               </motion.button>
             ))}
           </div>
-        </div>
-
-        {/* Selector de sensor */}
-        <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Sensor</label>
-          <select 
-            value={selectedSensor}
-            onChange={(e) => setSelectedSensor(e.target.value === "todos" ? "todos" : Number(e.target.value))}
-            className="p-2 border rounded w-full"
-          >
-            <option value="todos">Todos los sensores</option>
-            {filteredSensores.map(sensor => (
-              <option key={sensor.id} value={sensor.id}>
-                {sensor.nombre}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Tabla de datos */}

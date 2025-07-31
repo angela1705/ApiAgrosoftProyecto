@@ -21,11 +21,6 @@ const toggleSensor = async ({ sensorId, activo }: { sensorId: number; activo: bo
     );
     return response.data;
   } catch (error: any) {
-    console.error("[useToggleSensor] Error al cambiar el estado del sensor:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
     throw new Error(error.response?.data?.message || "Error al cambiar el estado del sensor");
   }
 };

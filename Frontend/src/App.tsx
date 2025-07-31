@@ -64,7 +64,8 @@ import BodegaPage from "./pages/inventario/BodegaPage";
 import ListaBodegaPage from "./pages/inventario/ListaBodegaPage";
 
 // IoT
-import SensoresPage from "./pages/iot/SensoresPage2";
+import SensoresPage from "./pages/iot/SensoresPage";
+import SensoresPage2 from "./pages/iot/SensoresPage2";
 import DatosMeteorologicosPage from "./pages/iot/DatosMeteorologicosPage";
 import RegistrarSensorPage from "./pages/iot/sensores/RegistrarSensorPage";
 import ListarSensores from "./pages/iot/sensores/ListarSensoresPage";
@@ -99,7 +100,6 @@ import ListaTipoResiduoPage from "./pages/cultivo/ListaTipoResiduoPage";
 const queryClient = new QueryClient();
 
 const AuthenticatedLayout: React.FC = () => {
-  // Sidebar abierto por defecto
   const isSidebarOpen = true;
   return (
     <div className="flex min-h-screen flex-col">
@@ -145,6 +145,7 @@ const App: React.FC = () => {
 
             {/* IoT */}
             <Route path="/iot/sensores" element={<SensoresPage />} />
+            <Route path="/iot/sensores-http" element={<SensoresPage2 />} />
             <Route path="/iot/datosmeteorologicos" element={<DatosMeteorologicosPage />} />
             <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
             <Route path="/iot/listar-sensores" element={<ListarSensores />} />

@@ -23,14 +23,12 @@ export const useModalSensorForm = ({
 
   useEffect(() => {
     if (!isDelete && (!sensor || !sensor.id || !sensor.tipo_sensor)) {
-      console.error("[useModalSensorForm] Sensor inválido:", sensor);
       setError("Sensor no proporcionado o datos incompletos.");
       setEditedSensor(null);
       return;
     }
 
     if (!isDelete && (!tipoSensores || tipoSensores.length === 0)) {
-      console.error("[useModalSensorForm] tipoSensores no disponible:", tipoSensores);
       setError("No hay tipos de sensores disponibles.");
       addToast({
         title: "Error",
@@ -51,7 +49,6 @@ export const useModalSensorForm = ({
     );
 
     if (!tipoSensor) {
-      console.warn("[useModalSensorForm] No se encontró tipoSensor para:", sensor.tipo_sensor);
       addToast({
         title: "Advertencia",
         description: `Tipo de sensor "${sensor.tipo_sensor}" no encontrado. Seleccione uno válido.`,
@@ -75,7 +72,6 @@ export const useModalSensorForm = ({
       bancal_nombre: sensor.bancal_nombre ?? "",
     };
 
-    console.log("[useModalSensorForm] Inicializando editedSensor:", updatedSensor);
     setEditedSensor(updatedSensor);
     setError(null);
   }, [sensor, tipoSensores, isDelete]);
@@ -127,7 +123,6 @@ export const useModalSensorForm = ({
       return;
     }
     if (!editedSensor || !editedSensor.id || !editedSensor.tipo_sensor || !editedSensor.nombre) {
-      console.error("[useModalSensorForm] Validación fallida:", editedSensor);
       addToast({
         title: "Error",
         description: "Por favor, complete todos los campos obligatorios.",
