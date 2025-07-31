@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@heroui/button";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { Menu, ChevronDown, ChevronRight } from "lucide-react";
 import {
   FaHome,
   FaUser,
@@ -9,9 +9,6 @@ import {
   FaLeaf,
   FaDollarSign,
   FaBug,
-  FaCloudRain,
-  FaTachometerAlt,
-  FaTemperatureHigh,
   FaWarehouse,
   FaFileAlt,
   FaChartBar,
@@ -20,8 +17,7 @@ import {
 import { GiProcessor } from "react-icons/gi";
 import LogoSena from "../../assets/Agrosoft_Logo.png";
 import Sena from "../../assets/logo sena.png";
-import { useAuth } from "@/context/AuthContext"; 
-
+import { useAuth } from "@/context/AuthContext";
 
 const menuItemsBase = [
   { id: 1, label: "Inicio", path: "/", icon: <FaHome /> },
@@ -74,12 +70,12 @@ const menuItemsBase = [
     label: "Inventario",
     icon: <FaWarehouse />,
     subItems: [
-      { id: 29, label: "Herramientas", path: "/inventario/listarherramientas", icon: <FaWarehouse /> },
-      { id: 30, label: "Insumos", path: "/inventario/listarinsumos", icon: <FaWarehouse /> },
-      { id: 31, label: "Producto", path: "/inventario/listarpreciosproductos", icon: <FaWarehouse /> },
-      { id: 32, label: "Bodega", path: "/inventario/listarbodega", icon: <FaWarehouse /> },
-      { id: 33, label: "Bodega Herramienta", path: "/inventario/listarbodegaherramienta", icon: <FaWarehouse /> },
-      { id: 34, label: "Bodega Insumo", path: "/inventario/listarbodegainsumos", icon: <FaWarehouse /> },
+      { id: 29, label: "Herramientas", path: "/inventario/listarherramientas" },
+      { id: 30, label: "Insumos", path: "/inventario/listarinsumos" },
+      { id: 31, label: "Producto", path: "/inventario/listarpreciosproductos" },
+      { id: 32, label: "Bodega", path: "/inventario/listarbodega" },
+      { id: 33, label: "Bodega Herramienta", path: "/inventario/listarbodegaherramienta" },
+      { id: 34, label: "Bodega Insumo", path: "/inventario/listarbodegainsumos" },
     ],
   },
   {
@@ -87,22 +83,23 @@ const menuItemsBase = [
     label: "IoT",
     icon: <GiProcessor />,
     subItems: [
-      { id: 36, label: "Datos en Tiempo Real", path: "/iot/sensores", icon: <FaTachometerAlt /> },
-      { id: 37, label: "Datos Históricos", path: "/iot/datosmeteorologicos", icon: <FaTemperatureHigh /> },
-      { id: 38, label: "Lista de Sensores", path: "/iot/listar-sensores", icon: <FaTachometerAlt /> },
-      { id: 39, label: "Evapotranspiración", path: "/iot/evapotranspiracion", icon: <FaCloudRain /> },
+      { id: 36, label: "Datos en Tiempo Real (HTTP)", path: "/iot/sensores-http" },  
+      { id: 37, label: "Datos en Tiempo Real (MQTT)", path: "/iot/sensores" },  
+      { id: 38, label: "Datos Históricos", path: "/iot/datosmeteorologicos" },
+      { id: 39, label: "Lista de Sensores", path: "/iot/listar-sensores" },
+      { id: 40, label: "Evapotranspiración", path: "/iot/evapotranspiracion" },
     ],
   },
-  { id: 40, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
+  { id: 41, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
   {
-    id: 41,
+    id: 42,
     label: "Gráficas",
     icon: <FaChartBar />,
     subItems: [
-      { id: 42, label: "Ingresos", path: "/graficas/ingresos" },
-      { id: 43, label: "Cosechas", path: "/graficas/cosechas" },
-      { id: 44, label: "Egresos", path: "/graficas/egresos" },
-      { id: 45, label: "Costo actividad", path: "/graficas/actividadcosto" },
+      { id: 43, label: "Ingresos", path: "/graficas/ingresos" },
+      { id: 44, label: "Cosechas", path: "/graficas/cosechas" },
+      { id: 45, label: "Egresos", path: "/graficas/egresos" },
+      { id: 46, label: "Costo actividad", path: "/graficas/actividadcosto" },
     ],
   },
 ];
@@ -110,22 +107,23 @@ const menuItemsBase = [
 export default function Navbar() {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [expandedItems, setExpandedItems] = useState<{ [key: number]: boolean }>({});
+  const [isMobile, setIsMobile] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const { user } = useAuth();
   const rol = user?.rol?.rol ?? "";
 
   const menuItemsFiltrados = menuItemsBase.filter(item => {
     if (rol === "Pasante") {
-      return ![3, 15, 28, 35, 41].includes(item.id); // Oculta por ID
+      return ![3, 15, 28, 41].includes(item.id);
     }
     if (rol === "Invitado") {
-      return [1].includes(item.id); // Solo Inicio
+      return [1].includes(item.id);
     }
     return true;
   });
 
   const toggleExpanded = (itemId: number) => {
-    setExpandedItems((prev: { [key: number]: boolean }) => ({
+    setExpandedItems((prev) => ({
       ...prev,
       [itemId]: !prev[itemId],
     }));
@@ -135,42 +133,77 @@ export default function Navbar() {
     setSidebarOpen((prev: boolean) => !prev);
   };
 
-  return (
-    <aside
-      className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50
-        ${isSidebarOpen ? "w-64 p-4" : "w-20 p-2"} rounded-r-lg`}
-    >
-      {/* Header con logos y barra vertical */}
-      <div className="flex flex-col items-center gap-4">
-        <Button isIconOnly variant="light" className="mb-4 rounded-md" onClick={toggleSidebar}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </Button>
-        <div className={`flex items-center justify-center gap-4 ${!isSidebarOpen ? "hidden" : ""}`}>
-          <img src={LogoSena} alt="Logo Agrosis" className="w-28" />
-          <span className="text-gray-400 text-2xl font-light">|</span>
-          <img src={Sena} alt="Logo Sena" className="w-12" />
-        </div>
-      </div>
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      }
+    };
 
-      {/* Menú */}
-      <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
-        <div className="flex flex-col gap-4">
-          {menuItemsFiltrados.map((item) => (
-            <SidebarItem
-              key={item.id}
-              item={item}
-              isOpen={isSidebarOpen}
-              isExpanded={!!expandedItems[item.id]}
-              toggleExpanded={() => toggleExpanded(item.id)}
-            />
-          ))}
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+
+  return (
+    <>
+      {isMobile && (
+        <Button
+          isIconOnly
+          variant="light"
+          className="fixed top-4 left-4 z-50 rounded-md p-3 bg-white shadow-md border border-gray-300 text-white transition-colors duration-200"
+          onClick={toggleSidebar}
+          aria-label={isSidebarOpen ? "Cerrar menú lateral" : "Abrir menú lateral"}
+        >
+          <Menu size={24} className="text-black" /> {/* Ajuste del color del ícono a negro para que contraste con fondo blanco */}
+        </Button>
+      )}  
+
+      <aside
+        className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50
+          ${isSidebarOpen ? "w-64 p-4" : "w-20 p-2"}
+          ${isMobile ? (isSidebarOpen ? "translate-x-0" : "-translate-x-full") : ""}
+          rounded-r-2xl scrollbar-hide`}
+        style={isMobile ? { top: '64px', height: 'calc(100vh - 64px)' } : {}}
+      >
+        <div className="flex flex-col items-center gap-4">
+          {!isMobile && (
+            <Button
+              isIconOnly
+              variant="light"
+              className="mb-4 rounded-md p-3 shadow-md hover:bg-gray-100 transition-colors duration-200"
+              onClick={toggleSidebar}
+              aria-label={isSidebarOpen ? "Cerrar menú lateral" : "Abrir menú lateral"}
+            >
+              <Menu size={24} />
+            </Button>
+          )}
+          <div className={`flex items-center justify-center gap-4 py-4 ${!isSidebarOpen ? "hidden" : ""}`}>
+            <img src={LogoSena} alt="Logo Agrosis" className="w-28" />
+            <span className="text-gray-400 text-2xl font-light">|</span>
+            <img src={Sena} alt="Logo Sena" className="w-12" />
+          </div>
         </div>
-      </nav>
-    </aside>
+
+        <nav ref={navRef} className="flex-1 mt-6 overflow-y-auto scrollbar-hide">
+          <div className="flex flex-col gap-4">
+            {menuItemsFiltrados.map((item) => (
+              <SidebarItem
+                key={item.id}
+                item={item}
+                isOpen={isSidebarOpen}
+                isExpanded={!!expandedItems[item.id]}
+                toggleExpanded={() => toggleExpanded(item.id)}
+              />
+            ))}
+          </div>
+        </nav>
+      </aside>
+    </>
   );
 }
 
@@ -214,7 +247,6 @@ function SidebarItem({
                 bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto
                 relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
             >
-              {subItem.icon && <span className="text-gray-600">{subItem.icon}</span>}
               <span className="text-sm">{subItem.label}</span>
             </Link>
           ))}

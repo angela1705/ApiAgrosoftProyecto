@@ -21,7 +21,7 @@ interface EvapotranspiracionData {
   id: number;
   fk_bancal: number;
   fecha: string;
-  valor: string; 
+  valor: string;
   creado: string;
 }
 
@@ -31,7 +31,6 @@ const fetchBancales = async (): Promise<Bancal[]> => {
   const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log("Bancales recibidos:", response.data);
   return response.data;
 };
 
@@ -41,7 +40,6 @@ const fetchEvapotranspiracion = async (): Promise<EvapotranspiracionData[]> => {
   const response = await api.get("http://127.0.0.1:8000/iot/evapotranspiracion/", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log("Datos de evapotranspiración recibidos:", response.data);
   return response.data;
 };
 
@@ -93,10 +91,9 @@ export default function EvapotranspiracionPage() {
 
   const mutation = useMutation({
     mutationFn: calcularEvapotranspiracion,
-    onSuccess: async (data) => {
-      console.log("Mutación exitosa, datos:", data);
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["evapotranspiracion"] });
-      await refetch(); // Forzar recarga de datos
+      await refetch();
       addToast({
         title: "Éxito",
         description: "Evapotranspiración calculada con éxito",
@@ -104,7 +101,6 @@ export default function EvapotranspiracionPage() {
       });
     },
     onError: (err: any) => {
-      console.error("Error en mutación:", err);
       if (err.response?.status === 401) {
         addToast({
           title: "Sesión expirada",
@@ -139,7 +135,6 @@ export default function EvapotranspiracionPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    console.log(`Input ${name} cambió a: ${value}`);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -148,7 +143,6 @@ export default function EvapotranspiracionPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Formulario enviado:", formData);
     if (!formData.fk_bancal_id || !formData.fecha) {
       addToast({
         title: "Error",
@@ -177,20 +171,14 @@ export default function EvapotranspiracionPage() {
   ];
 
   const tableData = useMemo(() => {
-    const result = evapotranspiracionData.map((dato: EvapotranspiracionData, index) => {
-      const mappedData = {
-        id: `${dato.id}-${index}`,
-        fk_bancal:
-          bancales.find((b) => b.id === dato.fk_bancal)?.nombre || `Bancal ${dato.fk_bancal}`,
-        fecha: dato.fecha,
-        valor: parseFloat(dato.valor).toFixed(2), // Convertir string a número
-        creado: new Date(dato.creado).toLocaleString(),
-      };
-      console.log("Dato mapeado:", mappedData);
-      return mappedData;
-    });
-    console.log("tableData generado:", result);
-    return result;
+    return evapotranspiracionData.map((dato: EvapotranspiracionData, index) => ({
+      id: `${dato.id}-${index}`,
+      fk_bancal:
+        bancales.find((b) => b.id === dato.fk_bancal)?.nombre || `Bancal ${dato.fk_bancal}`,
+      fecha: dato.fecha,
+      valor: parseFloat(dato.valor).toFixed(2),
+      creado: new Date(dato.creado).toLocaleString(),
+    }));
   }, [evapotranspiracionData, bancales]);
 
   if (isPendingBancales || isPendingEvapotranspiracion) {
