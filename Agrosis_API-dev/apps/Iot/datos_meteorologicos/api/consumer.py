@@ -51,6 +51,7 @@ class RealtimeDataConsumer(AsyncWebsocketConsumer):
                     'direccion_viento': float(obj.direccion_viento) if obj.direccion_viento is not None else None,
                     'humedad_suelo': float(obj.humedad_suelo) if obj.humedad_suelo is not None else None,
                     'ph_suelo': float(obj.ph_suelo) if obj.ph_suelo is not None else None,
+                    'calidad_aire': float(obj.calidad_aire) if obj.calidad_aire is not None else None,
                     'fecha_medicion': obj.fecha_medicion.isoformat() if obj.fecha_medicion else None,
                 }
                 global realtime_data_buffer

@@ -12,7 +12,8 @@ class Datos_metereologicosSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'device_code', 'sensor_nombre', 'bancal_nombre', 'temperatura',
             'humedad_ambiente', 'luminosidad', 'lluvia', 'velocidad_viento',
-            'direccion_viento', 'humedad_suelo', 'ph_suelo', 'fecha_medicion'
+            'direccion_viento', 'humedad_suelo', 'ph_suelo', 'calidad_aire',
+            'fecha_medicion'
         ]
         read_only_fields = ['id', 'sensor_nombre', 'bancal_nombre']
 
@@ -28,7 +29,6 @@ class Datos_metereologicosSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         device_code = validated_data.pop('device_code')
         sensor = Sensor.objects.get(device_code=device_code)
-        # Bancal es opcional, se toma del sensor si existe
         validated_data['fk_sensor'] = sensor
         validated_data['fk_bancal'] = sensor.bancal if sensor.bancal else None
         return Datos_metereologicos.objects.create(**validated_data)

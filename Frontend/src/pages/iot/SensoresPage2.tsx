@@ -70,7 +70,7 @@ const viewModes: ViewMode[] = [
   { id: 'allData', label: 'Todos los Datos' },
 ];
 
-const SensoresPage: React.FC = () => {
+const SensoresPage2: React.FC = () => {
   const { realTimeData, isLoading, error, mqttClient } = useSensores();
   const [sensorActive, setSensorActive] = useState(true);
   const [selectedDataType, setSelectedDataType] = useState<DataType>(dataTypes[0]);
@@ -94,6 +94,27 @@ const SensoresPage: React.FC = () => {
       }
     );
   }, [realTimeData, selectedDataType]);
+
+  // Compute latest data for all data types for the cards
+  const latestDataByType = useMemo(() => {
+    return dataTypes.map((type) => {
+      const latest = realTimeData
+        .filter(
+          (d) => {
+            const value = d[type.key];
+            return (
+              d.device_code === 'ESP32_001' &&
+              value !== null &&
+              value !== undefined &&
+              !isNaN(value) &&
+              typeof value === 'number'
+            );
+          }
+        )
+        .sort((a, b) => new Date(b.fecha_medicion || '').getTime() - new Date(a.fecha_medicion || '').getTime())[0];
+      return { type, value: latest ? (latest[type.key] as number) : null };
+    });
+  }, [realTimeData]);
 
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
 
@@ -127,62 +148,51 @@ const SensoresPage: React.FC = () => {
     <DefaultLayout>
       <div className='w-full flex flex-col items-center bg-gray-50 px-4 py-6 min-h-screen'>
         <div className='w-full max-w-7xl flex flex-col items-center gap-8'>
-          <h1 className='text-3xl font-bold text-gray-800'>Panel de Sensores</h1>
+          <h1 className='text-3xl font-bold text-gray-800'>Panel de Sensores (MQTT)</h1>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full'>
-            {dataTypes.map((type, index) => {
-              const latest = filteredData
-                .filter(
-                  (d) => {
-                    const value = d[type.key];
-                    return value !== null && value !== undefined && !isNaN(value) && typeof value === 'number';
-                  }
-                )
-                .sort((a, b) => new Date(b.fecha_medicion || '').getTime() - new Date(a.fecha_medicion || '').getTime())[0];
-              const value = latest ? latest[type.key] as number : null;
-              return (
-                <motion.div
-                  key={type.key}
-                  className='bg-white rounded-lg shadow-md p-4 flex flex-col justify-center items-center h-32'
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+            {latestDataByType.map(({ type, value }, index) => (
+              <motion.div
+                key={type.key}
+                className='bg-white rounded-lg shadow-md p-4 flex flex-col justify-center items-center h-32'
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <p className='text-sm font-semibold text-gray-600 flex items-center gap-2'>
+                  {type.icon} {type.nombre}
+                </p>
+                <p
+                  className='text-2xl font-bold mt-2'
+                  style={{
+                    color:
+                      type.key === 'temperatura'
+                        ? '#dc2626'
+                        : type.key === 'humedad_ambiente'
+                        ? '#2563eb'
+                        : type.key === 'humedad_suelo'
+                        ? '#10b981'
+                        : type.key === 'calidad_aire'
+                        ? '#f59e0b'
+                        : '#f59e0b',
+                  }}
                 >
-                  <p className='text-sm font-semibold text-gray-600 flex items-center gap-2'>
-                    {type.icon} {type.nombre}
-                  </p>
-                  <p
-                    className='text-2xl font-bold mt-2'
-                    style={{
-                      color:
-                        type.key === 'temperatura'
-                          ? '#dc2626'
-                          : type.key === 'humedad_ambiente'
-                          ? '#2563eb'
-                          : type.key === 'humedad_suelo'
-                          ? '#10b981'
-                          : type.key === 'calidad_aire'
-                          ? '#f59e0b'
-                          : '#f59e0b',
-                    }}
-                  >
-                    {value !== null ? value.toFixed(type.decimals) : 'N/A'}{' '}
-                    {type.key === 'temperatura'
-                      ? '°C'
-                      : type.key === 'humedad_ambiente' || type.key === 'humedad_suelo'
-                      ? '%'
-                      : type.key === 'calidad_aire'
-                      ? 'PPM'
-                      : 'lux'}
-                  </p>
-                </motion.div>
-              );
-            })}
+                  {value !== null ? value.toFixed(type.decimals) : 'N/A'}{' '}
+                  {type.key === 'temperatura'
+                    ? '°C'
+                    : type.key === 'humedad_ambiente' || type.key === 'humedad_suelo'
+                    ? '%'
+                    : type.key === 'calidad_aire'
+                    ? 'PPM'
+                    : 'lux'}
+                </p>
+              </motion.div>
+            ))}
           </div>
 
           <SensorStats realTimeData={filteredData} selectedSensor='todos' selectedDataType={selectedDataType} />
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 w-full'>
             <motion.button
               className='bg-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold text-gray-700 hover:bg-gray-100 h-16'
               onClick={() => publishCommand(sensorActive ? 'STOP_SENSOR' : 'START_SENSOR')}
@@ -207,6 +217,14 @@ const SensoresPage: React.FC = () => {
               whileTap={{ scale: 0.95 }}
             >
               Ver Datos Históricos
+            </motion.button>
+            <motion.button
+              className='bg-blue-600 text-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold h-16'
+              onClick={() => navigate('/iot/sensores')}
+              whileHover={{ scale: 1.05, backgroundColor: '#1d4ed8' }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Ver Datos HTTP
             </motion.button>
           </div>
 
@@ -243,4 +261,4 @@ const SensoresPage: React.FC = () => {
   );
 };
 
-export default SensoresPage;
+export default SensoresPage2;

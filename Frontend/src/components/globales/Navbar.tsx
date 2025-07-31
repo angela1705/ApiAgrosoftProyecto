@@ -83,22 +83,23 @@ const menuItemsBase = [
     label: "IoT",
     icon: <GiProcessor />,
     subItems: [
-      { id: 36, label: "Datos en Tiempo Real", path: "/iot/sensores" },
-      { id: 37, label: "Datos Históricos", path: "/iot/datosmeteorologicos" },
-      { id: 38, label: "Lista de Sensores", path: "/iot/listar-sensores" },
-      { id: 39, label: "Evapotranspiración", path: "/iot/evapotranspiracion" },
+      { id: 36, label: "Datos en Tiempo Real (HTTP)", path: "/iot/sensores-http" },  
+      { id: 37, label: "Datos en Tiempo Real (MQTT)", path: "/iot/sensores" },  
+      { id: 38, label: "Datos Históricos", path: "/iot/datosmeteorologicos" },
+      { id: 39, label: "Lista de Sensores", path: "/iot/listar-sensores" },
+      { id: 40, label: "Evapotranspiración", path: "/iot/evapotranspiracion" },
     ],
   },
-  { id: 40, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
+  { id: 41, label: "Reportes", path: "/reportes/", icon: <FaFileAlt /> },
   {
-    id: 41,
+    id: 42,
     label: "Gráficas",
     icon: <FaChartBar />,
     subItems: [
-      { id: 42, label: "Ingresos", path: "/graficas/ingresos" },
-      { id: 43, label: "Cosechas", path: "/graficas/cosechas" },
-      { id: 44, label: "Egresos", path: "/graficas/egresos" },
-      { id: 45, label: "Costo actividad", path: "/graficas/actividadcosto" },
+      { id: 43, label: "Ingresos", path: "/graficas/ingresos" },
+      { id: 44, label: "Cosechas", path: "/graficas/cosechas" },
+      { id: 45, label: "Egresos", path: "/graficas/egresos" },
+      { id: 46, label: "Costo actividad", path: "/graficas/actividadcosto" },
     ],
   },
 ];
@@ -113,7 +114,7 @@ export default function Navbar() {
 
   const menuItemsFiltrados = menuItemsBase.filter(item => {
     if (rol === "Pasante") {
-      return ![3, 15, 28, 35, 41].includes(item.id);
+      return ![3, 15, 28, 41].includes(item.id);
     }
     if (rol === "Invitado") {
       return [1].includes(item.id);
@@ -150,7 +151,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Botón para abrir/cerrar la sidebar en modo móvil */}
       {isMobile && (
         <Button
           isIconOnly
@@ -243,7 +243,7 @@ function SidebarItem({
             <Link
               key={subItem.id}
               to={subItem.path}
-              className="flex items-center gap-2 p-2 pl-6 rounded-full transition-all font-medium cursor-pointer
+              className="flex items-center gap-2 p-2 pl-6 rounded-md transition-all font-medium cursor-pointer
                 bg-gray-100 shadow-sm hover:bg-gray-300 hover:text-white text-gray-700 w-5/6 mx-auto
                 relative before:absolute before:left-3 before:w-2 before:h-2 before:bg-gray-400 before:rounded-full"
             >

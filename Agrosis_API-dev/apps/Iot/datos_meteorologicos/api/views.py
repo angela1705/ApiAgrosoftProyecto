@@ -28,7 +28,6 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
-        # Permitir creación sin autenticación, resto de acciones requieren autenticación
         if self.request.method == 'POST':
             return [AllowAny()]
         return [IsAuthenticated()]
@@ -128,18 +127,24 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
 
             daily_averages = datos.annotate(date=TruncDate('fecha_medicion')).values('date').annotate(
                 avg_temp=Avg('temperatura'),
-                avg_hum=Avg('humedad_ambiente')
+                avg_hum=Avg('humedad_ambiente'),
+                avg_humedad_suelo=Avg('humedad_suelo'),
+                avg_calidad_aire=Avg('calidad_aire'),
+                avg_luminosidad=Avg('luminosidad')
             ).order_by('date')
 
             overall_avg_temp = datos.aggregate(avg_temp=Avg('temperatura'))['avg_temp']
             overall_avg_hum = datos.aggregate(avg_hum=Avg('humedad_ambiente'))['avg_hum']
+            overall_avg_humedad_suelo = datos.aggregate(avg_humedad_suelo=Avg('humedad_suelo'))['avg_humedad_suelo']
+            overall_avg_calidad_aire = datos.aggregate(avg_calidad_aire=Avg('calidad_aire'))['avg_calidad_aire']
+            overall_avg_luminosidad = datos.aggregate(avg_luminosidad=Avg('luminosidad'))['avg_luminosidad']
 
             elementos.append(Paragraph("<b>2. Registro de Datos Meteorológicos (Últimos 100 Registros)</b>", styles['Heading2']))
             elementos.append(Spacer(1, 5))
 
             datos_limitados = datos.order_by('-fecha_medicion')[:100]
             data_datos = [
-                ["ID", "Sensor", "Bancal", "Temp (°C)", "Hum (%)", "Fecha"]
+                ["ID", "Sensor", "Bancal", "Temp (°C)", "Hum (%)", "Humedad Suelo (%)", "Calidad Aire (PPM)", "Luminosidad (lux)", "Fecha"]
             ]
             for dato in datos_limitados:
                 try:
@@ -152,13 +157,16 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
                         bancal_nombre,
                         str(dato.temperatura) if dato.temperatura is not None else "N/A",
                         str(dato.humedad_ambiente) if dato.humedad_ambiente is not None else "N/A",
+                        str(dato.humedad_suelo) if dato.humedad_suelo is not None else "N/A",
+                        str(dato.calidad_aire) if dato.calidad_aire is not None else "N/A",
+                        str(dato.luminosidad) if dato.luminosidad is not None else "N/A",
                         fecha
                     ])
                 except Exception as e:
                     logger.error(f"[DatosMeteorologicosViewSet] Error al procesar dato {dato.id}: {str(e)}")
                     continue
 
-            tabla_datos = Table(data_datos, colWidths=[30, 60, 60, 40, 40, 80])
+            tabla_datos = Table(data_datos, colWidths=[30, 60, 60, 40, 40, 50, 50, 50, 80])
             tabla_datos.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), colors.black),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -175,15 +183,18 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(Paragraph("<b>3. Promedios Diarios</b>", styles['Heading2']))
             elementos.append(Spacer(1, 5))
 
-            data_daily_averages = [["Fecha", "Temp Prom (°C)", "Hum Prom (%)"]]
+            data_daily_averages = [["Fecha", "Temp Prom (°C)", "Hum Prom (%)", "Humedad Suelo Prom (%)", "Calidad Aire Prom (PPM)", "Luminosidad Prom (lux)"]]
             for day in daily_averages:
                 data_daily_averages.append([
                     day['date'].strftime('%Y-%m-%d'),
                     f"{day['avg_temp']:.2f}" if day['avg_temp'] is not None else "N/A",
                     f"{day['avg_hum']:.2f}" if day['avg_hum'] is not None else "N/A",
+                    f"{day['avg_humedad_suelo']:.2f}" if day['avg_humedad_suelo'] is not None else "N/A",
+                    f"{day['avg_calidad_aire']:.2f}" if day['avg_calidad_aire'] is not None else "N/A",
+                    f"{day['avg_luminosidad']:.2f}" if day['avg_luminosidad'] is not None else "N/A",
                 ])
 
-            tabla_daily_averages = Table(data_daily_averages, colWidths=[80, 60, 60])
+            tabla_daily_averages = Table(data_daily_averages, colWidths=[80, 60, 60, 60, 60, 60])
             tabla_daily_averages.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), colors.black),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -199,10 +210,16 @@ class DatosMeteorologicosViewSet(viewsets.ModelViewSet):
             elementos.append(Paragraph("<b>4. Resumen General</b>", styles['Heading2']))
             temp_prom_str = f"{overall_avg_temp:.2f} °C" if overall_avg_temp is not None else "N/A"
             hum_prom_str = f"{overall_avg_hum:.2f} %" if overall_avg_hum is not None else "N/A"
+            humedad_suelo_prom_str = f"{overall_avg_humedad_suelo:.2f} %" if overall_avg_humedad_suelo is not None else "N/A"
+            calidad_aire_prom_str = f"{overall_avg_calidad_aire:.2f} PPM" if overall_avg_calidad_aire is not None else "N/A"
+            luminosidad_prom_str = f"{overall_avg_luminosidad:.2f} lux" if overall_avg_luminosidad is not None else "N/A"
             resumen_texto = f"""
             Se registraron {total_datos} mediciones meteorológicas en el sistema.<br/>
             - Temperatura Promedio General: {temp_prom_str}<br/>
-            - Humedad Promedio General: {hum_prom_str}
+            - Humedad Ambiente Promedio General: {hum_prom_str}<br/>
+            - Humedad Suelo Promedio General: {humedad_suelo_prom_str}<br/>
+            - Calidad Aire Promedio General: {calidad_aire_prom_str}<br/>
+            - Luminosidad Promedio General: {luminosidad_prom_str}
             """
             elementos.append(Paragraph(resumen_texto, styles['Normal']))
 
