@@ -155,13 +155,13 @@ export default function Navbar() {
         <Button
           isIconOnly
           variant="light"
-          className="fixed top-4 left-4 z-50 rounded-md p-3 shadow-md hover:bg-gray-100 transition-colors duration-200"
+          className="fixed top-4 left-4 z-50 rounded-md p-3 bg-white shadow-md border border-gray-300 text-white transition-colors duration-200"
           onClick={toggleSidebar}
           aria-label={isSidebarOpen ? "Cerrar menú lateral" : "Abrir menú lateral"}
         >
-          <Menu size={24} />
+          <Menu size={24} className="text-black" /> {/* Ajuste del color del ícono a negro para que contraste con fondo blanco */}
         </Button>
-      )}
+      )}  
 
       <aside
         className={`h-screen bg-white shadow-lg transition-all duration-300 flex flex-col fixed top-0 left-0 z-50
