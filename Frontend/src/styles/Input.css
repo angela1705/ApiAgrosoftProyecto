@@ -1,0 +1,5 @@
+.custom-input:focus {
+  border-color: #d1d5db; /* Color del borde sin resaltado */
+  box-shadow: none; /* Elimina la sombra elevada */
+  outline: none; /* Elimina el contorno predeterminado */
+}

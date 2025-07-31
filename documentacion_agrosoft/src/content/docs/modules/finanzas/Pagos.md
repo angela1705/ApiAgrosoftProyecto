@@ -1,168 +1,357 @@
 ---
-title: "Módulo de Pagos - Gestión de Pagos"
+title: Módulo de Pagos - Gestión de Pagos
 slug: modules/finanzas/pagos
-description: "Cómo administrar pagos a trabajadores en el módulo de Pagos de Agrosoft, calculando el total a pagar basado en horas trabajadas y salario por hora."
+description: Cómo administrar pagos a trabajadores en el módulo de Pagos de Agrosoft, calculando automáticamente el total a pagar basado en actividades completadas, horas trabajadas y salario por jornal.
 ---
 
-El módulo de Pagos en Agrosoft permite registrar y calcular los pagos a trabajadores basados en las **horas trabajadas** y el **salario por hora** asociado a cada usuario. Este módulo está vinculado al modelo de `Salario` y `Usuarios`, y calcula automáticamente el **total a pagar** mediante un método integrado en el modelo.
-
-## Características principales
-- Registro de **pagos** asociados a usuarios específicos.
-- Cálculo automático del **total a pagar** basado en horas trabajadas y salario por hora.
-- Almacenamiento de datos históricos de pagos.
-- Integración con los módulos de **Salarios** y **Usuarios** para una gestión eficiente.
-- Visualización de pagos en la interfaz de Agrosoft.
+Las **Pagos** son registros financieros que calculan la compensación de trabajadores basados en las actividades completadas, las horas trabajadas derivadas de estas actividades, y el salario por jornal asociado al rol del usuario.
 
 ## ¿Cómo registrar un pago?
 Para registrar un nuevo pago en Agrosoft:
-1. Ir a la sección **Pagos → Gestión de Pagos**.
-2. Hacer clic en el botón **"Registrar Pago"**.
-3. Completar los siguientes campos:
-   - **Horas Trabajadas:** Cantidad de horas trabajadas por el usuario (por ejemplo, "40").
-   - **Salario:** Seleccionar el salario asociado al trabajador desde el módulo de Salarios.
-   - **Usuario:** Seleccionar el usuario al que corresponde el pago.
-   - **Total a Pagar:** Se calcula automáticamente al guardar (opcional para edición manual).
-4. Guardar los cambios.
-   - **Nota:** El método `calcular_total()` se ejecuta automáticamente para determinar el total a pagar.
+1. Navega al módulo de Pagos.
+2. Haz clic en el botón **"Calcular Pago"**.
+3. Completa los siguientes campos obligatorios:
+   - **Usuario**: Selecciona el usuario al que corresponde el pago.
+   - **Fecha Inicio**: Define la fecha de inicio del período (formato `YYYY-MM-DD`).
+   - **Fecha Fin**: Define la fecha de fin del período (formato `YYYY-MM-DD`).
+4. Opcionalmente, el sistema calculará automáticamente:
+   - **Horas Trabajadas**: Basado en las actividades completadas.
+   - **Jornales**: Calculado dividiendo las horas trabajadas por 8 (horas por jornal).
+   - **Total a Pagar**: Multiplicando los jornales por el valor del salario por jornal.
+   - **Fecha de Cálculo**: Fecha y hora en que se genera el pago.
+   - **Actividades**: Actividades completadas asociadas al usuario en el período.
+   - **Salario**: Salario activo asociado al rol del usuario.
 
 ## Datos de un Pago
 Cada pago tiene la siguiente información:
 
-| Campo               | Tipo de Dato      | Descripción                                      |
-|---------------------|-------------------|--------------------------------------------------|
-| **ID**              | `Integer`         | Identificador único del pago                    |
-| **Horas Trabajadas**| `IntegerField`    | Cantidad de horas trabajadas por el usuario     |
-| **Salario**         | `ForeignKey`      | Relación con el modelo `Salario` (salario/hora) |
-| **Total a Pagar**   | `DecimalField`    | Total calculado (máx. 10 dígitos, 2 decimales)  |
-| **Usuario**         | `ForeignKey`      | Relación con el modelo `Usuarios`               |
+| Campo               | Tipo de Dato         | Descripción                                      |
+|---------------------|----------------------|--------------------------------------------------|
+| **id**              | `AutoField`          | Identificador único del pago                    |
+| **usuario**         | `ForeignKey`         | Relación con el modelo `Usuarios`               |
+| **actividades**     | `ManyToManyField`    | Actividades completadas asociadas al pago       |
+| **salario**         | `ForeignKey`         | Relación con el modelo `Salario` (salario/jornal) |
+| **fecha_inicio**    | `DateField`          | Fecha de inicio del período                     |
+| **fecha_fin**       | `DateField`          | Fecha de fin del período                        |
+| **horas_trabajadas**| `DecimalField`       | Horas trabajadas calculadas (máx. 10 dígitos, 2 decimales) |
+| **jornales**        | `DecimalField`       | Jornales calculados (máx. 10 dígitos, 2 decimales) |
+| **total_pago**      | `DecimalField`       | Total a pagar calculado (máx. 10 dígitos, 2 decimales) |
+| **fecha_calculo**   | `DateTimeField`      | Fecha y hora de cálculo del pago (automático)   |
 
----
+## Ejemplo de API para gestionar pagos
 
-## Ejemplos de API para gestionar pagos
+### **Calcular un pago (POST)**  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">POST</span> </p>
 
-A continuación, se presentan los ejemplos de uso de la API para las operaciones CRUD sobre el recurso `/api/pagos`:
+**URL:** `http://127.0.0.1:8000/api/pagos/calcular_pago/`
 
-### **POST /api/pagos**
+**Encabezados de la solicitud**  
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`          | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`  | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`          | Indica que la respuesta debe estar en formato JSON.       |
 
-Registra un nuevo pago para un trabajador.
-
-**Validaciones:**
-- Campos obligatorios: `horas_trabajadas`, `salario`, `usuario`
-- `horas_trabajadas` debe ser un número entero mayor o igual a 0
-- `salario` y `usuario` deben corresponder a IDs válidos en sus respectivas tablas
-
----
-### **Ejemplos de solicitudes y respuestas post:**
-
+**Ejemplo de solicitud:**  
 ```json
-// POST /api/pagos - Ejemplo de solicitud
 {
-  "horas_trabajadas": 40,
-  "salario": 1,
-  "usuario": 5
-}
-
-// POST /api/pagos - Respuesta exitosa (201 Created)
-{
-  "id": 1,
-  "message": "Pago registrado correctamente"
+  "usuario_id": 5,
+  "fecha_inicio": "2023-11-01",
+  "fecha_fin": "2023-11-30"
 }
 ```
----
-### **GET /api/pagos**
 
-Obtiene todos los pagos registrados con filtros opcionales.
+**Validaciones:**  
+- `fecha_inicio` no puede ser posterior a `fecha_fin`.  
+- `usuario_id` debe corresponder a un usuario existente con un rol asignado.  
+- Debe existir un salario activo para el rol del usuario.  
+- No debe existir un pago previo para el mismo usuario y rango de fechas.  
+- Deben existir actividades completadas asociadas al usuario en el rango de fechas.  
 
----
-
-### **Ejemplos de solicitudes y respuestas get:**
-
+**Ejemplo de respuesta exitosa (201 Created):**  
 ```json
+{
+  "id": 1,
+  "usuario": 5,
+  "usuario_nombre": "Juan Pérez",
+  "usuario_rol": "Trabajador Agrícola",
+  "actividades": [1, 2],
+  "salario": 1,
+  "fecha_inicio": "2023-11-01",
+  "fecha_fin": "2023-11-30",
+  "horas_trabajadas": 40.00,
+  "jornales": 5.00,
+  "total_pago": 1000.00,
+  "fecha_calculo": "2025-07-30T21:42:00Z"
+}
+```
 
-// GET /api/pagos - Ejemplo de respuesta (200 OK)
+**Posibles errores:**  
+- `400 Bad Request`: Si faltan campos, las fechas son inválidas, no hay actividades completadas, o ya existe un pago para el rango de fechas.  
+  ```json
+  {
+    "error": "Ya existe un pago calculado para este usuario y rango de fechas."
+  }
+  ```
+
+### **Listar pagos (GET)**  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span> </p>
+
+**URL:** `http://127.0.0.1:8000/api/pagos/`
+
+**Encabezados de la solicitud**  
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`          | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`  | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`          | Indica que la respuesta debe estar en formato JSON.       |
+
+**Parámetros de consulta (opcional):**  
+- `usuario`: Filtra por ID de usuario (ej. `usuario=5`).  
+- `fecha_inicio`: Filtra por fecha de inicio (formato `YYYY-MM-DD`).  
+- `fecha_fin`: Filtra por fecha de fin (formato `YYYY-MM-DD`).  
+
+**Ejemplo de respuesta (200 OK):**  
+```json
 [
   {
     "id": 1,
-    "horas_trabajadas": 40,
-    "salario": {"id": 1, "valor_por_hora": 20.00},
-    "total_a_pagar": 800.00,
-    "usuario": {"id": 5, "nombre": "Juan Pérez"}
+    "usuario": 5,
+    "usuario_nombre": "Juan Pérez",
+    "usuario_rol": "Trabajador Agrícola",
+    "actividades": [1, 2],
+    "salario": 1,
+    "fecha_inicio": "2023-11-01",
+    "fecha_fin": "2023-11-30",
+    "horas_trabajadas": 40.00,
+    "jornales": 5.00,
+    "total_pago": 1000.00,
+    "fecha_calculo": "2025-07-30T21:42:00Z"
   }
 ]
 ```
 
----
+### **Obtener un pago (GET)**  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span> </p>
 
+**URL:** `http://127.0.0.1:8000/api/pagos/{id}/`
 
-**Parámetros opcionales:**
-- `?usuario=5`: Filtra por ID de usuario
-- `?salario=1`: Filtra por ID de salario
+**Encabezados de la solicitud**  
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`          | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`  | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`          | Indica que la respuesta debe estar en formato JSON.       |
 
----
-
-### **GET /api/pagos/{id}**
-
-Obtiene un pago específico por su ID.
-
----
-
-### **Ejemplos de solicitudes y respuestas get por ID:**
-
+**Ejemplo de respuesta (200 OK):**  
 ```json
-
-// GET /api/pagos/{id} - Ejemplo de respuesta (200 OK)
 {
   "id": 1,
-  "horas_trabajadas": 40,
-  "salario": {"id": 1},
-  "total_a_pagar": 800.00,
-  "usuario": {"id": 5}
+  "usuario": 5,
+  "usuario_nombre": "Juan Pérez",
+  "usuario_rol": "Trabajador Agrícola",
+  "actividades": [1, 2],
+  "salario": 1,
+  "fecha_inicio": "2023-11-01",
+  "fecha_fin": "2023-11-30",
+  "horas_trabajadas": 40.00,
+  "jornales": 5.00,
+  "total_pago": 1000.00,
+  "fecha_calculo": "2025-07-30T21:42:00Z"
 }
-
 ```
 
----
+**Posibles errores:**  
+- `404 Not Found`: Si el ID no existe.  
+  ```json
+  {
+    "error": "No existe el pago especificado"
+  }
+  ```
 
-### **PUT /api/pagos/{id}**
+### **Actualizar un pago (PUT)**  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">PUT</span> </p>
 
-Actualiza un pago existente.
+**URL:** `http://127.0.0.1:8000/api/pagos/{id}/`
 
----
+**Encabezados de la solicitud**  
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`          | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`  | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`          | Indica que la respuesta debe estar en formato JSON.       |
 
-### **Ejemplos de solicitudes y respuestas put por ID:**
-
+**Ejemplo de solicitud:**  
 ```json
-
-// PUT /api/pagos/{id} - Ejemplo de solicitud
 {
-  "horas_trabajadas": 45,
-  "salario": 1
+  "fecha_inicio": "2023-11-01",
+  "fecha_fin": "2023-12-01"
 }
 ```
 
-**Restricciones:**
-- No se puede modificar el `usuario` asociado
-- `horas_trabajadas` debe ser un número entero mayor o igual a 0
+**Restricciones:**  
+- No se pueden modificar `usuario`, `horas_trabajadas`, `jornales`, `total_pago`, `salario`, `actividades`, o `fecha_calculo`.  
+- Para recalcular el pago, elimina el registro existente y usa `/calcular_pago/`.  
+- `fecha_inicio` no puede ser posterior a `fecha_fin`.  
 
----
-
-### **DELETE /api/pagos/{id}**
-
-Elimina un registro de pago.
-
-**Error común (404 Not Found):**
-
----
-
-### **Ejemplos de solicitudes y respuestas delete por ID:**
+**Ejemplo de respuesta (200 OK):**  
 ```json
+{
+  "id": 1,
+  "usuario": 5,
+  "usuario_nombre": "Juan Pérez",
+  "usuario_rol": "Trabajador Agrícola",
+  "actividades": [1, 2],
+  "salario": 1,
+  "fecha_inicio": "2023-11-01",
+  "fecha_fin": "2023-12-01",
+  "horas_trabajadas": 40.00,
+  "jornales": 5.00,
+  "total_pago": 1000.00,
+  "fecha_calculo": "2025-07-30T21:42:00Z"
+}
+```
 
-// DELETE /api/pagos/{id} - Respuesta exitosa (200 OK)
+### **Eliminar un pago (DELETE)**  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">DELETE</span> </p>
+
+**URL:** `http://127.0.0.1:8000/api/pagos/{id}/`
+
+**Encabezados de la solicitud**  
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`          | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`  | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`          | Indica que la respuesta debe estar en formato JSON.       |
+
+**Ejemplo de respuesta exitosa (200 OK):**  
+```json
 {
   "message": "Pago eliminado correctamente"
 }
+```
 
-// DELETE /api/pagos/{id} - Error común (404 Not Found)
+**Posibles errores:**  
+- `404 Not Found`: Si el ID no existe.  
+  ```json
+  {
+    "error": "No existe el pago especificado"
+  }
+  ```
+
+### **Reporte de pagos en PDF (GET)**  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span> </p>
+
+**URL:** `http://127.0.0.1:8000/api/pagos/reporte_pdf/`
+
+**Parámetros de consulta (obligatorio):**  
+- `fecha_inicio`: Fecha de inicio (formato `YYYY-MM-DD`).  
+- `fecha_fin`: Fecha de fin (formato `YYYY-MM-DD`).  
+
+**Encabezados de la solicitud**  
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`          | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`  | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`          | Indica que la respuesta debe estar en formato JSON.       |
+
+**Ejemplo de solicitud:**  
+```bash
+GET /api/pagos/reporte_pdf/?fecha_inicio=2023-11-01&fecha_fin=2023-11-30
+```
+
+**Respuesta:**  
+- Un archivo PDF descargable (`reporte_pagos_por_mes.pdf`) con un resumen de pagos por mes, incluyendo usuario y total pagado, junto con un resumen general del período.
+
+**Posibles errores:**  
+- `400 Bad Request`: Si faltan `fecha_inicio` o `fecha_fin`.  
+  ```json
+  {
+    "error": "Debes proporcionar 'fecha_inicio' y 'fecha_fin'"
+  }
+  ```
+
+### **Datos para gráficas (GET)**  
+<p> <strong>Método:</strong> <span class="sl-badge success small astro-avdet4wd">GET</span> </p>
+
+**URL:** `http://127.0.0.1:8000/api/pagos/datos_graficas/`
+
+**Parámetros de consulta (obligatorio):**  
+- `fecha_inicio`: Fecha de inicio (formato `YYYY-MM-DD`).  
+- `fecha_fin`: Fecha de fin (formato `YYYY-MM-DD`).  
+
+**Encabezados de la solicitud**  
+| Encabezado     | Valor                         | Descripción                                               |
+|----------------|-------------------------------|-----------------------------------------------------------|
+| **Content-Type** | `application/json`          | Indica que los datos se envían en formato JSON.           |
+| **Authorization** | `Bearer <token_de_acceso>`  | Token de autenticación necesario para acceder al recurso. |
+| **Accept**       | `application/json`          | Indica que la respuesta debe estar en formato JSON.       |
+
+**Ejemplo de respuesta (200 OK):**  
+```json
 {
-  "error": "No existe el pago especificado"
+  "por_mes": {
+    "meses": ["2023-11"],
+    "total_pago": [1000.00],
+    "usuario_top": ["Juan Pérez"]
+  },
+  "por_usuario": {
+    "usuarios": ["Juan Pérez", "Ana Gómez"],
+    "total_pago": [1000.00, 500.00]
+  },
+  "por_dia_semana": {
+    "dias": ["Lunes", "Martes"],
+    "total_pago": [600.00, 400.00]
+  }
 }
+```
+
+**Posibles errores:**  
+- `400 Bad Request`: Si faltan `fecha_inicio` o `fecha_fin`.  
+  ```json
+  {
+    "error": "Debes proporcionar 'fecha_inicio' y 'fecha_fin'"
+  }
+  ```
+
+## Ejemplos de Uso
+
+### **Calcular y actualizar un pago:**  
+```bash
+# Calcular pago (POST)
+POST /api/pagos/calcular_pago/
+{
+  "usuario_id": 5,
+  "fecha_inicio": "2023-11-01",
+  "fecha_fin": "2023-11-30"
+}
+
+# Actualizar fechas (PUT)
+PUT /api/pagos/1/
+{
+  "fecha_inicio": "2023-11-01",
+  "fecha_fin": "2023-12-01"
+}
+```
+
+### **Filtrar pagos:**  
+```bash
+# Por usuario
+GET /api/pagos/?usuario=5
+
+# Por rango de fechas
+GET /api/pagos/?fecha_inicio=2023-11-01&fecha_fin=2023-11-30
+```
+
+## Relaciones en el Sistema
+Las **Pagos** se vinculan con:  
+- **Usuarios** (trabajador al que se le paga).  
+- **Actividades** (tareas completadas que determinan las horas trabajadas, relación ManyToMany).  
+- **Salarios** (tarifa por jornal asociada al rol del usuario).  
+
+## Buenas Prácticas  
+- **Períodos claros**: Definir rangos de fechas precisos para evitar solapamientos en los cálculos.  
+- **Verificación de actividades**: Asegurarse de que las actividades asociadas estén en estado `COMPLETADA`.  
+- **Actualización limitada**: Usar `/calcular_pago/` para recalcular pagos en lugar de editar directamente.  
+- **Reportes periódicos**: Generar reportes PDF mensuales para auditorías financieras.  
+- **Análisis de datos**: Utilizar `/datos_graficas/` para identificar tendencias en pagos por usuario o día de la semana.
