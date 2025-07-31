@@ -6,7 +6,7 @@ import { Box, Typography, TextField, Button, IconButton, InputAdornment } from "
 import { motion } from "framer-motion";
 import { addToast } from "@heroui/react";
 
-import AgrosisLogotic from "../../assets/def_AGROSIS_LOGOTIC.png";
+import AgrosisLogotic from "../../assets/Agrosoft_Logo.png";
 import LogoSena from "../../assets/logo2.png";
 
 
