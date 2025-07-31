@@ -1,12 +1,19 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+  server: {
+    host: '0.0.0.0', 
+    port: 5173, 
+  },
+  define: {
+    'import.meta.env.VITE_HOST': JSON.stringify(process.env.VITE_HOST || 'localhost'),
+  },
   build: {
     commonjsOptions: {
-      exclude: ['jspdf'], 
+      exclude: ['jspdf'],
     },
   },
-})
+});
