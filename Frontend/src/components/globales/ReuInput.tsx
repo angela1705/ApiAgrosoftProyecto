@@ -7,14 +7,14 @@ interface ReusableInputProps {
   type: string;
   variant?: "flat" | "bordered" | "underlined" | "faded";
   radius?: "full" | "lg" | "md" | "sm" | "none";
-  value: string | number;
+  value: string | number | null | undefined;
   step?: string;
   min?: string | number;
   max?: string | number;
   name?: string;
   required?: boolean;
   disabled?: boolean;
-  classname?: string;
+  className?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
@@ -23,25 +23,23 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
   placeholder,
   type,
   variant = "bordered",
-  radius = "md",
+  radius = "lg",
   value,
   step,
   min,
   max,
   name,
   required,
+  disabled,
+  className,
   onChange,
 }) => {
   return (
     <div className="w-full px-1 sm:px-0 mb-4">
-      {label && (
-        <label className="block mb-1 text-sm font-medium text-gray-700">
-          {label}
-        </label>
-      )}
       <Input
-        type={type}
+        label={label}
         placeholder={placeholder}
+        type={type}
         variant={variant}
         radius={radius}
         value={value != null ? value.toString() : ""}
@@ -51,7 +49,13 @@ export const ReuInput: React.FC<ReusableInputProps> = ({
         max={max?.toString()}
         name={name}
         required={required}
-        className="text-sm sm:text-base"
+        disabled={disabled}
+        labelPlacement="outside-top"
+        classNames={{
+          base: "w-full",
+          inputWrapper: "focus-within:border-2 focus-within:border-black",
+          input: `${className} text-sm sm:text-base outline-none`,
+        }}
       />
     </div>
   );

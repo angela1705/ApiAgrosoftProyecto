@@ -228,7 +228,6 @@ const ActividadPage: React.FC = () => {
                                 >
                                     <option value="PENDIENTE">Pendiente</option>
                                     <option value="EN_PROCESO">En proceso</option>
-                                    <option value="COMPLETADA">Completada</option>
                                     <option value="CANCELADA">Cancelada</option>
                                 </select>
                             </div>
