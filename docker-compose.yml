@@ -7,7 +7,7 @@ services:
     tty: true
 
   backend:
-    image: wmauriciodev/backend_agrosoft:8
+    image: wmauriciodev/backend_agrosoft:9
     ports:
       - "8000:8000"
     depends_on:
