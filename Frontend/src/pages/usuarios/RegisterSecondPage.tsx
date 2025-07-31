@@ -50,7 +50,7 @@ const UsuariosSecondPage: React.FC = () => {
 
     if (
       usuario.numero_documento <= 0 ||
-      numeroStr.length < 7 ||
+      numeroStr.length < 6 ||
       numeroStr.length > 19
     ) {
       addToast({
