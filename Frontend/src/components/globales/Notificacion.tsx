@@ -186,6 +186,8 @@ const Notificacion: React.FC = () => {
       window.location.href = `/actividades/${notification.data.actividad_id}`;
     } else if (notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") {
       window.location.href = `/insumos/${notification.data.insumo_id}`;
+    } else if (notification.type === "HERRAMIENTA_EN_USO" || notification.type === "HERRAMIENTA_BAJA_STOCK") {
+      window.location.href = `/bodega_herramienta/${notification.data.bodega_herramienta_id}`;
     } else if (notification.type === "PEST_ALERT") {
       window.location.href = `/cultivo/detallereporteplaga/${notification.data.reporte_plaga_id}`;
     }
@@ -198,6 +200,10 @@ const Notificacion: React.FC = () => {
       case "INSUMO_CADUCANDO":
         return <TimerIcon sx={{ color: "#ffb300" }} />;
       case "INSUMO_AGOTADO":
+        return <WarningIcon sx={{ color: "#d32f2f" }} />;
+      case "HERRAMIENTA_EN_USO":
+        return <TimerIcon sx={{ color: "#ffb300" }} />;
+      case "HERRAMIENTA_BAJA_STOCK":
         return <WarningIcon sx={{ color: "#d32f2f" }} />;
       case "PEST_ALERT":
         return <BugReportIcon sx={{ color: "#d81b60" }} />;
@@ -313,6 +319,7 @@ const Notificacion: React.FC = () => {
                             fontWeight:
                               line.startsWith("Se te ha asignado") ||
                               line.startsWith("El insumo") ||
+                              line.startsWith("La herramienta") ||
                               line.startsWith("Se ha detectado una plaga") ||
                               line.startsWith("Nuevo reporte de plaga") ||
                               line.startsWith("El estado del reporte de plaga")
@@ -339,6 +346,8 @@ const Notificacion: React.FC = () => {
                       {notification.type === "ACTIVIDAD_ASIGNADA" && "Ver Actividad"}
                       {(notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") &&
                         "Ver Insumo"}
+                      {(notification.type === "HERRAMIENTA_EN_USO" || notification.type === "HERRAMIENTA_BAJA_STOCK") &&
+                        "Ver Herramienta"}
                       {notification.type === "PEST_ALERT" && "Ver Reporte"}
                     </Button>
                   ) : (

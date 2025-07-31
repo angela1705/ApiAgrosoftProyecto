@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/components/utils/axios";
 import { addToast } from "@heroui/react";
-import {ActividadCostosData } from "@/types/cultivo/ActividadCosto";
+import {ActividadCostosData } from "@/types/graficas/ActividadCosto";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

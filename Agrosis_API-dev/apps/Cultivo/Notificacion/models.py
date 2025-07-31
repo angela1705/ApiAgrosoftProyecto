@@ -7,6 +7,8 @@ class Notification(models.Model):
         ('INSUMO_AGOTADO', 'Insumo Agotado'),
         ('INSUMO_CADUCANDO', 'Insumo Caducando'),
         ('PEST_ALERT', 'Alerta de Plagas'),
+        ('HERRAMIENTA_EN_USO', 'Herramienta en Uso'),
+        ('HERRAMIENTA_BAJA_STOCK', 'Herramienta Baja de Stock'),
         ('OTHER', 'Otro'),
     )
 

@@ -45,6 +45,7 @@ from apps.Iot.sensores.api.routers import SensoresRouter
 from apps.Iot.evapotranspiracion.api.routers import evapotranspiracionrouter
 from apps.mapa.api.routers import maparouter
 from apps.Cultivo.Notificacion.api.urls import urlpatterns
+from apps.Cultivo.calendario.api.router import calendarioRouter 
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -88,6 +89,7 @@ routerCultivo.registry.extend(tipoEspecieRouter.registry)
 routerCultivo.registry.extend(tipoPlagaRouter.registry)
 routerCultivo.registry.extend(tipoResiduoRouter.registry)
 routerCultivo.registry.extend(reporte_plaga_router.registry)
+routerCultivo.registry.extend(calendarioRouter.registry)
 
 # Finanzas
 routerFinanzas.registry.extend(pagoRouter.registry)

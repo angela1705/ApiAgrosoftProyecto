@@ -8,7 +8,7 @@ export interface Notification {
   data: any;
   created_at: string;
   read: boolean;
-  recipient_id?: string; // Agregar recipient_id
+  recipient_id?: string;
 }
 
 export const useNotifications = (
@@ -21,13 +21,9 @@ export const useNotifications = (
 
   const handleNotification = useCallback(
     (notification: Notification) => {
-      if (notification.recipient_id && notification.recipient_id !== userId) {
-        console.warn(
-          `[useNotifications] Notificación ignorada: destinada a recipient_id ${notification.recipient_id}, pero userId es ${userId}`
-        );
-        return;
-      }
-      console.log("[useNotifications] Recibiendo notificación:", notification);
+          if (notification.recipient_id && notification.recipient_id !== userId) {
+            return;
+          }
       addNotification(notification);
     },
     [addNotification, userId]
@@ -35,7 +31,7 @@ export const useNotifications = (
 
   const handleError = useCallback(
     (error: string) => {
-      console.log("[useNotifications] Error recibido:", error);
+          // ...
       onError(error);
     },
     [onError]
@@ -43,18 +39,14 @@ export const useNotifications = (
 
   useEffect(() => {
     if (!userId) {
-      console.error("[useNotifications] No se proporcionó userId, omitiendo configuración de WebSocket");
-      onError("No se proporcionó un ID de usuario válido");
       return;
     }
 
     if (isInitialized.current && lastUserId.current === userId) {
-      console.log("[useNotifications] Hook ya inicializado para userId:", userId);
       return;
     }
 
     const timer = setTimeout(() => {
-      console.log("[useNotifications] Inicializando WebSocket para userId:", userId);
       isInitialized.current = true;
       lastUserId.current = userId;
 
@@ -65,7 +57,6 @@ export const useNotifications = (
 
     return () => {
       clearTimeout(timer);
-      console.log("[useNotifications] Limpiando listeners para userId:", userId);
       webSocketService.removeNotificationListener(handleNotification);
       webSocketService.removeErrorListener(handleError);
       isInitialized.current = false;

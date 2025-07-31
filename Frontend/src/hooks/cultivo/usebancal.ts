@@ -85,7 +85,7 @@ const actualizarBancal = async (id: number, bancal: any) => {
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error en la API:", error.response?.data);
+    // ...
     throw error;
   }
 };

@@ -93,16 +93,11 @@ const registrarActividad = async (actividad: Actividad) => {
               Authorization: `Bearer ${token}`,
           },
       });
-      console.log("Datos enviados a la API:", actividad);
+      // ...
 
       return response.data;
   } catch (error: any) {
-    console.error("Error en la API:", {
-      mensaje: error.message,
-      status: error.response?.status,
-      data: error.response?.data,
-      headers: error.response?.headers,
-    });
+    // ...
           throw error;
   }
 };
@@ -123,14 +118,11 @@ const eliminarActividad = async (id: number) => {
     }
   
     try {
-      console.log("Actividad enviada para actualizar:", actividad);
-
       const response = await api.put(`${API_URL}${id}/`, actividad, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
     } catch (error: any) {
-      console.error("Error en la API:", error.response?.data);
       throw error;
     }
   };
@@ -251,7 +243,6 @@ export const useActualizarActividad = () => {
       });
       return response.data;
     } catch (error: any) {
-      console.error("Error en la API:", error.response?.data);
       throw error;
     }
   };
