@@ -22,7 +22,7 @@ const Login: React.FC = () => {
     try {
       await login(Number(numeroDeDocumento), password);
     } catch  {
-      setError('Error de autenticación. Verifica tus credenciales.');
+      setError('Credenciales incorrectas. Verifique su número de documento y/o contraseña.');
     } finally {
       setLoading(false);
     }

@@ -24,14 +24,18 @@ Si ya cuentas con la API, solo necesitas instalar las dependencias necesarias:
 pip install -r requirements.txt
 ```
 
-Asegúrate de que el archivo `settings.py` tenga configurado `rest_framework` en `INSTALLED_APPS`.
+Asegúrate de que el archivo `settings.py` este configurado correctamente el usuario, contraseña y nombre de la base de datos.
+## Migraciones
+```bash
+python manage.py migrate
+```
 
 ## Ejecutar el Servidor y Probar la API
 
 Navega al directorio del proyecto y ejecuta el servidor:
 
 ```bash
-python manage.py runserver
+daphne -b 0.0.0.0 -p 8000 Agrosoft.asgi:application
 ```
 
 La API estará disponible en `http://127.0.0.1:8000/api/`. Desde aquí, puedes probar los endpoints utilizando herramientas como Postman o la interfaz web de DRF.

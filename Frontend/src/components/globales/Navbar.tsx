@@ -15,7 +15,7 @@ import {
   FaMap,
 } from "react-icons/fa";
 import { GiProcessor } from "react-icons/gi";
-import LogoSena from "../../assets/def_AGROSIS_LOGOTIC.png";
+import LogoSena from "../../assets/Agrosoft_Logo.png";
 import Sena from "../../assets/logo sena.png";
 import { useAuth } from "@/context/AuthContext";
 
