@@ -5,11 +5,8 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
-    host: '0.0.0.0', 
-    port: 5173, 
-  },
-  define: {
-    'import.meta.env.VITE_HOST': JSON.stringify(process.env.VITE_HOST || 'localhost'),
+    host: '0.0.0.0',
+    port: 5173,
   },
   build: {
     commonjsOptions: {

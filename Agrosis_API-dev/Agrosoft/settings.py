@@ -102,7 +102,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            "hosts": [("localhost", 6379)],
         },
     },
 }
@@ -119,10 +119,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
 
-        'NAME': os.getenv('POSTGRES_DB', 'agrosoft_db'),
+        'NAME': os.getenv('POSTGRES_DB', 'agrosoft_db1'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'root'),
-        'HOST': os.getenv('DB_HOST', 'db'),  
+        'HOST': os.getenv('DB_HOST', 'localhost'),  
         'PORT': os.getenv('DB_PORT', '5432'), 
 
     }

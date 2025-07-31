@@ -27,8 +27,10 @@ import WarningIcon from "@mui/icons-material/Warning";
 import TimerIcon from "@mui/icons-material/Timer";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import { useNotifications, Notification } from "@/hooks/websocket/useNotifications";
-import axios from "@/api/axios";
+import axios from "@/api/axios"; // Asegúrate de que apunta al primer archivo de Axios
 import { debounce } from "lodash";
+
+const API_NOTIFICATIONS_URL = `${import.meta.env.VITE_API_BASE_URL}/api/notificaciones/`;
 
 const Notificacion: React.FC = () => {
   const { user } = useAuth();
@@ -47,7 +49,8 @@ const Notificacion: React.FC = () => {
 
     isFetching.current = true;
     try {
-      const response = await axios.get("http://localhost:8000/api/notificaciones/");
+      console.log("Fetching notifications from:", API_NOTIFICATIONS_URL); // Log para depuración
+      const response = await axios.get(API_NOTIFICATIONS_URL);
       const fetchedNotifications: Notification[] = response.data.map((n: any) => ({
         id: n.id,
         type: n.notification_type,
@@ -63,7 +66,9 @@ const Notificacion: React.FC = () => {
       setNotifications(uniqueNotifications);
       setUnreadCount(uniqueNotifications.filter((n) => !n.read).length);
     } catch (error: any) {
-      setError(`Error al cargar las notificaciones: ${error.message}`);
+      const errorMessage = `Error al cargar las notificaciones: ${error.message}`;
+      console.error(errorMessage, { status: error.response?.status, data: error.response?.data });
+      setError(errorMessage);
     } finally {
       isFetching.current = false;
     }
@@ -106,7 +111,7 @@ const Notificacion: React.FC = () => {
   const markAsRead = useCallback(
     async (id: string) => {
       try {
-        await axios.post("http://localhost:8000/api/notificaciones/", { action: "mark_read", notification_id: id });
+        await axios.post(API_NOTIFICATIONS_URL, { action: "mark_read", notification_id: id });
         setNotifications((prev) =>
           prev.map((n) =>
             n.id === id && !n.read ? { ...n, read: true } : n
@@ -114,7 +119,9 @@ const Notificacion: React.FC = () => {
         );
         setUnreadCount((prevUnread) => Math.max(0, prevUnread - 1));
       } catch (error: any) {
-        setError(`Error al marcar la notificación como leída: ${error.message}`);
+        const errorMessage = `Error al marcar la notificación como leída: ${error.message}`;
+        console.error(errorMessage, { status: error.response?.status, data: error.response?.data });
+        setError(errorMessage);
       }
     },
     []
@@ -123,7 +130,7 @@ const Notificacion: React.FC = () => {
   const deleteNotification = useCallback(
     async (id: string) => {
       try {
-        await axios.post("http://localhost:8000/api/notificaciones/", { action: "delete", notification_id: id });
+        await axios.post(API_NOTIFICATIONS_URL, { action: "delete", notification_id: id });
         setNotifications((prev) => {
           const notificationToDelete = prev.find((n) => n.id === id);
           const updatedNotifications = prev.filter((n) => n.id !== id);
@@ -133,7 +140,9 @@ const Notificacion: React.FC = () => {
           return updatedNotifications;
         });
       } catch (error: any) {
-        setError(`Error al eliminar la notificación: ${error.message}`);
+        const errorMessage = `Error al eliminar la notificación: ${error.message}`;
+        console.error(errorMessage, { status: error.response?.status, data: error.response?.data });
+        setError(errorMessage);
       }
     },
     []
@@ -141,12 +150,14 @@ const Notificacion: React.FC = () => {
 
   const clearAllNotifications = useCallback(async () => {
     try {
-      await axios.post("http://localhost:8000/api/notificaciones/", { action: "clear_all" });
+      await axios.post(API_NOTIFICATIONS_URL, { action: "clear_all" });
       setNotifications([]);
       setUnreadCount(0);
       setConfirmClearOpen(false);
     } catch (error: any) {
-      setError(`Error al limpiar todas las notificaciones: ${error.message}`);
+      const errorMessage = `Error al limpiar todas las notificaciones: ${error.message}`;
+      console.error(errorMessage, { status: error.response?.status, data: error.response?.data });
+      setError(errorMessage);
     }
   }, []);
 
@@ -343,12 +354,6 @@ const Notificacion: React.FC = () => {
                         "&:hover": { bgcolor: "rgba(46, 125, 50, 0.1)" },
                       }}
                     >
-                      {notification.type === "ACTIVIDAD_ASIGNADA" && "Ver Actividad"}
-                      {(notification.type === "INSUMO_CADUCANDO" || notification.type === "INSUMO_AGOTADO") &&
-                        "Ver Insumo"}
-                      {(notification.type === "HERRAMIENTA_EN_USO" || notification.type === "HERRAMIENTA_BAJA_STOCK") &&
-                        "Ver Herramienta"}
-                      {notification.type === "PEST_ALERT" && "Ver Reporte"}
                     </Button>
                   ) : (
                     <Button

@@ -70,3 +70,10 @@ export interface SensorTableProps {
   realTimeData: SensorData[];
   selectedDataType: TipoSensor; // Usamos TipoSensor
 }
+export interface EvapotranspiracionData {
+  id: number;
+  fk_bancal: number;
+  fecha: string;
+  valor: number;
+  creado: string;
+}
