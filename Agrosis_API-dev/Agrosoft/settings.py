@@ -102,7 +102,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("localhost", 6379)],
+            "hosts": [("redis", 6379)],
         },
     },
 }
@@ -118,10 +118,11 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'agrosoft10'),
+
+        'NAME': os.getenv('POSTGRES_DB', 'agrosoft_db'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'adso2024'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),  
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'root'),
+        'HOST': os.getenv('DB_HOST', 'db'),  
         'PORT': os.getenv('DB_PORT', '5432'), 
 
     }
@@ -170,23 +171,18 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174", 
-    "http://127.0.0.1:5174",
-]
-
+CORS_ALLOWED_ORIGINS = []  # Vacío para evitar conflictos
+CORS_ALLOW_ALL_ORIGINS = True  # Acepta solicitudes de cualquier origen
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
     "http://localhost:5173",
+    "http://localhost:8000",
     "http://127.0.0.1:5173",
-    "http://localhost:5174",  
-    "http://127.0.0.1:5174",
+    "http://127.0.0.1:8000",
+    "http://192.168.1.118:5173",
+    "http://192.168.1.118:8000",
+    "http://*:5173",
+    "http://*:8000",
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
