@@ -4,9 +4,10 @@ import { addToast } from "@heroui/react";
 
 export const useWebSocketData = (sensores: Sensor[] = []) => {
   const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
+  const WS_URL = import.meta.env.VITE_WS_URL;
 
   useEffect(() => {
-    const ws = new WebSocket("ws://192.168.1.8:8000/ws/realtime/");
+    const ws = new WebSocket(WS_URL);
 
     ws.onopen = () => {
       addToast({
