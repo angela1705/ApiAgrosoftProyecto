@@ -39,13 +39,13 @@ services:
       - "5434:5432"
 
   documentacion:
-    image: juan66016/agrosoft_documentacion:3
+    image: juan66016/agrosoft_documentacion:4
     ports:
       - "4321:4321"
     restart: unless-stopped
 
   manual:
-    image: juan66016/agrosoft_manual:3
+    image: juan66016/agrosoft_manual:4
     ports:
       - "4322:4322"
     restart: unless-stopped
