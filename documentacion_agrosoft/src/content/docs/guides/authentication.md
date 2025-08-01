@@ -17,7 +17,7 @@ Aquí aprenderás cómo autenticarte en la API usando tokens.
 
 # ¿Como generar un Token?
 
-**Campos de un usuario:**
+**Campos que contiene un usuario usuario:**
 
 ```json
 
