@@ -2,8 +2,12 @@ import axios from "axios";
 import { addToast } from "@heroui/react";
 import { obtenerNuevoToken } from "./refresh";
 
+const runtimeBaseUrl = import.meta.env.VITE_API_BASE_URL?.includes("192.")
+  ? import.meta.env.VITE_API_BASE_URL
+  : `${window.location.protocol}//${window.location.hostname}:8000`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: runtimeBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },
@@ -11,7 +15,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    // No agregar el header Authorization para el endpoint /iot/datosmeteorologicos/
     if (!config.url?.includes("/iot/datosmeteorologicos/")) {
       const token = localStorage.getItem("access_token");
       if (token) {
@@ -20,15 +23,11 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 

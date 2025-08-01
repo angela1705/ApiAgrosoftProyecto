@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const runtimeBaseUrl = import.meta.env.VITE_API_BASE_URL!;
-
+const runtimeBaseUrl =
+  import.meta.env.VITE_API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8000`;
 
 const api = axios.create({
   baseURL: runtimeBaseUrl,
@@ -9,7 +9,6 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
 
 api.interceptors.request.use(
   (config) => {
@@ -23,8 +22,5 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-console.log(import.meta.env.VITE_API_BASE_URL);
-console.log(`${window.location.protocol}//${window.location.hostname}:8000`);
-
 
 export default api;
