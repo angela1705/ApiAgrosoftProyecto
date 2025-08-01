@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: wmauriciodev/frontend_agrosoft:5
+    image: wmauriciodev/frontend_agrosoft:6
     ports:
       - "5173:80"
     stdin_open: true
