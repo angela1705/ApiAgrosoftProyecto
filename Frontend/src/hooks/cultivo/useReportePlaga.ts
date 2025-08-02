@@ -1,14 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToast } from "@heroui/react";
 import { ReportePlaga, ReportePlagaDetalle } from "@/types/cultivo/ReportePlaga";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${BASE_URL}/cultivo/reportes-plagas/`;
 
 const fetchReportes = async (): Promise<ReportePlagaDetalle[]> => {
   const token = localStorage.getItem("access_token");
-  const response = await axios.get(API_URL, {
+  const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -16,7 +16,7 @@ const fetchReportes = async (): Promise<ReportePlagaDetalle[]> => {
 
 const crearReporte = async (reporte: Omit<ReportePlaga, 'id' | 'estado' | 'fecha_reporte'>) => {
   const token = localStorage.getItem("access_token");
-  return axios.post(API_URL, {
+  return api.post(API_URL, {
     plaga_id: reporte.plaga_id,
     bancal_id: reporte.bancal_id,
     observaciones: reporte.observaciones
@@ -28,7 +28,7 @@ const crearReporte = async (reporte: Omit<ReportePlaga, 'id' | 'estado' | 'fecha
 const actualizarEstadoReporte = async (id: number, estado: 'RE' | 'AT') => {
   const token = localStorage.getItem("access_token");
   const endpoint = estado === 'RE' ? 'revisar' : 'atender';
-  return axios.post(`${API_URL}${id}/${endpoint}/`, {}, {
+  return api.post(`${API_URL}${id}/${endpoint}/`, {}, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
@@ -83,7 +83,7 @@ export const useActualizarEstadoReporte = () => {
 
 const fetchReporte = async (id: number): Promise<ReportePlagaDetalle> => {
     const token = localStorage.getItem("access_token");
-    const response = await axios.get(`${API_URL}${id}/`, {
+    const response = await api.get(`${API_URL}${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

@@ -7,4 +7,4 @@ class InsumosConfig(AppConfig):
     from django.apps import AppConfig
     
     def ready(self):
-        import apps.Inventario.insumos.signals
+        import apps.Inventario.insumos.api.signals

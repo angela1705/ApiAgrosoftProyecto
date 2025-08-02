@@ -64,3 +64,4 @@ class Insumo(models.Model):
 
     class Meta:
         db_table = "insumos_insumo"
+        
