@@ -13,10 +13,25 @@ class BodegaHerramienta(models.Model):
     cantidad_prestada = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
+        # Capturar valores anteriores antes de guardar
+        if self.pk:
+            try:
+                original = BodegaHerramienta.objects.get(pk=self.pk)
+                self._original_cantidad = original.cantidad
+                self._original_cantidad_prestada = original.cantidad_prestada
+            except BodegaHerramienta.DoesNotExist:
+                self._original_cantidad = None
+                self._original_cantidad_prestada = None
+        else:
+            self._original_cantidad = None
+            self._original_cantidad_prestada = None
+        
+        # Calcular costo_total
         if self.herramienta and self.herramienta.precio:
             self.costo_total = self.cantidad * self.herramienta.precio
         else:
             self.costo_total = 0.00
+        
         super().save(*args, **kwargs)
 
     def __str__(self):
