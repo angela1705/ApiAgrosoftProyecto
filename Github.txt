@@ -1,0 +1,13 @@
+Buen día instructor, en el presente archivo encontrará los enlaces de GitHub de este proyecto junto con los enlaces de dockerhub
+
+Github: https://github.com/angela1705/ApiAgrosoftProyecto.git
+Dockerhub
+
+Dockerhub:
+
+Frontend: https://hub.docker.com/repository/docker/wmauriciodev/frontend_agrosoft/general
+Backend: https://hub.docker.com/repository/docker/wmauriciodev/backend_agrosoft/general
+Documentación manual de usuario:
+https://hub.docker.com/repository/docker/juan66016/agrosoft_manual
+Documentación: https://hub.docker.com/repository/docker/juan66016/agrosoft_documentacion
+
