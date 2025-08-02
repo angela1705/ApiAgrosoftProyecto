@@ -4,7 +4,7 @@ import { addToast } from "@heroui/react";
 import api from "@/components/utils/axios";
 
 export const useWebSocketData = (sensores: Sensor[] = []) => {
-  const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
+  const [realTimeData, setRealTimeData] = useState<SensorData[]>([]); 
 
   useEffect(() => {
     // Obtener la baseURL del axios

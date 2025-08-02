@@ -80,12 +80,12 @@ const SensoresPage2: React.FC = () => {
 
   const debouncedSetSelectedDataType = useCallback(debounce(setSelectedDataType, 300), []);
 
+  // Datos filtrados para gráficas y tabla (depende de selectedDataType)
   const filteredData = useMemo(() => {
     return realTimeData.filter(
       (d) => {
         const value = d[selectedDataType.key];
         return (
-          d.device_code === 'ESP32_001' &&
           value !== null &&
           value !== undefined &&
           !isNaN(value) &&
@@ -95,7 +95,7 @@ const SensoresPage2: React.FC = () => {
     );
   }, [realTimeData, selectedDataType]);
 
-  // Compute latest data for all data types for the cards
+  // Datos para las tarjetas (muestra el valor más reciente para cada tipo de sensor)
   const latestDataByType = useMemo(() => {
     return dataTypes.map((type) => {
       const latest = realTimeData
@@ -103,7 +103,6 @@ const SensoresPage2: React.FC = () => {
           (d) => {
             const value = d[type.key];
             return (
-              d.device_code === 'ESP32_001' &&
               value !== null &&
               value !== undefined &&
               !isNaN(value) &&
@@ -190,7 +189,7 @@ const SensoresPage2: React.FC = () => {
             ))}
           </div>
 
-          <SensorStats realTimeData={filteredData} selectedSensor='todos' selectedDataType={selectedDataType} />
+          <SensorStats realTimeData={realTimeData} selectedSensor='todos' />
 
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 w-full'>
             <motion.button
