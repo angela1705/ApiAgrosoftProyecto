@@ -107,10 +107,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Frontend Vite
-    "http://127.0.0.1:5173",
-]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settizngs/#databases
@@ -170,9 +166,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ALLOWED_ORIGINS = []  # Vacío para evitar conflictos
 CORS_ALLOW_ALL_ORIGINS = True  # Acepta solicitudes de cualquier origen
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = False
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8000",
