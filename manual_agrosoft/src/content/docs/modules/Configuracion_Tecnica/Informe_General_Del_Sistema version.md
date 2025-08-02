@@ -104,8 +104,8 @@ El sistema está dirigido a los usuarios dentro de la unidad productiva, incluye
 
 ## Arquitectura de Información
 
- <img src="/public/informe_general/img1.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-as
+ <img src="/public/informe_general/img-1.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+ 
 ---
 
 ## Funcionalidades
@@ -210,85 +210,7 @@ A continuación, se describen los distintos tipos de usuarios que interactúan c
 - **Responsabilidades**: Usado para cuentas nuevas no configuradas.
 
 ---
-
-## Diagrama de Casos de Uso
-
-### General
-*Placeholder: El diagrama general de casos de uso muestra la interacción de los roles con el sistema. A continuación, un ejemplo en Mermaid:*
-
  
-### Específicos
-1. Registro de usuarios
-
-<img src="/public/informe_general/img1.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-2. Editar usuarios
-<img src="/public/informe_general/img2.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-3. Desactivar usuarios  
-   <img src="/public/informe_general/img3.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-4. Registrar, editar y desactivación de bancales  
-   <img src="/public/informe_general/img4.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-5. Registrar, editar y desactivación de Lotes  
-   <img src="/public/informe_general/img5.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-6. Registrar, editar y seguimiento de Controles  
-   <img src="/public/informe_general/img6.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-7. Asignar una actividad  
-   <img src="/public/informe_general/img7.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-8. Registrar, editar Cultivos  
-   <img src="/public/informe_general/img8.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-9. Registrar y editar cosecha  
-   <img src="/public/informe_general/img9.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-10. Registrar recordatorios  
-    <img src="/public/informe_general/img10.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-11. Registrar y editar tipo de plaga  
-    <img src="/public/informe_general/img11.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-12. Registrar y editar plaga  
-    <img src="/public/informe_general/img12.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-13. Registrar y editar una afección  
-    <img src="/public/informe_general/img13.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-14. Registro y edición de salario mínimo  
-    <img src="/public/informe_general/img14.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-15. Registrar una venta  
-    <img src="/public/informe_general/img15.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-16. Calcular Costo beneficio  
-    <img src="/public/informe_general/img16.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-17. Calcular pago  
-    <img src="/public/informe_general/img17.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-18. Registrar Insumos  
-    <img src="/public/informe_general/img18.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-19. Registrar Herramientas  
-    <img src="/public/informe_general/img19.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-20. Registrar Bodegas  
-    <img src="/public/informe_general/img20.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-21. Registrar Bodega Insumo  
-    <img src="/public/informe_general/img21.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-22. Registrar Bodega Herramienta  
-    <img src="/public/informe_general/img22.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-23. Registrar Producto  
-    <img src="/public/informe_general/img23.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
-
-
  # Historias de Usuario - AgroSoft
 
 ## 1. Registro de usuario
@@ -2191,3 +2113,6 @@ El sistema valida la información y permite al usuario realizar el registro.
 ## DIAGRAMA DE CLASES
 
 En esta sección se debe presentar el diagrama de clases del sistema. 
+
+ <img src="/public/informe_general/image.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+ 
