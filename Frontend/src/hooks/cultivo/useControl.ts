@@ -2,14 +2,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToast } from "@heroui/react";
 import { Control, ControlDetalle } from "@/types/cultivo/Control";
-import axios from "axios";
+import api from "@/components/utils/axios"; 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const API_URL = `${BASE_URL}/cultivo/control/`;
 
 const fetchControles = async (): Promise<ControlDetalle[]> => {
   const token = localStorage.getItem("access_token");
-  const response = await axios.get(API_URL, {
+  const response = await api.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -17,7 +17,7 @@ const fetchControles = async (): Promise<ControlDetalle[]> => {
 
 const fetchControl = async (id: number): Promise<ControlDetalle> => {
   const token = localStorage.getItem("access_token");
-  const response = await axios.get(`${API_URL}${id}/`, {
+  const response = await api.get(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -25,21 +25,21 @@ const fetchControl = async (id: number): Promise<ControlDetalle> => {
 
 const crearControl = async (control: Omit<Control, 'id'>) => {
   const token = localStorage.getItem("access_token");
-  return axios.post(API_URL, control, {
+  return api.post(API_URL, control, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 const actualizarControl = async (id: number, control: Partial<Control>) => {
   const token = localStorage.getItem("access_token");
-  return axios.patch(`${API_URL}${id}/`, control, {
+  return api.patch(`${API_URL}${id}/`, control, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 const eliminarControl = async (id: number) => {
   const token = localStorage.getItem("access_token");
-  return axios.delete(`${API_URL}${id}/`, {
+  return api.delete(`${API_URL}${id}/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

@@ -4,7 +4,7 @@ import DefaultLayout from "@/layouts/default";
 import { useControles, useEliminarControl, useActualizarControl } from "@/hooks/cultivo/useControl";
 import { useAfecciones } from "@/hooks/cultivo/useAfecciones";
 import { useTipoControl } from "@/hooks/cultivo/usetipocontrol";
-import { useProductoControl } from "@/hooks/cultivo/useproductoscontrol";
+import { useInsumos } from "@/hooks/inventario/useInsumo";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
 import Tabla from "@/components/globales/Tabla";
 import { EditIcon, Trash2 } from "lucide-react";
@@ -17,10 +17,10 @@ const ListaControlPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { data: controles, isLoading, refetch } = useControles();
+  const { data: controles, isLoading, error, refetch } = useControles();
   const { data: afecciones } = useAfecciones();
   const { data: tipoControles } = useTipoControl();
-  const { data: productos } = useProductoControl();
+  const { data: insumos } = useInsumos();
   const { data: usuarios } = useUsuarios();
   const eliminarMutation = useEliminarControl();
   const actualizarMutation = useActualizarControl();
@@ -30,7 +30,7 @@ const ListaControlPage: React.FC = () => {
     { name: "ID", uid: "id" },
     { name: "Afección", uid: "afeccion" },
     { name: "Tipo Control", uid: "tipo_control" },
-    { name: "Producto", uid: "producto" },
+    { name: "Insumo", uid: "insumo" },
     { name: "Fecha", uid: "fecha" },
     { name: "Efectividad", uid: "efectividad" },
     { name: "Acciones", uid: "acciones" },
@@ -62,37 +62,39 @@ const ListaControlPage: React.FC = () => {
     label: `${value}%`,
   }));
 
-  const transformedData =
-    controles?.map((control) => ({
-      id: control.id.toString(),
-      afeccion: control.afeccion.nombre,
-      tipo_control: control.tipo_control.nombre,
-      producto: control.producto.nombre,
-      fecha: new Date(control.fecha_control).toLocaleDateString(),
-      efectividad: (
-        <span
-          className={`px-2 py-1 rounded-full text-xs ${
-            control.efectividad >= 70
-              ? "bg-green-100 text-green-800"
-              : control.efectividad >= 40
-              ? "bg-yellow-100 text-yellow-800" 
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          {control.efectividad}%
-        </span>
-      ),
-      acciones: (
-        <div className="flex gap-2">
-          <button className="text-green-500 hover:underline" onClick={() => handleEdit(control)}>
-            <EditIcon size={18} color="black" />
-          </button>
-          <button className="text-red-500 hover:underline" onClick={() => handleDelete(control)}>
-            <Trash2 size={18} />
-          </button>
-        </div>
-      ),
-    })) || [];
+  // Ensure controles is an array before mapping
+  const transformedData = Array.isArray(controles)
+    ? controles.map((control) => ({
+        id: control.id.toString(),
+        afeccion: control.afeccion.nombre,
+        tipo_control: control.tipo_control.nombre,
+        insumo: control.producto.nombre,
+        fecha: new Date(control.fecha_control).toLocaleDateString(),
+        efectividad: (
+          <span
+            className={`px-2 py-1 rounded-full text-xs ${
+              control.efectividad >= 70
+                ? "bg-green-100 text-green-800"
+                : control.efectividad >= 40
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
+            {control.efectividad}%
+          </span>
+        ),
+        acciones: (
+          <div className="flex gap-2">
+            <button className="text-green-500 hover:underline" onClick={() => handleEdit(control)}>
+              <EditIcon size={18} color="black" />
+            </button>
+            <button className="text-red-500 hover:underline" onClick={() => handleDelete(control)}>
+              <Trash2 size={18} />
+            </button>
+          </div>
+        ),
+      }))
+    : [];
 
   return (
     <DefaultLayout>
@@ -111,6 +113,12 @@ const ListaControlPage: React.FC = () => {
 
       {isLoading ? (
         <p className="text-gray-600">Cargando...</p>
+      ) : error ? (
+        <p className="text-red-600">Error al cargar los controles: {error.message}</p>
+      ) : !Array.isArray(controles) ? (
+        <p className="text-red-600">Error: Los datos de controles no están en el formato esperado.</p>
+      ) : controles.length === 0 ? (
+        <p className="text-gray-600">No hay controles registrados.</p>
       ) : (
         <Tabla columns={columns} data={transformedData} />
       )}
@@ -175,7 +183,7 @@ const ListaControlPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Insumo</label>
             <select
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={selectedControl?.producto.id || 0}
@@ -187,9 +195,9 @@ const ListaControlPage: React.FC = () => {
               }
               required
             >
-              <option value="0">Seleccione un producto</option>
-              {productos?.map((p) => (
-                <option key={p.id} value={p.id}>{p.nombre}</option>
+              <option value="0">Seleccione un insumo</option>
+              {insumos?.map((i) => (
+                <option key={i.id} value={i.id}>{i.nombre}</option>
               ))}
             </select>
           </div>

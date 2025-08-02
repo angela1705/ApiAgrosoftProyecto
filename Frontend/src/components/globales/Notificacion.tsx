@@ -27,7 +27,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import TimerIcon from "@mui/icons-material/Timer";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import { useNotifications, Notification } from "@/hooks/websocket/useNotifications";
-import axios from "@/api/axios"; // Asegúrate de que apunta al primer archivo de Axios
+import axios from "@/api/axios";
 import { debounce } from "lodash";
 
 const API_NOTIFICATIONS_URL = `${import.meta.env.VITE_API_BASE_URL}/api/notificaciones/`;
@@ -49,7 +49,6 @@ const Notificacion: React.FC = () => {
 
     isFetching.current = true;
     try {
-      console.log("Fetching notifications from:", API_NOTIFICATIONS_URL); // Log para depuración
       const response = await axios.get(API_NOTIFICATIONS_URL);
       const fetchedNotifications: Notification[] = response.data.map((n: any) => ({
         id: n.id,
