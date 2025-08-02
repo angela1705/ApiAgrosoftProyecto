@@ -115,10 +115,9 @@ export default defineConfig({
             { label: 'Especificacion de Requerimientos', slug: 'modules/Configuracion_Tecnica/especificacion_requerimiento' },
             { label: 'Planteamiento del Problema', slug: 'modules/Configuracion_Tecnica/Planteamiento_del_Problema' },          
             { label: 'Prototipado del sistema', slug: 'modules/Configuracion_Tecnica/prototipado_del_sistema' },
+            { label: 'Casos de Prueba', slug: 'modules/Configuracion_Tecnica/Casos_de_prueba' },
+            { label: 'Manual Tecnico', slug: 'modules/Configuracion_Tecnica/Manual_Tecnico' },
             { label: 'Informe General Del Sistema', slug: 'modules/Configuracion_Tecnica/Informe_General_Del_Sistema' },
-
-
-
           ],
         },
       ],
