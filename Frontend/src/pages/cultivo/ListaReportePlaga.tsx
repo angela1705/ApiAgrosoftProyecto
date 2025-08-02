@@ -6,8 +6,21 @@ import Tabla from "@/components/globales/Tabla";
 import { CheckCircle, AlertCircle, Clock } from "lucide-react";
 import ReuModal from "@/components/globales/ReuModal";
 
+interface Reporte {
+  id: number;
+  usuario: { username: string };
+  bancal: { nombre: string };
+  plaga: { nombre: string };
+  estado: 'PE' | 'RE' | 'AT';
+  fecha_reporte: string;
+}
+
 const ListaReportePlaga: React.FC = () => {
-  const { data: reportes, isLoading } = useReportesPlaga();
+  const { data: reportes = [], isLoading, error } = useReportesPlaga() as {
+    data: Reporte[] | undefined;
+    isLoading: boolean;
+    error: any;
+  };
   const [selectedReporte, setSelectedReporte] = useState<number | null>(null);
   const [action, setAction] = useState<"RE" | "AT" | null>(null);
   const mutation = useActualizarEstadoReporte();
@@ -23,57 +36,61 @@ const ListaReportePlaga: React.FC = () => {
     { name: "Acciones", uid: "acciones" },
   ];
 
-  const transformedData = reportes?.map((reporte) => ({
-    id: reporte.id.toString(),
-    usuario: reporte.usuario.username,
-    bancal: reporte.bancal.nombre,
-    plaga: reporte.plaga.nombre,
-    estado: (
-      <div className="flex items-center gap-1">
-        {reporte.estado === 'PE' && <Clock className="text-yellow-500" size={18} />}
-        {reporte.estado === 'RE' && <AlertCircle className="text-blue-500" size={18} />}
-        {reporte.estado === 'AT' && <CheckCircle className="text-green-500" size={18} />}
-        <span>
-          {reporte.estado === 'PE' && 'Pendiente'}
-          {reporte.estado === 'RE' && 'Revisado'}
-          {reporte.estado === 'AT' && 'Atendido'}
-        </span>
-      </div>
-    ),
-    fecha: new Date(reporte.fecha_reporte).toLocaleDateString(),
-    acciones: (
-      <div className="flex gap-2">
-        {reporte.estado === 'PE' && (
-          <button
-            onClick={() => {
-              setSelectedReporte(reporte.id);
-              setAction("RE");
-            }}
-            className="text-blue-500 hover:underline text-sm"
-          >
-            Revisar
-          </button>
-        )}
-        {reporte.estado === 'RE' && (
-          <button
-            onClick={() => {
-              setSelectedReporte(reporte.id);
-              setAction("AT");
-            }}
-            className="text-green-500 hover:underline text-sm"
-          >
-            Atender
-          </button>
-        )}
-        <button
-          onClick={() => navigate(`/cultivo/detallereporteplaga/${reporte.id}`)}
-          className="text-gray-600 hover:underline text-sm"
-        >
-          Detalles
-        </button>
-      </div>
-    ),
-  })) || [];
+  console.log('reportes:', reportes); // Debug the value of reportes
+
+  const transformedData = Array.isArray(reportes)
+    ? reportes.map((reporte) => ({
+        id: reporte.id.toString(),
+        usuario: reporte.usuario.username,
+        bancal: reporte.bancal.nombre,
+        plaga: reporte.plaga.nombre,
+        estado: (
+          <div className="flex items-center gap-1">
+            {reporte.estado === 'PE' && <Clock className="text-yellow-500" size={18} />}
+            {reporte.estado === 'RE' && <AlertCircle className="text-blue-500" size={18} />}
+            {reporte.estado === 'AT' && <CheckCircle className="text-green-500" size={18} />}
+            <span>
+              {reporte.estado === 'PE' && 'Pendiente'}
+              {reporte.estado === 'RE' && 'Revisado'}
+              {reporte.estado === 'AT' && 'Atendido'}
+            </span>
+          </div>
+        ),
+        fecha: new Date(reporte.fecha_reporte).toLocaleDateString(),
+        acciones: (
+          <div className="flex gap-2">
+            {reporte.estado === 'PE' && (
+              <button
+                onClick={() => {
+                  setSelectedReporte(reporte.id);
+                  setAction("RE");
+                }}
+                className="text-blue-500 hover:underline text-sm"
+              >
+                Revisar
+              </button>
+            )}
+            {reporte.estado === 'RE' && (
+              <button
+                onClick={() => {
+                  setSelectedReporte(reporte.id);
+                  setAction("AT");
+                }}
+                className="text-green-500 hover:underline text-sm"
+              >
+                Atender
+              </button>
+            )}
+            <button
+              onClick={() => navigate(`/cultivo/detallereporteplaga/${reporte.id}`)}
+              className="text-gray-600 hover:underline text-sm"
+            >
+              Detalles
+            </button>
+          </div>
+        ),
+      }))
+    : [];
 
   const handleConfirmAction = () => {
     if (selectedReporte && action) {
@@ -102,23 +119,19 @@ const ListaReportePlaga: React.FC = () => {
           onClick={() => navigate('/cultivo/reportarplaga')}
         >
           + Nuevo Reporte
-
         </button>
       </div>
 
-     
-
-      {isLoading ? (
+      {error ? (
+        <div className="text-center py-8 text-red-500">Error: {error.message}</div>
+      ) : isLoading ? (
         <div className="text-center py-8">Cargando reportes...</div>
-      ) : reportes?.length === 0 ? (
+      ) : reportes.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           No hay reportes registrados
         </div>
       ) : (
-        <Tabla 
-          columns={columns} 
-          data={transformedData} 
-        />
+        <Tabla columns={columns} data={transformedData} />
       )}
 
       <ReuModal
