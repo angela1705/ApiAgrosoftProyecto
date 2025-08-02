@@ -64,8 +64,7 @@ export interface SensorChartsProps {
 
 export interface SensorStatsProps {
   realTimeData: SensorData[];
-  selectedSensor: number | "todos";
-  selectedDataType: DataType;  
+  selectedSensor: number | "todos"; 
 }
 
 export interface DataTypeSelectorProps {

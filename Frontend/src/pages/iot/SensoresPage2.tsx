@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from 'react-icons/fa';
@@ -75,11 +75,22 @@ const SensoresPage2: React.FC = () => {
   const [sensorActive, setSensorActive] = useState(true);
   const [selectedDataType, setSelectedDataType] = useState<DataType>(dataTypes[0]);
   const [selectedViewMode, setSelectedViewMode] = useState<ViewMode>(viewModes[0]);
+  const [resetCards, setResetCards] = useState(false);
   const navigate = useNavigate();
   const chartRef = useRef<HTMLDivElement>(null);
 
   const debouncedSetSelectedDataType = useCallback(debounce(setSelectedDataType, 300), []);
 
+  // Temporizador para limpiar las tarjetas cada 12 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setResetCards(true);
+      setTimeout(() => setResetCards(false), 100); // Restablece después de 100ms
+    }, 12000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Datos filtrados para gráficas y tabla, basados en el tipo de dato seleccionado
   const filteredData = useMemo(() => {
     return realTimeData.filter(
       (d) => {
@@ -95,8 +106,11 @@ const SensoresPage2: React.FC = () => {
     );
   }, [realTimeData, selectedDataType]);
 
-  // Compute latest data for all data types for the cards
+  // Calcular los datos más recientes para las tarjetas, sin depender de selectedDataType
   const latestDataByType = useMemo(() => {
+    if (resetCards) {
+      return dataTypes.map((type) => ({ type, value: null }));
+    }
     return dataTypes.map((type) => {
       const latest = realTimeData
         .filter(
@@ -114,7 +128,7 @@ const SensoresPage2: React.FC = () => {
         .sort((a, b) => new Date(b.fecha_medicion || '').getTime() - new Date(a.fecha_medicion || '').getTime())[0];
       return { type, value: latest ? (latest[type.key] as number) : null };
     });
-  }, [realTimeData]);
+  }, [realTimeData, resetCards]);
 
   const publishCommand = usePublishCommand(mqttClient, sensorActive, setSensorActive);
 
@@ -150,6 +164,7 @@ const SensoresPage2: React.FC = () => {
         <div className='w-full max-w-7xl flex flex-col items-center gap-8'>
           <h1 className='text-3xl font-bold text-gray-800'>Panel de Sensores (MQTT)</h1>
 
+          {/* Tarjetas de promedio: se muestran todas al mismo tiempo */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full'>
             {latestDataByType.map(({ type, value }, index) => (
               <motion.div
@@ -190,7 +205,7 @@ const SensoresPage2: React.FC = () => {
             ))}
           </div>
 
-          <SensorStats realTimeData={filteredData} selectedSensor='todos' selectedDataType={selectedDataType} />
+          <SensorStats realTimeData={realTimeData} selectedSensor='todos' />
 
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 w-full'>
             <motion.button
@@ -209,7 +224,7 @@ const SensoresPage2: React.FC = () => {
             >
               Reiniciar WiFi
             </motion.button>
-            <GenerateReport realTimeData={filteredData} dataTypes={dataTypes} />
+            <GenerateReport realTimeData={realTimeData} dataTypes={dataTypes} />
             <motion.button
               className='bg-green-600 text-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold h-16'
               onClick={() => navigate('/iot/datosmeteorologicos')}
@@ -239,6 +254,7 @@ const SensoresPage2: React.FC = () => {
             />
           </div>
 
+          {/* Gráficas y tabla: afectadas por selectedDataType */}
           <div className='w-full' ref={chartRef}>
             {selectedViewMode.id === 'realtime' ? (
               <SensorCharts
