@@ -7,6 +7,9 @@ import { EvapotranspiracionData, SensorData } from "@/types/iot/type";
 import { Cultivo } from "@/types/cultivo/Cultivo";
 import { obtenerNuevoToken } from "@/components/utils/refresh";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BANCAL_API_URL = `${BASE_URL}/cultivo/Bancal/`;
+
 const fetchBancales = async (): Promise<{ id: number; posY: number | null }[]> => {
   const token = localStorage.getItem("access_token");
   if (!token) {
@@ -20,7 +23,7 @@ const fetchBancales = async (): Promise<{ id: number; posY: number | null }[]> =
   }
 
   try {
-    const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
+    const response = await api.get(BANCAL_API_URL, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -39,7 +42,7 @@ const fetchBancales = async (): Promise<{ id: number; posY: number | null }[]> =
       try {
         const newToken = await obtenerNuevoToken(refreshToken);
         localStorage.setItem("access_token", newToken);
-        const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
+        const response = await api.get(BANCAL_API_URL, {
           headers: { Authorization: `Bearer ${newToken}` },
         });
         return response.data;
