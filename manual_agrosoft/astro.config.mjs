@@ -117,7 +117,7 @@ export default defineConfig({
             { label: 'Prototipado del sistema', slug: 'modules/Configuracion_Tecnica/prototipado_del_sistema' },
             { label: 'Casos de Prueba', slug: 'modules/Configuracion_Tecnica/Casos_de_prueba' },
             { label: 'Manual Tecnico', slug: 'modules/Configuracion_Tecnica/Manual_Tecnico' },
-
+            { label: 'Informe General Del Sistema', slug: 'modules/Configuracion_Tecnica/Informe_General_Del_Sistema' },
           ],
         },
       ],

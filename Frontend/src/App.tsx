@@ -144,8 +144,8 @@ const App: React.FC = () => {
             <Route path="/usuarios" element={<UsuariosPage />} />
 
             {/* IoT */}
-            <Route path="/iot/sensores" element={<SensoresPage />} />
-            <Route path="/iot/sensores-http" element={<SensoresPage2 />} />
+            <Route path="/iot/sensores-http" element={<SensoresPage />} />
+            <Route path="/iot/sensores" element={<SensoresPage2 />} />
             <Route path="/iot/datosmeteorologicos" element={<DatosMeteorologicosPage />} />
             <Route path="/iot/registrar-sensor" element={<RegistrarSensorPage />} />
             <Route path="/iot/listar-sensores" element={<ListarSensores />} />

@@ -68,7 +68,7 @@ export interface SensorStatsProps {
 
 export interface SensorTableProps {
   realTimeData: SensorData[];
-  selectedDataType: TipoSensor; // Usamos TipoSensor
+  selectedDataType: TipoSensor;  
 }
 export interface EvapotranspiracionData {
   id: number;

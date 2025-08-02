@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas';
 import { SensorData, TipoSensor, Sensor } from '@/types/iot/type';
 import { SensorCharts } from '@/components/Iot/sensores/SensorCharts'; 
 import agrosoftLogo from "../../../assets/Agrosoft_Logo.png";
-import senaLogo from '@/assets/logo sena.png';
+import senaLogo from "../../../assets/logo sena.png";
 
 interface GenerateReportProps {
   realTimeData: SensorData[];

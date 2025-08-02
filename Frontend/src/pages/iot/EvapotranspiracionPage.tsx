@@ -1,14 +1,18 @@
 import { useState, useMemo } from "react";
 import DefaultLayout from "@/layouts/default";
-import { useNavigate } from "react-router-dom";
 import { ReuInput } from "@/components/globales/ReuInput";
 import Tabla from "@/components/globales/Tabla";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToast } from "@heroui/react";
 import api from "@/components/utils/axios";
 import CustomSpinner from "@/components/globales/Spinner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, RefreshCw } from "lucide-react";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BANCAL_API_URL = `${BASE_URL}/cultivo/Bancal/`;
+const EVAPOTRANSPIRACION_API_URL = `${BASE_URL}/iot/evapotranspiracion/`;
+const CALCULAR_EVAPOTRANSPIRACION_URL = `${BASE_URL}/iot/evapotranspiracion/calcular/`;
 
 interface Bancal {
   id: number;
@@ -27,8 +31,8 @@ interface EvapotranspiracionData {
 
 const fetchBancales = async (): Promise<Bancal[]> => {
   const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
-  const response = await api.get("http://127.0.0.1:8000/cultivo/Bancal/", {
+  if (!token) throw new Error("No se encontró el token de autenticación");
+  const response = await api.get(BANCAL_API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -36,8 +40,8 @@ const fetchBancales = async (): Promise<Bancal[]> => {
 
 const fetchEvapotranspiracion = async (): Promise<EvapotranspiracionData[]> => {
   const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
-  const response = await api.get("http://127.0.0.1:8000/iot/evapotranspiracion/", {
+  if (!token) throw new Error("No se encontró el token de autenticación");
+  const response = await api.get(EVAPOTRANSPIRACION_API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -49,15 +53,53 @@ const calcularEvapotranspiracion = async (data: {
   latitud: number;
 }) => {
   const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("No se encontró el token de autenticación.");
-  const response = await api.post(
-    "http://127.0.0.1:8000/iot/evapotranspiracion/calcular/",
-    data,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+  if (!token) throw new Error("No se encontró el token de autenticación");
+  const response = await api.post(CALCULAR_EVAPOTRANSPIRACION_URL, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
   return response.data;
+};
+
+export const useEvapotranspiracion = () => {
+  return useQuery<EvapotranspiracionData[], Error>({
+    queryKey: ["evapotranspiracion"],
+    queryFn: fetchEvapotranspiracion,
+  });
+};
+
+export const useBancales = () => {
+  return useQuery<Bancal[], Error>({
+    queryKey: ["bancales"],
+    queryFn: fetchBancales,
+  });
+};
+
+export const useCalcularEvapotranspiracion = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: calcularEvapotranspiracion,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["evapotranspiracion"] });
+      addToast({
+        title: "Éxito",
+        description: "Evapotranspiración calculada con éxito",
+        timeout: 3000,
+        color: "success",
+      });
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.error || error?.message || "Error al calcular la evapotranspiración";
+      addToast({
+        title: "Error",
+        description: errorMessage,
+        timeout: 5000,
+        color: "danger",
+      });
+    },
+  });
 };
 
 export default function EvapotranspiracionPage() {
@@ -67,57 +109,21 @@ export default function EvapotranspiracionPage() {
     latitud: "",
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const {
     data: bancales = [],
     isPending: isPendingBancales,
     error: errorBancales,
-  } = useQuery<Bancal[], Error>({
-    queryKey: ["bancales"],
-    queryFn: fetchBancales,
-  });
+  } = useBancales();
 
   const {
     data: evapotranspiracionData = [],
     isPending: isPendingEvapotranspiracion,
     error: errorEvapotranspiracion,
     refetch,
-  } = useQuery<EvapotranspiracionData[], Error>({
-    queryKey: ["evapotranspiracion"],
-    queryFn: fetchEvapotranspiracion,
-  });
+  } = useEvapotranspiracion();
 
-  const mutation = useMutation({
-    mutationFn: calcularEvapotranspiracion,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["evapotranspiracion"] });
-      await refetch();
-      addToast({
-        title: "Éxito",
-        description: "Evapotranspiración calculada con éxito",
-        color: "success",
-      });
-    },
-    onError: (err: any) => {
-      if (err.response?.status === 401) {
-        addToast({
-          title: "Sesión expirada",
-          description: "Por favor, inicia sesión nuevamente.",
-          color: "warning",
-        });
-        navigate("/login");
-      } else {
-        const errorMessage = err.response?.data?.error || "Error al calcular la evapotranspiración";
-        addToast({
-          title: "Error",
-          description: errorMessage,
-          color: "danger",
-        });
-      }
-    },
-  });
+  const mutation = useCalcularEvapotranspiracion();
 
   const handleBancalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const bancalId = e.target.value;
@@ -143,19 +149,63 @@ export default function EvapotranspiracionPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fk_bancal_id || !formData.fecha) {
+
+    // Validar campos requeridos
+    if (!formData.fk_bancal_id || !formData.fecha || !formData.latitud) {
       addToast({
         title: "Error",
-        description: "Seleccione un bancal y una fecha",
+        description: "Todos los campos son obligatorios",
+        timeout: 3000,
         color: "danger",
       });
       return;
     }
-    mutation.mutate({
-      fk_bancal_id: Number(formData.fk_bancal_id),
+
+    // Validar formato de fecha (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(formData.fecha)) {
+      addToast({
+        title: "Error",
+        description: "Formato de fecha inválido (use YYYY-MM-DD)",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
+    }
+
+    // Validar latitud
+    const latitud = Number(formData.latitud);
+    if (isNaN(latitud) || latitud < -90 || latitud > 90) {
+      addToast({
+        title: "Error",
+        description: "La latitud debe ser un número válido entre -90 y 90",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
+    }
+
+    // Validar fk_bancal_id
+    const fk_bancal_id = Number(formData.fk_bancal_id);
+    if (isNaN(fk_bancal_id) || fk_bancal_id <= 0) {
+      addToast({
+        title: "Error",
+        description: "Seleccione un bancal válido",
+        timeout: 3000,
+        color: "danger",
+      });
+      return;
+    }
+
+    // Preparar datos para la solicitud
+    const requestData = {
+      fk_bancal_id,
       fecha: formData.fecha,
-      latitud: Number(formData.latitud) || 0,
-    });
+      latitud,
+    };
+
+    // Enviar solicitud
+    mutation.mutate(requestData);
   };
 
   const toggleForm = () => {
@@ -262,64 +312,70 @@ export default function EvapotranspiracionPage() {
           )}
         </motion.div>
 
-        {isFormOpen && (
-          <motion.div
-            className="bg-white p-6 rounded-lg shadow-md mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">
-              Calcular Evapotranspiración
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700">Bancal</label>
-                <select
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  name="fk_bancal_id"
-                  value={formData.fk_bancal_id}
-                  onChange={handleBancalChange}
+        <AnimatePresence>
+          {isFormOpen && (
+            <motion.div
+              key="form"
+              className="bg-white p-6 rounded-lg shadow-md mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                Calcular Evapotranspiración
+              </h3>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700">Bancal</label>
+                  <select
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    name="fk_bancal_id"
+                    value={formData.fk_bancal_id}
+                    onChange={handleBancalChange}
+                    required
+                  >
+                    <option value="">Seleccione un bancal</option>
+                    {bancales.map((bancal) => (
+                      <option key={bancal.id} value={bancal.id}>
+                        {bancal.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <ReuInput
+                  label="Fecha"
+                  type="date"
+                  name="fecha"
+                  value={formData.fecha}
+                  onChange={handleChange}
                   required
+                  min="2000-01-01"
+                  max="2099-12-31"
+                />
+                <ReuInput
+                  label="Latitud"
+                  type="number"
+                  step="0.01"
+                  name="latitud"
+                  value={formData.latitud}
+                  onChange={handleChange}
+                  placeholder="Ej: 6.12"
+                  required
+                />
+                <motion.button
+                  type="submit"
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
+                  disabled={mutation.isPending}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <option value="">Seleccione un bancal</option>
-                  {bancales.map((bancal) => (
-                    <option key={bancal.id} value={bancal.id}>
-                      {bancal.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <ReuInput
-                label="Fecha"
-                type="date"
-                name="fecha"
-                value={formData.fecha}
-                onChange={handleChange}
-                required
-                min="2000-01-01"
-              />
-              <ReuInput
-                label="Latitud"
-                type="number"
-                step="0.01"
-                name="latitud"
-                value={formData.latitud}
-                onChange={handleChange}
-                placeholder="Ej: 4.61"
-              />
-              <motion.button
-                type="submit"
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
-                disabled={mutation.isPending}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {mutation.isPending ? "Calculando..." : "Calcular"}
-              </motion.button>
-            </form>
-          </motion.div>
-        )}
+                  {mutation.isPending ? "Calculando..." : "Calcular"}
+                </motion.button>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </DefaultLayout>
   );
