@@ -115,6 +115,8 @@ export default defineConfig({
             { label: 'Especificacion de Requerimientos', slug: 'modules/Configuracion_Tecnica/especificacion_requerimiento' },
             { label: 'Planteamiento del Problema', slug: 'modules/Configuracion_Tecnica/Planteamiento_del_Problema' },          
             { label: 'Prototipado del sistema', slug: 'modules/Configuracion_Tecnica/prototipado_del_sistema' },
+            { label: 'Informe General Del Sistema', slug: 'modules/Configuracion_Tecnica/Informe_General_Del_Sistema' },
+
 
 
           ],
