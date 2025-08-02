@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import { Sensor, SensorData } from "@/types/iot/type";
 import { addToast } from "@heroui/react";
+import api from "@/components/utils/axios";
 
 export const useWebSocketData = (sensores: Sensor[] = []) => {
   const [realTimeData, setRealTimeData] = useState<SensorData[]>([]);
   const WS_URL = import.meta.env.VITE_WS_URL;
 
   useEffect(() => {
-    const ws = new WebSocket(WS_URL);
+    // Obtener la baseURL del axios
+    const baseURL = api.defaults.baseURL || "";
+    const wsProtocol = baseURL.startsWith("https") ? "wss" : "ws";
+    const host = baseURL.replace(/^https?:\/\//, ""); // quitar http:// o https://
+
+    const ws = new WebSocket(`${wsProtocol}://${host}/ws/realtime/`);
 
     ws.onopen = () => {
       addToast({

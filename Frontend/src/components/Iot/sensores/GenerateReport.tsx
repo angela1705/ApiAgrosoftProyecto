@@ -5,8 +5,8 @@ import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { SensorData, TipoSensor, Sensor } from '@/types/iot/type';
 import { SensorCharts } from '@/components/Iot/sensores/SensorCharts'; 
-import agrosoftLogo from '@/assets/def_AGROSIS_LOGOTIC.png';
-import senaLogo from '@/assets/logo sena.png';
+import agrosoftLogo from "../../../assets/Agrosoft_Logo.png";
+import senaLogo from "../../../assets/logo sena.png";
 
 interface GenerateReportProps {
   realTimeData: SensorData[];
