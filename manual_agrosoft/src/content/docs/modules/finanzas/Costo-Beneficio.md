@@ -25,7 +25,7 @@ Para consultar los análisis financieros:
 1. Inicia sesión en Agrosoft.
 2. En el **menú lateral izquierdo**, busca la sección **Finanzas** y haz clic en **Costo-Beneficio**. Esto te llevará a la pantalla principal del módulo, donde podrás ver el listado de cosechas.
 
-<img src="/public/finanzas/costo_beneficio_menu.png" alt="Menú de costo-beneficio" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
+<img src="/public/finanzas/costo_beneficio/costo_beneficio_menu.png" alt="Menú de costo-beneficio" style="display: block; margin: auto; width: 30%; border-radius: 12px;" />
 
 ## Visualizar Listado de Cosechas
 
@@ -40,7 +40,7 @@ En la pantalla principal de **Análisis de Costo-Beneficio**, encontrarás herra
   - **Nombre del cultivo**: Nombre del cultivo asociado (ej. "Maíz").
   - **Imagen**: Una imagen representativa de la cosecha (por defecto, si no se personaliza).
 
-<img src="/public/finanzas/costo_beneficio_lista.png" alt="Listado de cosechas" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+<img src="/public/finanzas/costo_beneficio/costo_beneficio_lista.png" alt="Listado de cosechas" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 ## Consultar Análisis de una Cosecha
 
@@ -49,7 +49,7 @@ Para ver el análisis financiero de una cosecha específica:
 1. Haz clic en una tarjeta de cosecha en el listado.
 2. Se abrirá un modal con el título **Análisis de Costo-Beneficio - Cosecha #X**, donde se mostrará la información detallada.
 
-<img src="/public/finanzas/costo_beneficio_modal.png" alt="Modal de análisis financiero" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+<img src="/public/finanzas/costo_beneficio/costo_beneficio_modal.png" alt="Modal de análisis financiero" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 
 El modal incluye tres secciones:
 
@@ -58,14 +58,13 @@ El modal incluye tres secciones:
 - Cada costo se presenta con su valor en pesos colombianos (COP), formateado con separadores de miles (ej. "COP 1.500.000").
 - Esta sección está resaltada en un fondo azul claro para facilitar su identificación.
 
-<img src="/public/finanzas/costo_beneficio_costos.png" alt="Sección de costos" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
 
 ### 2. Ingresos
 - Muestra los ingresos generados por la cosecha (ej. "Venta de maíz", "Subsidios").
 - Cada ingreso se presenta con su valor en COP, formateado de manera similar a los costos.
 - Esta sección está resaltada en un fondo verde claro.
 
-<img src="/public/finanzas/costo_beneficio_ingresos.png" alt="Sección de ingresos" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
 
 ### 3. Métricas Clave
 - Presenta indicadores financieros importantes:
@@ -75,7 +74,7 @@ El modal incluye tres secciones:
   - **ROI**: Retorno de inversión, expresado como porcentaje (en verde si es positivo, en rojo si es negativo).
 - Los valores están formateados en COP o porcentajes, según corresponda.
 
-<img src="/public/finanzas/costo_beneficio_metricas.png" alt="Sección de métricas clave" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
 
 ## Filtrar Cosechas
 
@@ -87,15 +86,19 @@ Para buscar cosechas específicas:
 2. Haz clic en el botón **Buscar** para actualizar el listado de cosechas según los criterios ingresados.
 3. Si no se encuentran resultados, aparecerá un mensaje: *“No hay cosechas para mostrar”*.
 
-<img src="/public/finanzas/costo_beneficio_filtros.png" alt="Filtros de búsqueda" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
-
+<img src="/public/finanzas/costo_beneficio/costo_beneficio_filtros.png" alt="Filtros de búsqueda" 
+style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+------------------ Ejemplo 1
+<img src="/public/finanzas/costo_beneficio/costo_beneficio_filtros2.png" alt="Filtros de búsqueda" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
+------------------ Ejemplo 2
+<img src="/public/finanzas/costo_beneficio/costo_beneficio_filtros3.png" alt="Filtros de búsqueda" style="display: block; margin: auto; width: 80%; border-radius: 12px;" />
 ## Manejo de Errores y Carga
 
 - **Cargando datos**: Mientras se obtienen las cosechas o el análisis, se muestra un mensaje de carga con un ícono animado.
 - **Error al cargar**: Si ocurre un problema al obtener los datos, se muestra un mensaje en rojo (ej. “Error al buscar las cosechas” o “Error al cargar el análisis”).
 - **Sin datos**: Si no hay cosechas que coincidan con los filtros, se muestra un mensaje informativo.
 
-<img src="/public/finanzas/costo_beneficio_cargando.png" alt="Pantalla de carga" style="display: block; margin: auto; width: 60%; border-radius: 12px;" />
+
 
 ## ¿Por qué importa el análisis de costo-beneficio?
 
