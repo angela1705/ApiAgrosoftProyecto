@@ -54,7 +54,7 @@ Estos módulos permitirán un control integral de procesos críticos, tales como
 ### **2.1 Pantalla de Inicio de Sesión**
 
 #### **Descripción:**  
-La pantalla de inicio de sesión permite a los usuarios autenticarse en el sistema **AgroSis** mediante su correo electrónico y contraseña. Su objetivo es garantizar que solo usuarios autorizados puedan acceder a las funcionalidades de la aplicación.
+La pantalla de inicio de sesión permite a los usuarios autenticarse en el sistema **Agrosoft** mediante su correo electrónico y contraseña. Su objetivo es garantizar que solo usuarios autorizados puedan acceder a las funcionalidades de la aplicación.
 
 #### **Diseño:**  
 ![Pantalla de Inicio de Sesión](/public/prototipado_del_sistema/Login.png)  
@@ -544,7 +544,7 @@ El sistema desglosa el tiempo trabajado por cada empleado y el costo total por a
 ### **2.48 Ventana de Reporte de Usuarios**
 
 #### **Descripción:**  
-Este reporte analiza el uso de la plataforma "AgroSis" por parte de los aprendices registrados previamente por el administrador. Presenta datos clave sobre su actividad, satisfacción y problemas frecuentes, con el fin de mejorar la experiencia de aprendizaje y optimizar las funcionalidades más utilizadas.
+Este reporte analiza el uso de la plataforma "Agrosoft" por parte de los aprendices registrados previamente por el administrador. Presenta datos clave sobre su actividad, satisfacción y problemas frecuentes, con el fin de mejorar la experiencia de aprendizaje y optimizar las funcionalidades más utilizadas.
 
 #### **Diseño:**  
 ![Ventana de Reporte de Usuarios](/public/prototipado_del_sistema/ReporteUsuarios.png)  
