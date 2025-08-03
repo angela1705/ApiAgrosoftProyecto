@@ -1,12 +1,12 @@
 ---
-title: "Especificación de Requerimientos de Software - AgroSis"
+title: "Especificación de Requerimientos de Software - Agrosoft"
 slug: modules/Configuracion_Tecnica/especificacion_requerimiento
-description: "Documentación completa de la Especificación de Requerimientos de Software para el sistema AgroSis versión 1.0"
+description: "Documentación completa de la Especificación de Requerimientos de Software para el sistema Agrosoft versión 1.0"
 version: "1.0"
 ---s
 
 # Especificación de Requerimientos de Software
-## AgroSis
+## Agrosoft
 ### Versión: 1.0
 
 ---
@@ -135,12 +135,12 @@ Sección para ajustar parámetros generales del sistema, preferencias del usuari
 
 #### 2.1.2 Mapa de Navegación
 
-<img src="/public/database/MapaNavegacionAgroSis.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+<img src="/public/database/MapaNavegacionAgrosoft.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 ### 2.2 Características del Producto
 
 **Desarrollo web:**
-AGROSIS será implementado como una aplicación web de acceso universal, lo que permitirá a los usuarios interactuar desde cualquier dispositivo con conexión a internet, sin requerir instalación adicional.
+Agrosoft será implementado como una aplicación web de acceso universal, lo que permitirá a los usuarios interactuar desde cualquier dispositivo con conexión a internet, sin requerir instalación adicional.
 
 **Lenguajes de programación:**
 La lógica del sistema será desarrollada en PHP para el backend, mientras que JavaScript será utilizado para dotar de interactividad al frontend, garantizando una experiencia de usuario dinámica.
@@ -152,7 +152,7 @@ El sistema contará con un módulo para administrar usuarios, permitiendo su cre
 Se incluirán funcionalidades para el seguimiento de cultivos, la programación del riego y la administración de fertilizantes e insumos, permitiendo un control efectivo sobre las actividades agrícolas.
 
 **Generación de reportes:**
-AGROSIS dispondrá de herramientas para la creación de reportes detallados, los cuales reflejarán datos sobre producción, consumo de recursos y otros indicadores relevantes para la toma de decisiones estratégicas.
+Agrosoft dispondrá de herramientas para la creación de reportes detallados, los cuales reflejarán datos sobre producción, consumo de recursos y otros indicadores relevantes para la toma de decisiones estratégicas.
 
 **Alertas y notificaciones:**
 El sistema enviará notificaciones automáticas sobre eventos críticos o pendientes, como niveles bajos de inventario, tareas agendadas o condiciones climáticas desfavorables.
@@ -475,7 +475,7 @@ Estos anexos representan un respaldo formal del trabajo realizado y fortalecen l
 
 ## Conclusión
 
-Esta Especificación de Requerimientos de Software para AgroSis versión 1.0 establece las bases fundamentales para el desarrollo de un sistema integral de gestión agrícola. La documentación proporciona una guía clara y estructurada que garantiza que todos los involucrados en el proyecto comprendan los objetivos, funcionalidades y restricciones del sistema.
+Esta Especificación de Requerimientos de Software para Agrosoft versión 1.0 establece las bases fundamentales para el desarrollo de un sistema integral de gestión agrícola. La documentación proporciona una guía clara y estructurada que garantiza que todos los involucrados en el proyecto comprendan los objetivos, funcionalidades y restricciones del sistema.
 
 El enfoque modular adoptado permitirá una implementación escalable y mantenible, mientras que los requerimientos funcionales y no funcionales especificados aseguran que el sistema cumpla con los estándares de calidad, seguridad y rendimiento esperados.
 

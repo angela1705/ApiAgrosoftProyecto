@@ -7,8 +7,8 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: 'Agrosis',
-      description: "Documentación de la api Agrosis",
+      title: 'Agrosoft',
+      description: "Documentación de la api Agrosoft",
       social: {
         github: 'https://github.com/angela1705/ApiAgrosoftProyecto',
       },
