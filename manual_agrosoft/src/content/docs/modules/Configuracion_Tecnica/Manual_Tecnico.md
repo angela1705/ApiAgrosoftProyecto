@@ -152,7 +152,7 @@ Se crea un script de arranque para contenedores Docker que usan Django y Postegr
 
 • Con docker buildx inspect mybuilder –bootstrap muestra los detalles y –Bootstrap lo inicializa.
 
-• docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t samboniwilson09/front\_agrosis:1.1.1 –push. Construye la imagen usando builder activo, fuerza una compilación limpia e ignora el cache, compila para múltiples arquitecturas como Linux-amd64 PC comunes, se etiqueta las imágenes samboniwilson09/front\_agrosis:1.1.1 y con el push sube la imagen automáticamente a Docker hub. El punto final hace referencia el contexto de build es el directorio actual (donde está el Dockerfile).
+• docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t samboniwilson09/front\_Agrosoft:1.1.1 –push. Construye la imagen usando builder activo, fuerza una compilación limpia e ignora el cache, compila para múltiples arquitecturas como Linux-amd64 PC comunes, se etiqueta las imágenes samboniwilson09/front\_Agrosoft:1.1.1 y con el push sube la imagen automáticamente a Docker hub. El punto final hace referencia el contexto de build es el directorio actual (donde está el Dockerfile).
 
 #### 8. Docker-compose.yml
 

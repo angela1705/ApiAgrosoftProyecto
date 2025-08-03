@@ -1,7 +1,7 @@
 ---
 title: "Especificación de Requerimientos de Software - Agrosoft"
 slug: modules/Configuracion_Tecnica/Informe_General_Del_Sistema
-description: "Documentación completa de la Especificación de Requerimientos de Software para el sistema AgroSis versión 1.0"
+description: "Documentación completa de la Especificación de Requerimientos de Software para el sistema Agrosoft versión 1.0"
 version: "1.0"
 ---
 
@@ -104,7 +104,7 @@ El sistema está dirigido a los usuarios dentro de la unidad productiva, incluye
 
 ## Arquitectura de Información
 
- <img src="/public/informe_general/img-1.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+ <img src="/public/informe_general/img-1.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
  
 ---
 
@@ -219,46 +219,46 @@ A continuación, se describen los distintos tipos de usuarios que interactúan c
 1. Registro de usuarios
 
 
-<img src="/public/informe_general/img1.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+<img src="/public/informe_general/img1.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 2. Editar usuarios
-<img src="/public/informe_general/img2.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+<img src="/public/informe_general/img2.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 3. Desactivar usuarios  
-   <img src="/public/informe_general/img3.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/informe_general/img3.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 4. Registrar, editar y desactivación de bancales  
-   <img src="/public/informe_general/img4.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/informe_general/img4.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 5. Registrar, editar y desactivación de Lotes  
-   <img src="/public/informe_general/img5.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/informe_general/img5.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
  
 7. Asignar una actividad  
-   <img src="/public/informe_general/img6.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/informe_general/img6.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 8. Registrar, editar Cultivos  
-   <img src="/public/informe_general/img8.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/informe_general/img8.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 9. Registrar y editar cosecha  
-   <img src="/public/informe_general/img9.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+   <img src="/public/informe_general/img9.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 10. Registrar recordatorios  
-    <img src="/public/informe_general/img10.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+    <img src="/public/informe_general/img10.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 11. Registrar y editar tipo de plaga  
-    <img src="/public/informe_general/img11.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+    <img src="/public/informe_general/img11.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 12. Registrar y editar plaga  
-    <img src="/public/informe_general/img12.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+    <img src="/public/informe_general/img12.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 15. Registrar una venta  
-    <img src="/public/informe_general/img15.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+    <img src="/public/informe_general/img15.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
  
 17. Calcular pago  
-    <img src="/public/informe_general/img17.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+    <img src="/public/informe_general/img17.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
 
 18. Registrar Insumos  
-    <img src="/public/informe_general/img18.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+    <img src="/public/informe_general/img18.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
  
 ---
  
@@ -2165,5 +2165,5 @@ El sistema valida la información y permite al usuario realizar el registro.
 
 En esta sección se debe presentar el diagrama de clases del sistema. 
 
- <img src="/public/informe_general/image.png" alt="Mapa de navegación del sistema AgroSis" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
+ <img src="/public/informe_general/image.png" alt="Mapa de navegación del sistema Agrosoft" style="display: block; margin: auto; width: 100%; border-radius: 12px;" />
  
