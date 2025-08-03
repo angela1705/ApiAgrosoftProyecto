@@ -58,7 +58,25 @@ class Insumo(models.Model):
     fecha_registro = models.DateTimeField(default=timezone.now)
     fecha_caducidad = models.DateField(blank=True, null=True)
     precio_insumo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    def save(self, *args, **kwargs):
+        if self.pk:
+            try:
+                original = Insumo.objects.get(pk=self.pk)
+                self._original_cantidad = original.cantidad
+                self._original_fecha_caducidad = original.fecha_caducidad
+            except Insumo.DoesNotExist:
+                self._original_cantidad = None
+                self._original_fecha_caducidad = None
+        else:
+            self._original_cantidad = None
+            self._original_fecha_caducidad = None
+        super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        db_table = "insumos_insumo"
     def __str__(self):
         return self.nombre
 
