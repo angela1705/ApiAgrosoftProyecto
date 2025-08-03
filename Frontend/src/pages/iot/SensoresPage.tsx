@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaTemperatureHigh, FaTint, FaLeaf, FaWind, FaLightbulb } from 'react-icons/fa';
@@ -102,6 +102,7 @@ const SensoresPage: React.FC = () => {
   const [selectedDataType, setSelectedDataType] = useState<TipoSensor>(dataTypes[0]);
   const [selectedViewMode, setSelectedViewMode] = useState<ViewMode>(viewModes[0]);
   const [selectedSensor, setSelectedSensor] = useState<number | 'todos'>('todos');
+  const [resetCards, setResetCards] = useState(false);
 
   const { sensores, isLoading: sensoresLoading, error: sensoresError } = useSensores();
   const { isLoading: historicosLoading, error: historicosError } = useDatosMeteorologicosHistoricos();
@@ -114,10 +115,20 @@ const SensoresPage: React.FC = () => {
     []
   );
 
+  // Temporizador para limpiar las tarjetas cada 12 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setResetCards(true);
+      setTimeout(() => setResetCards(false), 100); // Restablece después de 100ms
+    }, 12000);
+    return () => clearInterval(interval);
+  }, []);
+
   const filteredSensores = useMemo(() => {
     return sensores.filter((sensor: Sensor) => sensor.tipo_sensor === selectedDataType.tipo_sensor);
   }, [sensores, selectedDataType]);
 
+  // Datos filtrados para gráficas y tabla, basados en selectedDataType y selectedSensor
   const filteredData = useMemo(() => {
     return realTimeData
       .filter((d) => {
@@ -136,8 +147,11 @@ const SensoresPage: React.FC = () => {
       }));
   }, [realTimeData, selectedDataType, selectedSensor, sensores]);
 
-  // Compute latest data for all data types for the cards
+  // Calcular los datos más recientes para las tarjetas, sin depender de selectedDataType ni selectedSensor
   const latestDataByType = useMemo(() => {
+    if (resetCards) {
+      return dataTypes.map((type) => ({ type, value: null }));
+    }
     return dataTypes.map((type) => {
       const latest = realTimeData
         .filter((d) => {
@@ -145,14 +159,13 @@ const SensoresPage: React.FC = () => {
           return (
             value !== null &&
             value !== undefined &&
-            typeof value === 'number' &&
-            (selectedSensor === 'todos' || Number(d.fk_sensor) === selectedSensor)
+            typeof value === 'number'
           );
         })
         .sort((a, b) => new Date(b.fecha_medicion).getTime() - new Date(a.fecha_medicion).getTime())[0];
       return { type, value: latest ? (latest[type.key] as number) : null };
     });
-  }, [realTimeData, selectedSensor]);
+  }, [realTimeData, resetCards]);
 
   if (sensoresLoading || historicosLoading) {
     return (
@@ -220,7 +233,7 @@ const SensoresPage: React.FC = () => {
           </div>
 
           <SensorStats
-            realTimeData={filteredData}
+            realTimeData={realTimeData}
             selectedSensor={selectedSensor}
             selectedDataType={selectedDataType}
           />
@@ -242,7 +255,7 @@ const SensoresPage: React.FC = () => {
             >
               Reiniciar WiFi
             </motion.button>
-            <GenerateReport realTimeData={filteredData} dataTypes={dataTypes} sensores={sensores} />
+            <GenerateReport realTimeData={realTimeData} dataTypes={dataTypes} sensores={sensores} />
             <motion.button
               className='bg-green-600 text-white rounded-lg shadow-md p-2 flex items-center justify-center text-xs font-semibold h-16'
               onClick={() => navigate('/iot/datosmeteorologicos')}
