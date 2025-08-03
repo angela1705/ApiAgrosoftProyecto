@@ -10,6 +10,18 @@ Una guía completa para aprovechar al máximo el sistema de gestión agrícola i
 
 Agrosoft es una plataforma digital diseñada para optimizar la trazabilidad, control y administración de todas las actividades en una operación agricola. Este manual te ayudará a conocer cada módulo del sistema, y su correcto uso.
 
+**Links a videos que explican detalladamente cada módulo del sistema**:
+
+<ul>
+  <li><strong>Módulo de Usuarios</strong>: <a href="https://youtu.be/Bb1xhFU0cBQ?si=mQkiIvzxDNhwOKSf" target="_blank">https://youtu.be/Bb1xhFU0cBQ</a></li>
+  <li><strong>Módulo de Trazabilidad</strong>: <a href="https://youtu.be/XHY2_Op-QME" target="_blank">https://youtu.be/XHY2_Op-QME</a></li>
+  <li><strong>Módulo de Finanzas</strong>: <a href="https://youtu.be/R_KcT1uTp6c" target="_blank">https://youtu.be/R_KcT1uTp6c</a></li>
+  <li><strong>Módulo de Inventario</strong>: <a href="https://youtu.be/0fK2ahUWP-Y?si=Mr69GyLNe_kmY-Ui" target="_blank">https://youtu.be/0fK2ahUWP-Y</a></li>
+  <li><strong>Módulo de IoT</strong>: <a href="https://youtu.be/iQ9k7mDykj4?si=OHyUY3w3fbhEO9QY" target="_blank">https://youtu.be/iQ9k7mDykj4</a></li>
+</ul>
+
+- **Grupo 3**
+
 ## ¿A quién está dirigido este manual?
 
 Este documento está pensado para todos los usuarios del sistema:  
