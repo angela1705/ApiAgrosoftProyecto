@@ -7,7 +7,7 @@ services:
     tty: true
 
   backend:
-    image: wmauriciodev/backend_agrosoft:13
+    image: wmauriciodev/backend_agrosoft:14
     ports:
       - "8000:8000"
     depends_on:
@@ -21,8 +21,6 @@ services:
       - DB_PORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    volumes:
-      - ./Agrosis_API-dev:/app
     command: >
       sh -c "python manage.py migrate &&
              daphne -b 0.0.0.0 -p 8000 Agrosoft.asgi:application"
