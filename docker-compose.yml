@@ -45,13 +45,13 @@ services:
       retries: 5
 
   documentacion:
-    image: juan66016/agrosoft_documentacion:6
+    image: juan66016/agrosoft_documentacion:7
     ports:
       - "4321:4321"
     restart: unless-stopped
 
   manual:
-    image: juan66016/agrosoft_manual:6
+    image: juan66016/agrosoft_manual:7
     ports:
       - "4322:4322"
     restart: unless-stopped
