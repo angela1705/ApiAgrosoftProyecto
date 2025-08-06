@@ -30,13 +30,13 @@ bool oledActive = false;
 DHT dht(DHTPIN, DHTTYPE);
 
 // Sensor de humedad de suelo
-#define SOIL_MOISTURE_ANALOG A0
+#define SOIL_MOISTURE_ANALOG A2
 
 // Sensor MQ-135
 #define MQ135_ANALOG A1
 
 // Sensor LDR
-#define LDR_ANALOG A2
+#define LDR_ANALOG A0
 
 // Botón WiFi
 #define WIFI_BUTTON_PIN 4 // GPIO 4 (D4)
